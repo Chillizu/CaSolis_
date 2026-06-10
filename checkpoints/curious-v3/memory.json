@@ -1,0 +1,17 @@
+{
+  "ls": "",
+  "find /etc -name '*.conf' 2>/dev/null | head -5": "/etc/adduser.conf\n/etc/debconf.conf\n/etc/deluser.conf\n/etc/e2scrub.conf\n/etc/gai.conf",
+  "head -20 /etc/group": "root:x:0:\ndaemon:x:1:\nbin:x:2:\nsys:x:3:\nadm:x:4:\ntty:x:5:\ndisk:x:6:\nlp:x:7:\nmail:x:8:\nnews:x:9:\nuucp:x:10:\nman:x:12:\nproxy:x:13:\nkmem:x:15:\ndialout:x:20:\nfax:x:21:\nvoice:x:22:\ncdrom:x:24:\nfloppy:x:25:\ntape:x:26:",
+  "ls /proc | head -10": "1\n3373\n3379\n3380\nacpi\nasound\nbootconfig\nbuddyinfo\nbus\ncgroups",
+  "env | head -10": "HOSTNAME=f97b890da759\nPWD=/home/agent_user/workspace\nHOME=/home/agent_user\nSHLVL=0\nPATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\nDEBIAN_FRONTEND=noninteractive\n_=/usr/bin/env",
+  "ls /dev | head -10": "console\ncore\nfd\nfull\nmqueue\nnull\nptmx\npts\nrandom\nshm",
+  "ls -la /bin | head -10": "lrwxrwxrwx 1 root root 7 May  9 02:05 /bin -> usr/bin",
+  "sl 2>/dev/null; echo 'not found'": "not found",
+  "cat /etc/services | head -10": "",
+  "grep root /etc/passwd 2>/dev/null": "root:x:0:0:root:/root:/bin/bash",
+  "ls -R /etc 2>/dev/null | head -20": "/etc:\nadduser.conf\nalternatives\napt\nbash.bashrc\nbindresvport.blacklist\ncloud\ncron.d\ncron.daily\ndebconf.conf\ndebian_version\ndefault\ndeluser.conf\ndpkg\ne2scrub.conf\nenvironment\nfstab\ngai.conf\ngroup\ngroup-",
+  "ls /nonexistent 2>&1": "ls: cannot access '/nonexistent': No such file or directory",
+  "cat /dev/urandom | head -c 50 2>/dev/null": "",
+  "cat /etc/passwd | head -5": "root:x:0:0:root:/root:/bin/bash\ndaemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin\nbin:x:2:2:bin:/bin:/usr/sbin/nologin\nsys:x:3:3:sys:/dev:/usr/sbin/nologin\nsync:x:4:65534:sync:/bin:/bin/sync",
+  "locale": "LANG=\nLANGUAGE=\nLC_CTYPE=\"POSIX\"\nLC_NUMERIC=\"POSIX\"\nLC_TIME=\"POSIX\"\nLC_COLLATE=\"POSIX\"\nLC_MONETARY=\"POSIX\"\nLC_MESSAGES=\"POSIX\"\nLC_PAPER=\"POSIX\"\nLC_NAME=\"POSIX\"\nLC_ADDRESS=\"POSIX\"\nLC_TELEPHONE=\"POSIX\"\nLC_MEASUREMENT=\"POSIX\"\nLC_IDENTIFICATION=\"POSIX\"\nLC_ALL="
+}
