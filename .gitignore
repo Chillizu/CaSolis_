@@ -1,0 +1,18 @@
+# Checkpoints (1.6GB, too large for git)
+checkpoints/
+*.pt
+
+# Generated data
+data/thoughts/*.jsonl
+data/train_*.log
+data/*.log
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+
+# OS
+.DS_Store
+Thumbs.db
