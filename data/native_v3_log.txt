@@ -1,0 +1,220 @@
+/home/chillizu/Projects/Folunar_/scripts/train_online.py:96: RuntimeWarning: coroutine 'DockerSandbox.execute' was never awaited
+  r = sandbox.execute("bash", cmd, None)
+RuntimeWarning: Enable tracemalloc to get the object allocation traceback
+/home/chillizu/Projects/Folunar_/scripts/train_online.py:192: RuntimeWarning: coroutine 'DockerSandbox.execute' was never awaited
+  train_online(steps=args.steps, output_dir=args.output)
+RuntimeWarning: Enable tracemalloc to get the object allocation traceback
+🧠 在线训练 | 参数: 385,521
+🐳 Docker: 29031cde33a5
+
+   步 |                   行动 |       损失 |   多样 |    好奇
+-------------------------------------------------------
+  10 |       cat /etc/issue |   2.1844 |    7 | 0.382
+  20 |             which ls |   1.0018 |    9 | 0.276
+  30 | dmesg 2>/dev/null | tail -1 |   0.5995 |   11 | 0.281
+  40 |             hostname |   0.4094 |   13 | 0.280
+  50 |              df -h / |   0.2747 |   13 | 0.277
+  60 |         echo test123 |   0.1768 |   12 | 0.274
+  70 |       cat /etc/issue |   0.0911 |   12 | 0.277
+  80 |              ls /tmp |   0.1168 |   13 | 0.273
+  90 |         echo test123 |   0.0625 |   12 | 0.269
+ 100 |                   id |   0.0294 |   12 | 0.269
+ 110 |              df -h / |   0.0456 |   12 | 0.267
+ 120 |        env | head -3 |   0.1002 |   12 | 0.263
+ 130 |        env | head -3 |   0.0030 |   12 | 0.263
+ 140 |          du -sh /tmp |   0.0196 |   11 | 0.272
+ 150 |               who -b |   0.0813 |   10 | 0.277
+ 160 |         ls -la /home |   0.0937 |   10 | 0.281
+ 170 |       cat /etc/issue |   0.0002 |    9 | 0.278
+ 180 |       cat /etc/issue |   0.0008 |   12 | 0.273
+ 190 |                   ls |   0.0000 |   12 | 0.268
+ 200 |              free -h |   0.0000 |   11 | 0.265
+ 210 |     locale | head -3 |   0.0016 |   11 | 0.272
+ 220 |             hostname |   0.3995 |   10 | 0.272
+ 230 |               who -b |   0.0264 |    9 | 0.271
+ 240 |             hostname |   0.0000 |    8 | 0.273
+ 250 |         ls -la /home |   0.0000 |    7 | 0.271
+ 260 | ls -d /tmp /etc /var /home |   0.0000 |    8 | 0.271
+ 270 |               who -b |   0.1998 |    8 | 0.260
+ 280 |        env | head -3 |   0.0056 |   12 | 0.267
+ 290 |    ls /etc | head -3 |   0.0000 |   12 | 0.270
+ 300 |                   id |   0.0000 |   13 | 0.270
+ 310 | dmesg 2>/dev/null | tail -1 |   0.0000 |   12 | 0.272
+ 320 |     locale | head -3 |   0.0000 |   14 | 0.266
+ 330 |             hostname |   0.0000 |   12 | 0.259
+ 340 | ls -d /tmp /etc /var /home |   0.0000 |   12 | 0.271
+ 350 |          du -sh /tmp |   0.0000 |   11 | 0.278
+ 360 |              df -h / |   0.0000 |   11 | 0.268
+ 370 |         ls -la /home |   0.0000 |   11 | 0.266
+ 380 | dmesg 2>/dev/null | tail -1 |   0.0000 |   10 | 0.270
+ 390 |             which ls |   0.0000 |   11 | 0.274
+ 400 |    cat /etc/hostname |   0.2408 |   11 | 0.238
+ 410 |             which ls |   0.0116 |   11 | 0.261
+ 420 |              ls /tmp |   0.0000 |   11 | 0.267
+ 430 | ls -d /tmp /etc /var /home |   0.0000 |   12 | 0.268
+ 440 |         echo test123 |   0.0000 |   11 | 0.269
+ 450 |               who -b |   0.0000 |   10 | 0.269
+ 460 |          du -sh /tmp |   0.0000 |   11 | 0.269
+ 470 |                   ls |   0.0000 |   11 | 0.271
+ 480 | dmesg 2>/dev/null | tail -1 |   0.0000 |   10 | 0.267
+ 490 |          du -sh /tmp |   0.0000 |   10 | 0.265
+ 500 | dmesg 2>/dev/null | tail -1 |   0.0000 |    8 | 0.266
+ 510 |               uptime |   0.0000 |    7 | 0.271
+ 520 |       cat /etc/hosts |   0.0000 |    6 | 0.275
+ 530 |     locale | head -3 |   0.0000 |    6 | 0.270
+ 540 |    ls /etc | head -3 |   0.0000 |    7 | 0.271
+ 550 |         ls -la /home |   0.0000 |    7 | 0.264
+ 560 |                  pwd |   0.0000 |    7 | 0.272
+ 570 | ls -d /tmp /etc /var /home |   0.0000 |    8 | 0.263
+ 580 |       cat /etc/issue |   0.3054 |    9 | 0.272
+ 590 |             hostname |   0.0082 |    9 | 0.270
+ 600 |          du -sh /tmp |   0.0116 |   11 | 0.269
+ 610 |             uname -a |   0.0000 |   11 | 0.267
+ 620 |               uptime |   0.0000 |   10 | 0.266
+ 630 |              date -u |   0.0000 |   10 | 0.266
+ 640 |          du -sh /tmp |   0.0000 |   10 | 0.266
+ 650 |         ls -la /home |   0.0000 |    9 | 0.269
+ 660 |               whoami |   0.0000 |    8 | 0.269
+ 670 |    ls /etc | head -3 |   0.0000 |    9 | 0.263
+ 680 |               whoami |   0.0000 |    9 | 0.272
+ 690 |           echo $HOME |   0.0000 |    9 | 0.263
+ 700 |                   id |   0.0000 |    9 | 0.271
+ 710 | dmesg 2>/dev/null | tail -1 |   0.0000 |    9 | 0.266
+ 720 |               who -b |   0.0000 |    9 | 0.273
+ 730 | ls -d /tmp /etc /var /home |   0.0000 |   10 | 0.266
+ 740 |         echo test123 |   0.0000 |   10 | 0.275
+ 750 |             uname -a |   0.2874 |    9 | 0.275
+ 760 |                   ls |   0.0021 |    9 | 0.272
+ 770 |           echo hello |   0.0000 |    9 | 0.272
+ 780 |              ls /tmp |   0.0003 |   11 | 0.270
+ 790 |             which ls |   0.0000 |   11 | 0.270
+ 800 |              date -u |   0.0000 |   10 | 0.269
+ 810 |           echo $HOME |   0.0000 |   11 | 0.268
+ 820 |              date -u |   0.0000 |   11 | 0.270
+ 830 |    cat /etc/hostname |   0.0000 |    9 | 0.267
+ 840 |              date -u |   0.0000 |   10 | 0.271
+ 850 |           echo hello |   0.0000 |   10 | 0.264
+ 860 |             hostname |   0.0000 |    9 | 0.269
+ 870 |           echo hello |   0.0000 |    8 | 0.269
+ 880 |                   ls |   0.0000 |    8 | 0.267
+ 890 |                  pwd |   0.0000 |    8 | 0.271
+ 900 |              df -h / |   0.0000 |    9 | 0.271
+ 910 |              free -h |   0.0000 |   10 | 0.266
+ 920 |             hostname |   0.0000 |    9 | 0.264
+ 930 |               uptime |   0.0000 |   10 | 0.268
+ 940 |              df -h / |   0.0000 |    9 | 0.266
+ 950 |                   ls |   0.2004 |    9 | 0.270
+ 960 |             hostname |   0.0000 |    9 | 0.271
+ 970 |     locale | head -3 |   0.0000 |    9 | 0.271
+ 980 |    ls /etc | head -3 |   0.0000 |    8 | 0.271
+ 990 |    cat /etc/hostname |   0.0000 |    8 | 0.270
+1000 |        env | head -3 |   0.0000 |    7 | 0.270
+1010 |           echo $HOME |   0.0000 |    8 | 0.273
+1020 |             hostname |   0.0000 |    9 | 0.270
+1030 |               whoami |   0.0000 |    9 | 0.272
+1040 |        env | head -3 |   0.0000 |    9 | 0.268
+1050 |                   ls |   0.0000 |   10 | 0.269
+1060 | dmesg 2>/dev/null | tail -1 |   0.0000 |    9 | 0.269
+1070 |               uptime |   0.0000 |   10 | 0.271
+1080 |              date -u |   0.0000 |    9 | 0.269
+1090 |    ls /etc | head -3 |   0.0000 |    9 | 0.265
+1100 |           echo hello |   0.0000 |    9 | 0.266
+1110 |                  pwd |   0.0000 |   10 | 0.281
+1120 |          du -sh /tmp |   0.0000 |    9 | 0.273
+1130 |             hostname |   0.0000 |   10 | 0.269
+1140 |               who -b |   0.0000 |    9 | 0.264
+1150 |       cat /etc/hosts |   0.0000 |    8 | 0.259
+1160 |    ls /etc | head -3 |   0.0000 |    8 | 0.272
+1170 | dmesg 2>/dev/null | tail -1 |   0.0000 |    8 | 0.267
+1180 |     locale | head -3 |   0.0000 |    7 | 0.267
+1190 |             uname -a |   0.0201 |    8 | 0.264
+1200 |         ls -la /home |   0.1196 |    8 | 0.274
+1210 |         echo test123 |   0.0000 |   10 | 0.273
+1220 |                   ls |   0.0000 |   10 | 0.273
+1230 |    cat /etc/hostname |   0.0000 |   10 | 0.273
+1240 |          du -sh /tmp |   0.0000 |   10 | 0.272
+1250 |              ls /tmp |   0.0000 |    9 | 0.271
+1260 |         ls -la /home |   0.0000 |    9 | 0.269
+1270 |             hostname |   0.0000 |   10 | 0.270
+1280 |       cat /etc/hosts |   0.0000 |   10 | 0.270
+1290 |              date -u |   0.0000 |   10 | 0.267
+1300 |         ls -la /home |   0.0000 |   10 | 0.268
+1310 |          du -sh /tmp |   0.0000 |   10 | 0.269
+1320 |        env | head -3 |   0.0000 |    9 | 0.270
+1330 |              date -u |   0.0000 |    9 | 0.272
+1340 |         ls -la /home |   0.0000 |    9 | 0.267
+1350 | dmesg 2>/dev/null | tail -1 |   0.0000 |    8 | 0.276
+1360 |                  pwd |   0.0000 |   10 | 0.266
+1370 |                  pwd |   0.0000 |   11 | 0.270
+1380 |              df -h / |   0.0000 |   10 | 0.267
+1390 |             which ls |   0.0000 |   11 | 0.273
+1400 |         ls -la /home |   0.0000 |   10 | 0.285
+1410 |         echo test123 |   0.0000 |   10 | 0.269
+1420 |       cat /etc/issue |   0.0000 |   10 | 0.269
+1430 |           echo $HOME |   0.0000 |   10 | 0.267
+1440 |     locale | head -3 |   0.0000 |    9 | 0.269
+1450 |         ls -la /home |   0.0040 |    8 | 0.270
+1460 |             which ls |   0.0000 |    9 | 0.268
+1470 |              ls /tmp |   0.0000 |    9 | 0.266
+1480 |              date -u |   0.0000 |    9 | 0.266
+1490 |          du -sh /tmp |   0.0000 |    9 | 0.267
+1500 |       cat /etc/issue |   0.0248 |    9 | 0.272
+1510 |                   id |   0.0296 |    8 | 0.273
+1520 |                   ls |   0.0025 |    8 | 0.271
+1530 | ls -d /tmp /etc /var /home |   0.0000 |    8 | 0.269
+1540 |          du -sh /tmp |   0.0000 |    8 | 0.268
+1550 |       cat /etc/issue |   0.0000 |    9 | 0.269
+1560 |    cat /etc/hostname |   0.0000 |    9 | 0.271
+1570 |               who -b |   0.0000 |    8 | 0.272
+1580 |       cat /etc/hosts |   0.0000 |    8 | 0.269
+1590 | ls -d /tmp /etc /var /home |   0.0000 |    8 | 0.266
+1600 |          du -sh /tmp |   0.0000 |    8 | 0.271
+1610 |              free -h |   0.0000 |    9 | 0.269
+1620 |           echo hello |   0.0000 |    9 | 0.269
+1630 |         echo test123 |   0.0000 |    9 | 0.269
+1640 |              ls /tmp |   0.0000 |    9 | 0.269
+1650 |         echo test123 |   0.0000 |   10 | 0.274
+1660 |          du -sh /tmp |   0.0000 |   10 | 0.270
+1670 |         echo test123 |   0.0506 |   10 | 0.272
+1680 |              df -h / |   0.0439 |    9 | 0.271
+1690 |     locale | head -3 |   0.0000 |   10 | 0.270
+1700 |           echo hello |   0.0000 |   10 | 0.270
+1710 |          du -sh /tmp |   0.0000 |   10 | 0.270
+1720 | ls -d /tmp /etc /var /home |   0.0000 |   10 | 0.270
+1730 |     locale | head -3 |   0.0000 |   10 | 0.271
+1740 |         ls -la /home |   0.0000 |   10 | 0.268
+1750 |             hostname |   0.0000 |    9 | 0.268
+1760 |             uname -a |   0.0000 |    9 | 0.269
+1770 |             hostname |   0.0000 |   11 | 0.271
+1780 |             which ls |   0.0000 |   11 | 0.273
+1790 |               uptime |   0.0000 |   10 | 0.272
+1800 |    cat /etc/hostname |   0.0000 |   10 | 0.271
+1810 |     locale | head -3 |   0.0000 |   10 | 0.266
+1820 |                   ls |   0.0000 |   10 | 0.266
+1830 |         ls -la /home |   0.0000 |   10 | 0.272
+1840 |                   ls |   0.0000 |    9 | 0.268
+1850 |              ls /tmp |   0.0000 |    8 | 0.259
+1860 |     locale | head -3 |   0.0000 |    8 | 0.269
+1870 |              df -h / |   0.0000 |    9 | 0.270
+1880 |          du -sh /tmp |   0.0000 |    9 | 0.265
+1890 |                   id |   0.0000 |    9 | 0.277
+1900 |          du -sh /tmp |   0.0622 |    9 | 0.271
+1910 | dmesg 2>/dev/null | tail -1 |   0.0000 |    9 | 0.270
+1920 |             uname -a |   0.0000 |   10 | 0.269
+1930 |             uname -a |   0.0000 |   10 | 0.269
+1940 |       cat /etc/issue |   0.0000 |   10 | 0.270
+1950 |         ls -la /home |   0.0000 |   10 | 0.270
+1960 |         echo test123 |   0.0000 |    9 | 0.270
+1970 |           echo $HOME |   0.0000 |   11 | 0.267
+1980 |    cat /etc/hostname |   0.0000 |   11 | 0.269
+1990 |     locale | head -3 |   0.0000 |   11 | 0.268
+2000 |     locale | head -3 |   0.0000 |   11 | 0.269
+
+✅ 完成！2000 轮
+   最终损失: 0.0000
+   行动多样性: 15/16
+   模型已保存: checkpoints/native-online-v3/model_final.pt
+
+🧪 自主生成测试:
+  自主选择的命令: uptime, uptime, hostname, uptime, ls /tmp, ls /etc | head -3, free -h, hostname, date -u, who -b
+  多样性: 13/16

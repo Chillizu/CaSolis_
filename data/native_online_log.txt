@@ -1,0 +1,70 @@
+/home/chillizu/Projects/Folunar_/scripts/train_online.py:96: RuntimeWarning: coroutine 'DockerSandbox.execute' was never awaited
+  r = sandbox.execute("bash", cmd, None)
+RuntimeWarning: Enable tracemalloc to get the object allocation traceback
+/home/chillizu/Projects/Folunar_/scripts/train_online.py:192: RuntimeWarning: coroutine 'DockerSandbox.execute' was never awaited
+  train_online(steps=args.steps, output_dir=args.output)
+RuntimeWarning: Enable tracemalloc to get the object allocation traceback
+🧠 在线训练 | 参数: 385,521
+🐳 Docker: 94633e414a53
+
+   步 |                   行动 |       损失 |   多样 |    好奇
+-------------------------------------------------------
+  10 |       cat /etc/issue |   2.1638 |   10 | 0.360
+  20 |             which ls |   0.9496 |   13 | 0.288
+  30 | dmesg 2>/dev/null | tail -1 |   0.6147 |   15 | 0.251
+  40 |             hostname |   0.4942 |   16 | 0.262
+  50 |              df -h / |   0.3488 |   16 | 0.281
+  60 |         echo test123 |   0.2226 |   13 | 0.285
+  70 |       cat /etc/issue |   0.1495 |   13 | 0.251
+  80 |              ls /tmp |   0.1467 |   15 | 0.277
+  90 |         echo test123 |   0.0848 |   16 | 0.281
+ 100 |                   id |   0.1257 |   15 | 0.277
+ 110 |              df -h / |   0.0860 |   16 | 0.272
+ 120 |        env | head -3 |   0.0060 |   16 | 0.271
+ 130 |        env | head -3 |   0.0064 |   14 | 0.283
+ 140 |          du -sh /tmp |   0.0369 |   12 | 0.263
+ 150 |               who -b |   0.0368 |   13 | 0.262
+ 160 |         ls -la /home |   0.1158 |   12 | 0.257
+ 170 |       cat /etc/issue |   0.0077 |   12 | 0.271
+ 180 |       cat /etc/issue |   0.0000 |   11 | 0.273
+ 190 |                   ls |   0.0000 |   11 | 0.275
+ 200 |              free -h |   0.0000 |   10 | 0.267
+ 210 |     locale | head -3 |   0.0000 |   11 | 0.261
+ 220 |             hostname |   0.5732 |   13 | 0.273
+ 230 |               who -b |   0.0038 |   13 | 0.273
+ 240 |             hostname |   0.0075 |   13 | 0.271
+ 250 |         ls -la /home |   0.0000 |   13 | 0.272
+ 260 | ls -d /tmp /etc /var /home |   0.0000 |   12 | 0.268
+ 270 |               who -b |   0.1621 |   10 | 0.256
+ 280 |        env | head -3 |   0.0011 |   11 | 0.262
+ 290 |    ls /etc | head -3 |   0.0000 |   11 | 0.261
+ 300 |                   id |   0.0000 |   11 | 0.262
+ 310 | dmesg 2>/dev/null | tail -1 |   0.0000 |   11 | 0.266
+ 320 |     locale | head -3 |   0.0000 |   11 | 0.270
+ 330 |             hostname |   0.0000 |   11 | 0.280
+ 340 | ls -d /tmp /etc /var /home |   0.0000 |    9 | 0.264
+ 350 |          du -sh /tmp |   0.0000 |    9 | 0.255
+ 360 |              df -h / |   0.0000 |    9 | 0.275
+ 370 |         ls -la /home |   0.0000 |    8 | 0.265
+ 380 | dmesg 2>/dev/null | tail -1 |   0.0000 |   10 | 0.272
+ 390 |             which ls |   0.0000 |   10 | 0.272
+ 400 |    cat /etc/hostname |   0.0000 |    9 | 0.260
+ 410 |             which ls |   0.0000 |   10 | 0.306
+ 420 |              ls /tmp |   0.3891 |   11 | 0.264
+ 430 | ls -d /tmp /etc /var /home |   0.0000 |   10 | 0.266
+ 440 |         echo test123 |   0.0008 |   10 | 0.266
+ 450 |               who -b |   0.0000 |   10 | 0.268
+ 460 |          du -sh /tmp |   0.0000 |   10 | 0.267
+ 470 |                   ls |   0.0000 |    9 | 0.270
+ 480 | dmesg 2>/dev/null | tail -1 |   0.0000 |   11 | 0.268
+ 490 |          du -sh /tmp |   0.0000 |   11 | 0.270
+ 500 | dmesg 2>/dev/null | tail -1 |   0.0000 |   12 | 0.271
+
+✅ 完成！500 轮
+   最终损失: 0.0000
+   行动多样性: 16/16
+   模型已保存: checkpoints/native-online-v2/model_final.pt
+
+🧪 自主生成测试:
+  自主选择的命令: who -b, cat /etc/hostname, uptime, echo hello, uname -a, du -sh /tmp, uptime, ls, echo hello, uname -a
+  多样性: 12/16
