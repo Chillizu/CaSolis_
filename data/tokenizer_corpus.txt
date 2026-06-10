@@ -1,0 +1,1100 @@
+bin
+boot
+dev
+etc
+home
+lib
+lib32
+lib64
+libx32
+media
+mnt
+opt
+proc
+root
+run
+sbin
+srv
+sys
+tmp
+usr
+var
+total 24
+drwxr-xr-x   1 root root   0 Jun 10 04:23 .
+drwxr-xr-x   1 root root   0 Jun 10 04:23 ..
+-rwxr-xr-x   1 root root   0 Jun 10 04:23 .dockerenv
+lrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin
+drwxr-xr-x   1 root root   0 Apr 18  2022 boot
+drwxr-xr-x   5 root root 340 Jun 10 04:23 dev
+drwxr-xr-x   1 root root  56 Jun 10 04:23 etc
+drwxr-xr-x   1 root root   0 Apr 18  2022 home
+lrwxrwxrwx   1 root root   7 May  9 02:05 lib -> usr/lib
+lrwxrwxrwx   1 root root   9 May  9 02:05 lib32 -> usr/lib32
+lrwxrwxrwx   1 root root   9 May  9 02:05 lib64 -> usr/lib64
+lrwxrwxrwx   1 root root  10 May  9 02:05 libx32 -> usr/libx32
+drwxr-xr-x   1 root root   0 May  9 02:05 media
+drwxr-xr-x   1 root root   0 May  9 02:05 mnt
+drwxr-xr-x   1 root root   0 May  9 02:05 opt
+dr-xr-xr-x 580 root root   0 Jun 10 04:23 proc
+drwx------   1 root root  30 May  9 02:12 root
+drwxr-xr-x   1 root root  32 May  9 02:12 run
+lrwxrwxrwx   1 root root   8 May  9 02:05 sbin -> usr/sbin
+drwxr-xr-x   1 root root   0 May  9 02:05 srv
+dr-xr-xr-x  13 root root   0 Jun 10 04:23 sys
+drwxrwxrwt   1 root root   0 May  9 02:12 tmp
+drwxr-xr-x   1 root root 116 May  9 02:05 usr
+drwxr-xr-x   1 root root  90 May  9 02:12 var
+total 0
+drwxrwxrwt 1 root root 0 May  9 02:12 .
+drwxr-xr-x 1 root root 0 Jun 10 04:23 ..
+total 164
+drwxr-xr-x 1 root root      56 Jun 10 04:23 .
+drwxr-xr-x 1 root root       0 Jun 10 04:23 ..
+-rw------- 1 root root       0 May  9 02:05 .pwd.lock
+-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf
+total 292
+drwxr-xr-x 1 root root    124 May  9 02:05 .
+drwxr-xr-x 1 root root     90 May  9 02:12 ..
+root
+uid=0(root) gid=0(root) groups=0(root)
+53d4493534e7
+Wed Jun 10 04:23:36 UTC 2026
+Wed Jun 10 04:23:36 UTC 2026
+1781065416
+2026-06-10_04:23:36
+Linux
+Linux 53d4493534e7 7.0.10-arch1-1 #1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000 x86_64 x86_64 x86_64 GNU/Linux
+7.0.10-arch1-1
+Linux
+53d4493534e7
+04:23:36 up 7 days, 13:55,  0 users,  load average: 2.39, 1.88, 1.22
+test
+hello world
+abc123
+53d4493534e7
+127.0.0.1	localhost
+::1	localhost ip6-localhost ip6-loopback
+fe00::	ip6-localnet
+ff00::	ip6-mcastprefix
+ff02::1	ip6-allnodes
+PRETTY_NAME="Ubuntu 22.04.5 LTS"
+NAME="Ubuntu"
+VERSION_ID="22.04"
+VERSION="22.04.5 LTS (Jammy Jellyfish)"
+VERSION_CODENAME=jammy
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+Filesystem     1K-blocks     Used Available Use% Mounted on
+overlay        134217728 34493908  99027628  26% /
+tmpfs              65536        0     65536   0% /dev
+shm                65536        0     65536   0% /dev/shm
+/dev/nvme0n1p5 134217728 34493908  99027628  26% /etc/hosts
+tmpfs           16226068        0  16226068   0% /proc/acpi
+tmpfs           16226068        0  16226068   0% /proc/asound
+tmpfs           16226068        0  16226068   0% /proc/scsi
+tmpfs           16226068        0  16226068   0% /sys/devices/virtual/powercap
+tmpfs           16226068        0  16226068   0% /sys/firmware
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu0/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu1/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu2/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu3/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu4/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu5/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu6/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu7/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu8/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu9/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu10/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu11/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu12/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu13/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devic
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         128G   33G   95G  26% /
+tmpfs            64M     0   64M   0% /dev
+shm              64M     0   64M   0% /dev/shm
+/dev/nvme0n1p5  128G   33G   95G  26% /etc/hosts
+tmpfs            16G     0   16G   0% /proc/acpi
+tmpfs            16G     0   16G   0% /proc/asound
+tmpfs            16G     0   16G   0% /proc/scsi
+tmpfs            16G     0   16G   0% /sys/devices/virtual/powercap
+tmpfs            16G     0   16G   0% /sys/firmware
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu0/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu1/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu2/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu3/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu4/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu5/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu6/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu7/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu8/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu9/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu10/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu11/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu12/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu13/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu14/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu15/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu16/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu17/
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         128G   33G   95G  26% /
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         128G   33G   95G  26% /
+total        used        free      shared  buff/cache   available
+Mem:        32452140     5405272    11443344     1799432    15603524    24325900
+Swap:       16777212     3572196    13205016
+total        used        free      shared  buff/cache   available
+Mem:            30Gi       5.2Gi        10Gi       1.7Gi        14Gi        23Gi
+Swap:           15Gi       3.4Gi        12Gi
+total        used        free      shared  buff/cache   available
+Mem:           31691        5290       11163        1757       15237       23743
+Swap:          16383        3488       12895
+82M	/
+0	/tmp
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+add-shell
+addgroup
+adduser
+agetty
+badblocks
+/usr/bin/ls
+/usr/bin/which
+/usr/bin/cat
+/usr/bin/which
+/usr/bin/bash
+/usr/bin/which
+/usr/bin/sh
+/usr/bin/which
+HOSTNAME=53d4493534e7
+PWD=/
+HOME=/root
+SHLVL=0
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+_=/usr/bin/env
+BASH=/usr/bin/bash
+BASHOPTS=checkwinsize:cmdhist:complete_fullquote:extquote:force_fignore:globasciiranges:hostcomplete:interactive_comments:progcomp:promptvars:sourcepath
+BASH_ALIASES=()
+BASH_ARGC=()
+BASH_ARGV=()
+BASH_CMDS=()
+BASH_EXECUTION_STRING='set | head -10 2>/dev/null'
+BASH_LINENO=()
+BASH_SOURCE=()
+BASH_VERSINFO=([0]="5" [1]="1" [2]="16" [3]="1" [4]="release" [5]="x86_64-pc-linux-gnu")
+LANG=
+LANGUAGE=
+LC_CTYPE="POSIX"
+LC_NUMERIC="POSIX"
+LC_TIME="POSIX"
+LC_COLLATE="POSIX"
+LC_MONETARY="POSIX"
+LC_MESSAGES="POSIX"
+LC_PAPER="POSIX"
+LC_NAME="POSIX"
+LC_ADDRESS="POSIX"
+LC_TELEPHONE="POSIX"
+LC_MEASUREMENT="POSIX"
+LC_IDENTIFICATION="POSIX"
+LC_ALL=
+C
+C.utf8
+POSIX
+overlay on / type overlay (rw,relatime,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5330/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5331/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5331/work,index=off)
+proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
+tmpfs on /dev type tmpfs (rw,nosuid,size=65536k,mode=755,inode64,huge=within_size)
+devpts on /dev/pts type devpts (rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=666)
+sysfs on /sys type sysfs (ro,nosuid,nodev,noexec,relatime)
+bin
+boot
+dev
+etc
+home
+lib
+lib32
+lib64
+libx32
+media
+mnt
+opt
+proc
+root
+run
+sbin
+srv
+sys
+tmp
+usr
+var
+total 24
+drwxr-xr-x   1 root root   0 Jun 10 04:23 .
+drwxr-xr-x   1 root root   0 Jun 10 04:23 ..
+-rwxr-xr-x   1 root root   0 Jun 10 04:23 .dockerenv
+lrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin
+drwxr-xr-x   1 root root   0 Apr 18  2022 boot
+drwxr-xr-x   5 root root 340 Jun 10 04:23 dev
+drwxr-xr-x   1 root root  56 Jun 10 04:23 etc
+drwxr-xr-x   1 root root   0 Apr 18  2022 home
+lrwxrwxrwx   1 root root   7 May  9 02:05 lib -> usr/lib
+lrwxrwxrwx   1 root root   9 May  9 02:05 lib32 -> usr/lib32
+lrwxrwxrwx   1 root root   9 May  9 02:05 lib64 -> usr/lib64
+lrwxrwxrwx   1 root root  10 May  9 02:05 libx32 -> usr/libx32
+drwxr-xr-x   1 root root   0 May  9 02:05 media
+drwxr-xr-x   1 root root   0 May  9 02:05 mnt
+drwxr-xr-x   1 root root   0 May  9 02:05 opt
+dr-xr-xr-x 580 root root   0 Jun 10 04:23 proc
+drwx------   1 root root  30 May  9 02:12 root
+drwxr-xr-x   1 root root  32 May  9 02:12 run
+lrwxrwxrwx   1 root root   8 May  9 02:05 sbin -> usr/sbin
+drwxr-xr-x   1 root root   0 May  9 02:05 srv
+dr-xr-xr-x  13 root root   0 Jun 10 04:23 sys
+drwxrwxrwt   1 root root   0 May  9 02:12 tmp
+drwxr-xr-x   1 root root 116 May  9 02:05 usr
+drwxr-xr-x   1 root root  90 May  9 02:12 var
+total 0
+drwxrwxrwt 1 root root 0 May  9 02:12 .
+drwxr-xr-x 1 root root 0 Jun 10 04:23 ..
+total 164
+drwxr-xr-x 1 root root      56 Jun 10 04:23 .
+drwxr-xr-x 1 root root       0 Jun 10 04:23 ..
+-rw------- 1 root root       0 May  9 02:05 .pwd.lock
+-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf
+total 292
+drwxr-xr-x 1 root root    124 May  9 02:05 .
+drwxr-xr-x 1 root root     90 May  9 02:12 ..
+root
+uid=0(root) gid=0(root) groups=0(root)
+53d4493534e7
+Wed Jun 10 04:23:38 UTC 2026
+Wed Jun 10 04:23:38 UTC 2026
+1781065418
+2026-06-10_04:23:38
+Linux
+Linux 53d4493534e7 7.0.10-arch1-1 #1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000 x86_64 x86_64 x86_64 GNU/Linux
+7.0.10-arch1-1
+Linux
+53d4493534e7
+04:23:39 up 7 days, 13:55,  0 users,  load average: 2.39, 1.88, 1.22
+test
+hello world
+abc123
+53d4493534e7
+127.0.0.1	localhost
+::1	localhost ip6-localhost ip6-loopback
+fe00::	ip6-localnet
+ff00::	ip6-mcastprefix
+ff02::1	ip6-allnodes
+PRETTY_NAME="Ubuntu 22.04.5 LTS"
+NAME="Ubuntu"
+VERSION_ID="22.04"
+VERSION="22.04.5 LTS (Jammy Jellyfish)"
+VERSION_CODENAME=jammy
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+Filesystem     1K-blocks     Used Available Use% Mounted on
+overlay        134217728 34493908  99027628  26% /
+tmpfs              65536        0     65536   0% /dev
+shm                65536        0     65536   0% /dev/shm
+/dev/nvme0n1p5 134217728 34493908  99027628  26% /etc/hosts
+tmpfs           16226068        0  16226068   0% /proc/acpi
+tmpfs           16226068        0  16226068   0% /proc/asound
+tmpfs           16226068        0  16226068   0% /proc/scsi
+tmpfs           16226068        0  16226068   0% /sys/devices/virtual/powercap
+tmpfs           16226068        0  16226068   0% /sys/firmware
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu0/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu1/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu2/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu3/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu4/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu5/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu6/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu7/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu8/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu9/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu10/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu11/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu12/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu13/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devic
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         128G   33G   95G  26% /
+tmpfs            64M     0   64M   0% /dev
+shm              64M     0   64M   0% /dev/shm
+/dev/nvme0n1p5  128G   33G   95G  26% /etc/hosts
+tmpfs            16G     0   16G   0% /proc/acpi
+tmpfs            16G     0   16G   0% /proc/asound
+tmpfs            16G     0   16G   0% /proc/scsi
+tmpfs            16G     0   16G   0% /sys/devices/virtual/powercap
+tmpfs            16G     0   16G   0% /sys/firmware
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu0/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu1/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu2/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu3/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu4/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu5/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu6/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu7/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu8/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu9/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu10/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu11/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu12/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu13/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu14/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu15/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu16/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu17/
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         128G   33G   95G  26% /
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         128G   33G   95G  26% /
+total        used        free      shared  buff/cache   available
+Mem:        32452140     5384820    11382800     1842076    15684520    24303712
+Swap:       16777212     3572196    13205016
+total        used        free      shared  buff/cache   available
+Mem:            30Gi       5.1Gi        10Gi       1.8Gi        14Gi        23Gi
+Swap:           15Gi       3.4Gi        12Gi
+total        used        free      shared  buff/cache   available
+Mem:           31691        5252       11121        1799       15317       23739
+Swap:          16383        3488       12895
+82M	/
+0	/tmp
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+add-shell
+addgroup
+adduser
+agetty
+badblocks
+/usr/bin/ls
+/usr/bin/which
+/usr/bin/cat
+/usr/bin/which
+/usr/bin/bash
+/usr/bin/which
+/usr/bin/sh
+/usr/bin/which
+HOSTNAME=53d4493534e7
+PWD=/
+HOME=/root
+SHLVL=0
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+_=/usr/bin/env
+BASH=/usr/bin/bash
+BASHOPTS=checkwinsize:cmdhist:complete_fullquote:extquote:force_fignore:globasciiranges:hostcomplete:interactive_comments:progcomp:promptvars:sourcepath
+BASH_ALIASES=()
+BASH_ARGC=()
+BASH_ARGV=()
+BASH_CMDS=()
+BASH_EXECUTION_STRING='set | head -10 2>/dev/null'
+BASH_LINENO=()
+BASH_SOURCE=()
+BASH_VERSINFO=([0]="5" [1]="1" [2]="16" [3]="1" [4]="release" [5]="x86_64-pc-linux-gnu")
+LANG=
+LANGUAGE=
+LC_CTYPE="POSIX"
+LC_NUMERIC="POSIX"
+LC_TIME="POSIX"
+LC_COLLATE="POSIX"
+LC_MONETARY="POSIX"
+LC_MESSAGES="POSIX"
+LC_PAPER="POSIX"
+LC_NAME="POSIX"
+LC_ADDRESS="POSIX"
+LC_TELEPHONE="POSIX"
+LC_MEASUREMENT="POSIX"
+LC_IDENTIFICATION="POSIX"
+LC_ALL=
+C
+C.utf8
+POSIX
+overlay on / type overlay (rw,relatime,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5330/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5331/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5331/work,index=off)
+proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
+tmpfs on /dev type tmpfs (rw,nosuid,size=65536k,mode=755,inode64,huge=within_size)
+devpts on /dev/pts type devpts (rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=666)
+sysfs on /sys type sysfs (ro,nosuid,nodev,noexec,relatime)
+bin
+boot
+dev
+etc
+home
+lib
+lib32
+lib64
+libx32
+media
+mnt
+opt
+proc
+root
+run
+sbin
+srv
+sys
+tmp
+usr
+var
+total 24
+drwxr-xr-x   1 root root   0 Jun 10 04:23 .
+drwxr-xr-x   1 root root   0 Jun 10 04:23 ..
+-rwxr-xr-x   1 root root   0 Jun 10 04:23 .dockerenv
+lrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin
+drwxr-xr-x   1 root root   0 Apr 18  2022 boot
+drwxr-xr-x   5 root root 340 Jun 10 04:23 dev
+drwxr-xr-x   1 root root  56 Jun 10 04:23 etc
+drwxr-xr-x   1 root root   0 Apr 18  2022 home
+lrwxrwxrwx   1 root root   7 May  9 02:05 lib -> usr/lib
+lrwxrwxrwx   1 root root   9 May  9 02:05 lib32 -> usr/lib32
+lrwxrwxrwx   1 root root   9 May  9 02:05 lib64 -> usr/lib64
+lrwxrwxrwx   1 root root  10 May  9 02:05 libx32 -> usr/libx32
+drwxr-xr-x   1 root root   0 May  9 02:05 media
+drwxr-xr-x   1 root root   0 May  9 02:05 mnt
+drwxr-xr-x   1 root root   0 May  9 02:05 opt
+dr-xr-xr-x 533 root root   0 Jun 10 04:23 proc
+drwx------   1 root root  30 May  9 02:12 root
+drwxr-xr-x   1 root root  32 May  9 02:12 run
+lrwxrwxrwx   1 root root   8 May  9 02:05 sbin -> usr/sbin
+drwxr-xr-x   1 root root   0 May  9 02:05 srv
+dr-xr-xr-x  13 root root   0 Jun 10 04:23 sys
+drwxrwxrwt   1 root root   0 May  9 02:12 tmp
+drwxr-xr-x   1 root root 116 May  9 02:05 usr
+drwxr-xr-x   1 root root  90 May  9 02:12 var
+total 0
+drwxrwxrwt 1 root root 0 May  9 02:12 .
+drwxr-xr-x 1 root root 0 Jun 10 04:23 ..
+total 164
+drwxr-xr-x 1 root root      56 Jun 10 04:23 .
+drwxr-xr-x 1 root root       0 Jun 10 04:23 ..
+-rw------- 1 root root       0 May  9 02:05 .pwd.lock
+-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf
+total 292
+drwxr-xr-x 1 root root    124 May  9 02:05 .
+drwxr-xr-x 1 root root     90 May  9 02:12 ..
+root
+uid=0(root) gid=0(root) groups=0(root)
+53d4493534e7
+Wed Jun 10 04:23:40 UTC 2026
+Wed Jun 10 04:23:40 UTC 2026
+1781065420
+2026-06-10_04:23:40
+Linux
+Linux 53d4493534e7 7.0.10-arch1-1 #1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000 x86_64 x86_64 x86_64 GNU/Linux
+7.0.10-arch1-1
+Linux
+53d4493534e7
+04:23:41 up 7 days, 13:55,  0 users,  load average: 2.76, 1.96, 1.25
+test
+hello world
+abc123
+53d4493534e7
+127.0.0.1	localhost
+::1	localhost ip6-localhost ip6-loopback
+fe00::	ip6-localnet
+ff00::	ip6-mcastprefix
+ff02::1	ip6-allnodes
+PRETTY_NAME="Ubuntu 22.04.5 LTS"
+NAME="Ubuntu"
+VERSION_ID="22.04"
+VERSION="22.04.5 LTS (Jammy Jellyfish)"
+VERSION_CODENAME=jammy
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+Filesystem     1K-blocks     Used Available Use% Mounted on
+overlay        134217728 34493908  99027628  26% /
+tmpfs              65536        0     65536   0% /dev
+shm                65536        0     65536   0% /dev/shm
+/dev/nvme0n1p5 134217728 34493908  99027628  26% /etc/hosts
+tmpfs           16226068        0  16226068   0% /proc/acpi
+tmpfs           16226068        0  16226068   0% /proc/asound
+tmpfs           16226068        0  16226068   0% /proc/scsi
+tmpfs           16226068        0  16226068   0% /sys/devices/virtual/powercap
+tmpfs           16226068        0  16226068   0% /sys/firmware
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu0/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu1/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu2/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu3/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu4/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu5/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu6/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu7/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu8/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu9/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu10/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu11/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu12/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu13/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devic
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         128G   33G   95G  26% /
+tmpfs            64M     0   64M   0% /dev
+shm              64M     0   64M   0% /dev/shm
+/dev/nvme0n1p5  128G   33G   95G  26% /etc/hosts
+tmpfs            16G     0   16G   0% /proc/acpi
+tmpfs            16G     0   16G   0% /proc/asound
+tmpfs            16G     0   16G   0% /proc/scsi
+tmpfs            16G     0   16G   0% /sys/devices/virtual/powercap
+tmpfs            16G     0   16G   0% /sys/firmware
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu0/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu1/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu2/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu3/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu4/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu5/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu6/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu7/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu8/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu9/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu10/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu11/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu12/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu13/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu14/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu15/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu16/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu17/
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         128G   33G   95G  26% /
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         128G   33G   95G  26% /
+total        used        free      shared  buff/cache   available
+Mem:        32452140     5277564    11459640     1872432    15714936    24380440
+Swap:       16777212     3572128    13205084
+total        used        free      shared  buff/cache   available
+Mem:            30Gi       5.0Gi        10Gi       1.8Gi        14Gi        23Gi
+Swap:           15Gi       3.4Gi        12Gi
+total        used        free      shared  buff/cache   available
+Mem:           31691        5165       11179        1828       15346       23797
+Swap:          16383        3488       12895
+82M	/
+0	/tmp
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+add-shell
+addgroup
+adduser
+agetty
+badblocks
+/usr/bin/ls
+/usr/bin/which
+/usr/bin/cat
+/usr/bin/which
+/usr/bin/bash
+/usr/bin/which
+/usr/bin/sh
+/usr/bin/which
+HOSTNAME=53d4493534e7
+PWD=/
+HOME=/root
+SHLVL=0
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+_=/usr/bin/env
+BASH=/usr/bin/bash
+BASHOPTS=checkwinsize:cmdhist:complete_fullquote:extquote:force_fignore:globasciiranges:hostcomplete:interactive_comments:progcomp:promptvars:sourcepath
+BASH_ALIASES=()
+BASH_ARGC=()
+BASH_ARGV=()
+BASH_CMDS=()
+BASH_EXECUTION_STRING='set | head -10 2>/dev/null'
+BASH_LINENO=()
+BASH_SOURCE=()
+BASH_VERSINFO=([0]="5" [1]="1" [2]="16" [3]="1" [4]="release" [5]="x86_64-pc-linux-gnu")
+LANG=
+LANGUAGE=
+LC_CTYPE="POSIX"
+LC_NUMERIC="POSIX"
+LC_TIME="POSIX"
+LC_COLLATE="POSIX"
+LC_MONETARY="POSIX"
+LC_MESSAGES="POSIX"
+LC_PAPER="POSIX"
+LC_NAME="POSIX"
+LC_ADDRESS="POSIX"
+LC_TELEPHONE="POSIX"
+LC_MEASUREMENT="POSIX"
+LC_IDENTIFICATION="POSIX"
+LC_ALL=
+C
+C.utf8
+POSIX
+overlay on / type overlay (rw,relatime,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5330/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5331/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5331/work,index=off)
+proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
+tmpfs on /dev type tmpfs (rw,nosuid,size=65536k,mode=755,inode64,huge=within_size)
+devpts on /dev/pts type devpts (rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=666)
+sysfs on /sys type sysfs (ro,nosuid,nodev,noexec,relatime)
+bin
+boot
+dev
+etc
+home
+lib
+lib32
+lib64
+libx32
+media
+mnt
+opt
+proc
+root
+run
+sbin
+srv
+sys
+tmp
+usr
+var
+total 24
+drwxr-xr-x   1 root root   0 Jun 10 04:23 .
+drwxr-xr-x   1 root root   0 Jun 10 04:23 ..
+-rwxr-xr-x   1 root root   0 Jun 10 04:23 .dockerenv
+lrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin
+drwxr-xr-x   1 root root   0 Apr 18  2022 boot
+drwxr-xr-x   5 root root 340 Jun 10 04:23 dev
+drwxr-xr-x   1 root root  56 Jun 10 04:23 etc
+drwxr-xr-x   1 root root   0 Apr 18  2022 home
+lrwxrwxrwx   1 root root   7 May  9 02:05 lib -> usr/lib
+lrwxrwxrwx   1 root root   9 May  9 02:05 lib32 -> usr/lib32
+lrwxrwxrwx   1 root root   9 May  9 02:05 lib64 -> usr/lib64
+lrwxrwxrwx   1 root root  10 May  9 02:05 libx32 -> usr/libx32
+drwxr-xr-x   1 root root   0 May  9 02:05 media
+drwxr-xr-x   1 root root   0 May  9 02:05 mnt
+drwxr-xr-x   1 root root   0 May  9 02:05 opt
+dr-xr-xr-x 533 root root   0 Jun 10 04:23 proc
+drwx------   1 root root  30 May  9 02:12 root
+drwxr-xr-x   1 root root  32 May  9 02:12 run
+lrwxrwxrwx   1 root root   8 May  9 02:05 sbin -> usr/sbin
+drwxr-xr-x   1 root root   0 May  9 02:05 srv
+dr-xr-xr-x  13 root root   0 Jun 10 04:23 sys
+drwxrwxrwt   1 root root   0 May  9 02:12 tmp
+drwxr-xr-x   1 root root 116 May  9 02:05 usr
+drwxr-xr-x   1 root root  90 May  9 02:12 var
+total 0
+drwxrwxrwt 1 root root 0 May  9 02:12 .
+drwxr-xr-x 1 root root 0 Jun 10 04:23 ..
+total 164
+drwxr-xr-x 1 root root      56 Jun 10 04:23 .
+drwxr-xr-x 1 root root       0 Jun 10 04:23 ..
+-rw------- 1 root root       0 May  9 02:05 .pwd.lock
+-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf
+total 292
+drwxr-xr-x 1 root root    124 May  9 02:05 .
+drwxr-xr-x 1 root root     90 May  9 02:12 ..
+root
+uid=0(root) gid=0(root) groups=0(root)
+53d4493534e7
+Wed Jun 10 04:23:42 UTC 2026
+Wed Jun 10 04:23:42 UTC 2026
+1781065422
+2026-06-10_04:23:42
+Linux
+Linux 53d4493534e7 7.0.10-arch1-1 #1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000 x86_64 x86_64 x86_64 GNU/Linux
+7.0.10-arch1-1
+Linux
+53d4493534e7
+04:23:43 up 7 days, 13:55,  0 users,  load average: 2.76, 1.96, 1.25
+test
+hello world
+abc123
+53d4493534e7
+127.0.0.1	localhost
+::1	localhost ip6-localhost ip6-loopback
+fe00::	ip6-localnet
+ff00::	ip6-mcastprefix
+ff02::1	ip6-allnodes
+PRETTY_NAME="Ubuntu 22.04.5 LTS"
+NAME="Ubuntu"
+VERSION_ID="22.04"
+VERSION="22.04.5 LTS (Jammy Jellyfish)"
+VERSION_CODENAME=jammy
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+Filesystem     1K-blocks     Used Available Use% Mounted on
+overlay        134217728 34493908  99027628  26% /
+tmpfs              65536        0     65536   0% /dev
+shm                65536        0     65536   0% /dev/shm
+/dev/nvme0n1p5 134217728 34493908  99027628  26% /etc/hosts
+tmpfs           16226068        0  16226068   0% /proc/acpi
+tmpfs           16226068        0  16226068   0% /proc/asound
+tmpfs           16226068        0  16226068   0% /proc/scsi
+tmpfs           16226068        0  16226068   0% /sys/devices/virtual/powercap
+tmpfs           16226068        0  16226068   0% /sys/firmware
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu0/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu1/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu2/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu3/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu4/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu5/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu6/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu7/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu8/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu9/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu10/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu11/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu12/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu13/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devic
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         128G   33G   95G  26% /
+tmpfs            64M     0   64M   0% /dev
+shm              64M     0   64M   0% /dev/shm
+/dev/nvme0n1p5  128G   33G   95G  26% /etc/hosts
+tmpfs            16G     0   16G   0% /proc/acpi
+tmpfs            16G     0   16G   0% /proc/asound
+tmpfs            16G     0   16G   0% /proc/scsi
+tmpfs            16G     0   16G   0% /sys/devices/virtual/powercap
+tmpfs            16G     0   16G   0% /sys/firmware
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu0/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu1/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu2/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu3/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu4/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu5/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu6/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu7/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu8/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu9/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu10/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu11/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu12/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu13/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu14/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu15/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu16/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu17/
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         128G   33G   95G  26% /
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         128G   33G   95G  26% /
+total        used        free      shared  buff/cache   available
+Mem:        32452140     5417520    11273984     1917952    15760636    24194956
+Swap:       16777212     3572128    13205084
+total        used        free      shared  buff/cache   available
+Mem:            30Gi       5.1Gi        10Gi       1.8Gi        15Gi        23Gi
+Swap:           15Gi       3.4Gi        12Gi
+total        used        free      shared  buff/cache   available
+Mem:           31691        5265       11035        1872       15391       23653
+Swap:          16383        3488       12895
+82M	/
+0	/tmp
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+add-shell
+addgroup
+adduser
+agetty
+badblocks
+/usr/bin/ls
+/usr/bin/which
+/usr/bin/cat
+/usr/bin/which
+/usr/bin/bash
+/usr/bin/which
+/usr/bin/sh
+/usr/bin/which
+HOSTNAME=53d4493534e7
+PWD=/
+HOME=/root
+SHLVL=0
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+_=/usr/bin/env
+BASH=/usr/bin/bash
+BASHOPTS=checkwinsize:cmdhist:complete_fullquote:extquote:force_fignore:globasciiranges:hostcomplete:interactive_comments:progcomp:promptvars:sourcepath
+BASH_ALIASES=()
+BASH_ARGC=()
+BASH_ARGV=()
+BASH_CMDS=()
+BASH_EXECUTION_STRING='set | head -10 2>/dev/null'
+BASH_LINENO=()
+BASH_SOURCE=()
+BASH_VERSINFO=([0]="5" [1]="1" [2]="16" [3]="1" [4]="release" [5]="x86_64-pc-linux-gnu")
+LANG=
+LANGUAGE=
+LC_CTYPE="POSIX"
+LC_NUMERIC="POSIX"
+LC_TIME="POSIX"
+LC_COLLATE="POSIX"
+LC_MONETARY="POSIX"
+LC_MESSAGES="POSIX"
+LC_PAPER="POSIX"
+LC_NAME="POSIX"
+LC_ADDRESS="POSIX"
+LC_TELEPHONE="POSIX"
+LC_MEASUREMENT="POSIX"
+LC_IDENTIFICATION="POSIX"
+LC_ALL=
+C
+C.utf8
+POSIX
+overlay on / type overlay (rw,relatime,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5330/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5331/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5331/work,index=off)
+proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
+tmpfs on /dev type tmpfs (rw,nosuid,size=65536k,mode=755,inode64,huge=within_size)
+devpts on /dev/pts type devpts (rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=666)
+sysfs on /sys type sysfs (ro,nosuid,nodev,noexec,relatime)
+bin
+boot
+dev
+etc
+home
+lib
+lib32
+lib64
+libx32
+media
+mnt
+opt
+proc
+root
+run
+sbin
+srv
+sys
+tmp
+usr
+var
+total 24
+drwxr-xr-x   1 root root   0 Jun 10 04:23 .
+drwxr-xr-x   1 root root   0 Jun 10 04:23 ..
+-rwxr-xr-x   1 root root   0 Jun 10 04:23 .dockerenv
+lrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin
+drwxr-xr-x   1 root root   0 Apr 18  2022 boot
+drwxr-xr-x   5 root root 340 Jun 10 04:23 dev
+drwxr-xr-x   1 root root  56 Jun 10 04:23 etc
+drwxr-xr-x   1 root root   0 Apr 18  2022 home
+lrwxrwxrwx   1 root root   7 May  9 02:05 lib -> usr/lib
+lrwxrwxrwx   1 root root   9 May  9 02:05 lib32 -> usr/lib32
+lrwxrwxrwx   1 root root   9 May  9 02:05 lib64 -> usr/lib64
+lrwxrwxrwx   1 root root  10 May  9 02:05 libx32 -> usr/libx32
+drwxr-xr-x   1 root root   0 May  9 02:05 media
+drwxr-xr-x   1 root root   0 May  9 02:05 mnt
+drwxr-xr-x   1 root root   0 May  9 02:05 opt
+dr-xr-xr-x 534 root root   0 Jun 10 04:23 proc
+drwx------   1 root root  30 May  9 02:12 root
+drwxr-xr-x   1 root root  32 May  9 02:12 run
+lrwxrwxrwx   1 root root   8 May  9 02:05 sbin -> usr/sbin
+drwxr-xr-x   1 root root   0 May  9 02:05 srv
+dr-xr-xr-x  13 root root   0 Jun 10 04:23 sys
+drwxrwxrwt   1 root root   0 May  9 02:12 tmp
+drwxr-xr-x   1 root root 116 May  9 02:05 usr
+drwxr-xr-x   1 root root  90 May  9 02:12 var
+total 0
+drwxrwxrwt 1 root root 0 May  9 02:12 .
+drwxr-xr-x 1 root root 0 Jun 10 04:23 ..
+total 164
+drwxr-xr-x 1 root root      56 Jun 10 04:23 .
+drwxr-xr-x 1 root root       0 Jun 10 04:23 ..
+-rw------- 1 root root       0 May  9 02:05 .pwd.lock
+-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf
+total 292
+drwxr-xr-x 1 root root    124 May  9 02:05 .
+drwxr-xr-x 1 root root     90 May  9 02:12 ..
+root
+uid=0(root) gid=0(root) groups=0(root)
+53d4493534e7
+Wed Jun 10 04:23:44 UTC 2026
+Wed Jun 10 04:23:44 UTC 2026
+1781065424
+2026-06-10_04:23:44
+Linux
+Linux 53d4493534e7 7.0.10-arch1-1 #1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000 x86_64 x86_64 x86_64 GNU/Linux
+7.0.10-arch1-1
+Linux
+53d4493534e7
+04:23:45 up 7 days, 13:55,  0 users,  load average: 2.76, 1.96, 1.25
+test
+hello world
+abc123
+53d4493534e7
+127.0.0.1	localhost
+::1	localhost ip6-localhost ip6-loopback
+fe00::	ip6-localnet
+ff00::	ip6-mcastprefix
+ff02::1	ip6-allnodes
+PRETTY_NAME="Ubuntu 22.04.5 LTS"
+NAME="Ubuntu"
+VERSION_ID="22.04"
+VERSION="22.04.5 LTS (Jammy Jellyfish)"
+VERSION_CODENAME=jammy
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+Filesystem     1K-blocks     Used Available Use% Mounted on
+overlay        134217728 34493908  99027628  26% /
+tmpfs              65536        0     65536   0% /dev
+shm                65536        0     65536   0% /dev/shm
+/dev/nvme0n1p5 134217728 34493908  99027628  26% /etc/hosts
+tmpfs           16226068        0  16226068   0% /proc/acpi
+tmpfs           16226068        0  16226068   0% /proc/asound
+tmpfs           16226068        0  16226068   0% /proc/scsi
+tmpfs           16226068        0  16226068   0% /sys/devices/virtual/powercap
+tmpfs           16226068        0  16226068   0% /sys/firmware
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu0/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu1/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu2/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu3/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu4/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu5/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu6/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu7/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu8/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu9/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu10/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu11/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu12/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devices/system/cpu/cpu13/thermal_throttle
+tmpfs           16226068        0  16226068   0% /sys/devic
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         128G   33G   95G  26% /
+tmpfs            64M     0   64M   0% /dev
+shm              64M     0   64M   0% /dev/shm
+/dev/nvme0n1p5  128G   33G   95G  26% /etc/hosts
+tmpfs            16G     0   16G   0% /proc/acpi
+tmpfs            16G     0   16G   0% /proc/asound
+tmpfs            16G     0   16G   0% /proc/scsi
+tmpfs            16G     0   16G   0% /sys/devices/virtual/powercap
+tmpfs            16G     0   16G   0% /sys/firmware
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu0/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu1/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu2/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu3/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu4/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu5/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu6/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu7/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu8/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu9/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu10/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu11/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu12/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu13/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu14/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu15/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu16/thermal_throttle
+tmpfs            16G     0   16G   0% /sys/devices/system/cpu/cpu17/
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         128G   33G   95G  26% /
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         128G   33G   95G  26% /
+total        used        free      shared  buff/cache   available
+Mem:        32452140     5422288    11296276     1890876    15733576    24217264
+Swap:       16777212     3572128    13205084
+total        used        free      shared  buff/cache   available
+Mem:            30Gi       5.2Gi        10Gi       1.8Gi        15Gi        23Gi
+Swap:           15Gi       3.4Gi        12Gi
+total        used        free      shared  buff/cache   available
+Mem:           31691        5311       11015        1846       15364       23633
+Swap:          16383        3488       12895
+82M	/
+0	/tmp
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+add-shell
+addgroup
+adduser
+agetty
+badblocks
+/usr/bin/ls
+/usr/bin/which
+/usr/bin/cat
+/usr/bin/which
+/usr/bin/bash
+/usr/bin/which
+/usr/bin/sh
+/usr/bin/which
+HOSTNAME=53d4493534e7
+PWD=/
+HOME=/root
+SHLVL=0
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+_=/usr/bin/env
+BASH=/usr/bin/bash
+BASHOPTS=checkwinsize:cmdhist:complete_fullquote:extquote:force_fignore:globasciiranges:hostcomplete:interactive_comments:progcomp:promptvars:sourcepath
+BASH_ALIASES=()
+BASH_ARGC=()
+BASH_ARGV=()
+BASH_CMDS=()
+BASH_EXECUTION_STRING='set | head -10 2>/dev/null'
+BASH_LINENO=()
+BASH_SOURCE=()
+BASH_VERSINFO=([0]="5" [1]="1" [2]="16" [3]="1" [4]="release" [5]="x86_64-pc-linux-gnu")
+LANG=
+LANGUAGE=
+LC_CTYPE="POSIX"
+LC_NUMERIC="POSIX"
+LC_TIME="POSIX"
+LC_COLLATE="POSIX"
+LC_MONETARY="POSIX"
+LC_MESSAGES="POSIX"
+LC_PAPER="POSIX"
+LC_NAME="POSIX"
+LC_ADDRESS="POSIX"
+LC_TELEPHONE="POSIX"
+LC_MEASUREMENT="POSIX"
+LC_IDENTIFICATION="POSIX"
+LC_ALL=
+C
+C.utf8
+POSIX
+overlay on / type overlay (rw,relatime,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5330/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5331/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5331/work,index=off)
+proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
+tmpfs on /dev type tmpfs (rw,nosuid,size=65536k,mode=755,inode64,huge=within_size)
+devpts on /dev/pts type devpts (rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=666)
+sysfs on /sys type sysfs (ro,nosuid,nodev,noexec,relatime)
