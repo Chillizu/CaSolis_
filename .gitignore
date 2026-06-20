@@ -13,6 +13,19 @@ __pycache__/
 .venv/
 *.egg-info/
 
+# Temp / generated
+*.tmp
+*.wav
+*.yuv
+*.bin
+conftest.c
+speedcc.fit
+findssl.log
+affixcompress*
+
+# Agent logs
+exec_log.jsonl
+
 # OS
 .DS_Store
 Thumbs.db

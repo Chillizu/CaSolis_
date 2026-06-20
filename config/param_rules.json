@@ -1,0 +1,418 @@
+{
+  "version": 1,
+  "description": "\u610f\u56fe\u2192\u53c2\u6570\u63d0\u53d6\u89c4\u5219 (\u786e\u5b9a\u6027\u6620\u5c04, \u4e0d\u4f9d\u8d56 LLM)",
+  "intents": {
+    "READ": {
+      "description": "\u8bfb\u53d6\u6587\u4ef6\u5185\u5bb9",
+      "params": [
+        "path"
+      ],
+      "rules": [
+        {
+          "param": "path",
+          "priority": 10,
+          "patterns": [
+            "(?:/etc/|/var/|/tmp/|/proc/|/home/|/opt/|/dev/|/sys/|/usr/)?[a-zA-Z0-9_./-]+\\.(?:txt|log|conf|cfg|ini|json|yaml|yml|xml|sh|py|md)",
+            ""
+          ],
+          "note": "\u4ece\u63cf\u8ff0\u4e2d\u63d0\u53d6\u6587\u4ef6\u8def\u5f84"
+        },
+        {
+          "param": "path",
+          "priority": 5,
+          "patterns": [
+            "/etc/passwd",
+            "/etc/hostname",
+            "/etc/hosts",
+            "/proc/cpuinfo",
+            "/proc/meminfo"
+          ],
+          "note": "\u5e38\u7528\u7cfb\u7edf\u6587\u4ef6\u5173\u952e\u5b57"
+        },
+        {
+          "param": "path",
+          "priority": 1,
+          "default": "/etc/hostname",
+          "note": "\u65e0\u5339\u914d\u65f6\u7684\u9ed8\u8ba4\u6587\u4ef6"
+        }
+      ],
+      "keyword_map": {
+        "hostname": "/etc/hostname",
+        "passwd": "/etc/passwd",
+        "hosts": "/etc/hosts",
+        "fstab": "/etc/fstab",
+        "group": "/etc/group",
+        "shadow": "/etc/shadow",
+        "syslog": "/var/log/syslog",
+        "cpuinfo": "/proc/cpuinfo",
+        "meminfo": "/proc/meminfo"
+      }
+    },
+    "LIST": {
+      "description": "\u5217\u51fa\u76ee\u5f55\u5185\u5bb9",
+      "params": [
+        "path"
+      ],
+      "rules": [
+        {
+          "param": "path",
+          "priority": 5,
+          "patterns": [
+            "(?:/etc|/tmp|/var|/opt|/home|/proc|/dev|/sys|/usr|/run|/mnt)",
+            ""
+          ],
+          "note": "\u4ece\u63cf\u8ff0\u4e2d\u63d0\u53d6\u76ee\u5f55\u8def\u5f84"
+        },
+        {
+          "param": "path",
+          "priority": 1,
+          "default": "/",
+          "note": "\u65e0\u5339\u914d\u65f6\u9ed8\u8ba4\u6839\u76ee\u5f55"
+        }
+      ],
+      "keyword_map": {
+        "\u6839\u76ee\u5f55": "/",
+        "etc": "/etc",
+        "tmp": "/tmp",
+        "var": "/var",
+        "opt": "/opt",
+        "home": "/home",
+        "proc": "/proc"
+      }
+    },
+    "SEARCH": {
+      "description": "\u5728\u6587\u4ef6\u4e2d\u641c\u7d22\u5173\u952e\u8bcd",
+      "params": [
+        "pattern",
+        "path"
+      ],
+      "rules": [
+        {
+          "param": "pattern",
+          "priority": 10,
+          "patterns": [
+            "(?:\u641c\u7d22|\u627e|\u627e\u51fa|\u8fc7\u6ee4|grep)\\s*(.*?)(?:\u5728|\u7684|\u7684\u884c)",
+            "(?:\u5305\u542b|\u5e26|\u542b\u6709)\\s*(\\w+)"
+          ],
+          "note": "\u4ece\u63cf\u8ff0\u4e2d\u63d0\u53d6\u641c\u7d22\u5173\u952e\u8bcd"
+        },
+        {
+          "param": "pattern",
+          "priority": 5,
+          "default": "root",
+          "note": "\u65e0\u5339\u914d\u65f6\u7684\u9ed8\u8ba4\u5173\u952e\u8bcd"
+        },
+        {
+          "param": "path",
+          "priority": 5,
+          "patterns": [
+            "(?:/etc/|/var/|/tmp/|/proc/)?[a-zA-Z0-9_./-]+"
+          ],
+          "note": "\u4ece\u63cf\u8ff0\u4e2d\u63d0\u53d6\u6587\u4ef6\u8def\u5f84"
+        },
+        {
+          "param": "path",
+          "priority": 1,
+          "default": "/etc/passwd",
+          "note": "\u65e0\u5339\u914d\u65f6\u7684\u9ed8\u8ba4\u6587\u4ef6"
+        }
+      ],
+      "keyword_patterns": {
+        "error": "error",
+        "root": "root",
+        "admin": "admin",
+        "failed": "failed",
+        "warning": "warning",
+        "denied": "denied",
+        "localhost": "localhost"
+      }
+    },
+    "INFO": {
+      "description": "\u83b7\u53d6\u7cfb\u7edf\u4fe1\u606f",
+      "params": [
+        "target"
+      ],
+      "rules": [
+        {
+          "param": "target",
+          "priority": 1,
+          "default": "uname",
+          "note": "\u9ed8\u8ba4\u7cfb\u7edf\u4fe1\u606f"
+        }
+      ],
+      "keyword_map": {
+        "\u5f53\u524d\u65f6\u95f4": "date",
+        "\u73b0\u5728\u51e0\u70b9": "date",
+        "date": "date",
+        "cpu": "cpu",
+        "CPU": "cpu",
+        "\u5904\u7406\u5668": "cpu",
+        "\u6838\u5fc3": "cpu",
+        "\u578b\u53f7": "cpu",
+        "mem": "mem",
+        "\u5185\u5b58": "mem",
+        "RAM": "mem",
+        "disk": "disk",
+        "\u78c1\u76d8": "disk",
+        "\u786c\u76d8": "disk",
+        "df": "disk",
+        "\u4f7f\u7528": "disk",
+        "uptime": "uptime",
+        "\u8fd0\u884c": "uptime",
+        "\u5df2\u8fd0\u884c": "uptime",
+        "whoami": "whoami",
+        "\u7528\u6237": "whoami",
+        "\u5f53\u524d\u7528\u6237": "whoami",
+        "uname": "uname",
+        "\u7cfb\u7edf": "uname",
+        "\u5185\u6838": "uname",
+        "\u7248\u672c": "uname",
+        "hostname": "hostname",
+        "\u4e3b\u673a\u540d": "hostname",
+        "\u5185\u5b58\u4fe1\u606f": "mem",
+        "\u78c1\u76d8\u4fe1\u606f": "disk",
+        "CPU\u4fe1\u606f": "cpu",
+        "\u7cfb\u7edf\u4fe1\u606f": "uname"
+      }
+    },
+    "COUNT": {
+      "description": "\u7edf\u8ba1\u6587\u4ef6\u884c\u6570",
+      "params": [
+        "path"
+      ],
+      "rules": [
+        {
+          "param": "path",
+          "priority": 5,
+          "patterns": [
+            "(?:/etc/|/var/|/tmp/|/proc/)?[a-zA-Z0-9_./-]+"
+          ],
+          "note": "\u4ece\u63cf\u8ff0\u4e2d\u63d0\u53d6\u6587\u4ef6\u8def\u5f84"
+        },
+        {
+          "param": "path",
+          "priority": 1,
+          "default": "/etc/passwd",
+          "note": "\u65e0\u5339\u914d\u65f6\u9ed8\u8ba4\u6587\u4ef6"
+        }
+      ],
+      "keyword_map": {
+        "passwd": "/etc/passwd",
+        "group": "/etc/group",
+        "shadow": "/etc/shadow",
+        "hosts": "/etc/hosts",
+        "syslog": "/var/log/syslog",
+        "services": "/etc/services"
+      }
+    },
+    "INSPECT": {
+      "description": "\u68c0\u67e5\u547d\u4ee4\u662f\u5426\u5b58\u5728",
+      "params": [
+        "cmd"
+      ],
+      "rules": [
+        {
+          "param": "cmd",
+          "priority": 5,
+          "patterns": [
+            "(?:\u68c0\u67e5|\u786e\u8ba4|\u67e5\u770b|\u68c0\u6d4b|\u627e|\u641c\u7d22)\\s*(\\w+)",
+            "(\\w+)\\s*(?:\u662f\u5426|\u547d\u4ee4|\u80fd\u4e0d\u80fd|\u72b6\u6001|\u4f4d\u7f6e|\u5b58\u5728|\u5b89\u88c5)"
+          ],
+          "note": "\u4ece\u63cf\u8ff0\u4e2d\u63d0\u53d6\u547d\u4ee4\u540d"
+        },
+        {
+          "param": "cmd",
+          "priority": 1,
+          "default": "python3",
+          "note": "\u65e0\u5339\u914d\u65f6\u9ed8\u8ba4\u547d\u4ee4"
+        }
+      ],
+      "keyword_map": {
+        "python3": "python3",
+        "git": "git",
+        "docker": "docker",
+        "curl": "curl",
+        "node": "node",
+        "gcc": "gcc",
+        "java": "java",
+        "nginx": "nginx",
+        "ssh": "ssh",
+        "vim": "vim",
+        "ruby": "ruby",
+        "perl": "perl",
+        "make": "make",
+        "cmake": "cmake"
+      }
+    },
+    "HELP": {
+      "description": "\u67e5\u770b\u547d\u4ee4\u5e2e\u52a9",
+      "params": [
+        "cmd"
+      ],
+      "rules": [
+        {
+          "param": "cmd",
+          "priority": 5,
+          "patterns": [
+            "(?:\u67e5\u770b|\u4e86\u89e3|\u5b66\u4e60|\u67e5\u9605|\u770b)\\s*(\\w+)\\s*(?:\u7684\u5e2e\u52a9|\u7684\u7528\u6cd5|\u7684\u624b\u518c|\u6709\u54ea\u4e9b|\u547d\u4ee4)",
+            "(\\w+)\\s*(?:\u7684\u5e2e\u52a9|\u7684\u7528\u6cd5|\u7684\u624b\u518c|\u5e2e\u52a9|--help)"
+          ],
+          "note": "\u4ece\u63cf\u8ff0\u4e2d\u63d0\u53d6\u547d\u4ee4\u540d"
+        },
+        {
+          "param": "cmd",
+          "priority": 1,
+          "default": "ls",
+          "note": "\u65e0\u5339\u914d\u65f6\u9ed8\u8ba4\u547d\u4ee4"
+        }
+      ],
+      "keyword_map": {
+        "ls": "ls",
+        "cat": "cat",
+        "grep": "grep",
+        "find": "find",
+        "tar": "tar",
+        "ssh": "ssh",
+        "docker": "docker",
+        "git": "git",
+        "cp": "cp",
+        "mv": "mv",
+        "sed": "sed",
+        "awk": "awk"
+      }
+    },
+    "EXPLORE": {
+      "description": "\u63a2\u7d22\u76ee\u5f55",
+      "params": [
+        "path"
+      ],
+      "rules": [
+        {
+          "param": "path",
+          "priority": 5,
+          "patterns": [
+            "(?:\u63a2\u7d22|\u6d4f\u89c8|\u770b|\u67e5\u770b|\u5bfb\u627e)\\s*(.*?)(?:\u76ee\u5f55|\u6587\u4ef6\u5939|\u91cc|\u7684\u4e1c\u897f)",
+            ""
+          ],
+          "note": "\u4ece\u63cf\u8ff0\u4e2d\u63d0\u53d6\u76ee\u5f55"
+        },
+        {
+          "param": "path",
+          "priority": 1,
+          "default": "/",
+          "note": "\u65e0\u5339\u914d\u65f6\u9ed8\u8ba4\u6839\u76ee\u5f55"
+        }
+      ],
+      "keyword_map": {
+        "\u6839\u76ee\u5f55": "/",
+        "etc": "/etc",
+        "tmp": "/tmp",
+        "var": "/var",
+        "opt": "/opt",
+        "home": "/home",
+        "proc": "/proc"
+      }
+    },
+    "CUSTOM": {
+      "description": "\u81ea\u7531\u547d\u4ee4\u63a2\u7d22",
+      "params": [
+        "cmd_name",
+        "path",
+        "target"
+      ],
+      "rules": [
+        {
+          "param": "cmd_name",
+          "priority": 5,
+          "patterns": [
+            "",
+            ""
+          ],
+          "note": "\u7531 CommandSelector \u51b3\u5b9a"
+        },
+        {
+          "param": "cmd_name",
+          "priority": 1,
+          "default": "file",
+          "note": "\u9ed8\u8ba4"
+        }
+      ],
+      "keyword_map": {
+        "\u6587\u4ef6": "file",
+        "\u76ee\u5f55": "du",
+        "\u8fdb\u7a0b": "ps",
+        "\u5185\u5b58": "free",
+        "\u8bbe\u5907": "lspci",
+        "\u7f51\u7edc": "ip",
+        "\u6a21\u5757": "lsmod"
+      }
+    },
+    "READ_ETC": {
+      "description": "\u8bfb\u53d6 /etc \u914d\u7f6e\u6587\u4ef6",
+      "params": [
+        "path"
+      ],
+      "rules": [
+        {
+          "param": "path",
+          "priority": 5,
+          "patterns": [
+            "(/etc/[\\w./-]+)",
+            ""
+          ],
+          "note": "\u4ece\u63cf\u8ff0\u63d0\u53d6\u8def\u5f84"
+        },
+        {
+          "param": "path",
+          "priority": 1,
+          "default": "/etc/passwd",
+          "note": "\u9ed8\u8ba4"
+        }
+      ],
+      "keyword_map": {
+        "passwd": "/etc/passwd",
+        "hosts": "/etc/hosts",
+        "hostname": "/etc/hostname",
+        "shadow": "/etc/shadow",
+        "group": "/etc/group"
+      }
+    },
+    "USB_DEVICES": {
+      "description": "\u67e5\u770b USB \u8bbe\u5907",
+      "params": [],
+      "rules": [],
+      "keyword_map": {}
+    },
+    "DISK_USAGE": {
+      "description": "\u67e5\u770b\u78c1\u76d8\u4f7f\u7528\u91cf",
+      "params": [
+        "path"
+      ],
+      "rules": [
+        {
+          "param": "path",
+          "priority": 5,
+          "patterns": [
+            "(/[\\w/-]+)",
+            "/etc|/var|/tmp|/home|/opt|/usr",
+            ""
+          ],
+          "note": "\u4ece\u63cf\u8ff0\u63d0\u53d6\u76ee\u5f55"
+        },
+        {
+          "param": "path",
+          "priority": 1,
+          "default": "/",
+          "note": "\u9ed8\u8ba4"
+        }
+      ],
+      "keyword_map": {
+        "etc": "/etc",
+        "var": "/var",
+        "tmp": "/tmp",
+        "home": "/home",
+        "opt": "/opt"
+      }
+    }
+  }
+}

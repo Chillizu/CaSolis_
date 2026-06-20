@@ -1,0 +1,827 @@
+{"source": "benchformat", "state_text": "当前目录: / 已知文件: root 上步: 浏览 / 目录结构 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 了解磁盘使用情况情况 历史: 检查过 python3 了", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: protocols 上步: 统计 /etc/protocols 的行数 历史: 刚看了系统信息", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 看看运行时间是什么 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: meminfo 上步: 计算 /etc/meminfo 有多少行 历史: cd /etc → ls", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 看看内核是什么 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shadow 上步: 找出 /etc/shadow 中包含 admin 的行 历史: 前面执行了 whoami", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: services 上步: 统计 /etc/services 的行数 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shells 上步: 阅读 /etc/shells 文件 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /proc 已知文件: proc 上步: 展示 /proc 的目录列表 历史: 检查过 python3 了", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看CPU 核心数 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hostname 上步: 阅读 /etc/hostname 文件 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: fstab 上步: 看看 /etc/fstab 有多少行内容 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: python3 上步: 查看 python3 的帮助 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /var/log 已知文件: var/log 上步: 列举 /var/log 中的所有内容 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看系统磁盘 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ruby 上步: 看看 ruby 命令能不能用 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: protocols 上步: 计算 /etc/protocols 有多少行 历史: 检查过 python3 了", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: nmap 上步: 看看 nmap 命令能不能用 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /tmp 已知文件: fstab 上步: 阅读 /tmp/fstab 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: etc 上步: 随便看看 /etc 里有什么 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /sys 已知文件: sys 上步: 列举 /sys 中的所有内容 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 看看内存总量是什么 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: git 上步: 确认 git 是否存在 历史: 刚看了系统信息", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: vim 上步: 了解 vim 的用法 历史: 之前用了 cat /etc/passwd", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: nginx 上步: 了解 nginx 的用法 历史: cd /etc → ls", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /dev 已知文件: dev 上步: 查看 /dev 目录中有哪些文件 历史: 之前用了 cat /etc/passwd", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: node 上步: 检查 node 是否安装 历史: 刚看了 /etc/hostname", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: meminfo 上步: 找出 /etc/meminfo 中包含 root 的行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ssh 上步: 检查 ssh 的安装状态 历史: 刚看了 /etc/hostname", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 获取CPU 型号信息 历史: 前面用了 grep root", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hostname 上步: 看看 /etc/hostname 有多少行内容 历史: 刚看了系统信息", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: python3 上步: 查看 python3 有哪些选项 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: tmux 上步: 查阅 tmux 的手册 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: passwd 上步: 找出 /etc/passwd 中包含 admin 的行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: etc 上步: 列举 /etc 中的所有内容 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: cpuinfo 上步: 在 /etc/cpuinfo 中搜索 admin 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /proc 已知文件: cpuinfo 上步: 查看 /proc/cpuinfo 历史: 前面用了 grep root", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /var/log 已知文件: var/log 上步: 探索 /var/log 目录 历史: 检查过 python3 了", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: usr/bin 上步: 查看 /usr/bin 目录的整体情况 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hosts 上步: 在 /etc/hosts 中搜索 root 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /var/log 已知文件: var/log 上步: 查看 /var/log 目录中有哪些文件 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: java 上步: 查看 java 有哪些选项 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看内存总量 历史: 刚查了 df -h", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: cpuinfo 上步: 计算 /etc/cpuinfo 有多少行 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: vim 上步: 查看 vim 的帮助 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: python3 上步: 检查 python3 的安装状态 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /home 已知文件: meminfo 上步: 读取 /home/meminfo 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hostname 上步: 读取 /etc/hostname 的内容 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /home 已知文件: cpuinfo 上步: 查看 /home/cpuinfo 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /home 已知文件: home 上步: 浏览 /home 目录结构 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /etc/nginx 已知文件:  上步: 查看 /etc/nginx 的内容 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 获取当前用户信息 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: git 上步: 看看 git 命令能不能用 历史: 检查过 python3 了", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: crontab 上步: 查看 /etc/crontab 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /opt 已知文件: opt 上步: 随便看看 /opt 里有什么 历史: 刚查了 df -h", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ffmpeg 上步: 确认 ffmpeg 是否存在 历史: 刚看了 /etc/hostname", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: protocols 上步: 阅读 /etc/protocols 文件 历史: 检查过 python3 了", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: node 上步: 查阅 node 的手册 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: passwd 上步: 找出 /etc/passwd 中包含 root 的行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: tmux 上步: 确认 tmux 是否存在 历史: ls → cat passwd", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /home 已知文件: home 上步: 在 /home 中寻找有趣的文件 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 了解当前用户情况 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ssh 上步: 检查 ssh 是否安装 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /var/log 已知文件: cpuinfo 上步: 查看 /var/log/cpuinfo 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: gcc 上步: 确认 gcc 是否存在 历史: ls → cat passwd", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ffmpeg 上步: 看看 ffmpeg 命令能不能用 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: nginx 上步: 查看 nginx 命令的位置 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: environment 上步: 计算 /etc/environment 有多少行 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /dev 已知文件: dev 上步: 列出 /dev 目录下的内容 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: nginx 上步: 查阅 nginx 的手册 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 获取磁盘信息 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: tmux 上步: 学习 tmux 的详细用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /proc 已知文件: fstab 上步: 阅读 /proc/fstab 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: node 上步: 看看 node 命令能不能用 历史: 检查过 python3 了", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: issue 上步: 查看系统 issue 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: passwd 上步: 查看 /etc/passwd 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: passwd 上步: 找出 /etc/passwd 中包含 admin 的行 历史: ls → cat passwd", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hosts 上步: 在 /etc/hosts 中搜索 nobody 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: nginx 上步: 看看 nginx 命令能不能用 历史: 刚看了系统信息", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: make 上步: 查看 make 有哪些选项 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: pandoc 上步: 查看 pandoc 有哪些选项 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shadow 上步: 找出 /etc/shadow 中包含 root 的行 历史: 刚看了 /etc/hostname", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 了解硬件架构情况 历史: 之前用了 cat /etc/passwd", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: tmux 上步: 查看 tmux 有哪些选项 历史: 前面用了 grep root", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: passwd 上步: 显示 /etc/passwd 的所有行 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: curl 上步: 看看 curl 命令能不能用 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hostname 上步: 看看 /etc/hostname 有多少行内容 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: resolv.conf 上步: 查看 /etc/resolv.conf 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /proc 已知文件: proc 上步: 查看 /proc 目录的整体情况 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: protocols 上步: 统计 /etc/protocols 的行数 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: gcc 上步: 查看 gcc 有哪些选项 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /tmp 已知文件: tmp 上步: 列举 /tmp 中的所有内容 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /tmp 已知文件: tmp 上步: 查看 /tmp 目录的整体情况 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 看看时间是什么 历史: 刚看了系统信息", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: tmux 上步: 检查 tmux 是否安装 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hostname 上步: 找出 /etc/hostname 中包含 www-data 的行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: protocols 上步: 查看 /etc/protocols 历史: cd /etc → ls", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: passwd 上步: 读取 /etc/passwd 的内容 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: group 上步: 在 /etc/group 中搜索 admin 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: cpuinfo 上步: 在 /etc/cpuinfo 中搜索 nobody 历史: 刚看了系统信息", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: syslog 上步: 在 /etc/syslog 中搜索 nobody 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /dev 已知文件: dev 上步: 列举 /dev 中的所有内容 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: resolv.conf 上步: 打开 /etc/resolv.conf 看看 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 看看磁盘是什么 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: crontab 上步: 显示 /etc/crontab 的所有行 历史: 刚看了系统信息", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /tmp 已知文件: cpuinfo 上步: 查看 /tmp/cpuinfo 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: syslog 上步: 找出 /etc/syslog 中包含 root 的行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: make 上步: 查看 make 有哪些选项 历史: 刚查了 df -h", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: vim 上步: 查看 vim 有哪些选项 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 了解磁盘情况 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: python3 上步: 确认 python3 是否存在 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: release 上步: 查看系统 release 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 了解内存情况 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: usr/bin 上步: 查看 /usr/bin 目录中有哪些文件 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: nginx 上步: 查看 nginx 的帮助 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hosts 上步: 找出 /etc/hosts 中包含 nobody 的行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: fstab 上步: 显示 /etc/fstab 的所有行 历史: 刚看了 /etc/hostname", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hosts 上步: 在 /etc/hosts 中搜索 www-data 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /proc 已知文件: proc 上步: 探索 /proc 目录 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /var/log 已知文件: var/log 上步: 在 /var/log 中寻找有趣的文件 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shells 上步: 显示 /etc/shells 的所有行 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: group 上步: 对 /etc/group 进行行数计数 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: passwd 上步: 打开 /etc/passwd 看看 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 获取时间信息 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hosts 上步: 在 /etc/hosts 中搜索 admin 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: nmap 上步: 确认 nmap 是否存在 历史: 刚查了 df -h", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: java 上步: 看看 java 命令能不能用 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: syslog 上步: 打开 /etc/syslog 看看 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: resolv.conf 上步: 统计 /etc/resolv.conf 的行数 历史: 前面执行了 whoami", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: java 上步: 学习 java 的详细用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: resolv.conf 上步: 统计 /etc/resolv.conf 的行数 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shells 上步: 看看 /etc/shells 有多少行内容 历史: 前面执行了 whoami", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hosts 上步: 阅读 /etc/hosts 文件 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: meminfo 上步: 在 /etc/meminfo 中搜索 root 历史: 刚查了 df -h", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hostname 上步: 在 /etc/hostname 中搜索 www-data 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: java 上步: 了解 java 的用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: passwd 上步: 找出 /etc/passwd 中包含 nobody 的行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看磁盘使用情况 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: etc 上步: 浏览 /etc 目录结构 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: usr/bin 上步: 查看 /usr/bin 目录的整体情况 历史: 刚查了 df -h", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hosts 上步: 数一数 /etc/hosts 有几行 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: make 上步: 查看 make 命令的位置 历史: 检查过 python3 了", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: perl 上步: 检查 perl 是否安装 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /var/log 已知文件: syslog 上步: 过滤 /var/log/syslog 中的 denied 行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: syslog 上步: 在 /etc/syslog 中搜索 root 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /sys 已知文件: sys 上步: 查看 /sys 目录中有哪些文件 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ruby 上步: 查看 ruby 的帮助 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /home 已知文件: home 上步: 看看 /home 里有没有有趣的东西 历史: 检查过 python3 了", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shadow 上步: 计算 /etc/shadow 有多少行 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: perl 上步: 查看 perl 的帮助 历史: 刚查了 df -h", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shadow 上步: 找出 /etc/shadow 中包含 admin 的行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: protocols 上步: 显示 /etc/protocols 的所有行 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: screen 上步: 查看 screen 命令的位置 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: screen 上步: 确认 screen 是否存在 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: cmake 上步: 查阅 cmake 的手册 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 了解CPU 核心数情况 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: cpuinfo 上步: 阅读 /etc/cpuinfo 文件 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: meminfo 上步: 在 /etc/meminfo 中搜索 nobody 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 了解主机名情况 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /home 已知文件: fstab 上步: 阅读 /home/fstab 历史: 检查过 python3 了", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: resolv.conf 上步: 数一数 /etc/resolv.conf 有几行 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ruby 上步: 查阅 ruby 的手册 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: gcc 上步: 查阅 gcc 的手册 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /home 已知文件: home 上步: 随便看看 /home 里有什么 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: curl 上步: 检查 curl 是否安装 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ffmpeg 上步: 确认 ffmpeg 是否存在 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: crontab 上步: 查看 /etc/crontab 历史: 前面用了 grep root", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: docker 上步: 查看 docker 有哪些选项 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shells 上步: 读取 /etc/shells 的内容 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看系统当前用户 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: nginx 上步: 学习 nginx 的详细用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hostname 上步: 在 /etc/hostname 中搜索 root 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ruby 上步: 检查 ruby 是否安装 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: usr/bin 上步: 看看 /usr/bin 里有什么文件 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: protocols 上步: 数一数 /etc/protocols 有几行 历史: 刚看了 /etc/hostname", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: java 上步: 查看 java 的帮助 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: node 上步: 检查 node 的安装状态 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /var/log 已知文件: meminfo 上步: 读取 /var/log/meminfo 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: curl 上步: 检查 curl 的安装状态 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: pandoc 上步: 查看 pandoc 命令的位置 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: resolv.conf 上步: 看看 /etc/resolv.conf 有多少行内容 历史: 前面执行了 whoami", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ruby 上步: 查看 ruby 有哪些选项 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: cpuinfo 上步: 查看 /etc/cpuinfo 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: resolv.conf 上步: 显示 /etc/resolv.conf 的所有行 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /proc 已知文件: proc 上步: 随便看看 /proc 里有什么 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /tmp 已知文件: tmp 上步: 浏览 /tmp 目录结构 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: etc 上步: 浏览 /etc 目录结构 历史: 前面执行了 whoami", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: pandoc 上步: 检查 pandoc 是否安装 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /opt 已知文件: opt 上步: 列举 /opt 中的所有内容 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 了解系统信息情况 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: services 上步: 阅读 /etc/services 文件 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看运行时间 历史: 刚查了 df -h", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shells 上步: 统计 /etc/shells 的行数 历史: 刚查了 df -h", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: node 上步: 确认 node 是否存在 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: python3 上步: 看看 python3 命令能不能用 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: make 上步: 查阅 make 的手册 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hostname 上步: 计算 /etc/hostname 有多少行 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ruby 上步: 了解 ruby 的用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hostname 上步: 在 /etc/hostname 中搜索 admin 历史: 检查过 python3 了", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hostname 上步: 找出 /etc/hostname 中包含 root 的行 历史: 前面用了 grep root", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /home 已知文件: home 上步: 看看 /home 里有没有有趣的东西 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: syslog 上步: 统计 /etc/syslog 的行数 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看系统运行时间 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看主机名 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: meminfo 上步: 显示 /etc/meminfo 的所有行 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ssh 上步: 查看 ssh 有哪些选项 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shadow 上步: 打开 /etc/shadow 看看 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 看看系统信息是什么 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /sys 已知文件: sys 上步: 列举 /sys 中的所有内容 历史: cd /etc → ls", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: nginx 上步: 查看 nginx 有哪些选项 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: syslog 上步: 数一数 /etc/syslog 有几行 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: passwd 上步: 查看 /etc/passwd 历史: 刚看了 /etc/hostname", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: perl 上步: 查看 perl 有哪些选项 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: environment 上步: 打开 /etc/environment 看看 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: python3 上步: 学习 python3 的详细用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: syslog 上步: 打开 /etc/syslog 看看 历史: 前面执行了 whoami", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: meminfo 上步: 在 /etc/meminfo 中搜索 www-data 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: docker 上步: 看看 docker 命令能不能用 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: gcc 上步: 查看 gcc 的帮助 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: meminfo 上步: 找出 /etc/meminfo 中包含 nobody 的行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件: root 上步: 随便看看 / 里有什么 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hostname 上步: 找出 /etc/hostname 中包含 nobody 的行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: resolv.conf 上步: 显示 /etc/resolv.conf 的所有行 历史: cd /etc → ls", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shadow 上步: 在 /etc/shadow 中搜索 nobody 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件: root 上步: 看看 / 里有什么文件 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: group 上步: 在 /etc/group 中搜索 www-data 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: passwd 上步: 在 /etc/passwd 中搜索 admin 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ffmpeg 上步: 检查 ffmpeg 的安装状态 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: cpuinfo 上步: 查看 /etc/cpuinfo 历史: 检查过 python3 了", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /var/log 已知文件: cpuinfo 上步: 查看 /var/log/cpuinfo 历史: 前面执行了 whoami", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: syslog 上步: 读取 /etc/syslog 的内容 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /dev 已知文件: dev 上步: 展示 /dev 的目录列表 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /home 已知文件: home 上步: 看看 /home 里有什么文件 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看系统信息 历史: 之前用了 cat /etc/passwd", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: nmap 上步: 查看 nmap 有哪些选项 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: meminfo 上步: 在 /etc/meminfo 中搜索 root 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /var/log 已知文件: syslog 上步: 在 /var/log/syslog 中搜索 error 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: etc 上步: 探索 /etc 目录 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /var/log 已知文件: syslog 上步: 在 /var/log/syslog 中搜索 critical 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: passwd 上步: 在 /etc/passwd 中搜索 www-data 历史: cd /etc → ls", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shadow 上步: 统计 /etc/shadow 的行数 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 获取磁盘使用情况信息 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: meminfo 上步: 阅读 /etc/meminfo 文件 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看 CPU 型号和核心数 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 了解当前用户情况 历史: 刚看了系统信息", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: nmap 上步: 查看 nmap 的帮助 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: passwd 上步: 在 /etc/passwd 中搜索 root 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 获取内核信息 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /dev 已知文件: dev 上步: 在 /dev 中寻找有趣的文件 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: tmux 上步: 看看 tmux 命令能不能用 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: make 上步: 查看 make 的帮助 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ssh 上步: 查看 ssh 有哪些选项 历史: 刚查了 df -h", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件: root 上步: 随便看看 / 里有什么 历史: cd /etc → ls", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: usr/bin 上步: 随便看看 /usr/bin 里有什么 历史: 之前用了 cat /etc/passwd", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /var/log 已知文件: var/log 上步: 浏览 /var/log 目录结构 历史: 前面用了 grep root", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: perl 上步: 查看 perl 命令的位置 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /tmp 已知文件: tmp 上步: 查看 /tmp 目录中有哪些文件 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: tmux 上步: 了解 tmux 的用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: environment 上步: 查看 /etc/environment 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shells 上步: 统计 /etc/shells 的行数 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /var/log 已知文件: var/log 上步: 看看 /var/log 里有什么文件 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 了解CPU情况 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hostname 上步: 查看 /etc/hostname 历史: 前面执行了 whoami", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 获取硬件架构信息 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 看看主机名是什么 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: protocols 上步: 对 /etc/protocols 进行行数计数 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: services 上步: 计算 /etc/services 有多少行 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hostname 上步: 打开 /etc/hostname 看看 历史: ls → cat passwd", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件: root 上步: 查看 / 目录的整体情况 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ffmpeg 上步: 查看 ffmpeg 命令的位置 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: cmake 上步: 了解 cmake 的用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 获取内存信息 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: etc 上步: 在 /etc 中寻找有趣的文件 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: docker 上步: 学习 docker 的详细用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看系统内核 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件: root 上步: 列举 / 中的所有内容 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 获取系统信息信息 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: fstab 上步: 数一数 /etc/fstab 有几行 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: java 上步: 查看 java 命令的位置 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: environment 上步: 统计 /etc/environment 的行数 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件: root 上步: 列出 / 目录下的内容 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: java 上步: 检查 java 是否安装 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看当前用户 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: usr/bin 上步: 列举 /usr/bin 中的所有内容 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /sys 已知文件: sys 上步: 查看 /sys 目录的整体情况 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: group 上步: 找出 /etc/group 中包含 root 的行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shells 上步: 打开 /etc/shells 看看 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: protocols 上步: 读取 /etc/protocols 的内容 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ruby 上步: 确认 ruby 是否存在 历史: 刚查了 df -h", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: services 上步: 数一数 /etc/services 有几行 历史: 刚查了 df -h", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: cpuinfo 上步: 在 /etc/cpuinfo 中搜索 nobody 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /proc 已知文件: proc 上步: 查看 /proc 目录中有哪些文件 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: fstab 上步: 查看 /etc/fstab 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: crontab 上步: 数一数 /etc/crontab 有几行 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /tmp 已知文件: meminfo 上步: 读取 /tmp/meminfo 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ssh 上步: 看看 ssh 命令能不能用 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shadow 上步: 数一数 /etc/shadow 有几行 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件: root 上步: 探索 / 目录 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hostname 上步: 找出 /etc/hostname 中包含 root 的行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 获取根目录磁盘信息 历史: 之前用了 cat /etc/passwd", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hostname 上步: 找出 /etc/hostname 中包含 admin 的行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看内存 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /tmp 已知文件: fstab 上步: 阅读 /tmp/fstab 历史: ls → cat passwd", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件: root 上步: 在 / 中寻找有趣的文件 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /dev 已知文件: dev 上步: 浏览 /dev 目录结构 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: group 上步: 找出 /etc/group 中包含 www-data 的行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /var/log 已知文件: var/log 上步: 随便看看 /var/log 里有什么 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看系统磁盘 历史: 检查过 python3 了", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /dev 已知文件: dev 上步: 查看 /dev 目录中有哪些文件 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看系统时间 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看系统信息 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: git 上步: 检查 git 是否安装 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: usr/bin 上步: 在 /usr/bin 中寻找有趣的文件 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: meminfo 上步: 打开 /etc/meminfo 看看 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /sys 已知文件: sys 上步: 列出 /sys 目录下的内容 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: gcc 上步: 检查 gcc 是否安装 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: meminfo 上步: 对 /etc/meminfo 进行行数计数 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /home 已知文件: home 上步: 展示 /home 的目录列表 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hostname 上步: 查看 /etc/hostname 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: docker 上步: 学习 docker 的详细用法 历史: 刚看了 /etc/hostname", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: nmap 上步: 查阅 nmap 的手册 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shells 上步: 计算 /etc/shells 有多少行 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: etc 上步: 展示 /etc 的目录列表 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ffmpeg 上步: 了解 ffmpeg 的用法 历史: 之前用了 cat /etc/passwd", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: environment 上步: 对 /etc/environment 进行行数计数 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看系统磁盘使用情况 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: cpuinfo 上步: 找出 /etc/cpuinfo 中包含 www-data 的行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hosts 上步: 对 /etc/hosts 进行行数计数 历史: 刚查了 df -h", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ssh 上步: 学习 ssh 的详细用法 历史: 前面执行了 whoami", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /home 已知文件: home 上步: 列举 /home 中的所有内容 历史: 检查过 python3 了", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: passwd 上步: 在 /etc/passwd 中搜索 www-data 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ffmpeg 上步: 学习 ffmpeg 的详细用法 历史: cd /etc → ls", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: etc 上步: 看看 /etc 里有什么文件 历史: 之前用了 cat /etc/passwd", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: nginx 上步: 检查 nginx 的安装状态 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: node 上步: 学习 node 的详细用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: passwd 上步: 统计 /etc/passwd 的行数 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: vim 上步: 看看 vim 命令能不能用 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shadow 上步: 计算 /etc/shadow 有多少行 历史: 之前用了 cat /etc/passwd", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: docker 上步: 了解 docker 的用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看内核版本 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: fstab 上步: 对 /etc/fstab 进行行数计数 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: group 上步: 在 /etc/group 中搜索 nobody 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: fstab 上步: 阅读 /etc/fstab 文件 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: cpuinfo 上步: 在 /etc/cpuinfo 中搜索 www-data 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hosts 上步: 查看 /etc/hosts 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: perl 上步: 查阅 perl 的手册 历史: 前面执行了 whoami", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /proc 已知文件: proc 上步: 浏览 /proc 目录结构 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hostname 上步: 在 /etc/hostname 中搜索 admin 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /tmp 已知文件: cpuinfo 上步: 查看 /tmp/cpuinfo 历史: 之前用了 cat /etc/passwd", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ffmpeg 上步: 检查 ffmpeg 是否安装 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: make 上步: 看看 make 命令能不能用 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看系统CPU 型号 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: screen 上步: 学习 screen 的详细用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: passwd 上步: 数一数 /etc/passwd 有几行 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: nmap 上步: 检查 nmap 的安装状态 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: group 上步: 看看 /etc/group 有多少行内容 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /var/log 已知文件: syslog 上步: 在 /var/log/syslog 中搜索 denied 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: perl 上步: 查看 perl 的帮助 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 获取内核信息 历史: 刚看了系统信息", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /dev 已知文件: dev 上步: 随便看看 /dev 里有什么 历史: 前面用了 grep root", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: tmux 上步: 查看 tmux 的帮助 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: group 上步: 在 /etc/group 中搜索 root 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: group 上步: 数一数 /etc/group 有几行 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: perl 上步: 查阅 perl 的手册 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: docker 上步: 查阅 docker 的手册 历史: 刚查了 df -h", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: make 上步: 检查 make 是否安装 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hostname 上步: 统计 /etc/hostname 的行数 历史: 检查过 python3 了", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: java 上步: 查看 java 有哪些选项 历史: cd /etc → ls", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件: root 上步: 看看 / 里有没有有趣的东西 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: vim 上步: 检查 vim 是否安装 历史: cd /etc → ls", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: gcc 上步: 检查 gcc 是否安装 历史: 前面执行了 whoami", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: passwd 上步: 阅读 /etc/passwd 文件 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看内核 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: protocols 上步: 数一数 /etc/protocols 有几行 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 获取根目录磁盘信息 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: node 上步: 检查 node 是否安装 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: java 上步: 检查 java 的安装状态 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /var/log 已知文件: syslog 上步: 在 /var/log/syslog 中搜索 failed 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: protocols 上步: 计算 /etc/protocols 有多少行 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: curl 上步: 查看 curl 命令的位置 历史: 前面执行了 whoami", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /home 已知文件: home 上步: 看看 /home 里有什么文件 历史: 刚查了 df -h", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: etc 上步: 列出 /etc 目录下的内容 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shells 上步: 阅读 /etc/shells 文件 历史: 刚查了 df -h", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: syslog 上步: 找出 /etc/syslog 中包含 admin 的行 历史: 检查过 python3 了", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看CPU 型号 历史: 刚看了系统信息", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: group 上步: 在 /etc/group 中搜索 admin 历史: 之前用了 cat /etc/passwd", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 获取主机名信息 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: environment 上步: 数一数 /etc/environment 有几行 历史: 前面执行了 whoami", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: group 上步: 找出 /etc/group 中包含 www-data 的行 历史: 检查过 python3 了", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: pandoc 上步: 检查 pandoc 是否安装 历史: 之前用了 cat /etc/passwd", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: vim 上步: 查阅 vim 的手册 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ssh 上步: 学习 ssh 的详细用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 看看CPU是什么 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /dev/disk 已知文件:  上步: 查看 /dev/disk 的内容 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 看看时间是什么 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: nmap 上步: 确认 nmap 是否存在 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: vim 上步: 检查 vim 是否安装 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: cpuinfo 上步: 对 /etc/cpuinfo 进行行数计数 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: screen 上步: 查看 screen 的帮助 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /tmp 已知文件: tmp 上步: 探索 /tmp 目录 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: nginx 上步: 检查 nginx 是否安装 历史: cd /etc → ls", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: fstab 上步: 显示 /etc/fstab 的所有行 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: cmake 上步: 查看 cmake 命令的位置 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: passwd 上步: 看看 /etc/passwd 有多少行内容 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: usr/bin 上步: 随便看看 /usr/bin 里有什么 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hosts 上步: 找出 /etc/hosts 中包含 www-data 的行 历史: 前面用了 grep root", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /var/log 已知文件: syslog 上步: 在 /var/log/syslog 中搜索 critical 历史: 前面执行了 whoami", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: group 上步: 计算 /etc/group 有多少行 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /proc 已知文件: proc 上步: 在 /proc 中寻找有趣的文件 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: nmap 上步: 了解 nmap 的用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shadow 上步: 查看 /etc/shadow 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: environment 上步: 阅读 /etc/environment 文件 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: python3 上步: 检查 python3 是否安装 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: nginx 上步: 了解 nginx 的用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hostname 上步: 数一数 /etc/hostname 有几行 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ssh 上步: 看看 ssh 命令能不能用 历史: ls → cat passwd", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /var/log 已知文件: syslog 上步: 在 /var/log/syslog 中搜索 failed 历史: 刚看了 /etc/hostname", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看运行时间 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: protocols 上步: 阅读 /etc/protocols 文件 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /home 已知文件: fstab 上步: 阅读 /home/fstab 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 了解内存总量情况 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /proc 已知文件: proc 上步: 探索 /proc 目录 历史: 前面执行了 whoami", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: node 上步: 查看 node 有哪些选项 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: usr/bin 上步: 列举 /usr/bin 中的所有内容 历史: 刚看了 /etc/hostname", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: git 上步: 看看 git 命令能不能用 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: tmux 上步: 查看 tmux 有哪些选项 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ssh 上步: 查阅 ssh 的手册 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: crontab 上步: 打开 /etc/crontab 看看 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: group 上步: 显示 /etc/group 的所有行 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: version 上步: 查看系统 version 历史: 前面执行了 whoami", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 看看运行时间是什么 历史: 刚查了 df -h", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: screen 上步: 了解 screen 的用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看根目录磁盘 历史: 之前用了 cat /etc/passwd", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: gcc 上步: 查看 gcc 命令的位置 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /home 已知文件: home 上步: 列举 /home 中的所有内容 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: fstab 上步: 统计 /etc/fstab 的行数 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: gcc 上步: 确认 gcc 是否存在 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: services 上步: 对 /etc/services 进行行数计数 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: tmux 上步: 检查 tmux 的安装状态 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: syslog 上步: 找出 /etc/syslog 中包含 www-data 的行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: perl 上步: 查看 perl 有哪些选项 历史: 前面用了 grep root", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: docker 上步: 查看 docker 命令的位置 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /var/log 已知文件: syslog 上步: 过滤 /var/log/syslog 中的 error 行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: usr/bin 上步: 展示 /usr/bin 的目录列表 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: git 上步: 检查 git 是否安装 历史: 刚查了 df -h", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hostname 上步: 找出 /etc/hostname 中包含 www-data 的行 历史: 刚查了 df -h", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看CPU 核心数 历史: 刚看了系统信息", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hosts 上步: 计算 /etc/hosts 有多少行 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: resolv.conf 上步: 计算 /etc/resolv.conf 有多少行 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hostname 上步: 显示 /etc/hostname 的所有行 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: python3 上步: 查阅 python3 的手册 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: gcc 上步: 学习 gcc 的详细用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看系统内存总量 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /home 已知文件: home 上步: 查看 /home 目录中有哪些文件 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /sys 已知文件: sys 上步: 浏览 /sys 目录结构 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /var/log 已知文件: var/log 上步: 展示 /var/log 的目录列表 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: curl 上步: 检查 curl 的安装状态 历史: 刚看了系统信息", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /sys 已知文件: sys 上步: 探索 /sys 目录 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: cpuinfo 上步: 找出 /etc/cpuinfo 中包含 nobody 的行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: meminfo 上步: 读取 /etc/meminfo 的内容 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: git 上步: 确认 git 是否存在 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: protocols 上步: 查看 /etc/protocols 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: group 上步: 在 /etc/group 中搜索 www-data 历史: 前面执行了 whoami", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /tmp 已知文件: tmp 上步: 在 /tmp 中寻找有趣的文件 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: passwd 上步: 在 /etc/passwd 中搜索 nobody 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 了解内核情况 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看系统系统信息 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: java 上步: 检查 java 是否安装 历史: ls → cat passwd", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: gcc 上步: 检查 gcc 的安装状态 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 获取CPU 核心数信息 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ffmpeg 上步: 查看 ffmpeg 有哪些选项 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: nmap 上步: 查看 nmap 命令的位置 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: cpuinfo 上步: 打开 /etc/cpuinfo 看看 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: passwd 上步: 打开 /etc/passwd 看看 历史: 前面用了 grep root", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件: root 上步: 列举 / 中的所有内容 历史: 刚看了系统信息", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: cmake 上步: 学习 cmake 的详细用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: meminfo 上步: 查看 /etc/meminfo 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /opt 已知文件: opt 上步: 列出 /opt 目录下的内容 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /var/log 已知文件: syslog 上步: 在 /var/log/syslog 中搜索 warning 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shadow 上步: 找出 /etc/shadow 中包含 root 的行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shells 上步: 计算 /etc/shells 有多少行 历史: 刚查了 df -h", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: passwd 上步: 对 /etc/passwd 进行行数计数 历史: 刚看了 /etc/hostname", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: syslog 上步: 阅读 /etc/syslog 文件 历史: 检查过 python3 了", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hosts 上步: 找出 /etc/hosts 中包含 root 的行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: java 上步: 查阅 java 的手册 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hostname 上步: 统计 /etc/hostname 的行数 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: crontab 上步: 看看 /etc/crontab 有多少行内容 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: syslog 上步: 找出 /etc/syslog 中包含 nobody 的行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shadow 上步: 找出 /etc/shadow 中包含 www-data 的行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /dev 已知文件: dev 上步: 看看 /dev 里有没有有趣的东西 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ruby 上步: 看看 ruby 命令能不能用 历史: 刚看了 /etc/hostname", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看系统硬件架构 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: group 上步: 阅读 /etc/group 文件 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: etc 上步: 列举 /etc 中的所有内容 历史: ls → cat passwd", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: services 上步: 看看 /etc/services 有多少行内容 历史: 之前用了 cat /etc/passwd", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 了解运行时间情况 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: cpuinfo 上步: 统计 /etc/cpuinfo 的行数 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /dev 已知文件: dev 上步: 列举 /dev 中的所有内容 历史: ls → cat passwd", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: cmake 上步: 看看 cmake 命令能不能用 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: node 上步: 查阅 node 的手册 历史: 检查过 python3 了", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: pandoc 上步: 检查 pandoc 的安装状态 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shadow 上步: 看看 /etc/shadow 有多少行内容 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: git 上步: 检查 git 的安装状态 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hosts 上步: 看看 /etc/hosts 有多少行内容 历史: 检查过 python3 了", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: cpuinfo 上步: 找出 /etc/cpuinfo 中包含 root 的行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 了解系统信息情况 历史: 之前用了 cat /etc/passwd", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: cmake 上步: 检查 cmake 是否安装 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hosts 上步: 找出 /etc/hosts 中包含 www-data 的行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: curl 上步: 查看 curl 有哪些选项 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /var/log 已知文件: var/log 上步: 列出 /var/log 目录下的内容 历史: ls → cat passwd", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: cpuinfo 上步: 读取 /etc/cpuinfo 的内容 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: syslog 上步: 查看 /etc/syslog 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /proc 已知文件: proc 上步: 列出 /proc 目录下的内容 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shadow 上步: 在 /etc/shadow 中搜索 root 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: syslog 上步: 看看 /etc/syslog 有多少行内容 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: python3 上步: 查阅 python3 的手册 历史: 刚查了 df -h", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /var/log 已知文件: var/log 上步: 浏览 /var/log 目录结构 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: crontab 上步: 计算 /etc/crontab 有多少行 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: curl 上步: 了解 curl 的用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: cmake 上步: 检查 cmake 的安装状态 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: resolv.conf 上步: 打开 /etc/resolv.conf 看看 历史: 刚看了系统信息", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: perl 上步: 学习 perl 的详细用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /sys 已知文件: sys 上步: 看看 /sys 里有什么文件 历史: 刚看了 /etc/hostname", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: perl 上步: 检查 perl 的安装状态 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: nmap 上步: 查看 nmap 有哪些选项 历史: 刚查了 df -h", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看磁盘 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 了解时间情况 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: curl 上步: 学习 curl 的详细用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 获取内核版本信息 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: meminfo 上步: 在 /etc/meminfo 中搜索 admin 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: cmake 上步: 查看 cmake 的帮助 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: perl 上步: 检查 perl 是否安装 历史: cd /etc → ls", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: gcc 上步: 检查 gcc 的安装状态 历史: 检查过 python3 了", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: pandoc 上步: 查阅 pandoc 的手册 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shells 上步: 数一数 /etc/shells 有几行 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shells 上步: 查看 /etc/shells 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: services 上步: 读取 /etc/services 的内容 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ssh 上步: 检查 ssh 的安装状态 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 了解内存总量情况 历史: 刚查了 df -h", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: etc 上步: 探索 /etc 目录 历史: 之前用了 cat /etc/passwd", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: meminfo 上步: 找出 /etc/meminfo 中包含 admin 的行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ssh 上步: 检查 ssh 是否安装 历史: 刚看了 /etc/hostname", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 获取运行时间信息 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 看看硬件架构是什么 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: screen 上步: 查阅 screen 的手册 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /var/log 已知文件: var/log 上步: 探索 /var/log 目录 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ffmpeg 上步: 查阅 ffmpeg 的手册 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: group 上步: 在 /etc/group 中搜索 root 历史: 刚查了 df -h", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /var/log 已知文件: syslog 上步: 过滤 /var/log/syslog 中的 critical 行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hostname 上步: 打开 /etc/hostname 看看 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: crontab 上步: 显示 /etc/crontab 的所有行 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: environment 上步: 读取 /etc/environment 的内容 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: gcc 上步: 查看 gcc 的帮助 历史: cd /etc → ls", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 了解时间情况 历史: ls → cat passwd", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /sys 已知文件: sys 上步: 展示 /sys 的目录列表 历史: 前面执行了 whoami", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /opt 已知文件: opt 上步: 随便看看 /opt 里有什么 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件: root 上步: 查看 / 目录中有哪些文件 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /var/log 已知文件: var/log 上步: 查看 /var/log 目录的整体情况 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shadow 上步: 读取 /etc/shadow 的内容 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shells 上步: 对 /etc/shells 进行行数计数 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 获取内存总量信息 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hosts 上步: 对 /etc/hosts 进行行数计数 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: etc 上步: 查看 /etc 目录的整体情况 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ssh 上步: 了解 ssh 的用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: cpuinfo 上步: 在 /etc/cpuinfo 中搜索 admin 历史: cd /etc → ls", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: syslog 上步: 在 /etc/syslog 中搜索 admin 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: make 上步: 学习 make 的详细用法 历史: 刚看了 /etc/hostname", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: cpuinfo 上步: 找出 /etc/cpuinfo 中包含 admin 的行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: cmake 上步: 查看 cmake 有哪些选项 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看系统内核版本 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: meminfo 上步: 在 /etc/meminfo 中搜索 admin 历史: ls → cat passwd", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 了解根目录磁盘情况 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /dev 已知文件: dev 上步: 看看 /dev 里有什么文件 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /home 已知文件: home 上步: 列出 /home 目录下的内容 历史: ls → cat passwd", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看 CPU 型号和内存总量 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /proc 已知文件: proc 上步: 展示 /proc 的目录列表 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: pandoc 上步: 学习 pandoc 的详细用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ssh 上步: 查看 ssh 的帮助 历史: cd /etc → ls", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: protocols 上步: 打开 /etc/protocols 看看 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: perl 上步: 确认 perl 是否存在 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: screen 上步: 检查 screen 的安装状态 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: group 上步: 统计 /etc/group 的行数 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: gcc 上步: 查看 gcc 有哪些选项 历史: cd /etc → ls", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: environment 上步: 看看 /etc/environment 有多少行内容 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /home 已知文件: home 上步: 列出 /home 目录下的内容 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 看看CPU 核心数是什么 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: services 上步: 数一数 /etc/services 有几行 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: curl 上步: 查看 curl 命令的位置 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /dev 已知文件: dev 上步: 看看 /dev 里有没有有趣的东西 历史: 前面执行了 whoami", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: syslog 上步: 计算 /etc/syslog 有多少行 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看系统硬件架构 历史: 刚看了系统信息", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /opt 已知文件: opt 上步: 查看 /opt 目录中有哪些文件 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /tmp 已知文件: tmp 上步: 看看 /tmp 里有没有有趣的东西 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: pandoc 上步: 查看 pandoc 的帮助 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: curl 上步: 确认 curl 是否存在 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: make 上步: 查看 make 命令的位置 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: git 上步: 查看 git 有哪些选项 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: curl 上步: 查阅 curl 的手册 历史: 刚看了系统信息", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /opt 已知文件: opt 上步: 浏览 /opt 目录结构 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看内存总量 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shells 上步: 读取 /etc/shells 的内容 历史: 刚看了系统信息", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: crontab 上步: 阅读 /etc/crontab 文件 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /var/log 已知文件: var/log 上步: 展示 /var/log 的目录列表 历史: ls → cat passwd", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: meminfo 上步: 数一数 /etc/meminfo 有几行 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ruby 上步: 确认 ruby 是否存在 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看CPU 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: crontab 上步: 统计 /etc/crontab 的行数 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ffmpeg 上步: 学习 ffmpeg 的详细用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ffmpeg 上步: 查看 ffmpeg 的帮助 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: etc 上步: 看看 /etc 里有没有有趣的东西 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: nginx 上步: 看看 nginx 命令能不能用 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: group 上步: 找出 /etc/group 中包含 root 的行 历史: 前面执行了 whoami", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /sys 已知文件: sys 上步: 看看 /sys 里有什么文件 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /var/log 已知文件: syslog 上步: 过滤 /var/log/syslog 中的 failed 行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /proc 已知文件: proc 上步: 列举 /proc 中的所有内容 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /var/log 已知文件: syslog 上步: 过滤 /var/log/syslog 中的 warning 行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: git 上步: 查看 git 命令的位置 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /dev 已知文件: dev 上步: 查看 /dev 目录的整体情况 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /tmp 已知文件: tmp 上步: 列出 /tmp 目录下的内容 历史: 前面执行了 whoami", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: etc 上步: 查看 /etc 目录中有哪些文件 历史: 前面用了 grep root", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看根目录磁盘 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看系统内存 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: cpuinfo 上步: 数一数 /etc/cpuinfo 有几行 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: passwd 上步: 计算 /etc/passwd 有多少行 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shadow 上步: 显示 /etc/shadow 的所有行 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看系统内存总量 历史: 前面用了 grep root", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 获取CPU信息 历史: 之前用了 cat /etc/passwd", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: syslog 上步: 显示 /etc/syslog 的所有行 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: docker 上步: 检查 docker 是否安装 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: etc 上步: 查看 /etc 目录中有哪些文件 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ffmpeg 上步: 检查 ffmpeg 的安装状态 历史: cd /etc → ls", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: release 上步: 查看系统 release 历史: cd /etc → ls", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: git 上步: 查阅 git 的手册 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /proc 已知文件: proc 上步: 看看 /proc 里有什么文件 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: git 上步: 了解 git 的用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: nginx 上步: 检查 nginx 是否安装 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: gcc 上步: 了解 gcc 的用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /opt 已知文件: opt 上步: 查看 /opt 目录的整体情况 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: cpuinfo 上步: 在 /etc/cpuinfo 中搜索 root 历史: 前面用了 grep root", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /home 已知文件: home 上步: 查看 /home 目录的整体情况 历史: 刚看了 /etc/hostname", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shadow 上步: 在 /etc/shadow 中搜索 admin 历史: 刚看了 /etc/hostname", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shadow 上步: 在 /etc/shadow 中搜索 admin 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /sys 已知文件: sys 上步: 展示 /sys 的目录列表 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: syslog 上步: 数一数 /etc/syslog 有几行 历史: 刚查了 df -h", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: nginx 上步: 学习 nginx 的详细用法 历史: ls → cat passwd", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: passwd 上步: 对 /etc/passwd 进行行数计数 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: docker 上步: 查看 docker 的帮助 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc/nginx 已知文件:  上步: 查看 /etc/nginx 的内容 历史: 检查过 python3 了", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /proc 已知文件: cpuinfo 上步: 查看 /proc/cpuinfo 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shadow 上步: 阅读 /etc/shadow 文件 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: meminfo 上步: 在 /etc/meminfo 中搜索 nobody 历史: 之前用了 cat /etc/passwd", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hostname 上步: 在 /etc/hostname 中搜索 nobody 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看系统主机名 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: pandoc 上步: 了解 pandoc 的用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /tmp 已知文件: tmp 上步: 随便看看 /tmp 里有什么 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: resolv.conf 上步: 看看 /etc/resolv.conf 有多少行内容 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /tmp 已知文件: tmp 上步: 展示 /tmp 的目录列表 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: fstab 上步: 计算 /etc/fstab 有多少行 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: syslog 上步: 阅读 /etc/syslog 文件 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: usr/bin 上步: 探索 /usr/bin 目录 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 了解硬件架构情况 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 获取CPU信息 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: perl 上步: 看看 perl 命令能不能用 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /opt 已知文件: opt 上步: 展示 /opt 的目录列表 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shadow 上步: 对 /etc/shadow 进行行数计数 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /proc 已知文件: meminfo 上步: 读取 /proc/meminfo 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: meminfo 上步: 看看 /etc/meminfo 有多少行内容 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 了解内核版本情况 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看系统根目录磁盘 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看硬件架构 历史: cd /etc → ls", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: usr/bin 上步: 在 /usr/bin 中寻找有趣的文件 历史: 刚看了系统信息", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: passwd 上步: 找出 /etc/passwd 中包含 www-data 的行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: group 上步: 打开 /etc/group 看看 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /opt 已知文件: opt 上步: 查看 /opt 目录中有哪些文件 历史: 之前用了 cat /etc/passwd", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hosts 上步: 显示 /etc/hosts 的所有行 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: gcc 上步: 看看 gcc 命令能不能用 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: crontab 上步: 对 /etc/crontab 进行行数计数 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /etc/ssh 已知文件:  上步: 查看 /etc/ssh 的内容 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: resolv.conf 上步: 阅读 /etc/resolv.conf 文件 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件: root 上步: 展示 / 的目录列表 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: nginx 上步: 确认 nginx 是否存在 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看系统内存 历史: 检查过 python3 了", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: vim 上步: 查看 vim 命令的位置 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: usr/bin 上步: 看看 /usr/bin 里有没有有趣的东西 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: fstab 上步: 打开 /etc/fstab 看看 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hostname 上步: 显示 /etc/hostname 的所有行 历史: 之前用了 cat /etc/passwd", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: make 上步: 学习 make 的详细用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: syslog 上步: 在 /etc/syslog 中搜索 www-data 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: docker 上步: 检查 docker 的安装状态 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: git 上步: 了解 git 的用法 历史: 检查过 python3 了", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ruby 上步: 学习 ruby 的详细用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: fstab 上步: 打开 /etc/fstab 看看 历史: 检查过 python3 了", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ruby 上步: 检查 ruby 的安装状态 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 看看当前用户是什么 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: make 上步: 确认 make 是否存在 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /tmp 已知文件: tmp 上步: 看看 /tmp 里有什么文件 历史: 刚看了 /etc/hostname", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: cmake 上步: 确认 cmake 是否存在 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hosts 上步: 统计 /etc/hosts 的行数 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: screen 上步: 检查 screen 是否安装 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 看看磁盘使用情况是什么 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 看看磁盘是什么 历史: 检查过 python3 了", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /opt 已知文件: opt 上步: 探索 /opt 目录 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 获取内存总量信息 历史: 刚看了系统信息", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: syslog 上步: 读取 /etc/syslog 的内容 历史: cd /etc → ls", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: group 上步: 查看 /etc/group 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 看看CPU是什么 历史: 刚看了 /etc/hostname", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: make 上步: 了解 make 的用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: syslog 上步: 看看 /etc/syslog 有多少行内容 历史: 刚看了系统信息", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /proc/sys 已知文件:  上步: 查看 /proc/sys 的内容 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: protocols 上步: 看看 /etc/protocols 有多少行内容 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: vim 上步: 确认 vim 是否存在 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: fstab 上步: 读取 /etc/fstab 的内容 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: tmux 上步: 查看 tmux 命令的位置 历史: 刚看了系统信息", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: cpuinfo 上步: 显示 /etc/cpuinfo 的所有行 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: passwd 上步: 在 /etc/passwd 中搜索 root 历史: 刚看了系统信息", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: cpuinfo 上步: 看看 /etc/cpuinfo 有多少行内容 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: perl 上步: 了解 perl 的用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: make 上步: 检查 make 的安装状态 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ssh 上步: 查看 ssh 的帮助 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: nmap 上步: 检查 nmap 是否安装 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: vim 上步: 学习 vim 的详细用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 获取CPU 型号信息 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看系统运行时间 历史: cd /etc → ls", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: node 上步: 看看 node 命令能不能用 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: pandoc 上步: 确认 pandoc 是否存在 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ruby 上步: 查看 ruby 命令的位置 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看时间 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /opt 已知文件: opt 上步: 看看 /opt 里有什么文件 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: group 上步: 找出 /etc/group 中包含 nobody 的行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看系统CPU 核心数 历史: ls → cat passwd", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /home 已知文件: home 上步: 探索 /home 目录 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: resolv.conf 上步: 读取 /etc/resolv.conf 的内容 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: nginx 上步: 查看 nginx 有哪些选项 历史: 刚看了系统信息", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 了解CPU 型号情况 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: syslog 上步: 找出 /etc/syslog 中包含 admin 的行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /sys 已知文件: sys 上步: 在 /sys 中寻找有趣的文件 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: curl 上步: 查看 curl 的帮助 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: perl 上步: 了解 perl 的用法 历史: ls → cat passwd", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: screen 上步: 看看 screen 命令能不能用 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: services 上步: 看看 /etc/services 有多少行内容 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: tmux 上步: 查看 tmux 命令的位置 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: screen 上步: 查看 screen 有哪些选项 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看系统CPU 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 看看内核版本是什么 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: version 上步: 查看系统 version 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: cpuinfo 上步: 在 /etc/cpuinfo 中搜索 root 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: git 上步: 学习 git 的详细用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: group 上步: 找出 /etc/group 中包含 admin 的行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 了解磁盘使用情况情况 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hosts 上步: 打开 /etc/hosts 看看 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: java 上步: 了解 java 的用法 历史: 刚看了系统信息", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: node 上步: 查看 node 的帮助 历史: 之前用了 cat /etc/passwd", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ffmpeg 上步: 了解 ffmpeg 的用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: usr/bin 上步: 列出 /usr/bin 目录下的内容 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: etc 上步: 看看 /etc 里有什么文件 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: usr/bin 上步: 浏览 /usr/bin 目录结构 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ssh 上步: 确认 ssh 是否存在 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: vim 上步: 查阅 vim 的手册 历史: 前面执行了 whoami", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: python3 上步: 查看 python3 命令的位置 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /dev 已知文件: dev 上步: 在 /dev 中寻找有趣的文件 历史: ls → cat passwd", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /tmp 已知文件: tmp 上步: 列出 /tmp 目录下的内容 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /dev 已知文件: dev 上步: 随便看看 /dev 里有什么 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看系统CPU 核心数 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: environment 上步: 数一数 /etc/environment 有几行 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看系统磁盘使用情况 历史: ls → cat passwd", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: environment 上步: 显示 /etc/environment 的所有行 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /var/log 已知文件: var/log 上步: 列出 /var/log 目录下的内容 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 看看根目录磁盘是什么 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: python3 上步: 了解 python3 的用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hostname 上步: 对 /etc/hostname 进行行数计数 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: cpuinfo 上步: 读取 /etc/cpuinfo 的内容 历史: 前面执行了 whoami", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /sys 已知文件: sys 上步: 随便看看 /sys 里有什么 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /sys 已知文件: sys 上步: 看看 /sys 里有没有有趣的东西 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ssh 上步: 了解 ssh 的用法 历史: 刚看了 /etc/hostname", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: node 上步: 了解 node 的用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 看看内存是什么 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: node 上步: 查看 node 的帮助 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看CPU 型号 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: vim 上步: 了解 vim 的用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: nmap 上步: 学习 nmap 的详细用法 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shadow 上步: 在 /etc/shadow 中搜索 www-data 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看 CPU 型号和内存总量 历史: 刚查了 df -h", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 看看CPU 型号是什么 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /dev 已知文件: dev 上步: 探索 /dev 目录 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shadow 上步: 阅读 /etc/shadow 文件 历史: 刚查了 df -h", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: ssh 上步: 查看 ssh 命令的位置 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看主机名和系统运行时间 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: services 上步: 打开 /etc/services 看看 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: resolv.conf 上步: 对 /etc/resolv.conf 进行行数计数 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: docker 上步: 查阅 docker 的手册 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: tmux 上步: 看看 tmux 命令能不能用 历史: 刚看了系统信息", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hosts 上步: 看看 /etc/hosts 有多少行内容 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: syslog 上步: 计算 /etc/syslog 有多少行 历史: cd /etc → ls", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: crontab 上步: 读取 /etc/crontab 的内容 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看硬件架构 历史: 无", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: meminfo 上步: 统计 /etc/meminfo 的行数 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: group 上步: 读取 /etc/group 的内容 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /home 已知文件: home 上步: 查看 /home 目录的整体情况 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /proc 已知文件: proc 上步: 看看 /proc 里有没有有趣的东西 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: usr/bin 上步: 列出 /usr/bin 目录下的内容 历史: ls → cat passwd", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: node 上步: 查看 node 命令的位置 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: syslog 上步: 对 /etc/syslog 进行行数计数 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: meminfo 上步: 找出 /etc/meminfo 中包含 www-data 的行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 查看系统主机名 历史: ls → cat passwd", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /sys 已知文件: sys 上步: 随便看看 /sys 里有什么 历史: 前面执行了 whoami", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /var/log 已知文件: fstab 上步: 阅读 /var/log/fstab 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: docker 上步: 确认 docker 是否存在 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: / 已知文件:  上步: 获取运行时间信息 历史: cd /etc → ls", "intent": "INFO", "intent_id": 3}
+{"source": "benchformat", "state_text": "当前目录: /tmp 已知文件: tmp 上步: 看看 /tmp 里有什么文件 历史: 无", "intent": "LIST", "intent_id": 1}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: curl 上步: 查阅 curl 的手册 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hosts 上步: 找出 /etc/hosts 中包含 admin 的行 历史: 无", "intent": "SEARCH", "intent_id": 2}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shells 上步: 看看 /etc/shells 有多少行内容 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: tmux 上步: 确认 tmux 是否存在 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /opt 已知文件: opt 上步: 在 /opt 中寻找有趣的文件 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: services 上步: 显示 /etc/services 的所有行 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: group 上步: 数一数 /etc/group 有几行 历史: 前面用了 grep root", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: meminfo 上步: 计算 /etc/meminfo 有多少行 历史: 无", "intent": "COUNT", "intent_id": 5}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: pandoc 上步: 看看 pandoc 命令能不能用 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: hosts 上步: 读取 /etc/hosts 的内容 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: services 上步: 查看 /etc/services 历史: 无", "intent": "READ", "intent_id": 0}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: java 上步: 确认 java 是否存在 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /var/log 已知文件: var/log 上步: 看看 /var/log 里有没有有趣的东西 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: git 上步: 查看 git 的帮助 历史: 无", "intent": "HELP", "intent_id": 7}
+{"source": "benchformat", "state_text": "当前目录: /opt 已知文件: opt 上步: 看看 /opt 里有没有有趣的东西 历史: 无", "intent": "EXPLORE", "intent_id": 6}
+{"source": "benchformat", "state_text": "当前目录: /usr/bin 已知文件: vim 上步: 检查 vim 的安装状态 历史: 无", "intent": "INSPECT", "intent_id": 4}
+{"source": "benchformat", "state_text": "当前目录: /etc 已知文件: shadow 上步: 找出 /etc/shadow 中包含 nobody 的行 历史: 无", "intent": "SEARCH", "intent_id": 2}
