@@ -23,8 +23,8 @@ COMMAND_TEMPLATES = {
     "SEARCH": (["grep"],              ["{pattern}", "{path}"]),
     "INFO":   (None, None),           # 特殊处理
     "COUNT":  (["wc", "-l"],          ["{path}"]),
-    "INSPECT":(["which"],             ["{cmd}"]),
-    "EXPLORE":(["ls", "-la"],         ["{target}"]),
+    "INSPECT":(["sh", "-c"],          ["command -v {cmd} && command -V {cmd}"]),
+    "EXPLORE":(["ls", "-la"],         ["{path}"]),
     "HELP":   (["echo"],              ["(HELP disabled) {cmd}"]),  # 禁用, 不会被执行
     "CUSTOM": (None, None),           # 自由命令, CommandSelector 处理
     # 自动发现的意图
@@ -162,7 +162,11 @@ SAFE_COMMANDS = {
     # 文件
     "file", "stat", "du", "type",
     # shell
-    "compgen", "printf", "echo", "seq",
+    "compgen", "printf", "echo", "seq", "sh",
+    # 额外工具
+    "find", "lscpu", "lsblk",
+    "pstree", "lsmod", "lspci", "env", "locale",
+    "timedatectl", "mount", "file", "stat", "du", "type",
 }
 
 # 危险命令黑名单
