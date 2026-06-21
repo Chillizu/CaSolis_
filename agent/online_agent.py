@@ -389,10 +389,22 @@ class OnlineAgent:
             embs = torch.from_numpy(embs_np).float().to(self.device)
 
             self.conductor_optimizer.zero_grad()
-            _, logits = self.nanny.conductor.forward_emb(embs)
-            loss = torch.nn.functional.cross_entropy(
-                logits, torch.tensor(labels, device=self.device)
-            )
+            labels_t = torch.tensor(labels, device=self.device)
+            thought, logits = self.nanny.conductor.forward_emb(embs)
+
+            # CE 损失 (class_proj + shared 收到梯度)
+            ce_loss = torch.nn.functional.cross_entropy(logits, labels_t)
+
+            # 对比损失 (thought_head 也收到梯度)
+            thought_norm = torch.nn.functional.normalize(thought, dim=-1)
+            cos_sim = thought_norm @ thought_norm.T  # (B, B)
+            targets_exp = labels_t.unsqueeze(1)
+            same_mask = (targets_exp == targets_exp.T).float()
+            pos_loss = (same_mask * torch.nn.functional.relu(0.8 - cos_sim)).sum() / (same_mask.sum() + 1)
+            neg_loss = ((1 - same_mask) * torch.nn.functional.relu(cos_sim + 0.2)).sum() / ((1 - same_mask).sum() + 1)
+            contrastive_loss = pos_loss + neg_loss
+
+            loss = ce_loss + 0.05 * contrastive_loss
             loss.backward()
             torch.nn.utils.clip_grad_norm_(self.nanny.conductor.head.parameters(), 1.0)
             self.conductor_optimizer.step()
