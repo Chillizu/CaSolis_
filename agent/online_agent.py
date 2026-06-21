@@ -53,6 +53,7 @@ from collections import deque
 
 # 意图列表
 INTENTS = ["READ", "LIST", "SEARCH", "INFO", "INSPECT", "COUNT", "EXPLORE", "HELP", "READ_ETC", "USB_DEVICES", "DISK_USAGE", "LS_TMP", "ARCH_INFO", "CUSTOM"]
+N_INTENTS = 13  # Conductor/分类器输出维度 (不含 CUSTOM)
 
 
 class IntentClassifier:
@@ -415,8 +416,12 @@ class OnlineAgent:
             # ── 2. REINFORCE + entropy (轨迹数据) ──
             if n_traj >= 4:
                 sample = random.sample(self.conductor_trajectories, min(16, n_traj))
+                # 过滤掉 CUSTOM (Conductor 不输出 CUSTOM)
+                sample = [s for s in sample if s[1] != 'CUSTOM' and s[1] in INTENTS[:N_INTENTS]]
+                if len(sample) < 2:
+                    continue
                 traj_texts = [s[0] for s in sample]
-                traj_actions = [INTENTS.index(s[1]) if s[1] in INTENTS else 0 for s in sample]
+                traj_actions = [INTENTS.index(s[1]) for s in sample]
                 traj_rewards = [s[2] for s in sample]
 
                 traj_embs_np = self.nanny.conductor.encoder.encode(traj_texts, convert_to_numpy=True)
@@ -587,6 +592,7 @@ class OnlineAgent:
         # 4. 执行 (多命令组合 P1)
         depth = params.get("depth", 1)
         multi_results = None
+        all_exit_ok = False
 
         if depth > 1 and intent not in ("CUSTOM", "HELP", "EXPLORE"):
             try:
@@ -597,13 +603,16 @@ class OnlineAgent:
         if multi_results and len(multi_results) > 0 and multi_results[0].exit_code != -1:
             # 多命令: 合并输出, 用第一条为主结果
             output_parts = []
-            all_exit_ok = True
+            # 成功判定: exit=0 或 intent适用1(未找到/无匹配) 都算有效执行
+            ec = multi_results[0].exit_code
+            if intent in ("INSPECT", "SEARCH", "EXPLORE", "LS_TMP"):
+                all_exit_ok = ec in (0, 1, 127)  # not found / no match 也算
+            else:
+                all_exit_ok = ec == 0
             for i, r in enumerate(multi_results):
                 body = (r.stdout or r.stderr or "").strip()
                 if body:
                     output_parts.append(f"--- [{i+1}] ---\n{body}")
-                if r.exit_code != 0:
-                    all_exit_ok = False
             output = "\n".join(output_parts)
             result = multi_results[0]
             self.multi_cmds_count += 1
@@ -707,7 +716,9 @@ class OnlineAgent:
         # 9. 记录统计
         self.total_reward += reward
         self.intent_history.append(intent)
-        step_success = (result.exit_code == 0) and bool(output)
+        # 多命令: 用 all_exit_ok, 单命令: exit_code==0
+        step_success = all_exit_ok if multi_results else (result.exit_code == 0)
+        step_success = step_success and bool(output)
         if step_success:
             self.success_count += 1
             if used_conductor:

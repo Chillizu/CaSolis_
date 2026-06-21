@@ -23,7 +23,7 @@ COMMAND_TEMPLATES = {
     "SEARCH": (["grep"],              ["{pattern}", "{path}"]),
     "INFO":   (None, None),           # 特殊处理
     "COUNT":  (["wc", "-l"],          ["{path}"]),
-    "INSPECT":(["sh", "-c"],          ["command -v {cmd} && command -V {cmd}"]),
+    "INSPECT":(["sh", "-c"],          ["command -v {cmd} 2>/dev/null || { echo 'not found'; true; }"]),
     "EXPLORE":(["ls", "-la"],         ["{path}"]),
     "HELP":   (["echo"],              ["(HELP disabled) {cmd}"]),  # 禁用, 不会被执行
     "CUSTOM": (None, None),           # 自由命令, CommandSelector 处理
@@ -110,9 +110,9 @@ INTENT_MULTI_COMMANDS = {
         (["stat", "{path}"], None),
     ],
     "SEARCH": [
-        (["grep", "{pattern}", "{path}"], None),
-        (["wc", "-l", "{path}"], None),
+        (["grep", "-i", "{pattern}", "{path}"], None),
         (["grep", "-c", "{pattern}", "{path}"], None),
+        (["grep", "-n", "{pattern}", "{path}"], ["head", "-10"]),
     ],
     "LIST": [
         (["ls", "-la", "{path}"], None),
@@ -123,9 +123,9 @@ INTENT_MULTI_COMMANDS = {
         (["wc", "-c", "{path}"], None),
     ],
     "INSPECT": [
-        (["which", "{cmd}"], None),
+        (["sh", "-c"], ['command -v {cmd} 2>/dev/null']),
         (["type", "{cmd}"], None),
-        (["file", "{cmd}"], None),
+        (["which", "{cmd}"], None),
     ],
     "READ_ETC": [
         (["cat", "{path}"], None),
@@ -189,9 +189,11 @@ SAFE_COMMANDS = {
     "echo", "printf", "seq", "sh", "command",
     "compgen", "compopt", "complete",
     # 查找
-    "find", "locate", "whereis", "which", "type",
+    "find", "locate", "whereis", "which", "type", "fuser",
     # 时间
     "cal", "ncal", "hwclock", "time", "timeout",
+    # 杂项
+    "nproc", "mkfifo",
 }
 
 # 危险命令黑名单 (写操作/系统修改)
