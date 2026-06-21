@@ -479,9 +479,17 @@ class OnlineAgent:
                 if advantages.std() > 1e-8:
                     advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
 
-                # Policy gradient
+                # P3: Diversity bonus — 最近少用的意图得到额外优势
+                diversity_bonus = torch.zeros(len(traj_actions))
+                recent_wins = self.intent_history[-30:] if self.intent_history else []
+                for i, intent_name in enumerate([s[1] for s in sample]):
+                    freq = recent_wins.count(intent_name) / max(len(recent_wins), 1)
+                    diversity_bonus[i] = 1.0 - freq  # 0~1: 越少用奖励越高
+
+                # Policy gradient + diversity bonus
                 log_probs = torch.nn.functional.log_softmax(traj_logits, dim=-1)
                 selected = log_probs[range(len(traj_actions)), traj_actions]
+                advantages = advantages + diversity_bonus * 0.3
                 pg_loss = -(selected * advantages.detach()).mean()
 
                 # Entropy bonus (鼓励探索)
@@ -565,11 +573,16 @@ class OnlineAgent:
         intent = None
         params = {}
 
-        # P1.5: A/B 自适应采样率
+        # P1.5: A/B 自适应采样率 + 模式调整
         if self.conductor_path_active:
             cond_rate = self.ab_stats["conductor_success"] / max(self.ab_stats["conductor"], 1)
             clf_rate = self.ab_stats["classifier_success"] / max(self.ab_stats["classifier"], 1)
             p_conductor = 0.2 + 0.6 * max(0, min(1.0, cond_rate / max(clf_rate, 0.01)))
+            # 创意模式: 降低 Conductor 主导权 (给分类器更多机会)
+            if self.mode in ("creative", "auto"):
+                recent = self.intent_history[-20:] if self.intent_history else []
+                if recent and len(set(recent)) / max(len(recent), 1) < 0.2:
+                    p_conductor *= 0.3  # 多样性低时强制探索
             if random.random() < p_conductor:
                 try:
                     thought, logits = self.nanny.think(state_text)
