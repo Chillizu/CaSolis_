@@ -739,9 +739,11 @@ class OnlineAgent:
         output_emb = self.classifier.get_embedding(output[:500] if output else " ")
         output_emb = output_emb.detach().clone() if output_emb.is_inference() else output_emb.clone()
         intent_idx = INTENTS.index(intent) if intent in INTENTS else 0
-        world_curiosity = self.world_model.compute_curiosity(state_emb, intent_idx, output_emb)
-        if intent != "CUSTOM":
-            self.world_model.update(state_emb, intent_idx, output_emb)
+        # V2: 世界模型用输出属性而非嵌入
+        world_curiosity = self.world_model.compute_curiosity(
+            state_emb, intent_idx, output, result.exit_code
+        )
+        self.world_model.update(state_emb, intent_idx, output, result.exit_code)
 
         # 6b. RND 新颖度 (fallback, 权重降低)
         rnd_novelty = self.rnd.compute_novelty(state_emb)
@@ -770,6 +772,7 @@ class OnlineAgent:
             next_state_text=next_state_text,
             novelty=combined_curiosity,
             success=(result.exit_code == 0) and bool(output),
+            exit_code=result.exit_code,
         ))
 
         # 9. 记录统计
@@ -868,15 +871,17 @@ class OnlineAgent:
 
         self.classifier.head.eval()
 
-        # 同时训练世界模型 (用同批数据)
+        # V2: 世界模型用输出属性而非嵌入
         wm_samples = []
         for e in batch:
             s_emb = self.classifier.get_embedding(e.state_text)
-            o_emb = self.classifier.get_embedding(e.output[:500] if e.output else " ")
             s_emb = s_emb.detach().clone() if s_emb.is_inference() else s_emb.clone()
-            o_emb = o_emb.detach().clone() if o_emb.is_inference() else o_emb.clone()
             i_idx = INTENTS.index(e.intent) if e.intent in INTENTS else 0
-            wm_samples.append({"state_emb": s_emb, "intent_id": i_idx, "output_emb": o_emb})
+            wm_samples.append({
+                "state_emb": s_emb, "intent_id": i_idx,
+                "output": e.output[:500],
+                "exit_code": getattr(e, "exit_code", 0),
+            })
         wm_loss = self.world_model.train_on_buffer(wm_samples)
 
         return loss.item()

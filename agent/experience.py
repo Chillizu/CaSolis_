@@ -14,7 +14,8 @@ class Experience:
     """单条经验"""
     def __init__(self, state_text: str, intent: str, params: dict,
                  output: str, reward: float, next_state_text: str,
-                 novelty: float = 0.0, success: bool = False):
+                 novelty: float = 0.0, success: bool = False,
+                 exit_code: int = 0):
         self.state_text = state_text
         self.intent = intent
         self.params = params
@@ -23,6 +24,7 @@ class Experience:
         self.next_state_text = next_state_text
         self.novelty = novelty
         self.success = success
+        self.exit_code = exit_code
 
     def to_dict(self):
         return {
@@ -34,6 +36,7 @@ class Experience:
             "next_state_text": self.next_state_text,
             "novelty": self.novelty,
             "success": self.success,
+            "exit_code": self.exit_code,
         }
 
 
