@@ -132,6 +132,7 @@ class OnlineAgent:
         novelty_weight: float = 0.3,
         explore_prob: float = 0.1,
         conductor_gate: float = 0.7,  # A/B 切换阈值 (经验证 0.7 最优)
+        mode: str = "auto",  # stable | creative | auto
     ):
         # Conductor checkpoint 自动选择: 线上对齐版 > 原始版
         if conductor_checkpoint is None:
@@ -176,9 +177,28 @@ class OnlineAgent:
         # 训练配置
         self.train_interval = train_interval
         self.batch_size = batch_size
+        self.mode = mode  # stable | creative | auto
         self.novelty_weight = novelty_weight
         self.explore_prob = explore_prob
         self.conductor_gate = conductor_gate  # A/B 切换阈值
+
+        # 创意模式: 降低确定性意图的奖励, 鼓励探索
+        self.INTENT_REWARD_CREATIVE = {
+            "READ":     0.2,   # 大幅降低 (太容易偷懒)
+            "LIST":     0.3,
+            "INFO":     0.5,
+            "SEARCH":   0.8,
+            "COUNT":    0.6,
+            "INSPECT":  0.4,
+            "EXPLORE":  1.2,   # 探索性意图高奖励
+            "CUSTOM":   1.5,   # 自由命令最高奖励
+            "USB_DEVICES":1.2,
+            "READ_ETC": 0.3,
+            "DISK_USAGE":0.6,
+            "LS_TMP":   1.0,
+            "ARCH_INFO":1.0,
+            "HELP":    -0.8,
+        }
         self.device = "cpu"
 
         # 指挥家 + 保姆 (A/B 路径)
@@ -283,11 +303,25 @@ class OnlineAgent:
 
     def _compute_reward(self, result: ExecResult, intent: str, novelty: float, intent_diversity: float = 0.0) -> float:
         """计算奖励: 意图价值 + 成功信号 + 新颖度 - 重复惩罚"""
+        # 双模式: 根据 recent 多样性自动切换
+        if self.mode == "auto":
+            recent = self.intent_history[-20:] if self.intent_history else []
+            unique_ratio = len(set(recent)) / max(len(recent), 1)
+            # 多样性 < 15% 时切创意, > 30% 时切稳定
+            use_creative = unique_ratio < 0.15
+        elif self.mode == "creative":
+            use_creative = True
+        else:
+            use_creative = False
+
         reward = 0.0
         success = result.exit_code == 0
 
-        # 意图基础价值
-        base = self.INTENT_REWARD_BASE.get(intent, 0.5)
+        # 意图基础价值 (双模式)
+        if use_creative:
+            base = self.INTENT_REWARD_CREATIVE.get(intent, 0.6)
+        else:
+            base = self.INTENT_REWARD_BASE.get(intent, 0.5)
 
         # 成功信号
         if success and result.stdout and len(result.stdout.strip()) > 3:
@@ -299,16 +333,23 @@ class OnlineAgent:
         elif success and result.stderr:
             reward += base * 0.3
         # 新颖度奖励 (仅在真正新颖时)
-        if novelty > 0.05:
-            reward += novelty * self.novelty_weight
+        # 创意模式: 更低的新颖度阈值 + 更强的好奇心权重
+        novelty_threshold = 0.01 if use_creative else 0.05
+        novelty_mult = 1.0 if use_creative else self.novelty_weight
+        if novelty > novelty_threshold:
+            reward += novelty * novelty_mult
 
-        # 意图多样性奖励
-        reward += intent_diversity * 0.3
+        # 创意模式: 强多样性奖励
+        diversity_weight = 0.5 if use_creative else 0.3
+        reward += intent_diversity * diversity_weight
 
         # 连续重复惩罚: 同一个意图连续出现 >3 次
         recent = self.intent_history[-4:] if len(self.intent_history) >= 4 else []
         if len(recent) >= 4 and len(set(recent)) == 1:
-            reward *= 0.5
+            if use_creative:
+                reward *= 0.2  # 创意模式更狠
+            else:
+                reward *= 0.5
 
         # HELP 连续惩罚: 连续 HELP 越多, 惩罚越大
         if intent == "HELP":
