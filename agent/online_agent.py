@@ -229,6 +229,10 @@ class OnlineAgent:
         self.intent_history: list[str] = []
         self.success_count = 0
 
+        # 失败抑制: 同一 intent+params 失败后 N 步内不再尝试
+        self._failure_log: dict[str, int] = {}  # key→step_number_last_tried
+        self._failure_cooldown = 50  # 步数冷卻
+
         # 自动探索目标池
         self.explore_targets = [
             ("查看 /etc/hostname 的内容", "READ"),
@@ -725,6 +729,14 @@ class OnlineAgent:
                 self.ab_stats["conductor_success"] += 1
             else:
                 self.ab_stats["classifier_success"] += 1
+        else:
+            # 失败抑制: 记录失败用于后续回避
+            key_parts = [intent]
+            for pk in ("cmd", "path", "pattern", "target"):
+                if pk in params:
+                    key_parts.append(str(params[pk]))
+            fail_key = ":".join(key_parts)
+            self._failure_log[fail_key] = self.step_count
 
         # P1.5: 滑动窗口记录
         self.ab_window.append((used_conductor, step_success))
