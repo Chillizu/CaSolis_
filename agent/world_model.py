@@ -211,10 +211,9 @@ class WorldModel:
                           thought: torch.Tensor,
                           intent_idx: int,
                           output_text: str = "",
-                          exit_code: int = 0,
-                          reward: float = 0.0) -> float:
+                          exit_code: int = 0) -> float:
         """
-        好奇心 = 预测误差 (归一化 0~1)
+        好奇心 = 属性预测误差 (仅 exit/length/error, 不含 value)
         世界模型猜对了 → 低好奇心
         世界模型猜错了 → 高好奇心
         """
@@ -223,9 +222,14 @@ class WorldModel:
         intent_onehot = self._intent_to_onehot(intent_idx)
         
         pred = self.predictor(state_emb, thought, intent_onehot)
-        targets = self._extract_targets(output_text, exit_code, reward)
+        targets = self._extract_targets(output_text, exit_code)
         
-        error = self._compute_loss(pred, targets).item()
+        # 好奇心仅用属性预测误差 (不含 value/next_thought)
+        error = (
+            F.cross_entropy(pred["exit"], targets["exit"])
+            + F.cross_entropy(pred["length"], targets["length"])
+            + F.cross_entropy(pred["error"], targets["error"])
+        ).item() / 3.0
         
         # 自适应归一化
         self.running_errors.append(error)

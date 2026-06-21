@@ -746,13 +746,9 @@ class OnlineAgent:
         # V3: 世界模型 — 思考 + 预测 + 直觉
         intent_idx = INTENTS.index(intent) if intent in INTENTS else 0
         world_curiosity = self.world_model.compute_curiosity(
-            state_emb, thought_vector, intent_idx,
-            output, result.exit_code, reward
+            state_emb, thought_vector, intent_idx, output, result.exit_code
         )
-        self.world_model.update(
-            state_emb, thought_vector, intent_idx,
-            output, result.exit_code, reward
-        )
+        # 世界模型 update 在 reward 计算之后 (见 step 9a)
 
         # 6b. RND 新颖度 (fallback, 权重降低)
         rnd_novelty = self.rnd.compute_novelty(state_emb)
@@ -770,6 +766,12 @@ class OnlineAgent:
 
         # 9. 计算奖励
         reward = self._compute_reward(result, intent, combined_curiosity, intent_diversity)
+
+        # 9a. 更新世界模型 (含真实 reward)
+        self.world_model.update(
+            state_emb, thought_vector, intent_idx,
+            output, result.exit_code, reward
+        )
 
         # 10. 存储经验 (含嵌入用于世界模型训练)
         self.buffer.add(Experience(
