@@ -13,8 +13,8 @@ from sentence_transformers import SentenceTransformer
 
 
 N_DIMS = 16
-INTENTS = ["READ", "LIST", "SEARCH", "INFO", "INSPECT", "COUNT", "EXPLORE", "HELP", "READ_ETC", "USB_DEVICES", "DISK_USAGE", "CUSTOM"]
-N_INTENTS = len(INTENTS)
+INTENTS = ["READ", "LIST", "SEARCH", "INFO", "INSPECT", "COUNT", "EXPLORE", "HELP", "READ_ETC", "USB_DEVICES", "DISK_USAGE", "LS_TMP", "ARCH_INFO", "CUSTOM"]
+N_INTENTS = 13  # 有效意图数 (不含 CUSTOM)
 
 
 class ConductorHead(nn.Module):
@@ -38,8 +38,8 @@ class ConductorHead(nn.Module):
         )
         # 想法向量 (推理时用)
         self.thought_head = nn.Linear(64, N_DIMS)
-        # 分类投影 (只在蒸馏训练时用, 老师输出 11 类, 不含 CUSTOM)
-        self.class_proj = nn.Linear(64, 11)  # 老师只有 11 类
+        # 分类投影 (只在蒸馏训练时用, 不含 CUSTOM)
+        self.class_proj = nn.Linear(64, N_INTENTS)
 
     def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor | None]:
         """
@@ -71,8 +71,15 @@ class Conductor:
         self.head = ConductorHead().to(device)
 
         if checkpoint and os.path.exists(checkpoint):
-            self.head.load_state_dict(torch.load(checkpoint, map_location=device, weights_only=True))
-            print(f"  ✅ Conductor 已加载: {checkpoint}")
+            sd = torch.load(checkpoint, map_location=device, weights_only=True)
+            # 适配新旧intent数不同 (class_proj 可能尺寸不匹配)
+            try:
+                self.head.load_state_dict(sd)
+            except Exception:
+                self.head.load_state_dict(sd, strict=False)
+                print(f"  ⚠️ Conductor 加载部分权重 (class_proj 已扩展)")
+            else:
+                print(f"  ✅ Conductor 已加载: {checkpoint}")
 
         self.head.eval()
 

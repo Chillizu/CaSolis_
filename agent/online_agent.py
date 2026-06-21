@@ -52,7 +52,7 @@ from collections import deque
 
 
 # 意图列表
-INTENTS = ["READ", "LIST", "SEARCH", "INFO", "INSPECT", "COUNT", "EXPLORE", "HELP", "READ_ETC", "USB_DEVICES", "DISK_USAGE", "CUSTOM"]
+INTENTS = ["READ", "LIST", "SEARCH", "INFO", "INSPECT", "COUNT", "EXPLORE", "HELP", "READ_ETC", "USB_DEVICES", "DISK_USAGE", "LS_TMP", "ARCH_INFO", "CUSTOM"]
 
 
 class IntentClassifier:
@@ -77,14 +77,17 @@ class IntentClassifier:
                     nn.Linear(128, 128),
                     nn.GELU(),
                     nn.Dropout(0.15),
-                    nn.Linear(128, 11),
+                    nn.Linear(128, 13),
                 )
             def forward(self, x):
                 return self.net(x)
 
         self.head = MLPHead()
-        sd = torch.load(checkpoint, map_location=self.device, weights_only=True)
-        self.head.load_state_dict(sd)
+        try:
+            sd = torch.load(checkpoint, map_location=self.device, weights_only=True)
+            self.head.load_state_dict(sd, strict=False)  # 允许新旧intent数不同
+        except Exception:
+            print(f"  ⚠️ 分类器checkpoint加载部分失败, 新head随机初始化")
         self.head.to(self.device)
         self.head.eval()
 

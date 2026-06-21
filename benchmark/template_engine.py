@@ -31,6 +31,9 @@ COMMAND_TEMPLATES = {
     "READ_ETC":  (["cat"],             ["{path}"]),
     "USB_DEVICES":(["lsusb"],           None),
     "DISK_USAGE":(["du", "-sh", "{path}"], None),
+    # 新意图 (开放)
+    "LS_TMP":    (["ls", "-la"], ["/tmp"]),
+    "ARCH_INFO": (["arch"], None),
 }
 
 INFO_CMDS = {
@@ -137,6 +140,14 @@ INTENT_MULTI_COMMANDS = {
     "USB_DEVICES": [
         (["lsusb"], None),
         (["lsusb", "-v"], ["head", "-30"]),
+    ],
+    "LS_TMP": [
+        (["ls", "-la", "/tmp"], None),
+        (["ls", "-la", "/tmp/"], ["head", "-10"]),
+    ],
+    "ARCH_INFO": [
+        (["arch"], None),
+        (["uname", "-m"], None),
     ],
 }
 
