@@ -120,7 +120,7 @@ class OnlineAgent:
     def __init__(
         self,
         classifier_checkpoint: str = "checkpoints/intent_classifier/best_head.pt",
-        conductor_checkpoint: str = "checkpoints/conductor/head.pt",
+        conductor_checkpoint: str = None,  # None=自动选最佳版本
         buffer_size: int = 5000,
         train_interval: int = 20,
         batch_size: int = 32,
@@ -129,6 +129,11 @@ class OnlineAgent:
         explore_prob: float = 0.1,
         conductor_gate: float = 0.7,  # A/B 切换阈值 (经验证 0.7 最优)
     ):
+        # Conductor checkpoint 自动选择: 线上对齐版 > 原始版
+        if conductor_checkpoint is None:
+            aligned = "checkpoints/conductor/online_aligned.pt"
+            original = "checkpoints/conductor/head.pt"
+            conductor_checkpoint = aligned if os.path.exists(aligned) else original
         print("初始化 OnlineAgent...")
 
         # 沙箱 (Docker 容器, 所有命令在隔离环境执行)
