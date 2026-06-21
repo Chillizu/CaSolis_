@@ -314,6 +314,115 @@ class WorldModel:
         self.predictor.eval()
         return loss.item()
 
+    # ── 持久化 (A) ──
+
+    def save(self, path: str):
+        """保存世界模型权重"""
+        torch.save({
+            "predictor": self.predictor.state_dict(),
+            "optimizer": self.optimizer.state_dict(),
+            "running_errors": self.running_errors,
+            "max_error": self.max_error,
+        }, path)
+
+    def load(self, path: str):
+        """加载世界模型权重"""
+        ckpt = torch.load(path, map_location=self.device, weights_only=True)
+        self.predictor.load_state_dict(ckpt["predictor"])
+        self.optimizer.load_state_dict(ckpt["optimizer"])
+        self.running_errors = ckpt.get("running_errors", [])
+        self.max_error = ckpt.get("max_error", 1.0)
+        self.predictor.eval()
+
+    # ── 多步心理模拟 (B) ──
+
+    @torch.no_grad()
+    def rollout(self, state_emb: torch.Tensor, thought: torch.Tensor,
+                intent_sequence: list[int], gamma: float = 0.9) -> dict:
+        """
+        多步心理模拟: 想象执行一系列动作后的累积价值
+
+        Args:
+            state_emb: 当前状态嵌入
+            thought: 当前思考向量
+            intent_sequence: 意图序列 [intent_1, intent_2, ...]
+            gamma: 折扣因子
+
+        Returns:
+            {"total_value": 折扣累积价值,
+             "step_values": 每一步的价值,
+             "final_thought": 最后一步后的预测思考}
+        """
+        self.predictor.eval()
+        s = state_emb.clone()
+        t = thought.clone()
+        total = 0.0
+        step_values = []
+
+        for step, intent_idx in enumerate(intent_sequence):
+            s_2d, t_2d = self._ensure_2d(s, t)
+            oh = self._intent_to_onehot(intent_idx)
+            pred = self.predictor(s_2d, t_2d, oh)
+
+            value = pred["value"].item()
+            next_t = pred["next_thought"]
+
+            discounted = value * (gamma ** step)
+            total += discounted
+            step_values.append({"step": step, "value": value, "discounted": discounted})
+
+            # 把预测的 next_thought 作为下一步的输入
+            t = next_t.squeeze(0)
+
+        return {
+            "total_value": total,
+            "step_values": step_values,
+            "final_thought": t,
+        }
+
+    @torch.no_grad()
+    def rollout_top_k(self, state_emb: torch.Tensor, thought: torch.Tensor,
+                       primary_candidates: list[int],
+                       secondary_candidates: list[int] | None = None,
+                       depth: int = 2, gamma: float = 0.9) -> list[dict]:
+        """
+        多步搜索: 对每个主候选意图, 尝试所有可能的第二步意图
+
+        Args:
+            primary_candidates: 第一步的候选意图
+            secondary_candidates: 第二步的候选 (默认=primary)
+            depth: 搜索深度 (1=单步, 2=两步)
+            gamma: 折扣因子
+
+        Returns:
+            [(sequence, total_value, details), ...] 按总分降序
+        """
+        if secondary_candidates is None:
+            secondary_candidates = primary_candidates
+
+        results = []
+
+        for p in primary_candidates:
+            if depth >= 2:
+                for s in secondary_candidates:
+                    seq = [p, s]
+                    r = self.rollout(state_emb, thought, seq, gamma)
+                    results.append({
+                        "sequence": seq,
+                        "total_value": r["total_value"],
+                        "step_values": r["step_values"],
+                    })
+            else:
+                r = self.rollout(state_emb, thought, [p], gamma)
+                results.append({
+                    "sequence": [p],
+                    "total_value": r["total_value"],
+                    "step_values": r["step_values"],
+                })
+
+        results.sort(key=lambda r: -r["total_value"])
+        return results
+
     def stats(self) -> dict:
         return {
             "running_errors_avg": (sum(self.running_errors) / len(self.running_errors)

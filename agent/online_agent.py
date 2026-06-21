@@ -172,6 +172,14 @@ class OnlineAgent:
             if cmds:
                 self.cmd_selector.register_cluster(name, cmds)
         self.world_model = WorldModel(embed_dim=384, n_intents=len(INTENTS), thought_dim=16)
+        # 尝试加载已有世界模型权重
+        wm_ckpt = "checkpoints/world_model/latest.pt"
+        if os.path.exists(wm_ckpt):
+            try:
+                self.world_model.load(wm_ckpt)
+                print(f"  ✅ 世界模型已加载: {wm_ckpt}")
+            except Exception as e:
+                print(f"  ⚠️ 世界模型加载失败: {e}")
         self.intent_discoverer = IntentDiscoverer(min_trajectories=30)
 
         # 训练配置
@@ -473,9 +481,22 @@ class OnlineAgent:
                 traj_embs = torch.from_numpy(traj_embs_np).float().to(self.device)
                 _, traj_logits = self.nanny.conductor.forward_emb(traj_embs)
 
-                # Advantage: reward - baseline per intent
+                # V3: 世界模型作为 Critic — WM价值 + 实际奖励混合
                 baselines = [self.conductor_reward_baseline.get(s[1], 0.0) for s in sample]
-                advantages = torch.tensor(traj_rewards) - torch.tensor(baselines)
+                # 获取WM价值预测 (从轨迹的状态嵌入)
+                try:
+                    wm_values = []
+                    for s in sample:
+                        s_emb = self.classifier.get_embedding(s[0]).clone()
+                        i_idx = INTENTS.index(s[1]) if s[1] in INTENTS else 0
+                        sim = self.world_model.simulate(s_emb, thought_vector, i_idx)
+                        wm_values.append(sim["value"])
+                    wm_t = torch.tensor(wm_values)
+                except Exception:
+                    wm_t = torch.zeros(len(sample))
+                
+                # Actor-Critic: 混合奖励 (实际0.7 + WM预测0.3)
+                advantages = (torch.tensor(traj_rewards) * 0.7 + wm_t * 0.3) - torch.tensor(baselines)
                 if advantages.std() > 1e-8:
                     advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
 
@@ -567,6 +588,7 @@ class OnlineAgent:
 
         # 1. 编码当前状态
         state_text = self.state_encoder.get_state_text()
+        state_emb = self.classifier.get_embedding(state_text).detach().clone()
 
         # V3: 获取思考向量 (世界模型需要)
         thought_vector = torch.zeros(16)
@@ -641,6 +663,39 @@ class OnlineAgent:
                 if "cmd" not in params and intent in ("INSPECT", "HELP"):
                     params["cmd"] = "python3" if intent == "INSPECT" else "ls"
             self.ab_stats["classifier"] += 1
+
+        # V3: 世界模型心理模拟 — 多步 rollout
+        if intent is not None and self.step_count > 5:
+            try:
+                candidates = [INTENTS.index(intent)]
+                for alt in ["CUSTOM", "EXPLORE", "INSPECT", "SEARCH", "LS_TMP", "LIST"]:
+                    if alt in INTENTS and INTENTS.index(alt) not in candidates:
+                        candidates.append(INTENTS.index(alt))
+                
+                # 多步搜索 (depth=2): 想象做两步之后的总价值
+                rollout_results = self.world_model.rollout_top_k(
+                    state_emb, thought_vector,
+                    primary_candidates=candidates,
+                    secondary_candidates=candidates[:4],  # 只搜前4个的第二步
+                    depth=2, gamma=0.9
+                )
+                best = rollout_results[0]
+                best_seq = best["sequence"]
+                best_name = INTENTS[best_seq[0]]
+                
+                # WM推荐的与原始不同且两步总分更高? 切换
+                orig_single = self.world_model.rollout(
+                    state_emb, thought_vector, [INTENTS.index(intent)], 0.9
+                )
+                if best["total_value"] > orig_single["total_value"] * 1.05:
+                    intent = best_name
+                    if intent == "CUSTOM":
+                        cluster, cmd_args = self.cmd_selector.select()
+                        params = {"custom_args": cmd_args, "cluster": cluster}
+                    else:
+                        params = {"depth": random.choice([1, 2, 3])}
+            except Exception:
+                pass
 
         # Conductor 一致样本收集 (用于在线对齐训练)
         self._collect_conductor_agreement(state_text, intent)
@@ -740,8 +795,6 @@ class OnlineAgent:
 
         # 6. 世界模型好奇心 + RND 新颖度
         next_state_text = self.state_encoder.get_state_text()
-        state_emb = self.classifier.get_embedding(next_state_text)
-        state_emb = state_emb.detach().clone() if state_emb.is_inference() else state_emb.clone()
 
         # V3: 世界模型 — 思考 + 预测 + 直觉
         intent_idx = INTENTS.index(intent) if intent in INTENTS else 0
@@ -958,7 +1011,7 @@ class OnlineAgent:
         return self.summarize()
 
     def save(self, path: str = "checkpoints/online_agent"):
-        """保存分类器 + 经验缓冲"""
+        """保存分类器 + 经验 + 世界模型"""
         os.makedirs(path, exist_ok=True)
 
         # 保存分类头
@@ -966,6 +1019,10 @@ class OnlineAgent:
 
         # 保存经验缓冲
         self.buffer.save(f"{path}/experience.jsonl")
+
+        # V3: 保存世界模型
+        os.makedirs("checkpoints/world_model", exist_ok=True)
+        self.world_model.save("checkpoints/world_model/latest.pt")
 
         # 保存统计
         stats = {
@@ -977,7 +1034,7 @@ class OnlineAgent:
         with open(f"{path}/stats.json", "w") as f:
             json.dump(stats, f)
 
-        print(f"  ✅ 已保存: {path}/")
+        print(f"  ✅ 已保存: {path}/ + 世界模型")
 
     def load(self, path: str = "checkpoints/online_agent"):
         """加载之前训练的模型和经验"""
