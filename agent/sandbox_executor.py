@@ -77,6 +77,7 @@ class SandboxExecutor:
                 "--name", self.name,
                 "--read-only",              # 只读根文件系统
                 "--tmpfs", "/tmp",          # 可写 /tmp
+                "--tmpfs", "/workspace",    # 工作区 (持久跨步骤)
                 "--cap-drop", "ALL",        # 放弃所有能力
                 "--security-opt", "no-new-privileges",
                 "--network", "none",        # 无网络

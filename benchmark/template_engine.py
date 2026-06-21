@@ -34,6 +34,10 @@ COMMAND_TEMPLATES = {
     # 新意图 (开放)
     "LS_TMP":    (["ls", "-la"], ["/tmp"]),
     "ARCH_INFO": (["arch"], None),
+    # 文件创建意图 (从命令到文件)
+    "WRITE":   (["sh", "-c"], ["printf '%s\n' {content} > {path}"]),
+    "APPEND":  (["sh", "-c"], ["printf '%s\n' {content} >> {path}"]),
+    "CAT":     (["cat"],      ["{path}"]),
 }
 
 INFO_CMDS = {
@@ -123,7 +127,7 @@ INTENT_MULTI_COMMANDS = {
         (["wc", "-c", "{path}"], None),
     ],
     "INSPECT": [
-        (["sh", "-c"], ['command -v {cmd} 2>/dev/null']),
+        (["command", "-v", "{cmd}"], None),
         (["type", "{cmd}"], None),
         (["which", "{cmd}"], None),
     ],
@@ -149,6 +153,15 @@ INTENT_MULTI_COMMANDS = {
         (["arch"], None),
         (["uname", "-m"], None),
     ],
+    "WRITE": [
+        (["sh", "-c"], ["printf '%s\n' {content} > {path}"]),
+        (["cat", "{path}"], None),
+        (["wc", "-l", "{path}"], None),
+    ],
+    "APPEND": [
+        (["sh", "-c"], ["printf '%s\n' {content} >> {path}"]),
+        (["cat", "{path}"], None),
+    ],
 }
 
 
@@ -158,6 +171,7 @@ INTENT_MULTI_COMMANDS = {
 SAFE_PATHS = [
     "/proc/", "/etc/", "/tmp/", "/usr/",
     "/var/", "/sys/", "/home/", "/",
+    "/workspace/",  # 容器内工作区
 ]
 
 # 允许的命令 (open: 全部只读命令)
@@ -188,35 +202,36 @@ SAFE_COMMANDS = {
     # shell
     "echo", "printf", "seq", "sh", "command",
     "compgen", "compopt", "complete",
+    # 文件操作 (容器只读rootfs, 安全)
+    "cat", "tac", "tee", "xargs",
+    "touch", "mkdir", "cp", "mv", "rm", "rmdir", "ln",
+    "chmod", "chown", "dd", "truncate", "fallocate",
+    "mknod", "mkfifo",
+    # 进程
+    "kill", "pkill", "killall", "skill", "renice",
+    # 系统
+    "sysctl", "mount", "umount", "crontab",
     # 查找
     "find", "locate", "whereis", "which", "type", "fuser",
     # 时间
     "cal", "ncal", "hwclock", "time", "timeout",
     # 杂项
-    "nproc", "mkfifo",
+    "nproc", "mkfifo", "hostid", "md5sum", "sha1sum", "sha256sum",
 }
 
-# 危险命令黑名单 (写操作/系统修改)
+# 危险命令黑名单 (容器安全边界: root+零能力+只读rootfs)
+# 几乎所有命令都被放开 — 最多只能写 /tmp
 BLOCKED_COMMANDS = {
-    "rm", "chmod", "chown", "dd", "mkfs",
-    "mount", "umount", "shutdown", "reboot",
-    "sudo", "su", "passwd", "kill", "pkill", "renice",
-    "ln", "mv", "cp", "mkdir", "rmdir", "touch",
-    "truncate", "fallocate", "mknod", "mkfifo",
-    "insmod", "rmmod", "modprobe", "depmod",
-    "iptables", "ufw", "sysctl",  # sysctl 改内核参数
-    "fdisk", "parted", "mkfs.*", "fsck",
-    "crontab", "at", "batch",
-    "adduser", "deluser", "addgroup", "delgroup",
+    # 真正的危险: 仅保留明显有害的
+    "sudo",  # 没必要, 已经是 root
+    # 容器管理 (即使成功也不应该做)
+    "shutdown", "reboot", "poweroff", "halt",
 }
 
-# 危险标志参数 — CUSTOM 路径拒绝
+# 危险标志参数 — 放宽: 容器无法真正破坏
+# 只保留 clearly destructive 的格式操作
 DANGEROUS_FLAGS = {
-    "-w", "--write", "--delete", "--remove",
-    "-o", "--output", ">", ">>",
-    "--force", "-f",
-    "--format", "--mkfs",
-    "-exec",  # find -exec 过于危险, 禁止
+    "--mkfs", "--format",  # 磁盘格式化 (但没用, 没设备)
 }
 
 
