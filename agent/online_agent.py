@@ -481,23 +481,33 @@ class OnlineAgent:
         if self.conductor_path_active:
             cond_rate = self.ab_stats["conductor_success"] / max(self.ab_stats["conductor"], 1)
             clf_rate = self.ab_stats["classifier_success"] / max(self.ab_stats["classifier"], 1)
-            # Conductor 胜率接近分类器时多采样, 差距大时保守
             p_conductor = 0.2 + 0.6 * max(0, min(1.0, cond_rate / max(clf_rate, 0.01)))
             if random.random() < p_conductor:
                 try:
                     thought, logits = self.nanny.think(state_text)
                     probs = torch.nn.functional.softmax(logits, dim=-1)
                     best_prob = probs.max().item()
+                    cond_intent = INTENTS[logits.argmax().item()]
 
                     if best_prob > self.conductor_gate:
                         # 高置信度 → 走 Conductor
                         raw_intent, nanny_params, _ = self.nanny.translate(
                             thought, logits, state_text=state_text
                         )
-                        # Conductor 路径也跳过 HELP (HELP 应该由分类器兜底)
                         if raw_intent == "HELP":
-                            pass  # 不执行, 降级到分类器
+                            pass
                         else:
+                            intent = raw_intent
+                            params = nanny_params
+                            used_conductor = True
+                            self.ab_stats["conductor"] += 1
+                    elif cond_intent not in ("HELP", "CUSTOM"):
+                        # 置信度不够但和分类器一致时, 绕过 gate
+                        clf_intent = self.classifier.predict(state_text)
+                        if cond_intent == clf_intent:
+                            raw_intent, nanny_params, _ = self.nanny.translate(
+                                thought, logits, state_text=state_text
+                            )
                             intent = raw_intent
                             params = nanny_params
                             used_conductor = True
