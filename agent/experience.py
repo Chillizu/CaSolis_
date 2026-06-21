@@ -15,7 +15,7 @@ class Experience:
     def __init__(self, state_text: str, intent: str, params: dict,
                  output: str, reward: float, next_state_text: str,
                  novelty: float = 0.0, success: bool = False,
-                 exit_code: int = 0):
+                 exit_code: int = 0, thought: list = None):
         self.state_text = state_text
         self.intent = intent
         self.params = params
@@ -25,6 +25,7 @@ class Experience:
         self.novelty = novelty
         self.success = success
         self.exit_code = exit_code
+        self.thought = thought or []
 
     def to_dict(self):
         return {
@@ -37,6 +38,7 @@ class Experience:
             "novelty": self.novelty,
             "success": self.success,
             "exit_code": self.exit_code,
+            "thought": self.thought[:16] if self.thought else [],
         }
 
 

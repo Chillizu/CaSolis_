@@ -1,153 +1,255 @@
 """
-世界模型 V2 — 输出属性预测器
+世界模型 V3 — 思考 + 预测 + 直觉
 
-给定 (state_embedding, intent) → 预测 (success, length, error_flag)
-预测误差 = 好奇心信号 (0~1)
+架构:
+  状态(384) + 思考向量(16) + 意图(N)
+    ↓ 共享层
+  ┌─ exit_head     → 成功/失败 (2)
+  ├─ length_head   → 输出长度 (3)
+  ├─ error_head    → 错误信号 (2)
+  ├─ value_head    → 价值预测 (1)   ← 预测这次行动的奖励
+  ├─ next_thought  → 下步思考 (16)  ← 预测行动后的思维状态
+  └─ agreement_head→ 自洽性直觉 (2) ← 模型自我一致性
 
-V1 的问题: 预测 384-dim MiniLM 输出嵌入, 所有输出嵌入塌缩到相近空间
-V2 改进: 预测离散/可量化的输出属性, 产生有意义的好奇心
+用法:
+  wm = WorldModel()
+  # 执行前: 心理模拟
+  scores = wm.imagine_top_k(state_emb, thought, [0,1,2])
+  best_intent = scores.argmax()
+  # 执行后: 好奇心
+  curiosity = wm.compute_curiosity(state_emb, thought, intent_idx, output, exit_code, reward)
+  wm.update(state_emb, thought, intent_idx, output, exit_code, reward)
 """
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from typing import Optional
 
 
-class WorldModelNet(nn.Module):
-    """
-    世界模型网络 V2
-
-    输入: state_emb (384) + intent_onehot (N) = 384+N
-    输出: [exit_code(2), length_bucket(3), has_error(2)]
-          = 7 dims (用 softmax + sigmoid, 非回归)
-    """
+class WorldModelNetV3(nn.Module):
+    """世界模型 V3 网络"""
 
     def __init__(self, embed_dim: int = 384, n_intents: int = 14,
-                 hidden_dim: int = 128):
+                 thought_dim: int = 16, hidden_dim: int = 128):
         super().__init__()
-        input_dim = embed_dim + n_intents
+        input_dim = embed_dim + thought_dim + n_intents
+        
         self.shared = nn.Sequential(
             nn.Linear(input_dim, hidden_dim),
             nn.LayerNorm(hidden_dim),
-            nn.ReLU(),
+            nn.GELU(),
+            nn.Dropout(0.1),
             nn.Linear(hidden_dim, hidden_dim),
-            nn.ReLU(),
+            nn.GELU(),
         )
-        # Head 1: exit code (成功 vs 失败)
+        # 输出属性头
         self.exit_head = nn.Linear(hidden_dim, 2)
-        # Head 2: output length bucket (短/中/长)
         self.length_head = nn.Linear(hidden_dim, 3)
-        # Head 3: error keyword flag (含错误信息 vs 无)
         self.error_head = nn.Linear(hidden_dim, 2)
+        # 价值头 (回归: 预测 reward)
+        self.value_head = nn.Linear(hidden_dim, 1)
+        # 下步思考头 (回归: 预测 next thought vector)
+        self.next_thought_head = nn.Linear(hidden_dim, thought_dim)
+        # 直觉头 (自洽性: 这个组合合理吗?)
+        self.agreement_head = nn.Linear(hidden_dim, 2)
 
-    def forward(self, state_emb: torch.Tensor, intent_onehot: torch.Tensor):
-        x = torch.cat([state_emb, intent_onehot], dim=-1)
+    def forward(self, state_emb: torch.Tensor, thought: torch.Tensor,
+                intent_onehot: torch.Tensor):
+        x = torch.cat([state_emb, thought, intent_onehot], dim=-1)
         h = self.shared(x)
-        logits_exit = self.exit_head(h)
-        logits_len = self.length_head(h)
-        logits_err = self.error_head(h)
-        return logits_exit, logits_len, logits_err
+        return {
+            "exit": self.exit_head(h),
+            "length": self.length_head(h),
+            "error": self.error_head(h),
+            "value": self.value_head(h).squeeze(-1),
+            "next_thought": self.next_thought_head(h),
+            "agreement": self.agreement_head(h),
+        }
 
 
 class WorldModel:
     """
-    世界模型 V2
-
-    好奇心 = 预测错误率 (而非 MSE)
-    当世界模型预测 "exit=0, 短输出, 无错误" 但实际得到 "exit=1, 错误信息"
-    → 高好奇心
+    世界模型 V3 — 集思考、预测、直觉
+    
+    Usage:
+      wm = WorldModel()
+      
+      # 心理模拟: 遍历候选意图
+      for intent_idx in candidates:
+          pred = wm.simulate(state_emb, thought, intent_idx)
+          score = pred["value"] + wm_curiosity * pred["uncertainty"]
+      
+      # 执行后学习
+      curiosity = wm.compute_curiosity(state_emb, thought, intent_idx, ...)
+      wm.update(state_emb, thought, intent_idx, ...)
     """
 
     def __init__(self, embed_dim: int = 384, n_intents: int = 14,
-                 lr: float = 3e-4, device: str = "cpu"):
+                 thought_dim: int = 16, lr: float = 3e-4, device: str = "cpu"):
         self.device = device
         self.n_intents = n_intents
-        self.predictor = WorldModelNet(embed_dim, n_intents=n_intents).to(device)
+        self.thought_dim = thought_dim
+        self.predictor = WorldModelNetV3(
+            embed_dim, n_intents=n_intents, thought_dim=thought_dim
+        ).to(device)
         self.optimizer = torch.optim.AdamW(
             self.predictor.parameters(), lr=lr, weight_decay=1e-4
         )
+        # 误差追踪 (自适应好奇心归一化)
         self.running_errors: list[float] = []
         self.max_error = 1.0
+
+    # ── 工具方法 ──
 
     def _intent_to_onehot(self, intent_idx: int) -> torch.Tensor:
         onehot = torch.zeros(1, self.n_intents, device=self.device)
         onehot[0, intent_idx] = 1.0
         return onehot
 
-    def _extract_output_features(self, output_text: str, exit_code: int) -> torch.Tensor:
-        """从原始输出提取分类目标: [exit_class, length_class, error_class]"""
-        # exit_code: 0=成功, 1=失败
-        exit_cls = 0 if exit_code == 0 else 1
+    def _ensure_2d(self, *tensors):
+        return [t.unsqueeze(0) if t.dim() == 1 else t for t in tensors]
 
-        # length: 0=短(<100), 1=中(100-1000), 2=长(>1000)
+    def _extract_targets(self, output_text: str, exit_code: int,
+                         reward: float = 0.0,
+                         next_thought: Optional[torch.Tensor] = None,
+                         agreement: int = 1) -> dict:
+        """从实际经验提取训练目标"""
+        # exit_code class
+        exit_cls = 0 if exit_code == 0 else 1
+        # length bucket: 0=短(<100), 1=中(100-1000), 2=长(>1000)
         n = len(output_text)
         length_cls = 0 if n < 100 else (1 if n < 1000 else 2)
-
         # error keywords
         lower = output_text.lower()
-        has_error = 1 if any(kw in lower for kw in ("not found", "error", "denied", "no such file", "not installed")) else 0
+        has_error = 1 if any(kw in lower for kw in (
+            "not found", "error", "denied", "no such file", "not installed",
+            "timed out", "permission denied"
+        )) else 0
+        
+        targets = {
+            "exit": torch.tensor([exit_cls], device=self.device),
+            "length": torch.tensor([length_cls], device=self.device),
+            "error": torch.tensor([has_error], device=self.device),
+            "value": torch.tensor([reward], device=self.device),
+        }
+        if next_thought is not None:
+            targets["next_thought"] = next_thought.clone().detach()
+        targets["agreement"] = torch.tensor([agreement], device=self.device)
+        return targets
 
-        return torch.tensor([exit_cls, length_cls, has_error], device=self.device)
-
-    def _compute_prediction_error(self, logits: tuple, targets: torch.Tensor) -> float:
-        """预测误差 = 3个分类头的平均交叉熵损失"""
-        logits_exit, logits_len, logits_err = logits
+    def _compute_loss(self, pred: dict, targets: dict) -> torch.Tensor:
+        """多任务损失"""
         loss = (
-            F.cross_entropy(logits_exit, targets[0:1])
-            + F.cross_entropy(logits_len, targets[1:2])
-            + F.cross_entropy(logits_err, targets[2:3])
+            F.cross_entropy(pred["exit"], targets["exit"])
+            + F.cross_entropy(pred["length"], targets["length"])
+            + F.cross_entropy(pred["error"], targets["error"])
         ) / 3.0
-        return loss.item()
+        
+        if "value" in targets:
+            loss += F.mse_loss(pred["value"], targets["value"])
+        if "next_thought" in targets:
+            loss += F.mse_loss(pred["next_thought"], targets["next_thought"]) * 0.1
+        if "agreement" in targets:
+            loss += F.cross_entropy(pred["agreement"], targets["agreement"]) * 0.3
+        
+        return loss
+
+    # ── 核心 API ──
+
+    @torch.no_grad()
+    def simulate(self, state_emb: torch.Tensor, thought: torch.Tensor,
+                 intent_idx: int) -> dict:
+        """
+        心理模拟: 给定状态和思考, 预测执行某意图的结果
+        
+        Returns:
+          { "exit_probs", "value", "next_thought", "agreement_prob",
+            "uncertainty" (预测熵), "score" (综合得分) }
+        """
+        self.predictor.eval()
+        state_emb, thought = self._ensure_2d(state_emb, thought)
+        intent_onehot = self._intent_to_onehot(intent_idx)
+        
+        pred = self.predictor(state_emb, thought, intent_onehot)
+        
+        exit_probs = F.softmax(pred["exit"], dim=-1)
+        value = pred["value"].item()
+        next_t = pred["next_thought"]
+        agree_prob = F.softmax(pred["agreement"], dim=-1)[0, 1].item()
+        
+        # 不确定性 = 预测的熵 (越高 = 越不确定 = 越值得探索)
+        exit_entropy = -(exit_probs * exit_probs.clamp(min=1e-8).log()).sum(dim=-1).item()
+        uncertainty = exit_entropy / 0.693  # normalize by ln(2)
+        
+        # 综合得分 = 预测价值 + 不确定性bonus
+        score = value + 0.2 * uncertainty
+        
+        return {
+            "exit_probs": exit_probs[0].tolist(),
+            "value": value,
+            "next_thought": next_t,
+            "agreement_prob": agree_prob,
+            "uncertainty": uncertainty,
+            "score": score,
+        }
+
+    @torch.no_grad()
+    def imagine_top_k(self, state_emb: torch.Tensor, thought: torch.Tensor,
+                       intent_candidates: list[int]) -> list[dict]:
+        """对候选意图列表做心理模拟, 返回排序后的结果"""
+        results = []
+        for idx in intent_candidates:
+            r = self.simulate(state_emb, thought, idx)
+            r["intent_idx"] = idx
+            results.append(r)
+        results.sort(key=lambda r: -r["score"])
+        return results
 
     @torch.no_grad()
     def compute_curiosity(self, state_emb: torch.Tensor,
+                          thought: torch.Tensor,
                           intent_idx: int,
                           output_text: str = "",
-                          exit_code: int = 0) -> float:
+                          exit_code: int = 0,
+                          reward: float = 0.0) -> float:
         """
-        计算好奇心: 世界模型预测 vs 实际输出属性的误差
-
-        Returns: 0~1 归一化的预测误差
+        好奇心 = 预测误差 (归一化 0~1)
+        世界模型猜对了 → 低好奇心
+        世界模型猜错了 → 高好奇心
         """
         self.predictor.eval()
-
-        if state_emb.dim() == 1:
-            state_emb = state_emb.unsqueeze(0)
-
+        state_emb, thought = self._ensure_2d(state_emb, thought)
         intent_onehot = self._intent_to_onehot(intent_idx)
-        logits = self.predictor(state_emb, intent_onehot)
-        targets = self._extract_output_features(output_text, exit_code)
-
-        error = self._compute_prediction_error(logits, targets)
-
+        
+        pred = self.predictor(state_emb, thought, intent_onehot)
+        targets = self._extract_targets(output_text, exit_code, reward)
+        
+        error = self._compute_loss(pred, targets).item()
+        
         # 自适应归一化
         self.running_errors.append(error)
         if len(self.running_errors) > 50:
             self.running_errors.pop(0)
             self.max_error = max(self.running_errors) + 1e-8
+        
+        return min(error / self.max_error, 1.0)
 
-        curiosity = min(error / self.max_error, 1.0)
-        return curiosity
-
-    def update(self, state_emb: torch.Tensor, intent_idx: int,
-               output_text: str, exit_code: int) -> float:
-        """单步更新世界模型"""
+    def update(self, state_emb: torch.Tensor, thought: torch.Tensor,
+               intent_idx: int, output_text: str,
+               exit_code: int, reward: float = 0.0,
+               next_thought: Optional[torch.Tensor] = None) -> float:
+        """从实际经验更新世界模型"""
         self.predictor.train()
         self.optimizer.zero_grad()
 
-        if state_emb.dim() == 1:
-            state_emb = state_emb.unsqueeze(0)
-
+        state_emb, thought = self._ensure_2d(state_emb, thought)
         intent_onehot = self._intent_to_onehot(intent_idx)
-        logits_exit, logits_len, logits_err = self.predictor(state_emb, intent_onehot)
-        targets = self._extract_output_features(output_text, exit_code)
-
-        loss = (
-            F.cross_entropy(logits_exit, targets[0:1])
-            + F.cross_entropy(logits_len, targets[1:2])
-            + F.cross_entropy(logits_err, targets[2:3])
-        ) / 3.0
-
+        
+        pred = self.predictor(state_emb, thought, intent_onehot)
+        targets = self._extract_targets(output_text, exit_code, reward, next_thought)
+        
+        loss = self._compute_loss(pred, targets)
         loss.backward()
         torch.nn.utils.clip_grad_norm_(self.predictor.parameters(), 1.0)
         self.optimizer.step()
@@ -155,42 +257,51 @@ class WorldModel:
         self.predictor.eval()
         return loss.item()
 
-    def train_on_buffer(self, buffer_samples: list) -> float:
-        """从缓冲区采样训练"""
-        if not buffer_samples:
+    def train_on_buffer(self, samples: list) -> float:
+        """从缓冲区批量训练"""
+        if len(samples) < 4:
             return 0.0
 
-        state_embs, intent_idxs, outputs, exit_codes = [], [], [], []
-        for s in buffer_samples:
-            if all(k in s for k in ("state_emb", "intent_id", "output", "exit_code")):
-                state_embs.append(s["state_emb"])
-                intent_idxs.append(s["intent_id"])
-                outputs.append(s["output"])
-                exit_codes.append(s["exit_code"])
+        states, vecs, onehots = [], [], []
+        exit_t, len_t, err_t, val_t = [], [], [], []
+        next_t, agree_t = [], []
 
-        if len(state_embs) < 4:
-            return 0.0
+        for s in samples:
+            states.append(s["state_emb"])
+            vecs.append(s["thought"])
+            oh = torch.zeros(self.n_intents)
+            idx = s["intent_id"]
+            oh[idx if idx < self.n_intents else 0] = 1.0
+            onehots.append(oh)
+            exit_t.append(s["exit_cls"])
+            len_t.append(s["length_cls"])
+            err_t.append(s["error_cls"])
+            val_t.append(s.get("value", 0.0))
+            if "next_thought" in s:
+                next_t.append(s["next_thought"])
+            agree_t.append(s.get("agreement", 1))
 
-        s = torch.stack(state_embs).to(self.device)
-        i_onehot = torch.zeros(len(intent_idxs), self.n_intents, device=self.device)
-        for idx, val in enumerate(intent_idxs):
-            i_onehot[idx, val if val < self.n_intents else 0] = 1.0
-
-        # 批量提取目标
-        targets = torch.stack([
-            self._extract_output_features(outputs[i], exit_codes[i])
-            for i in range(len(outputs))
-        ]).to(self.device)
+        s_t = torch.stack(states).to(self.device)
+        v_t = torch.stack(vecs).to(self.device)
+        o_t = torch.stack(onehots).to(self.device)
 
         self.predictor.train()
         self.optimizer.zero_grad()
 
-        le, ll, lr = self.predictor(s, i_onehot)
+        pred = self.predictor(s_t, v_t, o_t)
+
         loss = (
-            F.cross_entropy(le, targets[:, 0])
-            + F.cross_entropy(ll, targets[:, 1])
-            + F.cross_entropy(lr, targets[:, 2])
+            F.cross_entropy(pred["exit"], torch.tensor(exit_t, device=self.device))
+            + F.cross_entropy(pred["length"], torch.tensor(len_t, device=self.device))
+            + F.cross_entropy(pred["error"], torch.tensor(err_t, device=self.device))
         ) / 3.0
+        loss += F.mse_loss(pred["value"].squeeze(-1),
+                           torch.tensor(val_t, device=self.device))
+        if next_t:
+            loss += F.mse_loss(pred["next_thought"],
+                               torch.stack(next_t).to(self.device)) * 0.1
+        loss += F.cross_entropy(pred["agreement"],
+                                torch.tensor(agree_t, device=self.device)) * 0.3
 
         loss.backward()
         torch.nn.utils.clip_grad_norm_(self.predictor.parameters(), 1.0)
@@ -205,4 +316,6 @@ class WorldModel:
                                    if self.running_errors else 0),
             "max_error": self.max_error,
             "n_samples": len(self.running_errors),
+            "thought_dim": self.thought_dim,
+            "n_intents": self.n_intents,
         }

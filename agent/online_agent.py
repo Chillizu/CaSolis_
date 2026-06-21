@@ -171,7 +171,7 @@ class OnlineAgent:
         for name, cmds in self.clusterer.clusters.items():
             if cmds:
                 self.cmd_selector.register_cluster(name, cmds)
-        self.world_model = WorldModel(embed_dim=384, n_intents=len(INTENTS))
+        self.world_model = WorldModel(embed_dim=384, n_intents=len(INTENTS), thought_dim=16)
         self.intent_discoverer = IntentDiscoverer(min_trajectories=30)
 
         # 训练配置
@@ -568,6 +568,14 @@ class OnlineAgent:
         # 1. 编码当前状态
         state_text = self.state_encoder.get_state_text()
 
+        # V3: 获取思考向量 (世界模型需要)
+        thought_vector = torch.zeros(16)
+        if self.conductor_path_active:
+            try:
+                thought_vector, _ = self.nanny.think(state_text)
+            except Exception:
+                pass
+
         # 2. A/B 切换: 优先指挥家路径
         used_conductor = False
         intent = None
@@ -735,15 +743,16 @@ class OnlineAgent:
         state_emb = self.classifier.get_embedding(next_state_text)
         state_emb = state_emb.detach().clone() if state_emb.is_inference() else state_emb.clone()
 
-        # 6a. 世界模型好奇心: 预测输出嵌入 vs 实际
-        output_emb = self.classifier.get_embedding(output[:500] if output else " ")
-        output_emb = output_emb.detach().clone() if output_emb.is_inference() else output_emb.clone()
+        # V3: 世界模型 — 思考 + 预测 + 直觉
         intent_idx = INTENTS.index(intent) if intent in INTENTS else 0
-        # V2: 世界模型用输出属性而非嵌入
         world_curiosity = self.world_model.compute_curiosity(
-            state_emb, intent_idx, output, result.exit_code
+            state_emb, thought_vector, intent_idx,
+            output, result.exit_code, reward
         )
-        self.world_model.update(state_emb, intent_idx, output, result.exit_code)
+        self.world_model.update(
+            state_emb, thought_vector, intent_idx,
+            output, result.exit_code, reward
+        )
 
         # 6b. RND 新颖度 (fallback, 权重降低)
         rnd_novelty = self.rnd.compute_novelty(state_emb)
@@ -773,6 +782,7 @@ class OnlineAgent:
             novelty=combined_curiosity,
             success=(result.exit_code == 0) and bool(output),
             exit_code=result.exit_code,
+            thought=thought_vector.tolist() if thought_vector.numel() > 0 else [],
         ))
 
         # 9. 记录统计
@@ -871,16 +881,35 @@ class OnlineAgent:
 
         self.classifier.head.eval()
 
-        # V2: 世界模型用输出属性而非嵌入
+        # V3: 世界模型训练 (思考 + 属性 + 价值)
         wm_samples = []
         for e in batch:
             s_emb = self.classifier.get_embedding(e.state_text)
             s_emb = s_emb.detach().clone() if s_emb.is_inference() else s_emb.clone()
             i_idx = INTENTS.index(e.intent) if e.intent in INTENTS else 0
+            # 从输出提取分类目标
+            out = e.output[:500] if e.output else ""
+            ec = getattr(e, "exit_code", 0)
+            exit_cls = 0 if ec == 0 else 1
+            length_cls = 0 if len(out) < 100 else (1 if len(out) < 1000 else 2)
+            lower = out.lower()
+            error_cls = 1 if any(kw in lower for kw in (
+                "not found", "error", "denied", "no such file"
+            )) else 0
+            # 思考向量
+            thought_list = getattr(e, "thought", [])
+            thought_t = torch.tensor(thought_list[:16] if thought_list else [0]*16)
+            # 价值 = 奖励
+            val = getattr(e, "reward", 0.0)
             wm_samples.append({
-                "state_emb": s_emb, "intent_id": i_idx,
-                "output": e.output[:500],
-                "exit_code": getattr(e, "exit_code", 0),
+                "state_emb": s_emb,
+                "thought": thought_t,
+                "intent_id": i_idx,
+                "exit_cls": exit_cls,
+                "length_cls": length_cls,
+                "error_cls": error_cls,
+                "value": val,
+                "agreement": 1,
             })
         wm_loss = self.world_model.train_on_buffer(wm_samples)
 
