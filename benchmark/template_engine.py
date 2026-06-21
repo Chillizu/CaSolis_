@@ -25,7 +25,7 @@ COMMAND_TEMPLATES = {
     "COUNT":  (["wc", "-l"],          ["{path}"]),
     "INSPECT":(["which"],             ["{cmd}"]),
     "EXPLORE":(["ls", "-la"],         ["{target}"]),
-    "HELP":   (["man"],               ["{cmd}"]),
+    "HELP":   (["echo"],              ["(HELP disabled) {cmd}"]),  # 禁用, 不会被执行
     "CUSTOM": (None, None),           # 自由命令, CommandSelector 处理
     # 自动发现的意图
     "READ_ETC":  (["cat"],             ["{path}"]),

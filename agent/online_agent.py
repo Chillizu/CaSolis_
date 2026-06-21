@@ -195,6 +195,19 @@ class OnlineAgent:
             self.classifier.head.parameters(), lr=lr, weight_decay=1e-4
         )
 
+        # Conductor 在线对齐训练
+        if self.conductor_path_active:
+            self.conductor_optimizer = torch.optim.AdamW(
+                self.nanny.conductor.head.parameters(), lr=5e-6, weight_decay=1e-4
+            )
+            self.conductor_train_buffer = []  # 累积 (state_text, intent) 一致样本
+            # 加载离线训练数据 (用于混合训练防止遗忘)
+            self.offline_train_data = self._load_offline_conductor_data()
+            print(f"  ✅ Conductor 在线对齐就绪 (离线样本={len(self.offline_train_data)})")
+        else:
+            self.conductor_train_buffer = []
+            self.offline_train_data = []
+
         # 统计
         self.step_count = 0
         self.total_reward = 0.0
@@ -246,7 +259,7 @@ class OnlineAgent:
         "EXPLORE": 0.8,
         # 低价值 (容易偷懒, 严重惩罚)
         "INSPECT": 0.1,
-        "HELP":   -0.3,
+        "HELP":   -0.8,
     }
 
     def _compute_reward(self, result: ExecResult, intent: str, novelty: float, intent_diversity: float = 0.0) -> float:
@@ -287,7 +300,7 @@ class OnlineAgent:
                 else:
                     break
             if consecutive_help >= 2:
-                reward -= 0.3 * min(consecutive_help, 5)  # 累进惩罚
+                reward -= 0.5 * min(consecutive_help, 5)  # 累进惩罚
 
         # 持续非 HELP 奖励 (鼓励探索)
         if intent != "HELP":
@@ -302,6 +315,98 @@ class OnlineAgent:
 
         return reward
 
+    def _load_offline_conductor_data(self) -> list:
+        """加载离线训练数据, 用于 Conductor 混合训练防止遗忘"""
+        import json
+        data_path = "data/intent_train_v3.jsonl"
+        offline = []
+        try:
+            with open(data_path) as f:
+                for line in f:
+                    r = json.loads(line)
+                    if r["intent"] in INTENTS:
+                        offline.append((r["state_text"], r["intent"]))
+        except:
+            pass
+        return offline[:1000]  # 取前1000条, 够用
+
+    def _collect_conductor_agreement(self, state_text: str, executed_intent: str):
+        """收集 Conductor 和分类器一致的样本"""
+        if not self.conductor_path_active:
+            return
+        if executed_intent in ("HELP", "CUSTOM"):
+            return  # HELP/CUSTOM 不适合当训练信号
+
+        try:
+            _, cond_logits = self.nanny.think(state_text)
+            cond_probs = torch.nn.functional.softmax(cond_logits, dim=-1)
+            cond_intent = INTENTS[cond_logits.argmax().item()]
+            cond_conf = cond_probs.max().item()
+
+            # 如果 Conductor 和实际执行的 intent 一致, 且置信度还行 → 好样本
+            if cond_intent == executed_intent and cond_conf > 0.3:
+                self.conductor_train_buffer.append((state_text, executed_intent))
+                # 控制缓冲区大小, 保留最近 500 条
+                if len(self.conductor_train_buffer) > 500:
+                    self.conductor_train_buffer = self.conductor_train_buffer[-500:]
+        except Exception:
+            pass
+
+    def _train_conductor_online(self):
+        """Conductor 在线对齐训练: 一致样本 + 离线混合"""
+        if not self.conductor_path_active:
+            return 0.0
+        if len(self.conductor_train_buffer) < 4:
+            return 0.0
+
+        from agent.conductor import N_INTENTS
+        import random
+
+        self.nanny.conductor.head.train()
+        total_loss = 0.0
+        n_batches = 0
+
+        for _ in range(3):  # 每次训练跑 3 个 mini-batch
+            batch = []
+
+            # 50% 在线一致样本
+            n_online = min(16, len(self.conductor_train_buffer))
+            samples = random.sample(self.conductor_train_buffer, n_online)
+            batch.extend(samples)
+
+            # 50% 离线数据 (防止遗忘)
+            if self.offline_train_data:
+                n_offline = min(16, len(self.offline_train_data))
+                batch.extend(random.sample(self.offline_train_data, n_offline))
+
+            if len(batch) < 4:
+                continue
+
+            texts = [b[0] for b in batch]
+            labels = [INTENTS.index(b[1]) if b[1] in INTENTS else 0 for b in batch]
+
+            embs_np = self.nanny.conductor.encoder.encode(texts, convert_to_numpy=True)
+            embs = torch.from_numpy(embs_np).float().to(self.device)
+
+            self.conductor_optimizer.zero_grad()
+            _, logits = self.nanny.conductor.forward_emb(embs)
+            loss = torch.nn.functional.cross_entropy(
+                logits, torch.tensor(labels, device=self.device)
+            )
+            loss.backward()
+            torch.nn.utils.clip_grad_norm_(self.nanny.conductor.head.parameters(), 1.0)
+            self.conductor_optimizer.step()
+
+            total_loss += loss.item()
+            n_batches += 1
+
+        self.nanny.conductor.head.eval()
+
+        # 清空缓冲区 (已经用过了)
+        self.conductor_train_buffer.clear()
+
+        return total_loss / max(n_batches, 1)
+
     def _select_intent(self, state_text: str) -> str:
         """选择意图: 分类器 + 自适应探索 (含 CUSTOM 新颖度驱动)"""
         # 偶尔选 CUSTOM (新颖度低时更频繁)
@@ -312,14 +417,27 @@ class OnlineAgent:
         if random.random() < custom_prob:
             return "CUSTOM"
         
-        # ε-贪心探索
+        # ε-贪心探索 (跳过 HELP — 禁用)
         if random.random() < self.explore_prob:
             return random.choice([i for i in INTENTS if i not in ("HELP", "INSPECT")])
         
         intent = self.classifier.predict(state_text)
         
-        # 如果分类器选了 HELP/INSPECT, 检查置信度
-        if intent in ("HELP", "INSPECT"):
+        # HELP 已被禁用: 分类器选到 HELP 时重定向到第二高置信度的非 HELP 意图
+        if intent == "HELP":
+            emb = self.classifier.get_embedding(state_text)
+            with torch.no_grad():
+                logits = self.classifier.head(emb)
+            alternatives = [i for i in INTENTS if i not in ("HELP", "CUSTOM")]
+            sorted_idx = logits.argsort(descending=True).flatten()
+            for idx in sorted_idx.tolist():
+                alt = INTENTS[idx]
+                if alt in alternatives:
+                    return alt
+            return "INFO"  # 全 fail 兜底
+        
+        # INSPECT 也做低置信度保护 (保留)
+        if intent == "INSPECT":
             emb = self.classifier.get_embedding(state_text)
             with torch.no_grad():
                 logits = self.classifier.head(emb)
@@ -361,12 +479,17 @@ class OnlineAgent:
 
                     if best_prob > self.conductor_gate:
                         # 高置信度 → 走 Conductor
-                        intent, nanny_params, _ = self.nanny.translate(
+                        raw_intent, nanny_params, _ = self.nanny.translate(
                             thought, logits, state_text=state_text
                         )
-                        params = nanny_params
-                        used_conductor = True
-                        self.ab_stats["conductor"] += 1
+                        # Conductor 路径也跳过 HELP (HELP 应该由分类器兜底)
+                        if raw_intent == "HELP":
+                            pass  # 不执行, 降级到分类器
+                        else:
+                            intent = raw_intent
+                            params = nanny_params
+                            used_conductor = True
+                            self.ab_stats["conductor"] += 1
                 except Exception:
                     pass
 
@@ -385,6 +508,9 @@ class OnlineAgent:
                 if "cmd" not in params and intent in ("INSPECT", "HELP"):
                     params["cmd"] = "python3" if intent == "INSPECT" else "ls"
             self.ab_stats["classifier"] += 1
+
+        # Conductor 一致样本收集 (用于在线对齐训练)
+        self._collect_conductor_agreement(state_text, intent)
 
         # P1: 如果 params 还没设置 depth, 用 RND 新颖度计算
         if "depth" not in params:
@@ -619,11 +745,13 @@ class OnlineAgent:
             # 在线训练
             if i > 0 and i % self.train_interval == 0:
                 loss = self.train_step()
+                cond_loss = self._train_conductor_online()
                 if verbose:
                     rnd_stats = self.rnd.get_novelty_stats()
+                    cond_info = f"  |  Conductor对齐={cond_loss:.4f}" if cond_loss > 0 else ""
                     print(f"  [{i:4d}] 训练 loss={loss:.4f}  |  "
                           f"新颖度 avg={rnd_stats['running_errors_avg']:.4f}  |  "
-                          f"缓冲区 {self.buffer.size}")
+                          f"缓冲区 {self.buffer.size}{cond_info}")
 
             # 每隔 N 步显示统计
             if verbose and (i + 1) % 10 == 0:
