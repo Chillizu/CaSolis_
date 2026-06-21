@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import subprocess
 import shlex
+import re
 from dataclasses import dataclass
 from typing import Any
 
@@ -84,6 +85,59 @@ CUSTOM_COMMANDS = {
     "services": {"args": ["cat", "/etc/services"], "desc": "服务端口映射"},
     # Shell
     "completions":{"args": ["compgen", "-c"], "desc": "所有可用命令"},
+}
+
+
+# ── 多命令组合 (P1) ────────────────────────────────────────────
+
+# 意图 → 命令序列 (深度探索)
+# 每条: (args_template, pipe_args) or (command, None)
+# 执行时只跑前 depth 条 (depth 由保姆从想法向量计算)
+INTENT_MULTI_COMMANDS = {
+    "INFO": [
+        (["cat", "/proc/cpuinfo"], ["head", "-5"]),
+        (["free", "-h"], None),
+        (["uname", "-a"], None),
+        (["uptime"], None),
+        (["df", "-h"], None),
+    ],
+    "READ": [
+        (["cat", "{path}"], None),
+        (["wc", "-l", "{path}"], None),
+        (["stat", "{path}"], None),
+    ],
+    "SEARCH": [
+        (["grep", "{pattern}", "{path}"], None),
+        (["wc", "-l", "{path}"], None),
+        (["grep", "-c", "{pattern}", "{path}"], None),
+    ],
+    "LIST": [
+        (["ls", "-la", "{path}"], None),
+        (["ls", "-la", "{path}/"], ["head", "-10"]),
+    ],
+    "COUNT": [
+        (["wc", "-l", "{path}"], None),
+        (["wc", "-c", "{path}"], None),
+    ],
+    "INSPECT": [
+        (["which", "{cmd}"], None),
+        (["type", "{cmd}"], None),
+        (["file", "{cmd}"], None),
+    ],
+    "READ_ETC": [
+        (["cat", "{path}"], None),
+        (["wc", "-l", "{path}"], None),
+        (["head", "-20", "{path}"], None),
+    ],
+    "DISK_USAGE": [
+        (["du", "-sh", "{path}"], None),
+        (["df", "-h"], None),
+        (["df", "-i"], None),
+    ],
+    "USB_DEVICES": [
+        (["lsusb"], None),
+        (["lsusb", "-v"], ["head", "-30"]),
+    ],
 }
 
 
@@ -254,6 +308,112 @@ class TemplateEngine:
         except Exception as e:
             self._stats["errors"] += 1
             return ExecResult("", str(e), 1, 0)
+
+    def _build_multi_cmd(self, intent: str, params: dict[str, Any], index: int) -> tuple[list[str] | None, str | None]:
+        """
+        构建多命令序列中第 index 条命令.
+        Returns: (args_list, shell_cmd) — 二选一, 有 pipe 时用 shell_cmd
+        """
+        cmds = INTENT_MULTI_COMMANDS.get(intent)
+        if not cmds or index >= len(cmds):
+            return None, None
+
+        args_template, pipe_template = cmds[index]
+        args = list(args_template)
+
+        # 模板参数替换 (支持 {path}/ 这种带后缀的写法)
+        args_str = " ".join(args)
+        for key in list(params.keys()):
+            placeholder = "{" + key + "}"
+            if placeholder in args_str:
+                args_str = args_str.replace(placeholder, str(params[key]))
+        args = shlex.split(args_str)
+        # 检查是否所有占位符都已替换
+        if "{" in args_str and "}" in args_str:
+            return None, None
+
+        if pipe_template:
+            # pipe_template 是 args 列表, 如 ["head", "-5"]
+            # 拼成 shell pipe 目标: "head -5"
+            pipe_dest = " ".join(shlex.quote(p) for p in pipe_template)
+            main_part = " ".join(shlex.quote(a) for a in args)
+            shell_cmd = f"{main_part} | {pipe_dest}"
+            return args, shell_cmd
+
+        return args, None
+
+    def execute_multi(self, intent: str, params: dict[str, Any], depth: int = 2) -> list[ExecResult]:
+        """
+        执行多命令序列, 返回结果列表
+        depth: 执行前 depth 条命令 (1-3)
+        """
+        import time
+        results = []
+        n_cmds = min(depth, 3)
+
+        for i in range(n_cmds):
+            args, shell_cmd = self._build_multi_cmd(intent, params, i)
+            if args is None:
+                results.append(ExecResult("", f"序列第{i+1}条: 不支持的参数", 1, 0))
+                break
+
+            ok, msg = self.validate(args)
+            if not ok:
+                self._stats["blocked"] += 1
+                results.append(ExecResult("", msg, 1, 0))
+                break
+
+            self._stats["calls"] += 1
+
+            if self.dry_run:
+                display = shell_cmd if shell_cmd else " ".join(args)
+                results.append(ExecResult(f"[DRY RUN] {display}", "", 0, 0))
+                continue
+
+            try:
+                start = time.monotonic()
+                if self.sandbox:
+                    cmd_str = shell_cmd if shell_cmd else " ".join(shlex.quote(a) for a in args)
+                    r = self.sandbox.execute(cmd_str, timeout=self.timeout)
+                    elapsed = (time.monotonic() - start) * 1000
+                    if r.exit_code != 0:
+                        self._stats["errors"] += 1
+                    results.append(ExecResult(
+                        stdout=r.stdout or "",
+                        stderr=r.stderr or "",
+                        exit_code=r.exit_code,
+                        duration_ms=elapsed,
+                    ))
+                else:
+                    if shell_cmd:
+                        result = subprocess.run(
+                            ["/bin/sh", "-c", shell_cmd],
+                            capture_output=True, text=True, timeout=self.timeout,
+                        )
+                    else:
+                        result = subprocess.run(
+                            args,
+                            capture_output=True, text=True, timeout=self.timeout,
+                        )
+                    elapsed = (time.monotonic() - start) * 1000
+                    if result.returncode != 0:
+                        self._stats["errors"] += 1
+                    results.append(ExecResult(
+                        stdout=result.stdout or "",
+                        stderr=result.stderr or "",
+                        exit_code=result.returncode,
+                        duration_ms=elapsed,
+                    ))
+            except subprocess.TimeoutExpired:
+                self._stats["errors"] += 1
+                results.append(ExecResult("", f"超时 ({self.timeout}s)", 124, self.timeout * 1000))
+                break
+            except Exception as e:
+                self._stats["errors"] += 1
+                results.append(ExecResult("", str(e), 1, 0))
+                break
+
+        return results
 
     def stats(self) -> dict:
         return {**self._stats}

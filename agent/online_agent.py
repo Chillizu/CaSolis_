@@ -48,6 +48,7 @@ from agent.world_model import WorldModel
 from agent.intent_discoverer import IntentDiscoverer
 from benchmark.param_extractor import ParameterExtractor
 from benchmark.template_engine import TemplateEngine, ExecResult
+from collections import deque
 
 
 # 意图列表
@@ -126,7 +127,7 @@ class OnlineAgent:
         lr: float = 1e-4,
         novelty_weight: float = 0.3,
         explore_prob: float = 0.1,
-        conductor_gate: float = 0.8,  # A/B 切换阈值
+        conductor_gate: float = 0.7,  # A/B 切换阈值 (经验证 0.7 最优)
     ):
         print("初始化 OnlineAgent...")
 
@@ -186,6 +187,8 @@ class OnlineAgent:
             print(f"  ⚠️ 保姆不可用: {e}")
         
         self.ab_stats = {"conductor": 0, "classifier": 0, "conductor_success": 0, "classifier_success": 0}
+        self.multi_cmds_count = 0  # P1: 多命令步数
+        self.ab_window = deque(maxlen=100)  # P1.5: 滑动窗口, 记录 (used_conductor, success)
 
         # 优化器 (只训练分类头)
         self.optimizer = torch.optim.AdamW(
@@ -243,7 +246,7 @@ class OnlineAgent:
         "EXPLORE": 0.8,
         # 低价值 (容易偷懒, 严重惩罚)
         "INSPECT": 0.1,
-        "HELP":    0.0,
+        "HELP":   -0.3,
     }
 
     def _compute_reward(self, result: ExecResult, intent: str, novelty: float, intent_diversity: float = 0.0) -> float:
@@ -274,6 +277,17 @@ class OnlineAgent:
         recent = self.intent_history[-4:] if len(self.intent_history) >= 4 else []
         if len(recent) >= 4 and len(set(recent)) == 1:
             reward *= 0.5
+
+        # HELP 连续惩罚: 连续 HELP 越多, 惩罚越大
+        if intent == "HELP":
+            consecutive_help = 0
+            for h in reversed(self.intent_history[-10:]):
+                if h == "HELP":
+                    consecutive_help += 1
+                else:
+                    break
+            if consecutive_help >= 2:
+                reward -= 0.3 * min(consecutive_help, 5)  # 累进惩罚
 
         # 持续非 HELP 奖励 (鼓励探索)
         if intent != "HELP":
@@ -333,21 +347,28 @@ class OnlineAgent:
         intent = None
         params = {}
 
-        if self.conductor_path_active and random.random() < 0.5:
-            # 50% 概率尝试 Conductor 路径
-            try:
-                thought, logits = self.nanny.think(state_text)
-                probs = torch.nn.functional.softmax(logits, dim=-1)
-                best_prob = probs.max().item()
+        # P1.5: A/B 自适应采样率
+        if self.conductor_path_active:
+            cond_rate = self.ab_stats["conductor_success"] / max(self.ab_stats["conductor"], 1)
+            clf_rate = self.ab_stats["classifier_success"] / max(self.ab_stats["classifier"], 1)
+            # Conductor 胜率接近分类器时多采样, 差距大时保守
+            p_conductor = 0.2 + 0.6 * max(0, min(1.0, cond_rate / max(clf_rate, 0.01)))
+            if random.random() < p_conductor:
+                try:
+                    thought, logits = self.nanny.think(state_text)
+                    probs = torch.nn.functional.softmax(logits, dim=-1)
+                    best_prob = probs.max().item()
 
-                if best_prob > self.conductor_gate:
-                    # 高置信度 → 走 Conductor
-                    intent, nanny_params, _ = self.nanny.translate(thought, logits)
-                    params = nanny_params
-                    used_conductor = True
-                    self.ab_stats["conductor"] += 1
-            except Exception:
-                pass
+                    if best_prob > self.conductor_gate:
+                        # 高置信度 → 走 Conductor
+                        intent, nanny_params, _ = self.nanny.translate(
+                            thought, logits, state_text=state_text
+                        )
+                        params = nanny_params
+                        used_conductor = True
+                        self.ab_stats["conductor"] += 1
+                except Exception:
+                    pass
 
         if not used_conductor:
             # 3. 旧分类器路径 (fallback)
@@ -365,9 +386,45 @@ class OnlineAgent:
                     params["cmd"] = "python3" if intent == "INSPECT" else "ls"
             self.ab_stats["classifier"] += 1
 
-        # 4. 执行
-        result = self.engine.execute(intent, params)
-        output = (result.stdout or result.stderr or "")
+        # P1: 如果 params 还没设置 depth, 用 RND 新颖度计算
+        if "depth" not in params:
+            # RND 新颖度范围 ~[0.003, 0.025]
+            rnd_stats = self.rnd.get_novelty_stats()
+            rnd_novelty_val = rnd_stats.get("running_errors_avg", 0.01)
+            if rnd_novelty_val > 0.015:
+                depth_from_novelty = 3
+            elif rnd_novelty_val > 0.008:
+                depth_from_novelty = 2
+            else:
+                depth_from_novelty = 1
+            params["depth"] = depth_from_novelty
+
+        # 4. 执行 (多命令组合 P1)
+        depth = params.get("depth", 1)
+        multi_results = None
+
+        if depth > 1 and intent not in ("CUSTOM", "HELP", "EXPLORE"):
+            try:
+                multi_results = self.engine.execute_multi(intent, params, depth)
+            except Exception:
+                multi_results = None
+
+        if multi_results and len(multi_results) > 0 and multi_results[0].exit_code != -1:
+            # 多命令: 合并输出, 用第一条为主结果
+            output_parts = []
+            all_exit_ok = True
+            for i, r in enumerate(multi_results):
+                body = (r.stdout or r.stderr or "").strip()
+                if body:
+                    output_parts.append(f"--- [{i+1}] ---\n{body}")
+                if r.exit_code != 0:
+                    all_exit_ok = False
+            output = "\n".join(output_parts)
+            result = multi_results[0]
+            self.multi_cmds_count += 1
+        else:
+            result = self.engine.execute(intent, params)
+            output = (result.stdout or result.stderr or "")
         
         # 全量日志
         _log_execution(intent, params, result, output, state_text)
@@ -417,7 +474,8 @@ class OnlineAgent:
                             print(f"     {ni['name']:20s} ({ni['n_samples']}条, 例: {ni['cmd_base']})")
 
         # 5. 更新状态
-        self.state_encoder.update(intent, f"{intent} {params}", output)
+        cmd_summary = f"{intent} depth={depth}" if depth > 1 else f"{intent} {params}"
+        self.state_encoder.update(intent, cmd_summary, output)
         self.state_encoder.set_goal(self._get_next_goal())
 
         # 6. 世界模型好奇心 + RND 新颖度
@@ -464,14 +522,18 @@ class OnlineAgent:
         # 9. 记录统计
         self.total_reward += reward
         self.intent_history.append(intent)
-        if (result.exit_code == 0) and output:
+        step_success = (result.exit_code == 0) and bool(output)
+        if step_success:
             self.success_count += 1
             if used_conductor:
                 self.ab_stats["conductor_success"] += 1
             else:
                 self.ab_stats["classifier_success"] += 1
 
-        return (result.exit_code == 0), reward
+        # P1.5: 滑动窗口记录
+        self.ab_window.append((used_conductor, step_success))
+
+        return step_success, reward
 
     def train_step(self):
         """在线训练: 从缓冲区采样, 微调分类头"""
@@ -627,6 +689,7 @@ class OnlineAgent:
                 k: v / max(self.step_count, 1) for k, v in intent_dist.items()
             },
             "rnd_stats": self.rnd.get_novelty_stats(),
+            "multi_cmds": self.multi_cmds_count,
         }
 
         print(f"\n{'=' * 45}")
@@ -642,6 +705,14 @@ class OnlineAgent:
         cond_rate = a['conductor_success'] / max(a['conductor'], 1) * 100
         clf_rate = a['classifier_success'] / max(a['classifier'], 1) * 100
         print(f"  A/B: 指挥家={a['conductor']}次 ({cond_rate:.0f}%)  分类器={a['classifier']}次 ({clf_rate:.0f}%)")
+        if self.multi_cmds_count > 0:
+            print(f"  多命令步数: {self.multi_cmds_count}/{result['steps']} ({self.multi_cmds_count/result['steps']*100:.0f}%)")
+
+        # P1.5: 自适应采样率
+        cond_rate = self.ab_stats["conductor_success"] / max(self.ab_stats["conductor"], 1)
+        clf_rate = self.ab_stats["classifier_success"] / max(self.ab_stats["classifier"], 1)
+        p_cond = 0.2 + 0.6 * max(0, min(1.0, cond_rate / max(clf_rate, 0.01)))
+        print(f"  A/B 自适应: p_conductor={p_cond:.0%}  (Conductor胜率={cond_rate:.0%} vs 分类器胜率={clf_rate:.0%})")
         print(f"{'=' * 45}")
 
         return result

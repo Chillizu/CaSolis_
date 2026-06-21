@@ -9,9 +9,10 @@
 
 import torch
 import torch.nn.functional as F
-from typing import Any
+from typing import Any, Optional
 
 from benchmark.template_engine import TemplateEngine, ExecResult
+from benchmark.param_extractor import ParameterExtractor
 
 
 INTENTS = ["READ", "LIST", "SEARCH", "INFO", "INSPECT", "COUNT", "EXPLORE", "HELP", "READ_ETC", "USB_DEVICES", "DISK_USAGE"]
@@ -45,6 +46,7 @@ class Nanny:
         # ConductorHead
         from agent.conductor import Conductor
         self.conductor = Conductor(checkpoint=conductor_checkpoint)
+        self.param_extractor = ParameterExtractor()
 
     def think(self, state_text: str) -> tuple:
         """编码状态文本 → (想法向量, 分类logits)"""
@@ -56,7 +58,8 @@ class Nanny:
         return thought.squeeze(0), logits.squeeze(0)
 
     def translate(
-        self, thought: torch.Tensor, logits: torch.Tensor, threshold: float = 0.3
+        self, thought: torch.Tensor, logits: torch.Tensor,
+        threshold: float = 0.3, state_text: str = ""
     ) -> tuple[str, dict, float]:
         """
         想法 → 意图 + 参数
@@ -65,6 +68,7 @@ class Nanny:
             thought: (16,) tensor
             logits: (11,) tensor
             threshold: 置信度阈值, 低于此值走 CUSTOM
+            state_text: 当前状态文本 (用于参数提取)
         Returns:
             (intent_name, params, confidence)
         """
@@ -77,34 +81,54 @@ class Nanny:
         if best_prob < threshold:
             best_intent = "CUSTOM"
 
-        # 参数推断 (基于想法向量的激活模式)
-        params = self._vector_to_params(thought, best_intent)
+        # 参数推断 (基于想法向量 + 状态文本规则提取)
+        params = self._vector_to_params(thought, best_intent, state_text)
+
+        # P1: 从想法向量计算探索深度
+        thought_norm = float(thought.norm().item())
+        depth = min(3, max(1, int(thought_norm * 0.6 + 0.5)))
+        params["depth"] = depth
 
         self.stats["total"] += 1
         self.stats["by_intent"][best_intent] = self.stats["by_intent"].get(best_intent, 0) + 1
 
         return best_intent, params, best_prob
 
-    def _vector_to_params(self, thought: torch.Tensor, intent: str) -> dict:
-        """从想法向量推断参数"""
+    def _vector_to_params(self, thought: torch.Tensor, intent: str, state_text: str = "") -> dict:
+        """从想法向量 + 状态文本推断参数"""
         params = {}
-        vec = thought.detach().cpu().numpy()
 
-        if intent == "READ":
+        # 1. 先用规则提取器从状态文本中提取参数
+        if state_text:
+            rule_params = self.param_extractor.extract(intent, state_text)
+            params.update(rule_params)
+
+        # 2. 只有确实没提取到时, 才用默认兜底
+        if intent == "READ" and "path" not in params:
             params["path"] = "/etc/hosts"
         elif intent == "SEARCH":
-            params["pattern"] = "root"
+            if "pattern" not in params:
+                params["pattern"] = "root"
+            if "path" not in params:
+                params["path"] = "/etc/passwd"
+        elif intent == "COUNT" and "path" not in params:
             params["path"] = "/etc/passwd"
-        elif intent == "COUNT":
-            params["path"] = "/etc/passwd"
-        elif intent == "INSPECT":
+        elif intent == "INSPECT" and "cmd" not in params:
             params["cmd"] = "python3"
-        elif intent == "HELP":
+        elif intent == "HELP" and "cmd" not in params:
             params["cmd"] = "ls"
-        elif intent == "READ_ETC":
+        elif intent == "READ_ETC" and "path" not in params:
             params["path"] = "/etc/passwd"
-        elif intent == "DISK_USAGE":
+        elif intent == "DISK_USAGE" and "path" not in params:
             params["path"] = "/"
+
+        # 3. 想法向量微调: 高激活维度影响参数选择
+        vec = thought.detach().cpu().numpy()
+        if intent == "SEARCH" and abs(vec[0]) > 0.8:
+            # 如果想法向量 dim[0] 高激活, 换搜索关键词
+            alt_patterns = ["bash", "nobody", "daemon", "www-data"]
+            idx = int(abs(vec[0]) * 3) % len(alt_patterns)
+            params["pattern"] = alt_patterns[idx]
 
         return params
 

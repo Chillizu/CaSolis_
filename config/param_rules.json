@@ -1,9 +1,9 @@
 {
   "version": 1,
-  "description": "\u610f\u56fe\u2192\u53c2\u6570\u63d0\u53d6\u89c4\u5219 (\u786e\u5b9a\u6027\u6620\u5c04, \u4e0d\u4f9d\u8d56 LLM)",
+  "description": "意图→参数提取规则 (确定性映射, 不依赖 LLM)",
   "intents": {
     "READ": {
-      "description": "\u8bfb\u53d6\u6587\u4ef6\u5185\u5bb9",
+      "description": "读取文件内容",
       "params": [
         "path"
       ],
@@ -15,7 +15,7 @@
             "(?:/etc/|/var/|/tmp/|/proc/|/home/|/opt/|/dev/|/sys/|/usr/)?[a-zA-Z0-9_./-]+\\.(?:txt|log|conf|cfg|ini|json|yaml|yml|xml|sh|py|md)",
             ""
           ],
-          "note": "\u4ece\u63cf\u8ff0\u4e2d\u63d0\u53d6\u6587\u4ef6\u8def\u5f84"
+          "note": "从描述中提取文件路径"
         },
         {
           "param": "path",
@@ -27,13 +27,13 @@
             "/proc/cpuinfo",
             "/proc/meminfo"
           ],
-          "note": "\u5e38\u7528\u7cfb\u7edf\u6587\u4ef6\u5173\u952e\u5b57"
+          "note": "常用系统文件关键字"
         },
         {
           "param": "path",
           "priority": 1,
           "default": "/etc/hostname",
-          "note": "\u65e0\u5339\u914d\u65f6\u7684\u9ed8\u8ba4\u6587\u4ef6"
+          "note": "无匹配时的默认文件"
         }
       ],
       "keyword_map": {
@@ -49,7 +49,7 @@
       }
     },
     "LIST": {
-      "description": "\u5217\u51fa\u76ee\u5f55\u5185\u5bb9",
+      "description": "列出目录内容",
       "params": [
         "path"
       ],
@@ -61,17 +61,17 @@
             "(?:/etc|/tmp|/var|/opt|/home|/proc|/dev|/sys|/usr|/run|/mnt)",
             ""
           ],
-          "note": "\u4ece\u63cf\u8ff0\u4e2d\u63d0\u53d6\u76ee\u5f55\u8def\u5f84"
+          "note": "从描述中提取目录路径"
         },
         {
           "param": "path",
           "priority": 1,
           "default": "/",
-          "note": "\u65e0\u5339\u914d\u65f6\u9ed8\u8ba4\u6839\u76ee\u5f55"
+          "note": "无匹配时默认根目录"
         }
       ],
       "keyword_map": {
-        "\u6839\u76ee\u5f55": "/",
+        "根目录": "/",
         "etc": "/etc",
         "tmp": "/tmp",
         "var": "/var",
@@ -81,7 +81,7 @@
       }
     },
     "SEARCH": {
-      "description": "\u5728\u6587\u4ef6\u4e2d\u641c\u7d22\u5173\u952e\u8bcd",
+      "description": "在文件中搜索关键词",
       "params": [
         "pattern",
         "path"
@@ -91,16 +91,16 @@
           "param": "pattern",
           "priority": 10,
           "patterns": [
-            "(?:\u641c\u7d22|\u627e|\u627e\u51fa|\u8fc7\u6ee4|grep)\\s*(.*?)(?:\u5728|\u7684|\u7684\u884c)",
-            "(?:\u5305\u542b|\u5e26|\u542b\u6709)\\s*(\\w+)"
+            "(?:搜索|找|找出|过滤|grep)\\s*(.*?)(?:在|的|的行)",
+            "(?:包含|带|含有)\\s*(\\w+)"
           ],
-          "note": "\u4ece\u63cf\u8ff0\u4e2d\u63d0\u53d6\u641c\u7d22\u5173\u952e\u8bcd"
+          "note": "从描述中提取搜索关键词"
         },
         {
           "param": "pattern",
           "priority": 5,
           "default": "root",
-          "note": "\u65e0\u5339\u914d\u65f6\u7684\u9ed8\u8ba4\u5173\u952e\u8bcd"
+          "note": "无匹配时的默认关键词"
         },
         {
           "param": "path",
@@ -108,13 +108,13 @@
           "patterns": [
             "(?:/etc/|/var/|/tmp/|/proc/)?[a-zA-Z0-9_./-]+"
           ],
-          "note": "\u4ece\u63cf\u8ff0\u4e2d\u63d0\u53d6\u6587\u4ef6\u8def\u5f84"
+          "note": "从描述中提取文件路径"
         },
         {
           "param": "path",
           "priority": 1,
           "default": "/etc/passwd",
-          "note": "\u65e0\u5339\u914d\u65f6\u7684\u9ed8\u8ba4\u6587\u4ef6"
+          "note": "无匹配时的默认文件"
         }
       ],
       "keyword_patterns": {
@@ -128,7 +128,7 @@
       }
     },
     "INFO": {
-      "description": "\u83b7\u53d6\u7cfb\u7edf\u4fe1\u606f",
+      "description": "获取系统信息",
       "params": [
         "target"
       ],
@@ -137,46 +137,55 @@
           "param": "target",
           "priority": 1,
           "default": "uname",
-          "note": "\u9ed8\u8ba4\u7cfb\u7edf\u4fe1\u606f"
+          "note": "默认系统信息"
         }
       ],
       "keyword_map": {
-        "\u5f53\u524d\u65f6\u95f4": "date",
-        "\u73b0\u5728\u51e0\u70b9": "date",
+        "当前时间": "date",
+        "现在几点": "date",
         "date": "date",
         "cpu": "cpu",
         "CPU": "cpu",
-        "\u5904\u7406\u5668": "cpu",
-        "\u6838\u5fc3": "cpu",
-        "\u578b\u53f7": "cpu",
+        "处理器": "cpu",
+        "核心": "cpu",
+        "型号": "cpu",
         "mem": "mem",
-        "\u5185\u5b58": "mem",
+        "内存": "mem",
         "RAM": "mem",
         "disk": "disk",
-        "\u78c1\u76d8": "disk",
-        "\u786c\u76d8": "disk",
+        "磁盘": "disk",
+        "硬盘": "disk",
         "df": "disk",
-        "\u4f7f\u7528": "disk",
+        "使用": "disk",
         "uptime": "uptime",
-        "\u8fd0\u884c": "uptime",
-        "\u5df2\u8fd0\u884c": "uptime",
+        "运行": "uptime",
+        "已运行": "uptime",
         "whoami": "whoami",
-        "\u7528\u6237": "whoami",
-        "\u5f53\u524d\u7528\u6237": "whoami",
+        "用户": "whoami",
+        "当前用户": "whoami",
         "uname": "uname",
-        "\u7cfb\u7edf": "uname",
-        "\u5185\u6838": "uname",
-        "\u7248\u672c": "uname",
+        "系统": "uname",
+        "内核": "uname",
+        "版本": "uname",
         "hostname": "hostname",
-        "\u4e3b\u673a\u540d": "hostname",
-        "\u5185\u5b58\u4fe1\u606f": "mem",
-        "\u78c1\u76d8\u4fe1\u606f": "disk",
-        "CPU\u4fe1\u606f": "cpu",
-        "\u7cfb\u7edf\u4fe1\u606f": "uname"
+        "主机名": "hostname",
+        "内存信息": "mem",
+        "磁盘信息": "disk",
+        "CPU信息": "cpu",
+        "系统信息": "uname",
+        "network": "network",
+        "网络": "network",
+        "ip": "network",
+        "连接": "network",
+        "端口": "network",
+        "process": "process",
+        "进程": "process",
+        "ps": "process",
+        "运行中": "process"
       }
     },
     "COUNT": {
-      "description": "\u7edf\u8ba1\u6587\u4ef6\u884c\u6570",
+      "description": "统计文件行数",
       "params": [
         "path"
       ],
@@ -187,13 +196,13 @@
           "patterns": [
             "(?:/etc/|/var/|/tmp/|/proc/)?[a-zA-Z0-9_./-]+"
           ],
-          "note": "\u4ece\u63cf\u8ff0\u4e2d\u63d0\u53d6\u6587\u4ef6\u8def\u5f84"
+          "note": "从描述中提取文件路径"
         },
         {
           "param": "path",
           "priority": 1,
           "default": "/etc/passwd",
-          "note": "\u65e0\u5339\u914d\u65f6\u9ed8\u8ba4\u6587\u4ef6"
+          "note": "无匹配时默认文件"
         }
       ],
       "keyword_map": {
@@ -206,7 +215,7 @@
       }
     },
     "INSPECT": {
-      "description": "\u68c0\u67e5\u547d\u4ee4\u662f\u5426\u5b58\u5728",
+      "description": "检查命令是否存在",
       "params": [
         "cmd"
       ],
@@ -215,16 +224,16 @@
           "param": "cmd",
           "priority": 5,
           "patterns": [
-            "(?:\u68c0\u67e5|\u786e\u8ba4|\u67e5\u770b|\u68c0\u6d4b|\u627e|\u641c\u7d22)\\s*(\\w+)",
-            "(\\w+)\\s*(?:\u662f\u5426|\u547d\u4ee4|\u80fd\u4e0d\u80fd|\u72b6\u6001|\u4f4d\u7f6e|\u5b58\u5728|\u5b89\u88c5)"
+            "(?:检查|确认|查看|检测|找|搜索)\\s*(\\w+)",
+            "(\\w+)\\s*(?:是否|命令|能不能|状态|位置|存在|安装)"
           ],
-          "note": "\u4ece\u63cf\u8ff0\u4e2d\u63d0\u53d6\u547d\u4ee4\u540d"
+          "note": "从描述中提取命令名"
         },
         {
           "param": "cmd",
           "priority": 1,
           "default": "python3",
-          "note": "\u65e0\u5339\u914d\u65f6\u9ed8\u8ba4\u547d\u4ee4"
+          "note": "无匹配时默认命令"
         }
       ],
       "keyword_map": {
@@ -245,7 +254,7 @@
       }
     },
     "HELP": {
-      "description": "\u67e5\u770b\u547d\u4ee4\u5e2e\u52a9",
+      "description": "查看命令帮助",
       "params": [
         "cmd"
       ],
@@ -254,16 +263,16 @@
           "param": "cmd",
           "priority": 5,
           "patterns": [
-            "(?:\u67e5\u770b|\u4e86\u89e3|\u5b66\u4e60|\u67e5\u9605|\u770b)\\s*(\\w+)\\s*(?:\u7684\u5e2e\u52a9|\u7684\u7528\u6cd5|\u7684\u624b\u518c|\u6709\u54ea\u4e9b|\u547d\u4ee4)",
-            "(\\w+)\\s*(?:\u7684\u5e2e\u52a9|\u7684\u7528\u6cd5|\u7684\u624b\u518c|\u5e2e\u52a9|--help)"
+            "(?:查看|了解|学习|查阅|看)\\s*(\\w+)\\s*(?:的帮助|的用法|的手册|有哪些|命令)",
+            "(\\w+)\\s*(?:的帮助|的用法|的手册|帮助|--help)"
           ],
-          "note": "\u4ece\u63cf\u8ff0\u4e2d\u63d0\u53d6\u547d\u4ee4\u540d"
+          "note": "从描述中提取命令名"
         },
         {
           "param": "cmd",
           "priority": 1,
           "default": "ls",
-          "note": "\u65e0\u5339\u914d\u65f6\u9ed8\u8ba4\u547d\u4ee4"
+          "note": "无匹配时默认命令"
         }
       ],
       "keyword_map": {
@@ -282,7 +291,7 @@
       }
     },
     "EXPLORE": {
-      "description": "\u63a2\u7d22\u76ee\u5f55",
+      "description": "探索目录",
       "params": [
         "path"
       ],
@@ -291,20 +300,20 @@
           "param": "path",
           "priority": 5,
           "patterns": [
-            "(?:\u63a2\u7d22|\u6d4f\u89c8|\u770b|\u67e5\u770b|\u5bfb\u627e)\\s*(.*?)(?:\u76ee\u5f55|\u6587\u4ef6\u5939|\u91cc|\u7684\u4e1c\u897f)",
+            "(?:探索|浏览|看|查看|寻找)\\s*(.*?)(?:目录|文件夹|里|的东西)",
             ""
           ],
-          "note": "\u4ece\u63cf\u8ff0\u4e2d\u63d0\u53d6\u76ee\u5f55"
+          "note": "从描述中提取目录"
         },
         {
           "param": "path",
           "priority": 1,
           "default": "/",
-          "note": "\u65e0\u5339\u914d\u65f6\u9ed8\u8ba4\u6839\u76ee\u5f55"
+          "note": "无匹配时默认根目录"
         }
       ],
       "keyword_map": {
-        "\u6839\u76ee\u5f55": "/",
+        "根目录": "/",
         "etc": "/etc",
         "tmp": "/tmp",
         "var": "/var",
@@ -314,7 +323,7 @@
       }
     },
     "CUSTOM": {
-      "description": "\u81ea\u7531\u547d\u4ee4\u63a2\u7d22",
+      "description": "自由命令探索",
       "params": [
         "cmd_name",
         "path",
@@ -328,27 +337,27 @@
             "",
             ""
           ],
-          "note": "\u7531 CommandSelector \u51b3\u5b9a"
+          "note": "由 CommandSelector 决定"
         },
         {
           "param": "cmd_name",
           "priority": 1,
           "default": "file",
-          "note": "\u9ed8\u8ba4"
+          "note": "默认"
         }
       ],
       "keyword_map": {
-        "\u6587\u4ef6": "file",
-        "\u76ee\u5f55": "du",
-        "\u8fdb\u7a0b": "ps",
-        "\u5185\u5b58": "free",
-        "\u8bbe\u5907": "lspci",
-        "\u7f51\u7edc": "ip",
-        "\u6a21\u5757": "lsmod"
+        "文件": "file",
+        "目录": "du",
+        "进程": "ps",
+        "内存": "free",
+        "设备": "lspci",
+        "网络": "ip",
+        "模块": "lsmod"
       }
     },
     "READ_ETC": {
-      "description": "\u8bfb\u53d6 /etc \u914d\u7f6e\u6587\u4ef6",
+      "description": "读取 /etc 配置文件",
       "params": [
         "path"
       ],
@@ -360,13 +369,13 @@
             "(/etc/[\\w./-]+)",
             ""
           ],
-          "note": "\u4ece\u63cf\u8ff0\u63d0\u53d6\u8def\u5f84"
+          "note": "从描述提取路径"
         },
         {
           "param": "path",
           "priority": 1,
           "default": "/etc/passwd",
-          "note": "\u9ed8\u8ba4"
+          "note": "默认"
         }
       ],
       "keyword_map": {
@@ -378,13 +387,13 @@
       }
     },
     "USB_DEVICES": {
-      "description": "\u67e5\u770b USB \u8bbe\u5907",
+      "description": "查看 USB 设备",
       "params": [],
       "rules": [],
       "keyword_map": {}
     },
     "DISK_USAGE": {
-      "description": "\u67e5\u770b\u78c1\u76d8\u4f7f\u7528\u91cf",
+      "description": "查看磁盘使用量",
       "params": [
         "path"
       ],
@@ -397,13 +406,13 @@
             "/etc|/var|/tmp|/home|/opt|/usr",
             ""
           ],
-          "note": "\u4ece\u63cf\u8ff0\u63d0\u53d6\u76ee\u5f55"
+          "note": "从描述提取目录"
         },
         {
           "param": "path",
           "priority": 1,
           "default": "/",
-          "note": "\u9ed8\u8ba4"
+          "note": "默认"
         }
       ],
       "keyword_map": {
