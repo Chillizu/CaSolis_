@@ -149,31 +149,61 @@ SAFE_PATHS = [
     "/var/", "/sys/", "/home/", "/",
 ]
 
-# 允许的命令
+# 允许的命令 (open: 全部只读命令)
 SAFE_COMMANDS = {
-    # 基础
-    "cat", "ls", "grep", "wc", "which", "man",
-    "head", "tail", "sort", "uniq", "cut", "tr",
-    "uptime", "whoami", "id", "uname", "df", "date", "hostname",
-    # 系统信息 (新增)
-    "arch", "lscpu", "lsblk", "free", "ps", "ss", "ip",
-    "dmesg", "pstree", "lsmod", "lspci", "lsusb", "env",
-    "locale", "timedatectl", "mount",
-    # 文件
-    "file", "stat", "du", "type",
+    # 基础文件
+    "cat", "ls", "grep", "wc", "which", "head", "tail",
+    "sort", "uniq", "cut", "tr", "tee", "od", "hexdump",
+    "strings", "cmp", "diff", "comm", "fold", "nl", "pr",
+    "expand", "unexpand", "rev", "tac",
+    # 系统信息
+    "uname", "hostname", "uptime", "date", "whoami", "id",
+    "who", "w", "users", "groups", "logname",
+    "arch", "lscpu", "lsblk", "free", "df", "du",
+    "ps", "pstree", "top", "pidof", "pgrep",
+    "dmesg", "lsmod", "modinfo", "lspci", "lsusb",
+    "lsof", "fuser", "stat", "file", "type",
+    "mount", "df", "lsblk", "blkid", "findmnt",
+    # 环境
+    "env", "printenv", "locale", "localectl", "timedatectl",
+    "getconf", "yes", "basename", "dirname", "realpath",
+    "readlink", "readelf", "ldd",
+    # 网络 (read-only)
+    "ip", "ss", "ping", "nslookup", "host", "dig",
+    "route", "arp", "ifconfig", "netstat",
+    # 进程
+    "ps", "top", "htop", "pstree", "lsof", "fuser",
+    "pidof", "pgrep", "killall", "skill",
     # shell
-    "compgen", "printf", "echo", "seq", "sh",
-    # 额外工具
-    "find", "lscpu", "lsblk",
-    "pstree", "lsmod", "lspci", "env", "locale",
-    "timedatectl", "mount", "file", "stat", "du", "type",
+    "echo", "printf", "seq", "sh", "command",
+    "compgen", "compopt", "complete",
+    # 查找
+    "find", "locate", "whereis", "which", "type",
+    # 时间
+    "cal", "ncal", "hwclock", "time", "timeout",
 }
 
-# 危险命令黑名单
+# 危险命令黑名单 (写操作/系统修改)
 BLOCKED_COMMANDS = {
     "rm", "chmod", "chown", "dd", "mkfs",
     "mount", "umount", "shutdown", "reboot",
-    "sudo", "su", "passwd",
+    "sudo", "su", "passwd", "kill", "pkill", "renice",
+    "ln", "mv", "cp", "mkdir", "rmdir", "touch",
+    "truncate", "fallocate", "mknod", "mkfifo",
+    "insmod", "rmmod", "modprobe", "depmod",
+    "iptables", "ufw", "sysctl",  # sysctl 改内核参数
+    "fdisk", "parted", "mkfs.*", "fsck",
+    "crontab", "at", "batch",
+    "adduser", "deluser", "addgroup", "delgroup",
+}
+
+# 危险标志参数 — CUSTOM 路径拒绝
+DANGEROUS_FLAGS = {
+    "-w", "--write", "--delete", "--remove",
+    "-o", "--output", ">", ">>",
+    "--force", "-f",
+    "--format", "--mkfs",
+    "-exec",  # find -exec 过于危险, 禁止
 }
 
 
@@ -252,6 +282,12 @@ class TemplateEngine:
                 if not any(arg.startswith(p) for p in SAFE_PATHS):
                     self._stats["blocked"] += 1
                     return False, f"路径不在安全范围内: {arg}"
+
+        # 危险标志检查 (拒绝任何含破坏性标志的命令)
+        for arg in args[1:]:
+            if arg in DANGEROUS_FLAGS:
+                self._stats["blocked"] += 1
+                return False, f"危险标志被禁止: {arg}"
 
         return True, ""
 

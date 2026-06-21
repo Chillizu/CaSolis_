@@ -95,6 +95,22 @@ class RND:
 
         return loss.item()
 
+    def reset(self):
+        """重置新颖度: 清空历史误差, 重新初始化 predictor 权重"""
+        self.running_errors.clear()
+        self.max_error = 1.0
+        # 重新初始化 predictor (遗忘旧的状态分布)
+        for layer in self.predictor.net:
+            if hasattr(layer, 'reset_parameters'):
+                layer.reset_parameters()
+        self.optimizer = torch.optim.AdamW(self.predictor.parameters(), lr=1e-3)
+
+    def soft_reset(self, factor: float = 0.5):
+        """软重置: 降低 max_error, 让已熟悉的状态重新变得 mildly novel"""
+        self.max_error *= factor
+        if self.max_error < 0.1:
+            self.max_error = 1.0
+
     def get_novelty_stats(self) -> dict:
         """返回新颖度统计"""
         return {

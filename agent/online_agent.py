@@ -571,18 +571,15 @@ class OnlineAgent:
         # Conductor 一致样本收集 (用于在线对齐训练)
         self._collect_conductor_agreement(state_text, intent)
 
-        # P1: 如果 params 还没设置 depth, 用 RND 新颖度计算
+        # D: 固定概率随机深度 (不再依赖RND新颖度)
         if "depth" not in params:
-            # RND 新颖度范围 ~[0.003, 0.025]
-            rnd_stats = self.rnd.get_novelty_stats()
-            rnd_novelty_val = rnd_stats.get("running_errors_avg", 0.01)
-            if rnd_novelty_val > 0.015:
-                depth_from_novelty = 3
-            elif rnd_novelty_val > 0.008:
-                depth_from_novelty = 2
+            roll = random.random()
+            if roll < 0.3:
+                params["depth"] = 3
+            elif roll < 0.6:
+                params["depth"] = 2
             else:
-                depth_from_novelty = 1
-            params["depth"] = depth_from_novelty
+                params["depth"] = 1
 
         # 4. 执行 (多命令组合 P1)
         depth = params.get("depth", 1)
@@ -823,6 +820,14 @@ class OnlineAgent:
                     print(f"  [{i:4d}] 训练 loss={loss:.4f}  |  "
                           f"新颖度 avg={rnd_stats['running_errors_avg']:.4f}  |  "
                           f"缓冲区 {self.buffer.size}{cond_info}")
+
+            # C: RND 自动软重置 (新颖度持续过低时)
+            if i > 0 and i % 100 == 0:
+                rnd_stats = self.rnd.get_novelty_stats()
+                if rnd_stats['running_errors_avg'] < 0.002:
+                    self.rnd.soft_reset(factor=0.3)
+                    if verbose:
+                        print(f"  [RND] 新颖度过低({rnd_stats['running_errors_avg']:.4f}), 软重置")
 
             # 每隔 N 步显示统计
             if verbose and (i + 1) % 10 == 0:
