@@ -700,7 +700,8 @@ class OnlineAgent:
         intent_diversity = unique_in_last_5 / 5.0
 
         # 8. 综合好奇心 (世界模型为主, RND 为辅)
-        combined_curiosity = world_curiosity * 0.7 + rnd_novelty * 0.3
+        # P3: 世界模型好奇心权重提升
+        combined_curiosity = world_curiosity * 0.8 + rnd_novelty * 0.2
 
         # 9. 计算奖励
         reward = self._compute_reward(result, intent, combined_curiosity, intent_diversity)
