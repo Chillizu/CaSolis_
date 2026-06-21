@@ -92,6 +92,17 @@ CUSTOM_COMMANDS = {
     "services": {"args": ["cat", "/etc/services"], "desc": "服务端口映射"},
     # Shell
     "completions":{"args": ["compgen", "-c"], "desc": "所有可用命令"},
+    # 自动发现的命令 (1000步长程)
+    "hostname": {"args": ["cat", "/etc/hostname"], "desc": "主机名"},
+    "wc_hosts": {"args": ["wc", "-l", "/etc/hosts"], "desc": "hosts行数"},
+    "sha1sum_hosts":{"args": ["sha1sum", "/etc/hosts"], "desc": "hosts哈希"},
+    "lsof_hosts":  {"args": ["lsof", "/etc/hosts"], "desc": "hosts进程"},
+    "realpath_hosts":{"args": ["realpath", "/etc/hosts"], "desc": "hosts真实路径"},
+    "id_version":  {"args": ["id"], "desc": "用户身份"},
+    "mount_info":  {"args": ["mount"], "desc": "挂载点"},
+    "groups":     {"args": ["groups"], "desc": "用户组"},
+    "kernel_modules":{"args": ["lsmod"], "desc": "内核模块"},
+    "disk_usage":  {"args": ["du", "-sh", "/"], "desc": "根目录大小"},
 }
 
 

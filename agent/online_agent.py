@@ -676,14 +676,24 @@ class OnlineAgent:
                 rollout_results = self.world_model.rollout_top_k(
                     state_emb, thought_vector,
                     primary_candidates=candidates,
-                    secondary_candidates=candidates[:4],  # 只搜前4个的第二步
+                    secondary_candidates=candidates[:4],
                     depth=2, gamma=0.9
                 )
                 best = rollout_results[0]
                 best_seq = best["sequence"]
                 best_name = INTENTS[best_seq[0]]
                 
-                # WM推荐的与原始不同且两步总分更高? 切换
+                # 多样性bonus: 最近少用的意图加分
+                recent = self.intent_history[-30:] if self.intent_history else []
+                for r in rollout_results:
+                    seq_name = INTENTS[r["sequence"][0]]
+                    freq = recent.count(seq_name) / max(len(recent), 1)
+                    r["total_value"] += max(0, 1.0 - freq * 3) * 0.2
+                rollout_results.sort(key=lambda r: -r["total_value"])
+                best = rollout_results[0]
+                best_name = INTENTS[best["sequence"][0]]
+                
+                # WM推荐的与原始不同且得分更高? 切换
                 orig_single = self.world_model.rollout(
                     state_emb, thought_vector, [INTENTS.index(intent)], 0.9
                 )

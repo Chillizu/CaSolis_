@@ -40,8 +40,8 @@ class CommandSelector:
         """每步衰减所有命令的厌腻度"""
         self._step_counter += 1
         for meta in self.history.values():
-            # 每步恢复 3% (缓慢恢复, 厌腻感持久)
-            meta["satiation"] = max(0.0, meta["satiation"] * 0.97)
+            # 每步恢复 2% (更持久, 强迫换命令)
+            meta["satiation"] = max(0.0, meta["satiation"] * 0.98)
 
     def select(self, state_text: str, rnd_novelty: float = 0.0, forced: str | None = None) -> list[str]:
         """
