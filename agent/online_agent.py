@@ -193,6 +193,7 @@ class OnlineAgent:
         
         self.ab_stats = {"conductor": 0, "classifier": 0, "conductor_success": 0, "classifier_success": 0}
         self.multi_cmds_count = 0  # P1: 多命令步数
+        self._last_cond_logits = None  # P2: 最近一次 Conductor logits
         self.ab_window = deque(maxlen=100)  # P1.5: 滑动窗口, 记录 (used_conductor, success)
 
         # 优化器 (只训练分类头)
@@ -209,9 +210,14 @@ class OnlineAgent:
             # 加载离线训练数据 (用于混合训练防止遗忘)
             self.offline_train_data = self._load_offline_conductor_data()
             print(f"  ✅ Conductor 在线对齐就绪 (离线样本={len(self.offline_train_data)})")
+            # P2: REINFORCE 数据
+            self.conductor_trajectories = []  # (state_text, intent, reward, logits)
+            self.conductor_reward_baseline = {}  # intent → running mean reward
         else:
             self.conductor_train_buffer = []
             self.offline_train_data = []
+            self.conductor_trajectories = []
+            self.conductor_reward_baseline = {}
 
         # 统计
         self.step_count = 0
@@ -358,69 +364,93 @@ class OnlineAgent:
             pass
 
     def _train_conductor_online(self):
-        """Conductor 在线对齐训练: 一致样本 + 离线混合"""
+        """Conductor 在线训练: CE+对比+REINFORCE+entropy"""
         if not self.conductor_path_active:
             return 0.0
-        if len(self.conductor_train_buffer) < 4:
-            return 0.0
 
-        from agent.conductor import N_INTENTS
         import random
+        n_agreement = len(self.conductor_train_buffer)
+        n_traj = len(self.conductor_trajectories)
+        if n_agreement < 4 and n_traj < 4:
+            return 0.0
 
         self.nanny.conductor.head.train()
         total_loss = 0.0
         n_batches = 0
 
-        for _ in range(3):  # 每次训练跑 3 个 mini-batch
-            batch = []
+        for _ in range(3):  # 3 mini-batches
+            self.conductor_optimizer.zero_grad()
+            batch_loss = 0.0
 
-            # 50% 在线一致样本
-            n_online = min(16, len(self.conductor_train_buffer))
-            samples = random.sample(self.conductor_train_buffer, n_online)
-            batch.extend(samples)
+            # ── 1. CE + 对比损失 (一致样本 + 离线混合) ──
+            if n_agreement >= 4:
+                batch = []
+                n_online = min(16, n_agreement)
+                batch.extend(random.sample(self.conductor_train_buffer, n_online))
+                if self.offline_train_data:
+                    n_offline = min(16, len(self.offline_train_data))
+                    batch.extend(random.sample(self.offline_train_data, n_offline))
 
-            # 50% 离线数据 (防止遗忘)
-            if self.offline_train_data:
-                n_offline = min(16, len(self.offline_train_data))
-                batch.extend(random.sample(self.offline_train_data, n_offline))
+                if len(batch) >= 4:
+                    texts = [b[0] for b in batch]
+                    labels = [INTENTS.index(b[1]) if b[1] in INTENTS else 0 for b in batch]
+                    embs_np = self.nanny.conductor.encoder.encode(texts, convert_to_numpy=True)
+                    embs = torch.from_numpy(embs_np).float().to(self.device)
+                    labels_t = torch.tensor(labels, device=self.device)
+                    thought, logits = self.nanny.conductor.forward_emb(embs)
 
-            if len(batch) < 4:
+                    ce_loss = torch.nn.functional.cross_entropy(logits, labels_t)
+                    thought_norm = torch.nn.functional.normalize(thought, dim=-1)
+                    cos_sim = thought_norm @ thought_norm.T
+                    targets_exp = labels_t.unsqueeze(1)
+                    same_mask = (targets_exp == targets_exp.T).float()
+                    pos_loss = (same_mask * torch.nn.functional.relu(0.8 - cos_sim)).sum() / (same_mask.sum() + 1)
+                    neg_loss = ((1 - same_mask) * torch.nn.functional.relu(cos_sim + 0.2)).sum() / ((1 - same_mask).sum() + 1)
+                    contrastive_loss = pos_loss + neg_loss
+                    batch_loss += ce_loss + 0.05 * contrastive_loss
+
+            # ── 2. REINFORCE + entropy (轨迹数据) ──
+            if n_traj >= 4:
+                sample = random.sample(self.conductor_trajectories, min(16, n_traj))
+                traj_texts = [s[0] for s in sample]
+                traj_actions = [INTENTS.index(s[1]) if s[1] in INTENTS else 0 for s in sample]
+                traj_rewards = [s[2] for s in sample]
+
+                traj_embs_np = self.nanny.conductor.encoder.encode(traj_texts, convert_to_numpy=True)
+                traj_embs = torch.from_numpy(traj_embs_np).float().to(self.device)
+                _, traj_logits = self.nanny.conductor.forward_emb(traj_embs)
+
+                # Advantage: reward - baseline per intent
+                baselines = [self.conductor_reward_baseline.get(s[1], 0.0) for s in sample]
+                advantages = torch.tensor(traj_rewards) - torch.tensor(baselines)
+                if advantages.std() > 1e-8:
+                    advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
+
+                # Policy gradient
+                log_probs = torch.nn.functional.log_softmax(traj_logits, dim=-1)
+                selected = log_probs[range(len(traj_actions)), traj_actions]
+                pg_loss = -(selected * advantages.detach()).mean()
+
+                # Entropy bonus (鼓励探索)
+                probs = torch.nn.functional.softmax(traj_logits, dim=-1)
+                entropy = -(probs * probs.log().clamp(min=-100)).sum(dim=-1).mean()
+                batch_loss += pg_loss - 0.01 * entropy
+
+            if batch_loss.item() == 0.0:
                 continue
 
-            texts = [b[0] for b in batch]
-            labels = [INTENTS.index(b[1]) if b[1] in INTENTS else 0 for b in batch]
-
-            embs_np = self.nanny.conductor.encoder.encode(texts, convert_to_numpy=True)
-            embs = torch.from_numpy(embs_np).float().to(self.device)
-
-            self.conductor_optimizer.zero_grad()
-            labels_t = torch.tensor(labels, device=self.device)
-            thought, logits = self.nanny.conductor.forward_emb(embs)
-
-            # CE 损失 (class_proj + shared 收到梯度)
-            ce_loss = torch.nn.functional.cross_entropy(logits, labels_t)
-
-            # 对比损失 (thought_head 也收到梯度)
-            thought_norm = torch.nn.functional.normalize(thought, dim=-1)
-            cos_sim = thought_norm @ thought_norm.T  # (B, B)
-            targets_exp = labels_t.unsqueeze(1)
-            same_mask = (targets_exp == targets_exp.T).float()
-            pos_loss = (same_mask * torch.nn.functional.relu(0.8 - cos_sim)).sum() / (same_mask.sum() + 1)
-            neg_loss = ((1 - same_mask) * torch.nn.functional.relu(cos_sim + 0.2)).sum() / ((1 - same_mask).sum() + 1)
-            contrastive_loss = pos_loss + neg_loss
-
-            loss = ce_loss + 0.05 * contrastive_loss
-            loss.backward()
+            batch_loss.backward()
             torch.nn.utils.clip_grad_norm_(self.nanny.conductor.head.parameters(), 1.0)
             self.conductor_optimizer.step()
 
-            total_loss += loss.item()
+            total_loss += batch_loss.item()
             n_batches += 1
 
         self.nanny.conductor.head.eval()
 
-        # 清空缓冲区 (已经用过了)
+        # 清空缓冲区
         self.conductor_train_buffer.clear()
+        self.conductor_trajectories.clear()
 
         return total_loss / max(n_batches, 1)
 
@@ -506,6 +536,7 @@ class OnlineAgent:
                             params = nanny_params
                             used_conductor = True
                             self.ab_stats["conductor"] += 1
+                            self._last_cond_logits = logits.detach().clone()
                     elif cond_intent not in ("HELP", "CUSTOM"):
                         # 置信度不够但和分类器一致时, 绕过 gate
                         clf_intent = self.classifier.predict(state_text)
@@ -517,6 +548,7 @@ class OnlineAgent:
                             params = nanny_params
                             used_conductor = True
                             self.ab_stats["conductor"] += 1
+                            self._last_cond_logits = logits.detach().clone()
                 except Exception:
                     pass
 
@@ -685,6 +717,18 @@ class OnlineAgent:
 
         # P1.5: 滑动窗口记录
         self.ab_window.append((used_conductor, step_success))
+
+        # P2: 记录 Conductor 轨迹 (用于 REINFORCE)
+        if used_conductor and self.conductor_path_active and self._last_cond_logits is not None:
+            self.conductor_trajectories.append((
+                state_text, intent, reward, self._last_cond_logits.clone()
+            ))
+            if len(self.conductor_trajectories) > 500:
+                self.conductor_trajectories = self.conductor_trajectories[-500:]
+            # 更新 running baseline
+            old_base = self.conductor_reward_baseline.get(intent, 0.0)
+            self.conductor_reward_baseline[intent] = 0.9 * old_base + 0.1 * reward
+            self._last_cond_logits = None
 
         return step_success, reward
 
