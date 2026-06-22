@@ -231,7 +231,7 @@ class OnlineAgent:
         except Exception as e:
             print(f"  ⚠️ 保姆不可用: {e}")
         
-        self.ab_stats = {"conductor": 0, "classifier": 0, "conductor_success": 0, "classifier_success": 0, "goal_driven": 0, "goal_driven_success": 0}
+        self.ab_stats = {"conductor": 0, "classifier": 0, "conductor_success": 0, "classifier_success": 0, "goal_driven": 0, "goal_driven_success": 0, "imagined": 0, "imagined_success": 0}
         self.multi_cmds_count = 0  # P1: 多命令步数
         self._last_cond_logits = None  # P2: 最近一次 Conductor logits
         self.ab_window = deque(maxlen=100)  # P1.5: 滑动窗口, 记录 (used_conductor, success)
@@ -558,17 +558,85 @@ class OnlineAgent:
 
         return total_loss / max(n_batches, 1)
 
+    def _imagine_intent(self, state_text: str, temperature: float = 1.5) -> str | None:
+        """
+        P5.2: 反向想象 — 世界模型创造意图
+
+        流程:
+          1. 编码 state → state_emb + thought_vector
+          2. 对每个意图模拟: 世界模型预测 next_thought (价值加权混合)
+          3. 解码 next_thought → 指挥家隐藏层 → class_proj → 意图 logits
+          4. 加噪声 (温度控制创造力)
+          5. 低置信度 → CUSTOM (纯粹探索)
+
+        Returns:
+          intent_name or None (imagination 不可用时)
+        """
+        if not self.conductor_path_active:
+            return None
+        try:
+            # 1. 编码
+            emb = self.classifier.get_embedding(state_text).to(self.world_model.device)
+            cond_emb = self.nanny.conductor.encoder.encode(
+                state_text, convert_to_tensor=True
+            ).clone().to(self.world_model.device)
+            thought, _ = self.nanny.conductor.head(cond_emb.unsqueeze(0))
+            thought = thought.squeeze(0)
+
+            # 2. 批量模拟所有意图
+            n = self.world_model.n_intents
+            oh = torch.zeros(n, n, device=self.world_model.device)
+            oh[torch.arange(n), torch.arange(n)] = 1.0
+            s_batch = emb.unsqueeze(0).repeat(n, 1)
+            t_batch = thought.unsqueeze(0).repeat(n, 1)
+
+            self.world_model.predictor.eval()
+            with torch.no_grad():
+                pred = self.world_model.predictor(s_batch, t_batch, oh)
+                # 价值加权混合 next_thought
+                value_w = torch.exp(pred["value"].squeeze() * temperature)
+                imagined = (value_w.unsqueeze(-1) * pred["next_thought"]).sum(dim=0) / value_w.sum()
+
+            # 3. 解码 imagined_thought → 隐藏 → 意图 logits
+            W = self.nanny.conductor.head.thought_head.weight.to(self.world_model.device)  # (16, 64)
+            b = self.nanny.conductor.head.thought_head.bias.to(self.world_model.device)    # (16,)
+            W_pinv = torch.linalg.pinv(W)  # (64, 16)
+            hidden = W_pinv @ (imagined - b)  # (64,)
+
+            logits = self.nanny.conductor.head.class_proj(hidden.unsqueeze(0))  # (1, 13)
+
+            # 4. 创造力噪声
+            noise = torch.randn_like(logits) * temperature * 0.5
+            logits = logits + noise
+            probs = torch.softmax(logits / max(temperature, 0.1), dim=-1)
+            max_prob, idx = probs.max(dim=-1)
+            idx = idx.item()
+
+            # 5. 低置信度 → CUSTOM (纯粹探索)
+            non_custom = [i for i in INTENTS if i != "CUSTOM"]
+            if max_prob.item() < 0.3:
+                return "CUSTOM"
+            return non_custom[idx] if idx < len(non_custom) else "CUSTOM"
+        except Exception as e:
+            return None
+
     def _select_intent(self, state_text: str) -> str:
-        """选择意图: 多样性优先 + 分类器 + 自适应探索"""
+        """选择意图: 多样性优先 + 想象力 + 分类器"""
+        # P5.2: 世界模型想象力 — 每5步尝试
+        if self.step_count > 10 and self.step_count % 5 == 0:
+            temp = max(0.5, 2.0 - self.step_count * 0.005)  # 温度衰减: 2.0→0.5
+            imagined = self._imagine_intent(state_text, temperature=temp)
+            if imagined:
+                return imagined
+
         # P5.1: 强多样性调度 — 检查全局意图覆盖
         if len(self.intent_history) >= 30:
             recent_all = self.intent_history[-30:]
             covered = set(recent_all)
             uncovered = [i for i in INTENTS if i not in covered and i not in ("HELP", "CUSTOM")]
             if uncovered:
-                # 有从未使用的意图: 强制探索
                 return random.choice(uncovered)
-        
+
         # 最近20步单一意图超过35%: 强制转向
         recent = self.intent_history[-20:] if len(self.intent_history) >= 20 else None
         if recent:
@@ -687,6 +755,20 @@ class OnlineAgent:
                     self.ab_stats["goal_driven"] += 1
                     if self.step_count % 6 == 0:
                         print(f"  [PROBE] {params.get('custom_args', ['?'])}")
+
+        # P5.2: 世界模型想象力路径 — 当工作栏空闲时尝试
+        if not used_goal and self.step_count > 5 and self.step_count % 4 == 0:
+            temp = max(0.5, 2.0 - self.step_count * 0.003)
+            imagined = self._imagine_intent(state_text, temperature=temp)
+            if imagined and imagined not in ("HELP",):
+                intent = imagined
+                params = self.param_extractor.extract(intent, self.state_encoder.current_goal or "")
+                if intent == "CUSTOM":
+                    cluster, cmd_args = self.cmd_selector.select()
+                    params = {"custom_args": cmd_args, "cluster": cluster}
+                used_goal = True
+                self._last_was_imagined = True
+                self.ab_stats["imagined"] = self.ab_stats.get("imagined", 0) + 1
 
         if not used_goal:
             # Fallback: A/B 切换 + 指挥家/分类器
@@ -971,6 +1053,8 @@ class OnlineAgent:
                 self.ab_stats["goal_driven_success"] += 1
             elif used_conductor:
                 self.ab_stats["conductor_success"] += 1
+            elif self.ab_stats.get("imagined", 0) > self.ab_stats.get("imagined_success", 0) + self.ab_stats.get("imagined_failed", 0):
+                self.ab_stats["imagined_success"] += 1
             else:
                 self.ab_stats["classifier_success"] += 1
         else:
