@@ -87,7 +87,7 @@ class StateEncoder:
     def set_goal(self, goal: str):
         self.current_goal = goal
 
-    def get_state_text(self) -> str:
+    def get_state_text(self, thought_label: str = "") -> str:
         """P3+P4: 生成包含输出摘要、工作栏事实和思考向量的状态文本"""
         hist = self._format_history()
         # 已知文件: 最多3个
@@ -103,10 +103,14 @@ class StateEncoder:
         follow_up = self.workbench.get_follow_up() if self.workbench else None
         goal_part = f"方向: {follow_up[0]} " if follow_up else ""
         
+        # P4.1: 思考标签
+        thought_part = f"思考: {thought_label} " if thought_label else ""
+        
         return (
             f"当前目录: {self.current_dir} "
             f"已知文件: {known} "
             f"上步: {self.current_goal} "
+            f"{thought_part}"
             f"{fact_part}"
             f"{goal_part}"
             f"输出: {self._last_output_summary[:60]} "

@@ -37,7 +37,8 @@ def _log_execution(intent: str, params: dict, result, output: str, state_text: s
                 "exit_code": result.exit_code if result else -1,
                 "output_len": len(output),
                 "output_preview": output[:200],
-                "state": state_text[:200],
+                "state": state_text[:260],
+                "thought_label": state_text.split("思考:")[-1].split(" 事实:")[0].strip() if "思考:" in state_text else "",
             }, ensure_ascii=False) + "\n")
     except:
         pass
@@ -322,7 +323,8 @@ class OnlineAgent:
         "HELP":   -0.8,
     }
 
-    def _compute_reward(self, result: ExecResult, intent: str, novelty: float, intent_diversity: float = 0.0) -> float:
+    def _compute_reward(self, result: ExecResult, intent: str, novelty: float,
+                        intent_diversity: float = 0.0, chain_bonus: float = 0.0) -> float:
         """计算奖励: 意图价值 + 成功信号 + 新颖度 - 重复惩罚"""
         # 双模式: 根据 recent 多样性自动切换
         if self.mode == "auto":
@@ -393,6 +395,9 @@ class OnlineAgent:
                     break
             if non_help_run >= 3:
                 reward += 0.5 * min(non_help_run / 5.0, 1.0)
+
+        # P4.1: 链完成奖励 (发现→验证 1.5, 验证→扩展 3.0)
+        reward += chain_bonus
 
         return reward
 
@@ -600,18 +605,30 @@ class OnlineAgent:
         self.step_count += 1
 
         # 1. 编码当前状态
-        state_text = self.state_encoder.get_state_text()
+        # P4.1: 先无思考标签生成 state_text (给指挥家用)
+        state_text = self.state_encoder.get_state_text(thought_label="")
         state_emb = self.classifier.get_embedding(state_text).detach().clone()
 
         # V3 + P4: 思考向量 — 跨步持续 + 当前指挥家新鲜混合
         thought_vector = self.persistent_thought.clone()
+        thought_label = ""
         if self.conductor_path_active:
             try:
-                fresh_thought, _ = self.nanny.think(state_text)
-                # 70% 持久方向 + 30% 新鲜状态
+                fresh_thought, cond_logits = self.nanny.think(state_text)
                 thought_vector = 0.7 * thought_vector + 0.3 * fresh_thought
+                # 从 logits 生成可读思考标签
+                cond_top = INTENTS[cond_logits.argmax().item()]
+                discovery = self.workbench.get_current_discovery()
+                if discovery:
+                    val = self.workbench.get_fact(discovery) or ""
+                    thought_label = f"{cond_top}@{discovery}={val[:20]}"
+                else:
+                    thought_label = cond_top
             except Exception:
                 pass
+        # 带思考标签重新生成 state_text
+        state_text = self.state_encoder.get_state_text(thought_label=thought_label)
+        state_emb = self.classifier.get_embedding(state_text).detach().clone()
 
         # 2. A/B 切换: 优先指挥家路径
         used_conductor = False
@@ -679,17 +696,20 @@ class OnlineAgent:
                     params["cmd"] = "python3" if intent == "INSPECT" else "ls"
             self.ab_stats["classifier"] += 1
 
-        # P4: 工作栏后续推荐 — 覆盖浅层意图
+        # P4: 工作栏后续推荐 — 覆盖浅层意图 (用已缓存的 last_follow_up)
+        wb_overrode = False
         if self.workbench and intent in ("LS_TMP", "READ_ETC", "INFO"):
-            follow_up = self.workbench.get_follow_up()
-            if follow_up:
-                fu_intent, fu_params = follow_up
+            fu = self.workbench.last_follow_up
+            if fu:
+                fu_intent, fu_params = fu
+                old_intent = intent
                 intent = fu_intent
-                params = fu_params
-                print(f"  [WB] 工作栏推荐: {fu_intent} ← 覆盖 {intent}")
+                params = dict(fu_params)  # copy
+                wb_overrode = True
+                print(f"  [WB] {fu_intent}  ← {old_intent}")
 
-        # V3: 世界模型心理模拟 — 多步 rollout
-        if intent is not None and self.step_count > 5:
+        # V3: 世界模型心理模拟 (已工作栏覆盖时跳过, 避免丢失推荐)
+        if intent is not None and self.step_count > 5 and not wb_overrode:
             try:
                 candidates = [INTENTS.index(intent)]
                 for alt in ["CUSTOM", "EXPLORE", "INSPECT", "SEARCH", "LS_TMP", "LIST"]:
@@ -835,7 +855,7 @@ class OnlineAgent:
             self.workbench.extract_facts(intent, cmd_name, output, params, self.step_count)
 
         # 6. 世界模型好奇心 + RND 新颖度
-        next_state_text = self.state_encoder.get_state_text()
+        next_state_text = self.state_encoder.get_state_text(thought_label=thought_label)
 
         # V3: 世界模型 — 思考 + 预测 + 直觉
         intent_idx = INTENTS.index(intent) if intent in INTENTS else 0
@@ -858,8 +878,16 @@ class OnlineAgent:
         # P3: 世界模型好奇心权重提升
         combined_curiosity = world_curiosity * 0.8 + rnd_novelty * 0.2
 
-        # 9. 计算奖励
-        reward = self._compute_reward(result, intent, combined_curiosity, intent_diversity)
+        # P4.1: 链检测 + 链奖励
+        chain_bonus = 0.0
+        if self.workbench.check_chain_completed(intent, params):
+            chain_bonus = self.workbench.get_chain_bonus()
+            if chain_bonus > 0:
+                print(f"  [CHAIN] +{chain_bonus:.1f} (step={self.workbench.chain_step})")
+
+        # 9. 计算奖励 (含链奖励)
+        reward = self._compute_reward(result, intent, combined_curiosity, intent_diversity,
+                                      chain_bonus=chain_bonus)
 
         # 9a. 更新世界模型 (含真实 reward), 获取预测的 next_thought
         _, predicted_next = self.world_model.update(

@@ -32,6 +32,10 @@ class Workbench:
         self.max_facts = max_facts
         self._current_discovery: Optional[str] = None  # 最新关键事实 key
         self._step_counter = 0
+        # P4.1: 链式追踪
+        self.last_follow_up = None
+        self.chain_step: int = 0  # 0=无, 1=发现, 2=验证, 3=扩展
+        self.chain_completed_at: int = 0
 
     # ── 核心: 事实提取 ──
 
@@ -116,10 +120,47 @@ class Workbench:
                 self._extract_passwd(seg, intent, cmd_name, step)
                 continue
 
+
+        # ── 命令名辅助的回退 (内容未命中时的备用规则) ──
+        # 这些规则不使用 segments (因为内容模式不匹配),
+        # 而是直接检查命令名和输出结构
+
+        # cat /etc/hostname: 输出是短单行, 命令名含 hostname
+        if "hostname" in lower and ("cat" in lower or "etc" in lower):
+            lines = text.splitlines()
+            for line in lines:
+                line = line.strip()
+                if line and not line.startswith(("#", ";")):
+                    self._add_fact("hostname", line, intent, cmd_name, step, category="system")
+                    self._current_discovery = "hostname"
+                    break
+
+        # wc -l /etc/passwd: 输出 "123 /etc/passwd"
+        if "passwd" in lower and "wc" in lower:
+            import re as re2
+            m = re2.match(r"^\s*(\d+)", text)
+            if m:
+                self._add_fact("passwd_line_count", m.group(1), intent, cmd_name, step, category="system",
+                              confidence=0.7)
+
         # ── 命令名辅助的提取 (单命令 / CUSTOM) ──
 
         # hostname (裸命令)
         if lower.strip() == "hostname":
+            val = text.splitlines()[0].strip() if text.strip() else ""
+            if val and len(val) < 80:
+                self._add_fact("hostname_cmd", val, intent, cmd_name, step,
+                               category="system")
+
+        # whoami
+        if lower.strip() == "whoami":
+            self._extract_whoami(text, intent, cmd_name, step)
+
+        # id
+        if lower.strip() == "id":
+            self._extract_id(text, intent, cmd_name, step)
+
+        # hostname (裸命令)
             val = text.splitlines()[0].strip() if text.strip() else ""
             if val and len(val) < 80:
                 self._add_fact("hostname_cmd", val, intent, cmd_name, step,
@@ -228,6 +269,23 @@ class Workbench:
             user_list = ",".join(sorted(users)[:8])
             self._add_fact("users", user_list, intent, cmd, step, category="system", confidence=0.7)
 
+    def _extract_whoami(self, text: str, intent: str, cmd: str, step: int):
+        """whoami 输出: 当前用户名"""
+        val = text.splitlines()[0].strip() if text.strip() else ""
+        if val and len(val) < 40:
+            self._add_fact("current_user", val, intent, cmd, step, category="system")
+
+    def _extract_id(self, text: str, intent: str, cmd: str, step: int):
+        """id 输出: uid=0(root) gid=0(root)"""
+        uid_match = re.search(r'uid=(\d+)\(([^)]+)\)', text)
+        gid_match = re.search(r'gid=(\d+)\(([^)]+)\)', text)
+        if uid_match:
+            self._add_fact("uid_info", f"uid={uid_match.group(1)}({uid_match.group(2)})", intent, cmd, step, category="system")
+        if gid_match:
+            self._add_fact("gid_info", f"gid={gid_match.group(1)}({gid_match.group(2)})", intent, cmd, step, category="system")
+            if uid_match and uid_match.group(2) == "root":
+                self._add_fact("is_root", "yes", intent, cmd, step, category="system")
+
     def _extract_network(self, text: str, intent: str, cmd: str, step: int):
         for line in text.splitlines():
             line = line.strip()
@@ -304,38 +362,85 @@ class Workbench:
         return [k for k, v in self.facts.items() if v.get("category") == category]
 
     def get_follow_up(self) -> Optional[tuple[str, dict]]:
-        """
-        基于工作栏事实, 推荐下一步的行动
+        """推荐下一步, 并存储到 last_follow_up"""
+        result = self._compute_follow_up()
+        self.last_follow_up = result
+        return result
 
-        Returns:
-          (intent_name, params) 或 None (无建议)
-        """
-        # 知道 hostname → 验证 hostname 命令
+    def _compute_follow_up(self) -> Optional[tuple[str, dict]]:
+        """实际的推荐逻辑"""
+
+        # ── 验证链: 发现X → 验证X → 扩展X ──
         if "hostname" in self.facts and "hostname_cmd" not in self.facts:
             return ("CUSTOM", {"custom_args": ["hostname"], "cluster": "SYSTEM"})
-        # 知道 hostname → 查 hosts 文件
-        if "hostname" in self.facts and "etchosts_hosts" not in self.facts:
+        if "hostname" in self.facts and "hostname_cmd" in self.facts and "etchosts_hosts" not in self.facts:
             return ("READ", {"path": "/etc/hosts"})
-        # 知道内核 → 查发行版
-        if "kernel" in self.facts and "os_pretty_name" not in self.facts:
-            if "os_release" not in [k for k in self.facts]:
-                return ("READ", {"path": "/etc/os-release"})
-        # 知道内存 → 查磁盘
+
+        # ── 系统探查链 ──
+        if "cpu_cores" in self.facts and "mem_total" not in self.facts:
+            return ("CUSTOM", {"custom_args": ["free", "-h"], "cluster": "SYSTEM"})
         if "mem_total" in self.facts and "disk_root" not in self.facts:
-            # 用 CUSTOM 的 df 而不是 INFO (INFO 不传参)
             return ("CUSTOM", {"custom_args": ["df", "-h"], "cluster": "SYSTEM"})
-        # 有目录内容 → 读其中一个文件
+
+        # ── 身份链 ──
+        if "users" in self.facts and "current_user" not in self.facts:
+            return ("CUSTOM", {"custom_args": ["whoami"], "cluster": "USER"})
+        if "current_user" in self.facts and "uid_info" not in self.facts:
+            return ("CUSTOM", {"custom_args": ["id"], "cluster": "USER"})
+
+        # ── 内核链 ──
+        if "kernel" in self.facts and "os_pretty_name" not in self.facts:
+            return ("READ", {"path": "/etc/os-release"})
+        if "os_pretty_name" in self.facts and "kernel_modules" not in self.facts:
+            return ("CUSTOM", {"custom_args": ["lsmod"], "cluster": "SYSTEM"})
+
+        # ── 默认: 从目录读文件 ──
         dir_facts = [k for k in self.facts if k.startswith("dir_")]
         for dk in sorted(dir_facts, key=lambda k: -self.facts[k]["confidence"]):
             if dk not in ("dir_tmp", "dir_root"):
                 val = self.facts[dk]["value"]
                 first_file = val.split(",")[0].strip()
                 if first_file and first_file not in (".", ".."):
-                    # 尝试 /etc/{file}
                     path = f"/etc/{first_file}" if dk == "dir_etc" else first_file
                     return ("CUSTOM", {"custom_args": ["head", "-5", path], "cluster": "FILE_READ"})
 
         return None
+
+    def check_chain_completed(self, executed_intent: str, executed_params: dict) -> bool:
+        """检查链步骤完成 (chain_step满3后自动重置)"""
+        if self.last_follow_up is None or self.chain_step >= 3:
+            return False
+        fu_intent, fu_params = self.last_follow_up
+        if executed_intent != fu_intent:
+            return False
+        if fu_intent == "CUSTOM":
+            if executed_params.get("custom_args", []) != fu_params.get("custom_args", []):
+                return False
+        elif fu_intent == "READ":
+            if executed_params.get("path", "") != fu_params.get("path", ""):
+                return False
+        self.chain_step += 1
+        self.chain_completed_at = self._step_counter
+        if self.chain_step >= 3:
+            self.last_follow_up = None  # 链满, 重置
+        return True
+
+    def get_chain_bonus(self) -> float:
+        """链奖励递减: 第1步+1.5, 第2步+1.0, 第3步+0.5"""
+        if self.chain_completed_at == self._step_counter:
+            if self.chain_step == 1:
+                return 1.5
+            elif self.chain_step == 2:
+                return 1.0
+            elif self.chain_step >= 3:
+                return 0.5
+        return 0.0
+
+    def reset_chain(self):
+        """重置链状态"""
+        self.chain_step = 0
+        self.chain_completed_at = 0
+        self.last_follow_up = None
 
     # ── 状态摘要 ──
 
