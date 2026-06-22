@@ -596,7 +596,7 @@ class OnlineAgent:
         """
         if not self.sandbox:
             return
-        script = self.workbench.generate_script()
+        script, combo_key = self.workbench.generate_script() or (None, "")
         if not script:
             return
         try:
@@ -617,11 +617,13 @@ class OnlineAgent:
                 self.workbench.extract_facts("SCRIPT", script_name, out, {}, self.step_count)
                 # P5.4: 记录脚本效用
                 script_facts_before = len(self.workbench.facts)
+                combo = self.workbench.get_last_script_combo()
                 self.meta.register(f"script_{self.step_count}", "script_output",
-                                  {"script": script_name, "size": len(r.stdout)}, self.step_count)
+                                  {"script": script_name, "size": len(r.stdout),
+                                   "combo": combo}, self.step_count)
                 self.meta.record(f"script_{self.step_count}",
                                 min(1.0, len(r.stdout) / 500), self.step_count)
-                print(f"  [SCRIPT] {script_name} -> {len(r.stdout)} bytes")
+                print(f"  [SCRIPT] {script_name} -> {len(r.stdout)} bytes (combo: {combo})")
                 # 记到发现日志
                 try:
                     safe = r.stdout[:80].replace("'", "").replace("\n", " | ")

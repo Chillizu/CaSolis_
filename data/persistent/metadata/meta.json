@@ -30,9 +30,9 @@
       "pattern": "os_version_codename",
       "trigger": "output_contains"
     },
-    "utility": 0.30000000000000004,
-    "n": 7,
-    "last_step": 50,
+    "utility": 0.23750000000000007,
+    "n": 8,
+    "last_step": 25,
     "created_step": 1
   },
   "rule_kernel": {
@@ -78,9 +78,9 @@
       "pattern": "node_name",
       "trigger": "output_contains"
     },
-    "utility": 0.36,
-    "n": 5,
-    "last_step": 25,
+    "utility": 0.26666666666666666,
+    "n": 6,
+    "last_step": 50,
     "created_step": 1
   },
   "rule_disk_persistent": {
@@ -115,7 +115,7 @@
       "trigger": "output_contains"
     },
     "utility": 0.5,
-    "n": 30,
+    "n": 32,
     "last_step": 50,
     "created_step": 1
   },
@@ -127,7 +127,7 @@
       "trigger": "output_contains"
     },
     "utility": 0.5,
-    "n": 41,
+    "n": 43,
     "last_step": 50,
     "created_step": 1
   },
@@ -137,8 +137,8 @@
       "intent": "INFO",
       "source": "classifier"
     },
-    "utility": 0.25000000000000006,
-    "n": 4,
+    "utility": 0.22000000000000008,
+    "n": 5,
     "last_step": 1,
     "created_step": 1
   },
@@ -188,9 +188,9 @@
     "params": {
       "path": "cat /proc/loadavg"
     },
-    "utility": -0.08238529749999998,
-    "n": 26,
-    "last_step": 42,
+    "utility": -0.10899198523576636,
+    "n": 31,
+    "last_step": 39,
     "created_step": 9
   },
   "probe_cat_/proc/stat": {
@@ -198,9 +198,9 @@
     "params": {
       "path": "cat /proc/stat"
     },
-    "utility": -0.06449637690920901,
-    "n": 29,
-    "last_step": 45,
+    "utility": -0.08382258115253308,
+    "n": 32,
+    "last_step": 48,
     "created_step": 12
   },
   "probe_lsblk_-o_NAME,SIZE,TYPE,FSTYPE,MOUNTPOIN": {
@@ -218,9 +218,9 @@
     "params": {
       "path": "INFO"
     },
-    "utility": -0.06315789473684211,
-    "n": 19,
-    "last_step": 22,
+    "utility": -0.07650000000000001,
+    "n": 21,
+    "last_step": 7,
     "created_step": 14
   },
   "probe_free_-h": {
@@ -281,8 +281,8 @@
       "script": "discover_25.sh",
       "size": 414
     },
-    "utility": 0.8517500000000001,
-    "n": 8,
+    "utility": 0.8682222222222222,
+    "n": 9,
     "last_step": 25,
     "created_step": 25
   },
@@ -301,9 +301,9 @@
     "params": {
       "path": "cat /proc/sys/kernel/hostname"
     },
-    "utility": 0.03571428571428576,
-    "n": 14,
-    "last_step": 72,
+    "utility": -0.034999999999999976,
+    "n": 20,
+    "last_step": 45,
     "created_step": 33
   },
   "probe_ARCH_INFO": {
@@ -311,9 +311,9 @@
     "params": {
       "path": "ARCH_INFO"
     },
-    "utility": 0.023076923076923085,
-    "n": 13,
-    "last_step": 23,
+    "utility": 0.0071428571428571504,
+    "n": 14,
+    "last_step": 26,
     "created_step": 34
   },
   "probe_taskset": {
@@ -372,8 +372,8 @@
       "script": "discover_50.sh",
       "size": 716
     },
-    "utility": 0.9757500000000001,
-    "n": 8,
+    "utility": 0.9784444444444444,
+    "n": 9,
     "last_step": 50,
     "created_step": 50
   },
@@ -394,8 +394,8 @@
       "pattern": "hostname",
       "trigger": "output_contains"
     },
-    "utility": 0.3583725180742187,
-    "n": 27,
+    "utility": 0.3654538921705078,
+    "n": 28,
     "last_step": 20,
     "created_step": 51
   },
@@ -553,9 +553,9 @@
       "intent": "LS_TMP",
       "source": "imagination"
     },
-    "utility": -0.03900000000000001,
-    "n": 22,
-    "last_step": 41,
+    "utility": -0.03205000000000001,
+    "n": 23,
+    "last_step": 17,
     "created_step": 17
   },
   "probe_whoami": {
@@ -667,8 +667,8 @@
       "source": "classifier"
     },
     "utility": -0.4,
-    "n": 2,
-    "last_step": 1,
+    "n": 3,
+    "last_step": 2,
     "created_step": 1
   },
   "intent_INSPECT_classifier": {
@@ -795,7 +795,7 @@
       "trigger": "output_contains"
     },
     "utility": 0.5,
-    "n": 12,
+    "n": 13,
     "last_step": 20,
     "created_step": 51
   },
@@ -827,8 +827,8 @@
       "intent": "CUSTOM",
       "source": "imagination"
     },
-    "utility": -0.10586606198090866,
-    "n": 45,
+    "utility": -0.17423264478434108,
+    "n": 52,
     "last_step": 44,
     "created_step": 8
   },
@@ -883,8 +883,8 @@
       "source": "imagination"
     },
     "utility": 0.1,
-    "n": 1,
-    "last_step": 89,
+    "n": 2,
+    "last_step": 41,
     "created_step": 89
   },
   "probe_USB_DEVICES": {
@@ -893,8 +893,8 @@
       "path": "USB_DEVICES"
     },
     "utility": -0.5,
-    "n": 3,
-    "last_step": 47,
+    "n": 4,
+    "last_step": 34,
     "created_step": 34
   },
   "probe_SEARCH": {
@@ -947,5 +947,56 @@
     "n": 1,
     "last_step": 11,
     "created_step": 11
+  },
+  "probe_EXPLORE": {
+    "type": "probe_path",
+    "params": {
+      "path": "EXPLORE"
+    },
+    "utility": -0.42500000000000004,
+    "n": 4,
+    "last_step": 43,
+    "created_step": 4
+  },
+  "probe_INSPECT": {
+    "type": "probe_path",
+    "params": {
+      "path": "INSPECT"
+    },
+    "utility": -0.5,
+    "n": 3,
+    "last_step": 49,
+    "created_step": 14
+  },
+  "probe_LIST": {
+    "type": "probe_path",
+    "params": {
+      "path": "LIST"
+    },
+    "utility": -0.5,
+    "n": 3,
+    "last_step": 50,
+    "created_step": 23
+  },
+  "probe_find_/sys_-maxdepth_2_-type_f_2>/dev/nul": {
+    "type": "probe_path",
+    "params": {
+      "path": "find /sys -maxdepth 2 -type f 2>/dev/null | shuf -n 5"
+    },
+    "utility": -0.5,
+    "n": 2,
+    "last_step": 33,
+    "created_step": 22
+  },
+  "intent_READ_imagination": {
+    "type": "intent_choice",
+    "params": {
+      "intent": "READ",
+      "source": "imagination"
+    },
+    "utility": -0.4,
+    "n": 1,
+    "last_step": 29,
+    "created_step": 29
   }
 }
