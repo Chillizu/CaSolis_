@@ -12,7 +12,7 @@ import json
 from typing import Optional
 from dataclasses import dataclass
 
-SANDBOX_IMAGE = "alpine:latest"
+SANDBOX_IMAGE = "debian:bookworm-slim"
 CONTAINER_NAME = "folunar-sandbox"
 
 
@@ -130,10 +130,11 @@ class SandboxExecutor:
             return ExecResult("", str(e), -1)
 
     def install_packages(self, packages: list[str]):
-        """在容器内安装包 (如 coreutils, util-linux 等)"""
+        """在容器内安装包 (Debian apt)"""
+        self.execute("apt-get update -qq", timeout=60)
         for pkg in packages:
             print(f"  安装 {pkg}...")
-            self.execute(f"apk add {pkg}", timeout=60)
+            self.execute(f"apt-get install -y -qq {pkg}", timeout=60)
 
     def close(self):
         """停止并删除容器"""
