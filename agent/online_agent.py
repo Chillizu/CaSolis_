@@ -559,18 +559,36 @@ class OnlineAgent:
         return total_loss / max(n_batches, 1)
 
     def _select_intent(self, state_text: str) -> str:
-        """选择意图: 分类器 + 自适应探索 (含 CUSTOM 新颖度驱动)"""
+        """选择意图: 多样性优先 + 分类器 + 自适应探索"""
+        # P5.1: 强多样性调度 — 检查全局意图覆盖
+        if len(self.intent_history) >= 30:
+            recent_all = self.intent_history[-30:]
+            covered = set(recent_all)
+            uncovered = [i for i in INTENTS if i not in covered and i not in ("HELP", "CUSTOM")]
+            if uncovered:
+                # 有从未使用的意图: 强制探索
+                return random.choice(uncovered)
+        
+        # 最近20步单一意图超过35%: 强制转向
+        recent = self.intent_history[-20:] if len(self.intent_history) >= 20 else None
+        if recent:
+            usage = {i: recent.count(i) for i in set(recent)}
+            most_used = max(usage, key=usage.get)
+            most_used_pct = usage[most_used] / len(recent)
+            if most_used_pct > 0.35:
+                alternatives = [i for i in INTENTS if i != most_used and i not in ("HELP",)]
+                return random.choice(alternatives)
+        
         # 偶尔选 CUSTOM (新颖度低时更频繁)
         rnd_stats = self.rnd.get_novelty_stats()
         rnd_avg = rnd_stats.get("running_errors_avg", 0)
-        # 当 RND 新颖度低时, 用 CUSTOM 探索新命令
-        custom_prob = max(0.05, 0.15 - rnd_avg * 5)  # 新颖度低 → 更高概率 CUSTOM
+        custom_prob = max(0.05, 0.15 - rnd_avg * 5)
         if random.random() < custom_prob:
             return "CUSTOM"
         
-        # ε-贪心探索 (跳过 HELP — 禁用)
+        # ε-贪心探索 (跳过 HELP)
         if random.random() < self.explore_prob:
-            return random.choice([i for i in INTENTS if i not in ("HELP", "INSPECT")])
+            return random.choice([i for i in INTENTS if i not in ("HELP",)])
         
         intent = self.classifier.predict(state_text)
         
@@ -650,14 +668,25 @@ class OnlineAgent:
                 label = f"链{cs+1}/3" if cs > 0 else "新发现"
                 print(f"  [GOAL] {intent} ({label})")
         elif self.workbench and self.step_count % 3 == 0:
-            # P4.3: 好奇心探针 — 工作栏空闲时探索未读文件
+            # P4.3: 好奇心探针 (每3步一次, 不设上限)
+            if not hasattr(self, "_probe_find_count"):
+                self._probe_find_count = 0
             probe = self.workbench.get_curiosity_probe(self.state_encoder.explored_paths)
             if probe:
-                intent, params = probe
-                params = dict(params)
-                used_goal = True
-                self.ab_stats["goal_driven"] += 1
-                print(f"  [PROBE] {intent} {params.get('custom_args', ['?'])}")
+                p_args = probe[1].get("custom_args", [])
+                p_cmd = " ".join(str(a) for a in p_args) if isinstance(p_args, list) else str(p_args)
+                # 仅限制 find 无限重复
+                if "find" in p_cmd:
+                    self._probe_find_count += 1
+                    if self._probe_find_count > 20:
+                        probe = None  # find 重复过多, 跳过
+                if probe:
+                    intent, params = probe
+                    params = dict(params)
+                    used_goal = True
+                    self.ab_stats["goal_driven"] += 1
+                    if self.step_count % 6 == 0:
+                        print(f"  [PROBE] {params.get('custom_args', ['?'])}")
 
         if not used_goal:
             # Fallback: A/B 切换 + 指挥家/分类器
@@ -798,6 +827,12 @@ class OnlineAgent:
             result = self.engine.execute(intent, params)
             output = (result.stdout or result.stderr or "")
         
+        # P5.1: 命令名 (用于发现日志)
+        if intent == "CUSTOM":
+            cmd_name = " ".join(str(a) for a in params.get("custom_args", []))
+        else:
+            cmd_name = str(params.get("path", params.get("cmd", intent)))
+
         # 全量日志 (含正确步数)
         _log_execution(intent, params, result, output, state_text, step=self.step_count)
         
@@ -849,6 +884,16 @@ class OnlineAgent:
         cmd_summary = f"{intent} depth={depth}" if depth > 1 else f"{intent} {params}"
         self.state_encoder.update(intent, cmd_summary, output)
         self.state_encoder.set_goal(self._get_next_goal())
+
+        # P5.1: 发现日志 — 写入容器 /tmp (跨步骤可读)
+        if self.sandbox and result.exit_code == 0 and output and len(output.strip()) > 10:
+            try:
+                safe_out = output[:80].replace("'", "").replace("\n", " | ")
+                self.sandbox.execute(
+                    f"printf '### 步{self.step_count} {intent}\\n{cmd_name}\\n{safe_out}\\n\\n' >> /tmp/discoveries.md"
+                )
+            except Exception:
+                pass
 
         # P4: 从输出提取事实到工作栏
         cmd_name = str(params.get("custom_args", [intent]))
@@ -955,6 +1000,16 @@ class OnlineAgent:
         # P5: 持久化工作栏状态 (每10步写一次, 降低IO)
         if self.step_count % 10 == 0:
             self.workbench.save()
+
+        # P5.1: 自引用 — 每30步读自己的发现日志
+        if self.sandbox and self.step_count > 0 and self.step_count % 30 == 0:
+            try:
+                r = self.sandbox.execute("tail -5 /tmp/discoveries.md 2>/dev/null || echo ''")
+                if r.stdout and len(r.stdout) > 20:
+                    # 把它当普通输出处理, 提取事实
+                    self.workbench.extract_facts("SELF", "self-review", r.stdout, {}, self.step_count)
+            except Exception:
+                pass
 
         return step_success, reward
 

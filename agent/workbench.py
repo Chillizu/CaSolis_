@@ -449,9 +449,19 @@ class Workbench:
             if p not in explored_paths:
                 return ("CUSTOM", {"custom_args": ["cat", p], "cluster": "FILE_READ"})
         
-        # 都看过了: 扫描 /proc 找新文件
+        # 都看过了: 用不同参数扫描, 探索新区域
         if explored_paths:
-            return ("CUSTOM", {"custom_args": ["find", "/proc", "-maxdepth", "2", "-type", "f", "2>/dev/null", "|", "head", "-10"], "cluster": "FILE_FIND"})
+            import random as _rnd
+            # 每100步换一个扫描方向
+            phase = len(explored_paths) % 4
+            if phase == 0:
+                return ("CUSTOM", {"custom_args": ["find", "/proc", "-maxdepth", "3", "-type", "f", "2>/dev/null", "|", "shuf", "-n", "8"], "cluster": "FILE_FIND"})
+            elif phase == 1:
+                return ("CUSTOM", {"custom_args": ["find", "/sys", "-maxdepth", "2", "-type", "f", "2>/dev/null", "|", "shuf", "-n", "5"], "cluster": "FILE_FIND"})
+            elif phase == 2:
+                return ("CUSTOM", {"custom_args": ["ls", "-la", "/proc/self/fd/", "2>/dev/null"], "cluster": "PROCFS"})
+            else:
+                return ("CUSTOM", {"custom_args": ["ls", "-la", "/etc/", "2>/dev/null"], "cluster": "FILE_LIST"})
         
         return None
 
