@@ -78,6 +78,7 @@ class SandboxExecutor:
                 "--read-only",              # 只读根文件系统
                 "--tmpfs", "/tmp",          # 可写 /tmp
                 "--tmpfs", "/workspace",    # 工作区 (持久跨步骤)
+                "-v", f"{os.getcwd()}/data/persistent:/persistent:rw",  # P5: 持久记忆
                 "--cap-drop", "ALL",        # 放弃所有能力
                 "--security-opt", "no-new-privileges",
                 "--network", "none",        # 无网络

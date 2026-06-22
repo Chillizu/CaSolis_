@@ -164,6 +164,10 @@ class OnlineAgent:
         # P4: 工作栏必须早于状态编码器
         self.workbench = Workbench()
         self.state_encoder = StateEncoder(workbench=self.workbench)
+        # P5: 尝试从宿主持久化目录恢复工作栏
+        loaded = self.workbench.load()
+        if loaded > 0:
+            print(f"  ✅ 工作栏已恢复: {loaded} 个事实")
         self.rnd = RND(embed_dim=384)
         self.buffer = ExperienceBuffer(max_size=buffer_size)
         # 分层命令选择器 (替代 flat CommandSelector)
@@ -947,6 +951,10 @@ class OnlineAgent:
             old_base = self.conductor_reward_baseline.get(intent, 0.0)
             self.conductor_reward_baseline[intent] = 0.9 * old_base + 0.1 * reward
             self._last_cond_logits = None
+
+        # P5: 持久化工作栏状态 (每10步写一次, 降低IO)
+        if self.step_count % 10 == 0:
+            self.workbench.save()
 
         return step_success, reward
 

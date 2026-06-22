@@ -541,6 +541,48 @@ class Workbench:
             parts.append(f"{key}={val}")
         return " | ".join(parts)
 
+    def save(self, path: str = ""):
+        """持久化工作栏状态到文件 (含事实 + 链状态)"""
+        if not path:
+            # 默认: 项目 data/persistent/ 目录 (host 可写)
+            import os
+            base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            path = os.path.join(base, "data", "persistent", "workbench_snapshot.json")
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+        try:
+            data = {
+                "facts": {k: {sk: sv for sk, sv in v.items()}
+                         for k, v in self.facts.items()},
+                "chain_step": self.chain_step,
+                "chain_completed_at": self.chain_completed_at,
+                "_current_discovery": self._current_discovery,
+            }
+            import json
+            with open(path, "w") as f:
+                json.dump(data, f, ensure_ascii=False)
+        except Exception as e:
+            print(f"  ⚠️ 工作栏保存失败: {e}")
+
+    def load(self, path: str = ""):
+        """从文件恢复工作栏状态"""
+        if not path:
+            import os
+            base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            path = os.path.join(base, "data", "persistent", "workbench_snapshot.json")
+        try:
+            import json
+            with open(path) as f:
+                data = json.load(f)
+            self.facts.clear()
+            for k, v in data.get("facts", {}).items():
+                self.facts[k] = v
+            self.chain_step = data.get("chain_step", 0)
+            self.chain_completed_at = data.get("chain_completed_at", 0)
+            self._current_discovery = data.get("_current_discovery")
+            return len(self.facts)
+        except Exception:
+            return 0
+
     def reset(self):
         """清空工作栏 (新会话用)"""
         self.facts.clear()
