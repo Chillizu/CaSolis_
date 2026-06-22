@@ -33,7 +33,23 @@ class Workbench:
         self._current_discovery: Optional[str] = None  # 最新关键事实 key
         self._step_counter = 0
         # P4.1: 链式追踪
-        self.last_follow_up = None
+        self.chain_step: int = 0
+        self.chain_completed_at: int = 0
+        self.last_follow_up: Optional[tuple[str, dict]] = None
+
+    def has_active_goal(self) -> bool:
+        """工作栏有可执行的目标? (链进行中 或 未开始但有缓存推荐)"""
+        if self.chain_step > 0 and self.chain_step < 3 and self.last_follow_up:
+            return True
+        if self.chain_step == 0 and self.last_follow_up is not None:
+            return True
+        return False
+
+    def get_current_goal(self) -> Optional[tuple[str, dict]]:
+        """返回当前目标"""
+        if self.chain_step > 0 and self.chain_step < 3 and self.last_follow_up:
+            return self.last_follow_up
+        return self.get_follow_up()
         self.chain_step: int = 0  # 0=无, 1=发现, 2=验证, 3=扩展
         self.chain_completed_at: int = 0
 
@@ -422,7 +438,21 @@ class Workbench:
         self.chain_step += 1
         self.chain_completed_at = self._step_counter
         if self.chain_step >= 3:
-            self.last_follow_up = None  # 链满, 重置
+            self.last_follow_up = None
+
+    def has_active_goal(self) -> bool:
+        """工作栏有可执行的目标? (链进行中 或 未开始但有缓存推荐)"""
+        if self.chain_step > 0 and self.chain_step < 3 and self.last_follow_up:
+            return True
+        if self.chain_step == 0 and self.last_follow_up is not None:
+            return True
+        return False
+
+    def get_current_goal(self) -> Optional[tuple[str, dict]]:
+        """返回当前目标"""
+        if self.chain_step > 0 and self.chain_step < 3 and self.last_follow_up:
+            return self.last_follow_up
+        return self.get_follow_up()  # 链满, 重置
         return True
 
     def get_chain_bonus(self) -> float:
@@ -441,6 +471,20 @@ class Workbench:
         self.chain_step = 0
         self.chain_completed_at = 0
         self.last_follow_up = None
+
+    def has_active_goal(self) -> bool:
+        """工作栏有可执行的目标? (链进行中 或 未开始但有缓存推荐)"""
+        if self.chain_step > 0 and self.chain_step < 3 and self.last_follow_up:
+            return True
+        if self.chain_step == 0 and self.last_follow_up is not None:
+            return True
+        return False
+
+    def get_current_goal(self) -> Optional[tuple[str, dict]]:
+        """返回当前目标"""
+        if self.chain_step > 0 and self.chain_step < 3 and self.last_follow_up:
+            return self.last_follow_up
+        return self.get_follow_up()
 
     # ── 状态摘要 ──
 

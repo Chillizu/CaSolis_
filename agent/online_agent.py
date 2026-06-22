@@ -227,7 +227,7 @@ class OnlineAgent:
         except Exception as e:
             print(f"  ⚠️ 保姆不可用: {e}")
         
-        self.ab_stats = {"conductor": 0, "classifier": 0, "conductor_success": 0, "classifier_success": 0}
+        self.ab_stats = {"conductor": 0, "classifier": 0, "conductor_success": 0, "classifier_success": 0, "goal_driven": 0, "goal_driven_success": 0}
         self.multi_cmds_count = 0  # P1: 多命令步数
         self._last_cond_logits = None  # P2: 最近一次 Conductor logits
         self.ab_window = deque(maxlen=100)  # P1.5: 滑动窗口, 记录 (used_conductor, success)
@@ -630,86 +630,76 @@ class OnlineAgent:
         state_text = self.state_encoder.get_state_text(thought_label=thought_label)
         state_emb = self.classifier.get_embedding(state_text).detach().clone()
 
-        # 2. A/B 切换: 优先指挥家路径
-        used_conductor = False
+        # 2. P4.2: 工作栏驱动目标 (优先于 A/B 切换)
+        used_goal = False
         intent = None
         params = {}
-
-        # P1.5: A/B 自适应采样率 + 模式调整
-        if self.conductor_path_active:
-            cond_rate = self.ab_stats["conductor_success"] / max(self.ab_stats["conductor"], 1)
-            clf_rate = self.ab_stats["classifier_success"] / max(self.ab_stats["classifier"], 1)
-            p_conductor = 0.2 + 0.6 * max(0, min(1.0, cond_rate / max(clf_rate, 0.01)))
-            # 创意模式: 降低 Conductor 主导权 (给分类器更多机会)
-            if self.mode in ("creative", "auto"):
-                recent = self.intent_history[-20:] if self.intent_history else []
-                if recent and len(set(recent)) / max(len(recent), 1) < 0.2:
-                    p_conductor *= 0.3  # 多样性低时强制探索
-            if random.random() < p_conductor:
-                try:
-                    thought, logits = self.nanny.think(state_text)
-                    probs = torch.nn.functional.softmax(logits, dim=-1)
-                    best_prob = probs.max().item()
-                    cond_intent = INTENTS[logits.argmax().item()]
-
-                    if best_prob > self.conductor_gate:
-                        # 高置信度 → 走 Conductor
-                        raw_intent, nanny_params, _ = self.nanny.translate(
-                            thought, logits, state_text=state_text
-                        )
-                        if raw_intent == "HELP":
-                            pass
-                        else:
-                            intent = raw_intent
-                            params = nanny_params
-                            used_conductor = True
-                            self.ab_stats["conductor"] += 1
-                            self._last_cond_logits = logits.detach().clone()
-                    elif cond_intent not in ("HELP", "CUSTOM"):
-                        # 置信度不够但和分类器一致时, 绕过 gate
-                        clf_intent = self.classifier.predict(state_text)
-                        if cond_intent == clf_intent:
-                            raw_intent, nanny_params, _ = self.nanny.translate(
-                                thought, logits, state_text=state_text
-                            )
-                            intent = raw_intent
-                            params = nanny_params
-                            used_conductor = True
-                            self.ab_stats["conductor"] += 1
-                            self._last_cond_logits = logits.detach().clone()
-                except Exception:
-                    pass
-
-        if not used_conductor:
-            # 3. 旧分类器路径 (fallback)
-            intent = self._select_intent(state_text)
-            goal = self.state_encoder.current_goal
-            
-            if intent == "CUSTOM":
-                cluster, cmd_args = self.cmd_selector.select()
-                params = {"custom_args": cmd_args, "cluster": cluster}
-            else:
-                params = self.param_extractor.extract(intent, goal)
-                if "path" not in params and intent in ("READ", "COUNT", "SEARCH"):
-                    params["path"] = "/etc/hostname"
-                if "cmd" not in params and intent in ("INSPECT", "HELP"):
-                    params["cmd"] = "python3" if intent == "INSPECT" else "ls"
-            self.ab_stats["classifier"] += 1
-
-        # P4: 工作栏后续推荐 — 覆盖浅层意图 (用已缓存的 last_follow_up)
-        wb_overrode = False
-        if self.workbench and intent in ("LS_TMP", "READ_ETC", "INFO"):
-            fu = self.workbench.last_follow_up
+        used_conductor = False
+        if self.workbench and self.workbench.has_active_goal():
+            fu = self.workbench.get_current_goal()
             if fu:
-                fu_intent, fu_params = fu
-                old_intent = intent
-                intent = fu_intent
-                params = dict(fu_params)  # copy
-                wb_overrode = True
-                print(f"  [WB] {fu_intent}  ← {old_intent}")
+                intent, params = fu
+                params = dict(params)
+                used_goal = True
+                self.ab_stats["goal_driven"] += 1
+                cs = self.workbench.chain_step
+                label = f"链{cs+1}/3" if cs > 0 else "新发现"
+                print(f"  [GOAL] {intent} ({label})")
 
-        # V3: 世界模型心理模拟 (已工作栏覆盖时跳过, 避免丢失推荐)
-        if intent is not None and self.step_count > 5 and not wb_overrode:
+        if not used_goal:
+            # Fallback: A/B 切换 + 指挥家/分类器
+            used_conductor = False
+            # P1.5: A/B 自适应采样率
+            if self.conductor_path_active:
+                cond_rate = self.ab_stats["conductor_success"] / max(self.ab_stats["conductor"], 1)
+                clf_rate = self.ab_stats["classifier_success"] / max(self.ab_stats["classifier"], 1)
+                p_conductor = 0.2 + 0.6 * max(0, min(1.0, cond_rate / max(clf_rate, 0.01)))
+                if self.mode in ("creative", "auto"):
+                    recent = self.intent_history[-20:] if self.intent_history else []
+                    if recent and len(set(recent)) / max(len(recent), 1) < 0.2:
+                        p_conductor *= 0.3
+                if random.random() < p_conductor:
+                    try:
+                        thought, logits = self.nanny.think(state_text)
+                        probs = torch.nn.functional.softmax(logits, dim=-1)
+                        best_prob = probs.max().item()
+                        cond_intent = INTENTS[logits.argmax().item()]
+                        if best_prob > self.conductor_gate:
+                            raw_intent, nanny_params, _ = self.nanny.translate(thought, logits, state_text=state_text)
+                            if raw_intent != "HELP":
+                                intent = raw_intent
+                                params = nanny_params
+                                used_conductor = True
+                                self.ab_stats["conductor"] += 1
+                                self._last_cond_logits = logits.detach().clone()
+                        elif cond_intent not in ("HELP", "CUSTOM"):
+                            clf_intent = self.classifier.predict(state_text)
+                            if cond_intent == clf_intent:
+                                raw_intent, nanny_params, _ = self.nanny.translate(thought, logits, state_text=state_text)
+                                intent = raw_intent
+                                params = nanny_params
+                                used_conductor = True
+                                self.ab_stats["conductor"] += 1
+                                self._last_cond_logits = logits.detach().clone()
+                    except:
+                        pass
+
+            if not used_conductor:
+                intent = self._select_intent(state_text)
+                goal = self.state_encoder.current_goal
+                if intent == "CUSTOM":
+                    cluster, cmd_args = self.cmd_selector.select()
+                    params = {"custom_args": cmd_args, "cluster": cluster}
+                else:
+                    params = self.param_extractor.extract(intent, goal)
+                    if "path" not in params and intent in ("READ", "COUNT", "SEARCH"):
+                        params["path"] = "/etc/hostname"
+                    if "cmd" not in params and intent in ("INSPECT", "HELP"):
+                        params["cmd"] = "python3" if intent == "INSPECT" else "ls"
+                self.ab_stats["classifier"] += 1
+
+        # V3: 世界模型心理模拟 (目标驱动时跳过, 避免丢失方向)
+        if intent is not None and self.step_count > 5 and not used_goal:
             try:
                 candidates = [INTENTS.index(intent)]
                 for alt in ["CUSTOM", "EXPLORE", "INSPECT", "SEARCH", "LS_TMP", "LIST"]:
@@ -919,7 +909,9 @@ class OnlineAgent:
         step_success = step_success and bool(output)
         if step_success:
             self.success_count += 1
-            if used_conductor:
+            if used_goal:
+                self.ab_stats["goal_driven_success"] += 1
+            elif used_conductor:
                 self.ab_stats["conductor_success"] += 1
             else:
                 self.ab_stats["classifier_success"] += 1
@@ -1154,6 +1146,8 @@ class OnlineAgent:
         cond_rate = a['conductor_success'] / max(a['conductor'], 1) * 100
         clf_rate = a['classifier_success'] / max(a['classifier'], 1) * 100
         print(f"  A/B: 指挥家={a['conductor']}次 ({cond_rate:.0f}%)  分类器={a['classifier']}次 ({clf_rate:.0f}%)")
+        if a.get('goal_driven', 0) > 0:
+            print(f"  目标驱动: {a['goal_driven']}次 ({a['goal_driven']/max(result['steps'],1)*100:.0f}%)")
         if self.multi_cmds_count > 0:
             print(f"  多命令步数: {self.multi_cmds_count}/{result['steps']} ({self.multi_cmds_count/result['steps']*100:.0f}%)")
 
