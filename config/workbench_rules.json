@@ -304,6 +304,18 @@
       "pattern": "ID",
       "key": "ID",
       "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "hostname",
+      "key": "hostname",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "passwd_line_count",
+      "key": "passwd_line_count",
+      "category": "script"
     }
   ]
 }

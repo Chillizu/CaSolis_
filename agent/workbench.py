@@ -27,7 +27,7 @@ from typing import Optional
 class Workbench:
     """工作栏: 事实存储 + 自动提取 + 状态摘要"""
 
-    def __init__(self, max_facts: int = 40):
+    def __init__(self, max_facts: int = 40, meta_learner=None):
         self.facts: dict[str, dict] = {}  # key → {value, source, step, confidence, count}
         self.max_facts = max_facts
         self._current_discovery: Optional[str] = None  # 最新关键事实 key
@@ -38,6 +38,8 @@ class Workbench:
         self.last_follow_up: Optional[tuple[str, dict]] = None
         # P5.3: 从配置文件加载规则
         self.rules = self._load_rules()
+        # P5.4: 元学习器 (外部注入)
+        self.meta = meta_learner
 
     # ── 核心: 事实提取 ──
 
@@ -326,10 +328,11 @@ class Workbench:
     def _add_fact(self, key: str, value: str, source_intent: str,
                   source_cmd: str, step: int, confidence: float = 1.0,
                   category: str = "general"):
-        """添加或更新事实 (置信度递增)"""
+        """添加或更新事实 (置信度递增, P5.4: 追踪提取效用)"""
         if not value or len(value) > 100:
             value = value[:100]
 
+        is_new = key not in self.facts
         if key in self.facts:
             old = self.facts[key]
             old["value"] = value
@@ -339,7 +342,6 @@ class Workbench:
             old["category"] = category
         else:
             if len(self.facts) >= self.max_facts:
-                # 替换最旧的
                 oldest = min(self.facts, key=lambda k: self.facts[k]["step"])
                 del self.facts[oldest]
             self.facts[key] = {
@@ -351,6 +353,11 @@ class Workbench:
                 "count": 1,
                 "category": category,
             }
+        # P5.4: 记录提取效用
+        if self.meta and is_new:
+            self.meta.register(f"extract_{key}", "extraction",
+                              {"key": key, "source": str(source_cmd)[:40]}, step)
+            self.meta.record(f"extract_{key}", 1.0, step)
 
     # ── 查询接口 ──
 
@@ -541,7 +548,7 @@ class Workbench:
         self._save_rules()
 
     def _match_user_rules(self, output: str, intent: str, cmd_name: str, step: int):
-        """尝试用户自定义规则匹配输出"""
+        """尝试用户自定义规则匹配输出 (P5.4: 追踪效用)"""
         for rule in self.rules.get("user_rules", []):
             trigger = rule.get("trigger", "")
             pattern = rule.get("pattern", "")
@@ -549,12 +556,20 @@ class Workbench:
             cat = rule.get("category", "general")
             if not pattern or not key:
                 continue
+            rule_id = f"rule_{key}"
+            if self.meta:
+                self.meta.register(rule_id, "extraction_rule",
+                                  {"key": key, "pattern": pattern, "trigger": trigger}, step)
             if trigger == "output_contains" and pattern in output:
-                # 简单提取: pattern后的第一个值
                 idx = output.find(pattern) + len(pattern)
                 val = output[idx:idx+60].strip().split()[0] if idx > 0 else ""
                 if val and len(val) < 40:
                     self._add_fact(key, val, intent, cmd_name, step, confidence=0.5, category=cat)
+                    if self.meta:
+                        self.meta.record(rule_id, 0.5, step)
+                else:
+                    if self.meta:
+                        self.meta.record(rule_id, -0.2, step)
             elif trigger == "cmd_starts" and cmd_name.startswith(pattern):
                 val = output.splitlines()[0].strip()[:40] if output.strip() else ""
                 if val:

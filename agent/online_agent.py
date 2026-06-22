@@ -46,6 +46,7 @@ from agent.command_selector_v2 import HierarchicalSelector
 from agent.command_clusterer import CommandClusterer
 from agent.command_miner import CommandMiner
 from agent.world_model import WorldModel
+from agent.meta_learner import MetaLearner
 from agent.intent_discoverer import IntentDiscoverer
 from agent.workbench import Workbench
 from benchmark.param_extractor import ParameterExtractor
@@ -161,8 +162,13 @@ class OnlineAgent:
         self.classifier = IntentClassifier(classifier_checkpoint)
         self.param_extractor = ParameterExtractor()
         self.engine = TemplateEngine(dry_run=False, sandbox=self.sandbox)
+        # P5.4: 元学习器
+        self.meta = MetaLearner()
+        meta_stats = self.meta.get_stats()
+        if meta_stats["total_behaviors"] > 0:
+            print(f"  \u2705 元学习器已恢复: {meta_stats['total_behaviors']} 个行为")
         # P4: 工作栏必须早于状态编码器
-        self.workbench = Workbench()
+        self.workbench = Workbench(meta_learner=self.meta)
         self.state_encoder = StateEncoder(workbench=self.workbench)
         # P5: 尝试从宿主持久化目录恢复工作栏
         loaded = self.workbench.load()
@@ -267,6 +273,7 @@ class OnlineAgent:
         self.total_reward = 0.0
         self.intent_history: list[str] = []
         self.success_count = 0
+        self._last_action_source = "classifier"  # P5.4: 'probe'|'goal'|'imagination'|'conductor'|'classifier'
 
         # 失败抑制: 同一 intent+params 失败后 N 步内不再尝试
         self._failure_log: dict[str, int] = {}  # key→step_number_last_tried
@@ -584,6 +591,12 @@ class OnlineAgent:
             if r.exit_code == 0 and r.stdout and len(r.stdout) > 20:
                 out = r.stdout[:500]
                 self.workbench.extract_facts("SCRIPT", script_name, out, {}, self.step_count)
+                # P5.4: 记录脚本效用
+                script_facts_before = len(self.workbench.facts)
+                self.meta.register(f"script_{self.step_count}", "script_output",
+                                  {"script": script_name, "size": len(r.stdout)}, self.step_count)
+                self.meta.record(f"script_{self.step_count}",
+                                min(1.0, len(r.stdout) / 500), self.step_count)
                 print(f"  [SCRIPT] {script_name} -> {len(r.stdout)} bytes")
                 # 记到发现日志
                 try:
@@ -815,6 +828,7 @@ class OnlineAgent:
                     intent, params = probe
                     params = dict(params)
                     used_goal = True
+                    self._last_action_source = "probe"
                     self.ab_stats["goal_driven"] += 1
                     if self.step_count % 6 == 0:
                         print(f"  [PROBE] {params.get('custom_args', ['?'])}")
@@ -831,6 +845,7 @@ class OnlineAgent:
                     params = {"custom_args": cmd_args, "cluster": cluster}
                 used_goal = True
                 self._last_was_imagined = True
+                self._last_action_source = "imagination"
                 self.ab_stats["imagined"] = self.ab_stats.get("imagined", 0) + 1
 
         if not used_goal:
@@ -857,6 +872,7 @@ class OnlineAgent:
                                 intent = raw_intent
                                 params = nanny_params
                                 used_conductor = True
+                                self._last_action_source = "conductor"
                                 self.ab_stats["conductor"] += 1
                                 self._last_cond_logits = logits.detach().clone()
                         elif cond_intent not in ("HELP", "CUSTOM"):
@@ -1160,6 +1176,32 @@ class OnlineAgent:
         # P5.3c: 脚本创作 — 每25步生成一个 shell 脚本
         if self.step_count > 20 and self.step_count % 25 == 0:
             self._create_and_run_script()
+
+        # P5.4: 元学习 — 记录步效用 + 定期淘汰
+        # 记录探针效用
+        if self._last_action_source == "probe":
+            probe_cmd = params.get("custom_args", [intent])
+            probe_path = " ".join(str(a) for a in probe_cmd)[:50]
+            probe_id = f"probe_{probe_path[:40].replace(' ', '_')}"
+            self.meta.register(probe_id, "probe_path",
+                              {"path": probe_path}, self.step_count)
+            self.meta.record(probe_id, 0.5 if step_success else -0.3, self.step_count)
+        # 记录意图效用
+        asrc = self._last_action_source
+        if asrc in ("classifier", "conductor"):
+            self.meta.register(f"intent_{intent}_{asrc}", "intent_choice",
+                              {"intent": intent, "source": asrc}, self.step_count)
+            delta = 0.3 if step_success else -0.3
+            self.meta.record(f"intent_{intent}_{asrc}", delta, self.step_count)
+        # 每50步淘汰 + 保存 + 打印摘要
+        if self.step_count > 0 and self.step_count % 50 == 0:
+            pruned = self.meta.prune(min_trials=5, threshold=-0.2,
+                                     max_age=300, current_step=self.step_count)
+            self.meta.save()
+            meta_stats = self.meta.get_stats()
+            if pruned > 0:
+                print(f"  [META] 淘汰 {pruned} 个低效行为. "
+                      f"现存: {meta_stats['total_behaviors']} 个")
 
         return step_success, reward
 
