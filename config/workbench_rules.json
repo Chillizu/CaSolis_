@@ -1,0 +1,309 @@
+{
+  "_comment": "提取规则定义。系统会自动追加 user_rules。",
+  "extract_by_output": [
+    {
+      "output_starts": "Linux ",
+      "key": "node_name",
+      "value_from": "word:1",
+      "category": "system"
+    },
+    {
+      "output_starts": "Linux ",
+      "key": "kernel",
+      "value_from": "word:2",
+      "category": "system"
+    },
+    {
+      "output_starts": "Linux ",
+      "key": "architecture",
+      "value_from": "word:-1",
+      "category": "system"
+    },
+    {
+      "output_starts": "PRETTY_NAME",
+      "key": "os_pretty_name",
+      "value_from": "after_eq",
+      "category": "system"
+    },
+    {
+      "output_starts": "NAME",
+      "key": "os_name",
+      "value_from": "after_eq",
+      "category": "system"
+    },
+    {
+      "output_starts": "VERSION_ID",
+      "key": "os_version",
+      "value_from": "after_eq",
+      "category": "system"
+    },
+    {
+      "output_starts": "Mem:",
+      "key": "mem_total",
+      "value_from": "word:1",
+      "category": "system"
+    },
+    {
+      "output_starts": "Swap:",
+      "key": "swap_total",
+      "value_from": "word:1",
+      "category": "system"
+    },
+    {
+      "output_contains": "processor",
+      "key": "cpu_cores",
+      "value_from": "count_processor",
+      "category": "system"
+    },
+    {
+      "output_contains": "model name",
+      "key": "cpu_model",
+      "value_from": "after_colon",
+      "category": "system"
+    },
+    {
+      "output_contains": "root:x:0:0",
+      "key": "users",
+      "value_from": "passwd_users",
+      "category": "system"
+    },
+    {
+      "output_contains": "127.0.0.1",
+      "key": "etchosts_hosts",
+      "value_from": "etchosts_parse",
+      "category": "network"
+    },
+    {
+      "output_contains": "inet ",
+      "key": "ip_addr",
+      "value_from": "first_nonlocal_ip",
+      "category": "network"
+    }
+  ],
+  "extract_by_cmd": [
+    {
+      "command": "hostname",
+      "key": "hostname_cmd",
+      "value_from": "line1",
+      "category": "system"
+    },
+    {
+      "command": "whoami",
+      "key": "current_user",
+      "value_from": "line1",
+      "category": "system"
+    },
+    {
+      "command": "id",
+      "key": "uid_info",
+      "value_from": "id_uid",
+      "category": "system"
+    },
+    {
+      "command": "free -h",
+      "key": "mem_total",
+      "value_from": "word:1_on_Mem:",
+      "category": "system"
+    },
+    {
+      "command": "df -h",
+      "key": "disk_root",
+      "value_from": "partition:root",
+      "category": "system"
+    }
+  ],
+  "follow_up_chains": [
+    {
+      "trigger_key": "hostname",
+      "needs_key": "hostname_cmd",
+      "intent": "CUSTOM",
+      "args": [
+        "hostname"
+      ],
+      "cluster": "SYSTEM"
+    },
+    {
+      "trigger_key": "hostname_cmd",
+      "needs_key": "etchosts_hosts",
+      "intent": "READ",
+      "path": "/etc/hosts"
+    },
+    {
+      "trigger_key": "cpu_cores",
+      "needs_key": "mem_total",
+      "intent": "CUSTOM",
+      "args": [
+        "free",
+        "-h"
+      ],
+      "cluster": "SYSTEM"
+    },
+    {
+      "trigger_key": "mem_total",
+      "needs_key": "disk_root",
+      "intent": "CUSTOM",
+      "args": [
+        "df",
+        "-h"
+      ],
+      "cluster": "SYSTEM"
+    },
+    {
+      "trigger_key": "users",
+      "needs_key": "current_user",
+      "intent": "CUSTOM",
+      "args": [
+        "whoami"
+      ],
+      "cluster": "USER"
+    },
+    {
+      "trigger_key": "current_user",
+      "needs_key": "uid_info",
+      "intent": "CUSTOM",
+      "args": [
+        "id"
+      ],
+      "cluster": "USER"
+    },
+    {
+      "trigger_key": "kernel",
+      "needs_key": "os_pretty_name",
+      "intent": "READ",
+      "path": "/etc/os-release"
+    },
+    {
+      "trigger_key": "os_pretty_name",
+      "needs_key": "kernel_modules",
+      "intent": "CUSTOM",
+      "args": [
+        "lsmod"
+      ],
+      "cluster": "SYSTEM"
+    }
+  ],
+  "curiosity_probes": {
+    "priority": [
+      "/proc/version",
+      "/proc/uptime",
+      "/proc/loadavg",
+      "/proc/stat",
+      "/proc/self/status",
+      "/proc/self/environ",
+      "/proc/sys/kernel/hostname",
+      "/etc/hostname",
+      "/etc/hosts",
+      "/etc/os-release",
+      "/etc/fstab",
+      "/etc/resolv.conf"
+    ],
+    "fallback_commands": [
+      [
+        "find",
+        "/proc",
+        "-maxdepth",
+        "3",
+        "-type",
+        "f",
+        "2>/dev/null",
+        "|",
+        "shuf",
+        "-n",
+        "8"
+      ],
+      [
+        "find",
+        "/sys",
+        "-maxdepth",
+        "2",
+        "-type",
+        "f",
+        "2>/dev/null",
+        "|",
+        "shuf",
+        "-n",
+        "5"
+      ],
+      [
+        "ls",
+        "-la",
+        "/proc/self/fd/",
+        "2>/dev/null"
+      ],
+      [
+        "ls",
+        "-la",
+        "/etc/",
+        "2>/dev/null"
+      ]
+    ]
+  },
+  "user_rules": [
+    {
+      "trigger": "output_contains",
+      "pattern": "os_id",
+      "key": "os_id",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "os_version_id",
+      "key": "os_version_id",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "os_version_codename",
+      "key": "os_version_codename",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "kernel",
+      "key": "kernel",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "architecture",
+      "key": "architecture",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "disk_etc_hosts",
+      "key": "disk_etc_hosts",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "node_name",
+      "key": "node_name",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "disk_persistent",
+      "key": "disk_persistent",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cpu_cores",
+      "key": "cpu_cores",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "VERSION_CODENAME",
+      "key": "VERSION_CODENAME",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "ID",
+      "key": "ID",
+      "category": "script"
+    }
+  ]
+}

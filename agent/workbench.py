@@ -36,22 +36,8 @@ class Workbench:
         self.chain_step: int = 0
         self.chain_completed_at: int = 0
         self.last_follow_up: Optional[tuple[str, dict]] = None
-
-    def has_active_goal(self) -> bool:
-        """工作栏有可执行的目标? (链进行中 或 未开始但有缓存推荐)"""
-        if self.chain_step > 0 and self.chain_step < 3 and self.last_follow_up:
-            return True
-        if self.chain_step == 0 and self.last_follow_up is not None:
-            return True
-        return False
-
-    def get_current_goal(self) -> Optional[tuple[str, dict]]:
-        """返回当前目标"""
-        if self.chain_step > 0 and self.chain_step < 3 and self.last_follow_up:
-            return self.last_follow_up
-        return self.get_follow_up()
-        self.chain_step: int = 0  # 0=无, 1=发现, 2=验证, 3=扩展
-        self.chain_completed_at: int = 0
+        # P5.3: 从配置文件加载规则
+        self.rules = self._load_rules()
 
     # ── 核心: 事实提取 ──
 
@@ -189,6 +175,9 @@ class Workbench:
         # /etc/hosts
         if "127.0.0.1" in text or "localhost" in text:
             self._extract_etchosts(text, intent, cmd_name, step)
+
+        # P5.3: 用户自定义规则 (系统自改进)
+        self._match_user_rules(output, intent, cmd_name, step)
 
     # ── 各提取规则 ──
 
@@ -384,7 +373,20 @@ class Workbench:
         return result
 
     def _compute_follow_up(self) -> Optional[tuple[str, dict]]:
-        """实际的推荐逻辑"""
+        """实际的推荐逻辑 (先尝试配置链, 回退到硬编码)"""
+
+        # P5.3: 先尝试配置驱动的链
+        for chain in self.rules.get("follow_up_chains", []):
+            trigger = chain.get("trigger_key", "")
+            needs = chain.get("needs_key", "")
+            if trigger in self.facts and needs not in self.facts:
+                intent = chain.get("intent", "CUSTOM")
+                if intent == "CUSTOM":
+                    args = chain.get("args", ["ls"])
+                    return ("CUSTOM", {"custom_args": args, "cluster": chain.get("cluster", "SYSTEM")})
+                elif intent == "READ":
+                    path = chain.get("path", "/etc/hostname")
+                    return ("READ", {"path": path})
 
         # ── 验证链: 发现X → 验证X → 扩展X ──
         if "hostname" in self.facts and "hostname_cmd" not in self.facts:
@@ -423,46 +425,25 @@ class Workbench:
         return None
 
     def get_curiosity_probe(self, explored_paths: set[str] | None = None) -> Optional[tuple[str, dict]]:
-        """
-        好奇心探针: 当工作栏 idle 时推荐一个未探索的路径
-        从常见系统路径中挑一个没读过的
-        """
+        """好奇心探针 (配置驱动, user_rules 可扩展)"""
         if explored_paths is None:
             return None
-        
-        # 优先探索 /proc 的动态文件
-        proc_probes = [
-            "/proc/version", "/proc/uptime", "/proc/loadavg", "/proc/stat",
-            "/proc/self/status", "/proc/self/environ", 
-            "/proc/sys/kernel/hostname",
-        ]
-        for p in proc_probes:
+
+        probe_cfg = self.rules.get("curiosity_probes", {})
+
+        # 优先从配置读取
+        for p in probe_cfg.get("priority", []):
             if p not in explored_paths:
                 return ("CUSTOM", {"custom_args": ["cat", p], "cluster": "PROCFS"})
-        
-        # 然后 /etc 的基础文件
-        etc_probes = [
-            "/etc/hostname", "/etc/hosts", "/etc/os-release", "/etc/fstab",
-            "/etc/resolv.conf",
-        ]
-        for p in etc_probes:
-            if p not in explored_paths:
-                return ("CUSTOM", {"custom_args": ["cat", p], "cluster": "FILE_READ"})
-        
-        # 都看过了: 用不同参数扫描, 探索新区域
-        if explored_paths:
-            import random as _rnd
-            # 每100步换一个扫描方向
-            phase = len(explored_paths) % 4
-            if phase == 0:
-                return ("CUSTOM", {"custom_args": ["find", "/proc", "-maxdepth", "3", "-type", "f", "2>/dev/null", "|", "shuf", "-n", "8"], "cluster": "FILE_FIND"})
-            elif phase == 1:
-                return ("CUSTOM", {"custom_args": ["find", "/sys", "-maxdepth", "2", "-type", "f", "2>/dev/null", "|", "shuf", "-n", "5"], "cluster": "FILE_FIND"})
-            elif phase == 2:
-                return ("CUSTOM", {"custom_args": ["ls", "-la", "/proc/self/fd/", "2>/dev/null"], "cluster": "PROCFS"})
-            else:
-                return ("CUSTOM", {"custom_args": ["ls", "-la", "/etc/", "2>/dev/null"], "cluster": "FILE_LIST"})
-        
+
+        # 回退命令
+        fallbacks = probe_cfg.get("fallback_commands", [])
+        if explored_paths and fallbacks:
+            phase = len(explored_paths) % len(fallbacks)
+            cmd = list(fallbacks[phase])
+            cluster = "FILE_FIND" if "find" in " ".join(cmd) else "FILE_LIST"
+            return ("CUSTOM", {"custom_args": cmd, "cluster": cluster})
+
         return None
 
     def check_chain_completed(self, executed_intent: str, executed_params: dict) -> bool:
@@ -515,19 +496,189 @@ class Workbench:
         self.chain_completed_at = 0
         self.last_follow_up = None
 
-    def has_active_goal(self) -> bool:
-        """工作栏有可执行的目标? (链进行中 或 未开始但有缓存推荐)"""
-        if self.chain_step > 0 and self.chain_step < 3 and self.last_follow_up:
-            return True
-        if self.chain_step == 0 and self.last_follow_up is not None:
-            return True
-        return False
+    # ── P5.3: 可配置规则管理 ──
 
-    def get_current_goal(self) -> Optional[tuple[str, dict]]:
-        """返回当前目标"""
-        if self.chain_step > 0 and self.chain_step < 3 and self.last_follow_up:
-            return self.last_follow_up
-        return self.get_follow_up()
+    def _load_rules(self) -> dict:
+        """从配置文件加载规则, 不存在时返回默认"""
+        import os, json
+        base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        path = os.path.join(base, "config", "workbench_rules.json")
+        if os.path.exists(path):
+            try:
+                with open(path) as f:
+                    return json.load(f)
+            except Exception:
+                pass
+        return {}
+
+    def _save_rules(self):
+        """保存规则到配置文件"""
+        import os, json
+        base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        path = os.path.join(base, "config", "workbench_rules.json")
+        try:
+            with open(path, "w") as f:
+                json.dump(self.rules, f, indent=2, ensure_ascii=False)
+        except Exception:
+            pass
+
+    def add_user_rule(self, trigger_type: str, trigger_pattern: str,
+                       key: str, category: str = "system"):
+        """追加用户自定义的提取规则 (系统自改进用)"""
+        if "user_rules" not in self.rules:
+            self.rules["user_rules"] = []
+        rule = {
+            "trigger": trigger_type,
+            "pattern": trigger_pattern,
+            "key": key,
+            "category": category,
+        }
+        # 去重
+        for existing in self.rules["user_rules"]:
+            if existing.get("key") == key:
+                return
+        self.rules["user_rules"].append(rule)
+        self._save_rules()
+
+    def _match_user_rules(self, output: str, intent: str, cmd_name: str, step: int):
+        """尝试用户自定义规则匹配输出"""
+        for rule in self.rules.get("user_rules", []):
+            trigger = rule.get("trigger", "")
+            pattern = rule.get("pattern", "")
+            key = rule.get("key", "")
+            cat = rule.get("category", "general")
+            if not pattern or not key:
+                continue
+            if trigger == "output_contains" and pattern in output:
+                # 简单提取: pattern后的第一个值
+                idx = output.find(pattern) + len(pattern)
+                val = output[idx:idx+60].strip().split()[0] if idx > 0 else ""
+                if val and len(val) < 40:
+                    self._add_fact(key, val, intent, cmd_name, step, confidence=0.5, category=cat)
+            elif trigger == "cmd_starts" and cmd_name.startswith(pattern):
+                val = output.splitlines()[0].strip()[:40] if output.strip() else ""
+                if val:
+                    self._add_fact(key, val, intent, cmd_name, step, confidence=0.5, category=cat)
+
+    # ── P5.3c: 脚本创作 ──
+
+    def generate_script(self, script_name: str = "") -> Optional[str]:
+        """
+        基于当前工作栏事实生成一个 shell 脚本
+        返回脚本内容, 或 None (事实太少)
+        """
+        if len(self.facts) < 3:
+            return None
+        import random as _rnd
+        
+        # 收集可用事实
+        system_facts = self.get_facts_by_category("system")
+        if not system_facts:
+            return None
+        
+        # 随机选 2-4 个事实作为脚本主题
+        selected = _rnd.sample(system_facts, min(len(system_facts), 2 + _rnd.randint(0, 2)))
+        
+        lines = ["#!/bin/bash", "", "# Auto-generated by Folunar Workbench", f"# Facts: {', '.join(selected)}", ""]
+        
+        for key in selected:
+            fact = self.facts.get(key)
+            if not fact:
+                continue
+            val = fact["value"]
+            cmd = fact.get("source_cmd", "") or ""
+            
+            if key == "kernel":
+                lines.append(f"echo '=== Kernel Info ==='")
+                lines.append(f"echo 'Kernel: {val}'")
+                lines.append("uname -a")
+                lines.append("")
+            elif key == "cpu_cores":
+                lines.append(f"echo '=== CPU ==='")
+                lines.append(f"echo 'Online cores: $(nproc)'")
+                lines.append("cat /proc/loadavg")
+                lines.append("")
+            elif key == "mem_total":
+                lines.append(f"echo '=== Memory ==='")
+                lines.append("free -h")
+                lines.append("")
+            elif key == "disk_root":
+                lines.append(f"echo '=== Disk ==='")
+                lines.append(f"df -h | head -5")
+                lines.append("")
+            elif key == "hostname":
+                lines.append(f"echo '=== Host ==='")
+                lines.append(f"echo 'Hostname: {val}'")
+                lines.append(f"echo 'Hostname (cmd): $(hostname)'")
+                lines.append("")
+            elif key == "current_user":
+                lines.append(f"echo '=== User ==='")
+                lines.append(f"echo 'User: {val}'")
+                lines.append(f"id")
+                lines.append("")
+            elif key == "ip_addr":
+                lines.append(f"echo '=== Network ==='")
+                lines.append(f"echo 'IP: {val}'")
+                lines.append("cat /sys/class/net/*/address 2>/dev/null || ip link")
+                lines.append("")
+            elif key == "os_pretty_name":
+                lines.append(f"echo '=== OS ==='")
+                lines.append(f"echo '{val}'")
+                lines.append("cat /etc/os-release 2>/dev/null | head -3")
+                lines.append("")
+            else:
+                lines.append(f"echo '=== {key} ==='")
+                if cmd and cmd.startswith("["):
+                    # 从列表表示提取: ['cat', '/etc/os-release']
+                    import ast
+                    try:
+                        cmd_list = ast.literal_eval(cmd)
+                        if isinstance(cmd_list, list) and len(cmd_list) == 1:
+                            lines.append(self._find_command_for_key(key) or cmd_list[0])
+                        elif isinstance(cmd_list, list):
+                            lines.append(" ".join(cmd_list))
+                    except:
+                        lines.append(self._find_command_for_key(key) or cmd)
+                else:
+                    lines.append(self._find_command_for_key(key) or cmd)
+                lines.append("")
+        
+        # 总结: 所有选定事实
+        lines.append("echo '=== Summary ==='")
+        for k in selected:
+            fact = self.facts.get(k)
+            if fact:
+                lines.append(f"echo '{k}={fact["value"]}'")
+        lines.append("")
+        
+        return "\n".join(lines)
+
+    def _find_command_for_key(self, key: str) -> str:
+        """根据事实 key 推荐一个可执行的 shell 命令"""
+        cmd_map = {
+            "kernel": "uname -a",
+            "node_name": "uname -a",
+            "architecture": "uname -a",
+            "hostname": "cat /etc/hostname",
+            "hostname_cmd": "hostname",
+            "current_user": "whoami",
+            "uid_info": "id",
+            "cpu_cores": "cat /proc/cpuinfo | grep processor | wc -l",
+            "cpu_model": "cat /proc/cpuinfo | grep 'model name' | head -1",
+            "mem_total": "free -h | grep Mem",
+            "swap_total": "free -h | grep Swap",
+            "disk_root": "df -h /",
+            "ip_addr": "ip addr show | grep 'inet '",
+            "users": "cat /etc/passwd | cut -d: -f1",
+            "etchosts_hosts": "cat /etc/hosts",
+            "os_pretty_name": "cat /etc/os-release",
+            "os_name": "cat /etc/os-release | grep '^NAME='",
+            "os_version": "cat /etc/os-release | grep '^VERSION_ID='",
+            "os_version_id": "cat /etc/os-release | grep '^VERSION_ID='",
+            "os_id": "cat /etc/os-release | grep '^ID='",
+            "os_version_codename": "cat /etc/os-release | grep '^VERSION_CODENAME='",
+        }
+        return cmd_map.get(key, "")
 
     # ── 状态摘要 ──
 

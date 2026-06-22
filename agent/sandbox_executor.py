@@ -23,6 +23,25 @@ class ExecResult:
     exit_code: int
 
 
+# P5.3: 命令→包名映射 (auto-install 用)
+COMMAND_PACKAGE_MAP = {
+    "python3": "python3", "python": "python3",
+    "pip": "python3-pip", "pip3": "python3-pip",
+    "git": "git", "curl": "curl", "wget": "wget",
+    "vim": "vim", "nano": "nano",
+    "htop": "htop", "jq": "jq", "tree": "tree",
+    "make": "make", "gcc": "gcc", "g++": "g++",
+    "node": "nodejs", "npm": "npm", "ruby": "ruby",
+    "perl": "perl", "lua": "lua5.4",
+    "ifconfig": "net-tools",
+    "zip": "zip", "unzip": "unzip",
+    "bc": "bc", "lsof": "lsof", "strace": "strace",
+    "nc": "netcat-openbsd", "socat": "socat",
+    "rsync": "rsync",
+    "screen": "screen", "tmux": "tmux",
+}
+
+
 class SandboxExecutor:
     """
     Docker 容器执行器
@@ -90,7 +109,7 @@ class SandboxExecutor:
         )
 
     def execute(self, cmd: str, timeout: int = 10) -> ExecResult:
-        """在容器内执行命令"""
+        """在容器内执行命令 (自动检测缺失命令并安装)"""
         try:
             result = subprocess.run(
                 [
@@ -102,15 +121,37 @@ class SandboxExecutor:
                 timeout=timeout,
                 errors='replace',
             )
-            return ExecResult(
+            er = ExecResult(
                 stdout=result.stdout or "",
                 stderr=result.stderr or "",
                 exit_code=result.returncode,
             )
+            # P5.3: 检测缺失命令并自动安装
+            if er.exit_code != 0 and er.stderr:
+                self._try_auto_install(cmd, er)
+            return er
         except subprocess.TimeoutExpired:
             return ExecResult("", f"TIMEOUT ({timeout}s)", -1)
         except Exception as e:
             return ExecResult("", str(e), -1)
+
+    def _try_auto_install(self, cmd: str, result: ExecResult):
+        """检测 stderr 中 'not found' 并尝试安装"""
+        stderr = result.stderr
+        for cmd_name, pkg in COMMAND_PACKAGE_MAP.items():
+            if cmd_name in self._unavailable_commands:
+                continue
+            if f"{cmd_name}: not found" in stderr or f"{cmd_name}: command not found" in stderr:
+                if pkg in self._installed_packages:
+                    self._unavailable_commands.add(cmd_name)
+                    return
+                print(f"  \U0001f4e6 安装 {cmd_name} -> {pkg}")
+                self.execute(f"apt-get install -y -qq {pkg} 2>/dev/null || true", timeout=30)
+                self._installed_packages.add(pkg)
+                # 验证安装
+                check = self.execute(f"which {cmd_name} 2>/dev/null || echo 'MISSING'", timeout=5)
+                if "MISSING" in (check.stdout or ""):
+                    self._unavailable_commands.add(cmd_name)
 
     def execute_list(self, args: list[str], timeout: int = 10) -> ExecResult:
         """在容器内执行命令 (参数列表形式)"""

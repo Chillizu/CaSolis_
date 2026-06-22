@@ -558,6 +558,69 @@ class OnlineAgent:
 
         return total_loss / max(n_batches, 1)
 
+    def _create_and_run_script(self):
+        """
+        P5.3c: 基于工作栏事实生成 shell 脚本并执行
+        脚本存于 /persistent/scripts/, 跨会话保留
+        """
+        if not self.sandbox:
+            return
+        script = self.workbench.generate_script()
+        if not script:
+            return
+        try:
+            # 确保目录存在
+            self.sandbox.execute("mkdir -p /persistent/scripts", timeout=5)
+            script_name = f"discover_{self.step_count}.sh"
+            # 写脚本 (用 base64 编码避免 shell 特殊字符)
+            import base64 as _b64
+            encoded = _b64.b64encode(script.encode()).decode()
+            self.sandbox.execute(
+                f"echo '{encoded}' | base64 -d > /persistent/scripts/{script_name}", timeout=10
+            )
+            self.sandbox.execute(f"chmod +x /persistent/scripts/{script_name}", timeout=5)
+            # 执行脚本
+            r = self.sandbox.execute(f"/persistent/scripts/{script_name} 2>&1", timeout=15)
+            if r.exit_code == 0 and r.stdout and len(r.stdout) > 20:
+                out = r.stdout[:500]
+                self.workbench.extract_facts("SCRIPT", script_name, out, {}, self.step_count)
+                print(f"  [SCRIPT] {script_name} -> {len(r.stdout)} bytes")
+                # 记到发现日志
+                try:
+                    safe = r.stdout[:80].replace("'", "").replace("\n", " | ")
+                    self.sandbox.execute(
+                        f"printf '### 脚本{self.step_count} {script_name}\\n{safe}\\n\\n' >> /tmp/discoveries.md"
+                    )
+                except Exception:
+                    pass
+                # 自改进: 为新输出模式添加规则
+                self._maybe_add_discovery_rule(r.stdout, script_name)
+            elif r.exit_code != 0:
+                print(f"  [SCRIPT] {script_name} FAIL (exit={r.exit_code})")
+        except Exception as e:
+            pass
+
+    def _maybe_add_discovery_rule(self, output: str, script_name: str):
+        """
+        检查脚本输出中是否有可提取的新模式
+        如果有, 追加到用户自定义规则
+        """
+        lines = output.splitlines()
+        # 找 "key=value" 模式的输出
+        import re
+        for line in lines:
+            line = line.strip()
+            m = re.match(r'^\w+=[\w\./\-:]+$', line)
+            if m:
+                key, val = line.split("=", 1)
+                self.workbench.add_user_rule(
+                    trigger_type="output_contains",
+                    trigger_pattern=key,
+                    key=key,
+                    category="script",
+                )
+                print(f"  \U0001f9f0 新规则: {key}={val} (来自 {script_name})")
+
     def _imagine_intent(self, state_text: str, temperature: float = 1.5) -> str | None:
         """
         P5.2: 反向想象 — 世界模型创造意图
@@ -1090,10 +1153,13 @@ class OnlineAgent:
             try:
                 r = self.sandbox.execute("tail -5 /tmp/discoveries.md 2>/dev/null || echo ''")
                 if r.stdout and len(r.stdout) > 20:
-                    # 把它当普通输出处理, 提取事实
                     self.workbench.extract_facts("SELF", "self-review", r.stdout, {}, self.step_count)
             except Exception:
                 pass
+
+        # P5.3c: 脚本创作 — 每25步生成一个 shell 脚本
+        if self.step_count > 20 and self.step_count % 25 == 0:
+            self._create_and_run_script()
 
         return step_success, reward
 
