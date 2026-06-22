@@ -25,19 +25,19 @@ from agent.experience import Experience, ExperienceBuffer
 # ── 全量执行日志 ──
 import datetime
 EXEC_LOG_PATH = "exec_log.jsonl"
-def _log_execution(intent: str, params: dict, result, output: str, state_text: str):
+def _log_execution(intent: str, params: dict, result, output: str, state_text: str, step: int = 0):
     """记录每一步执行的详细信息到 JSONL 文件"""
     try:
         with open(EXEC_LOG_PATH, "a") as f:
             f.write(json.dumps({
                 "ts": datetime.datetime.now().isoformat(),
-                "step": None,  # 调用时填写
+                "step": step,
                 "intent": intent,
                 "params": {k: str(v) for k, v in params.items()},
                 "exit_code": result.exit_code if result else -1,
                 "output_len": len(output),
                 "output_preview": output[:200],
-                "state": state_text[:100],
+                "state": state_text[:200],
             }, ensure_ascii=False) + "\n")
     except:
         pass
@@ -160,7 +160,8 @@ class OnlineAgent:
         self.classifier = IntentClassifier(classifier_checkpoint)
         self.param_extractor = ParameterExtractor()
         self.engine = TemplateEngine(dry_run=False, sandbox=self.sandbox)
-        # P4: 状态编码器 + 工作栏
+        # P4: 工作栏必须早于状态编码器
+        self.workbench = Workbench()
         self.state_encoder = StateEncoder(workbench=self.workbench)
         self.rnd = RND(embed_dim=384)
         self.buffer = ExperienceBuffer(max_size=buffer_size)
@@ -182,8 +183,6 @@ class OnlineAgent:
                 print(f"  ✅ 世界模型已加载: {wm_ckpt}")
             except Exception as e:
                 print(f"  ⚠️ 世界模型加载失败: {e}")
-        # P4: 工作栏 (事实存储 + 逻辑链)
-        self.workbench = Workbench()
         self.intent_discoverer = IntentDiscoverer(min_trajectories=30)
 
         # 训练配置
@@ -300,7 +299,9 @@ class OnlineAgent:
             novel_exps = self.buffer.sample_novel(3)
             for exp in novel_exps:
                 if exp.novelty > 0.1:
-                    return f"探索系统: 上次发现 {exp.state_text[:50]}"
+                    # 只取输出摘要部分, 避免嵌套
+                    short = exp.state_text.split("输出:")[-1].strip()[:30] if "输出:" in exp.state_text else exp.state_text[:30]
+                    return f"探索系统: {short}"
 
         # 否则轮转预定目标
         goal = self.explore_targets[self.goal_idx % len(self.explore_targets)]
@@ -774,8 +775,8 @@ class OnlineAgent:
             result = self.engine.execute(intent, params)
             output = (result.stdout or result.stderr or "")
         
-        # 全量日志
-        _log_execution(intent, params, result, output, state_text)
+        # 全量日志 (含正确步数)
+        _log_execution(intent, params, result, output, state_text, step=self.step_count)
         
         # CUSTOM 回传结果 + 意图发现
         if intent == "CUSTOM":

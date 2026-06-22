@@ -314,8 +314,8 @@ class Workbench:
         ranked = sorted(
             self.facts.items(),
             key=lambda x: (
-                x[1]["confidence"] * (1.0 if x[1]["step"] == self._step_counter else 0.5),
-                -x[1]["step"]
+                x[1]["confidence"] * (1.0 if (x[1]["step"] or 0) == self._step_counter else 0.5),
+                -(x[1]["step"] or 0)
             ),
             reverse=True,
         )
