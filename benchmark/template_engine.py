@@ -185,59 +185,10 @@ SAFE_PATHS = [
     "/workspace/",  # 容器内工作区
 ]
 
-# 允许的命令 (open: 全部只读命令)
-SAFE_COMMANDS = {
-    # 基础文件
-    "cat", "ls", "grep", "wc", "which", "head", "tail",
-    "sort", "uniq", "cut", "tr", "tee", "od", "hexdump",
-    "strings", "cmp", "diff", "comm", "fold", "nl", "pr",
-    "expand", "unexpand", "rev", "tac",
-    # 系统信息
-    "uname", "hostname", "uptime", "date", "whoami", "id",
-    "who", "w", "users", "groups", "logname",
-    "arch", "lscpu", "lsblk", "free", "df", "du",
-    "ps", "pstree", "top", "pidof", "pgrep",
-    "dmesg", "lsmod", "modinfo", "lspci", "lsusb",
-    "lsof", "fuser", "stat", "file", "type",
-    "mount", "df", "lsblk", "blkid", "findmnt",
-    # 环境
-    "env", "printenv", "locale", "localectl", "timedatectl",
-    "getconf", "yes", "basename", "dirname", "realpath",
-    "readlink", "readelf", "ldd",
-    # 网络 (read-only)
-    "ip", "ss", "ping", "nslookup", "host", "dig",
-    "route", "arp", "ifconfig", "netstat",
-    # 进程
-    "ps", "top", "htop", "pstree", "lsof", "fuser",
-    "pidof", "pgrep", "killall", "skill",
-    # shell
-    "echo", "printf", "seq", "sh", "command",
-    "compgen", "compopt", "complete",
-    # 文件操作 (容器只读rootfs, 安全)
-    "cat", "tac", "tee", "xargs",
-    "touch", "mkdir", "cp", "mv", "rm", "rmdir", "ln",
-    "chmod", "chown", "dd", "truncate", "fallocate",
-    "mknod", "mkfifo",
-    # 进程
-    "kill", "pkill", "killall", "skill", "renice",
-    # 系统
-    "sysctl", "mount", "umount", "crontab",
-    # 查找
-    "find", "locate", "whereis", "which", "type", "fuser",
-    # 时间
-    "cal", "ncal", "hwclock", "time", "timeout",
-    # 杂项
-    "nproc", "mkfifo", "hostid", "md5sum", "sha1sum", "sha256sum",
-}
+# 开放: 所有命令默认允许 (容器只读+零能力+无网络)
+SAFE_COMMANDS: set[str] | None = None
 
-# 危险命令黑名单 (容器安全边界: root+零能力+只读rootfs)
-# 几乎所有命令都被放开 — 最多只能写 /tmp
-BLOCKED_COMMANDS = {
-    # 真正的危险: 仅保留明显有害的
-    "sudo",  # 没必要, 已经是 root
-    # 容器管理 (即使成功也不应该做)
-    "shutdown", "reboot", "poweroff", "halt",
-}
+BLOCKED_COMMANDS = {"sudo", "shutdown", "reboot", "poweroff", "halt"}
 
 # 危险标志参数 — 放宽: 容器无法真正破坏
 # 只保留 clearly destructive 的格式操作
@@ -310,8 +261,8 @@ class TemplateEngine:
             self._stats["blocked"] += 1
             return False, f"命令被禁止: {cmd}"
 
-        # 允许的命令
-        if cmd not in SAFE_COMMANDS:
+        # 允许的命令 (None = 全部允许, 仅黑名单过滤)
+        if SAFE_COMMANDS is not None and cmd not in SAFE_COMMANDS:
             self._stats["blocked"] += 1
             return False, f"命令不在白名单: {cmd}"
 
