@@ -325,12 +325,36 @@ class Workbench:
 
     # ── 内部: 事实管理 ──
 
+    @staticmethod
+    def _is_valid_value(val: str) -> bool:
+        """P6.1: 校验提取的值是否有效 (拒绝垃圾)"""
+        if not val or len(val) < 1:
+            return False
+        # 只含标点符号的垃圾
+        stripped = val.strip("=._-:;~!@#$%^&*()[]{}\"'")
+        if not stripped:
+            return False
+        # 以 = 或 _ 开头 (解析伪影)
+        if val.startswith(("=", "_", ".", ")", "(")):
+            return False
+        # 看起来像残留的键=值解析
+        if "=" in val and val.startswith("="):
+            return False
+        # 少于2个字母数字字符
+        letter_count = sum(c.isalnum() for c in val)
+        if letter_count < 2:
+            return False
+        return True
+
     def _add_fact(self, key: str, value: str, source_intent: str,
                   source_cmd: str, step: int, confidence: float = 1.0,
                   category: str = "general"):
         """添加或更新事实 (置信度递增, P5.4: 追踪提取效用)"""
         if not value or len(value) > 100:
             value = value[:100]
+        # P6.1: 拒绝垃圾值
+        if not self._is_valid_value(value):
+            return
 
         is_new = key not in self.facts
         if key in self.facts:
@@ -634,6 +658,8 @@ class Workbench:
                 idx = output.find(pattern) + len(pattern)
                 after = output[idx:idx+60].strip()
                 val = after.split()[0] if after else ""
+                # P6.1: 清理提取值中的垃圾 (去掉前导 = 和引号)
+                val = val.lstrip("=:_-").strip('\\"\"')
                 if val and len(val) < 40:
                     self._add_fact(key, val, intent, cmd_name, step, confidence=0.5, category=cat)
                     if self.meta:

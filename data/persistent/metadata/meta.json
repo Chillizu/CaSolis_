@@ -30,8 +30,8 @@
       "pattern": "os_version_codename",
       "trigger": "output_contains"
     },
-    "utility": 0.5,
-    "n": 5,
+    "utility": 0.30000000000000004,
+    "n": 7,
     "last_step": 50,
     "created_step": 1
   },
@@ -78,9 +78,9 @@
       "pattern": "node_name",
       "trigger": "output_contains"
     },
-    "utility": 0.5,
-    "n": 4,
-    "last_step": 50,
+    "utility": 0.36,
+    "n": 5,
+    "last_step": 25,
     "created_step": 1
   },
   "rule_disk_persistent": {
@@ -115,7 +115,7 @@
       "trigger": "output_contains"
     },
     "utility": 0.5,
-    "n": 28,
+    "n": 30,
     "last_step": 50,
     "created_step": 1
   },
@@ -127,7 +127,7 @@
       "trigger": "output_contains"
     },
     "utility": 0.5,
-    "n": 39,
+    "n": 41,
     "last_step": 50,
     "created_step": 1
   },
@@ -148,8 +148,8 @@
       "intent": "READ",
       "source": "classifier"
     },
-    "utility": 0.20000000000000007,
-    "n": 6,
+    "utility": 0.17500000000000007,
+    "n": 8,
     "last_step": 2,
     "created_step": 2
   },
@@ -188,9 +188,9 @@
     "params": {
       "path": "cat /proc/loadavg"
     },
-    "utility": -0.03999999999999998,
-    "n": 20,
-    "last_step": 45,
+    "utility": -0.08238529749999998,
+    "n": 26,
+    "last_step": 42,
     "created_step": 9
   },
   "probe_cat_/proc/stat": {
@@ -198,9 +198,9 @@
     "params": {
       "path": "cat /proc/stat"
     },
-    "utility": -0.01566437500000003,
-    "n": 23,
-    "last_step": 42,
+    "utility": -0.06449637690920901,
+    "n": 29,
+    "last_step": 45,
     "created_step": 12
   },
   "probe_lsblk_-o_NAME,SIZE,TYPE,FSTYPE,MOUNTPOIN": {
@@ -218,9 +218,9 @@
     "params": {
       "path": "INFO"
     },
-    "utility": -0.05555555555555555,
-    "n": 18,
-    "last_step": 23,
+    "utility": -0.06315789473684211,
+    "n": 19,
+    "last_step": 22,
     "created_step": 14
   },
   "probe_free_-h": {
@@ -281,8 +281,8 @@
       "script": "discover_25.sh",
       "size": 414
     },
-    "utility": 0.8305714285714287,
-    "n": 7,
+    "utility": 0.8517500000000001,
+    "n": 8,
     "last_step": 25,
     "created_step": 25
   },
@@ -291,9 +291,9 @@
     "params": {
       "path": "cat /proc/self/environ"
     },
-    "utility": 0.025000000000000015,
-    "n": 8,
-    "last_step": 66,
+    "utility": -0.05,
+    "n": 12,
+    "last_step": 48,
     "created_step": 27
   },
   "probe_cat_/proc/sys/kernel/hostname": {
@@ -311,9 +311,9 @@
     "params": {
       "path": "ARCH_INFO"
     },
-    "utility": 0.04166666666666667,
-    "n": 12,
-    "last_step": 91,
+    "utility": 0.023076923076923085,
+    "n": 13,
+    "last_step": 23,
     "created_step": 34
   },
   "probe_taskset": {
@@ -372,8 +372,8 @@
       "script": "discover_50.sh",
       "size": 716
     },
-    "utility": 0.9722857142857144,
-    "n": 7,
+    "utility": 0.9757500000000001,
+    "n": 8,
     "last_step": 50,
     "created_step": 50
   },
@@ -394,8 +394,8 @@
       "pattern": "hostname",
       "trigger": "output_contains"
     },
-    "utility": 0.46675,
-    "n": 21,
+    "utility": 0.3583725180742187,
+    "n": 27,
     "last_step": 20,
     "created_step": 51
   },
@@ -553,8 +553,8 @@
       "intent": "LS_TMP",
       "source": "imagination"
     },
-    "utility": 0.021052631578947375,
-    "n": 19,
+    "utility": -0.03900000000000001,
+    "n": 22,
     "last_step": 41,
     "created_step": 17
   },
@@ -699,9 +699,9 @@
       "intent": "LS_TMP",
       "source": "conductor"
     },
-    "utility": -0.2333333333333334,
-    "n": 3,
-    "last_step": 79,
+    "utility": -0.275,
+    "n": 4,
+    "last_step": 10,
     "created_step": 38
   },
   "probe_ls_/usr/bin": {
@@ -795,8 +795,8 @@
       "trigger": "output_contains"
     },
     "utility": 0.5,
-    "n": 10,
-    "last_step": 28,
+    "n": 12,
+    "last_step": 20,
     "created_step": 51
   },
   "intent_INSPECT_imagination": {
@@ -809,16 +809,6 @@
     "n": 1,
     "last_step": 65,
     "created_step": 65
-  },
-  "probe_COUNT": {
-    "type": "probe_path",
-    "params": {
-      "path": "COUNT"
-    },
-    "utility": -0.5,
-    "n": 4,
-    "last_step": 62,
-    "created_step": 74
   },
   "intent_SEARCH_imagination": {
     "type": "intent_choice",
@@ -837,8 +827,8 @@
       "intent": "CUSTOM",
       "source": "imagination"
     },
-    "utility": -0.13640032469531194,
-    "n": 38,
+    "utility": -0.10586606198090866,
+    "n": 45,
     "last_step": 44,
     "created_step": 8
   },
@@ -907,36 +897,6 @@
     "last_step": 47,
     "created_step": 34
   },
-  "probe_EXPLORE": {
-    "type": "probe_path",
-    "params": {
-      "path": "EXPLORE"
-    },
-    "utility": -0.5,
-    "n": 4,
-    "last_step": 50,
-    "created_step": 59
-  },
-  "probe_READ": {
-    "type": "probe_path",
-    "params": {
-      "path": "READ"
-    },
-    "utility": -0.5,
-    "n": 3,
-    "last_step": 7,
-    "created_step": 73
-  },
-  "probe_LIST": {
-    "type": "probe_path",
-    "params": {
-      "path": "LIST"
-    },
-    "utility": -0.5,
-    "n": 4,
-    "last_step": 25,
-    "created_step": 74
-  },
   "probe_SEARCH": {
     "type": "probe_path",
     "params": {
@@ -967,16 +927,6 @@
     "last_step": 5,
     "created_step": 5
   },
-  "probe_INSPECT": {
-    "type": "probe_path",
-    "params": {
-      "path": "INSPECT"
-    },
-    "utility": -0.5,
-    "n": 3,
-    "last_step": 49,
-    "created_step": 10
-  },
   "probe_ls_-la_/proc/self/fd/_2>/dev/null": {
     "type": "probe_path",
     "params": {
@@ -986,5 +936,16 @@
     "n": 1,
     "last_step": 39,
     "created_step": 36
+  },
+  "intent_INSPECT_conductor": {
+    "type": "intent_choice",
+    "params": {
+      "intent": "INSPECT",
+      "source": "conductor"
+    },
+    "utility": -0.4,
+    "n": 1,
+    "last_step": 11,
+    "created_step": 11
   }
 }
