@@ -94,6 +94,30 @@ class Conductor:
         """训练: 嵌入 → (想法向量, 分类logits)"""
         return self.head(emb)
 
+    def expand_intents(self, new_count: int):
+        """P6.4: 扩展分类头以容纳新意图
+        Args:
+            new_count: 新的总意图数 (不含CUSTOM)
+        """
+        old_proj = self.head.class_proj
+        old_weight = old_proj.weight.data         # (old_n, 64)
+        old_bias = old_proj.bias.data            # (old_n,)
+        old_n = old_weight.size(0)
+
+        if new_count <= old_n:
+            return
+
+        new_proj = nn.Linear(64, new_count).to(self.device)
+        # 复制旧权重
+        new_proj.weight.data[:old_n] = old_weight
+        new_proj.bias.data[:old_n] = old_bias
+        # 新意图初始化: 微小随机值
+        nn.init.normal_(new_proj.weight.data[old_n:], mean=0.0, std=0.01)
+        nn.init.zeros_(new_proj.bias.data[old_n:])
+
+        self.head.class_proj = new_proj
+        print(f"  [CONDUCTOR] 分类头扩展: {old_n} → {new_count} 个意图")
+
     def save(self, path: str):
         os.makedirs(os.path.dirname(path), exist_ok=True)
         torch.save(self.head.state_dict(), path)

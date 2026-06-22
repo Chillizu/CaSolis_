@@ -1115,11 +1115,35 @@ class OnlineAgent:
                 )
                 # 检查是否可以发现新意图
                 if self.intent_discoverer.ready():
+                    self.intent_discoverer.filter_known(INTENTS)
                     new_intents = self.intent_discoverer.discover()
                     if new_intents:
                         print(f"\n  🆕 发现 {len(new_intents)} 个候选意图!")
                         for ni in new_intents:
                             print(f"     {ni['name']:20s} ({ni['n_samples']}条, 例: {ni['cmd_base']})")
+                        # P6.4: 自动接入稳定新意图 (>=5样本)
+                        stable = [ni for ni in new_intents if ni['n_samples'] >= 5]
+                        if stable:
+                            _old_intents = list(INTENTS)
+                            for ni in stable:
+                                name = ni['name']
+                                if name not in INTENTS:
+                                    INTENTS.append(name)
+                                    import agent.nanny as nanny
+                                    if name not in nanny.INTENTS:
+                                        nanny.INTENTS.append(name)
+                            if INTENTS != _old_intents:
+                                effective = len([i for i in INTENTS if i != 'CUSTOM'])
+                                self.conductor.expand_intents(effective)
+                                total_intents = len(INTENTS)
+                                self.world_model.expand_intents(total_intents)
+                                for ni in stable:
+                                    self.INTENT_REWARD_BASE[ni['name']] = 0.5
+                                self.conductor.save(
+                                    'checkpoints/conductor/online_aligned.pt')
+                                self.world_model.save(
+                                    'checkpoints/world_model/latest.pt')
+                                print(f"  [SYSTEM] 接入 {len(stable)} 个新意图: {', '.join(ni['name'] for ni in stable)}")
 
         # 5. 更新状态
         cmd_summary = f"{intent} depth={depth}" if depth > 1 else f"{intent} {params}"
@@ -1426,10 +1450,16 @@ class OnlineAgent:
             # C: RND 自动软重置 (新颖度持续过低时)
             if i > 0 and i % 100 == 0:
                 rnd_stats = self.rnd.get_novelty_stats()
-                if rnd_stats['running_errors_avg'] < 0.002:
+                # P6.3: 降低阈值, 更快触发软重置
+                if rnd_stats['running_errors_avg'] < 0.008:
                     self.rnd.soft_reset(factor=0.3)
                     if verbose:
-                        print(f"  [RND] 新颖度过低({rnd_stats['running_errors_avg']:.4f}), 软重置")
+                        print(f"  [RND] 新颖度略低({rnd_stats['running_errors_avg']:.4f}), 软重置")
+            # P6.3: 每200步强制全量重置 (彻底遗忘旧状态分布)
+            if i > 0 and i % 200 == 0:
+                self.rnd.reset()
+                if verbose:
+                    print(f"  [RND] 200步强制全量重置")
 
             # 每隔 N 步显示统计
             if verbose and (i + 1) % 10 == 0:
@@ -1481,6 +1511,64 @@ class OnlineAgent:
         if os.path.exists(exp_path):
             self.buffer.load(exp_path)
             print(f"  ✅ 已加载经验: {self.buffer.size} 条")
+
+    def _try_expand_intents(self):
+        """P6.4: 检查 discoverer 发现的新意图, 如有则扩展系统"""
+        # 从 discoverer 获取未接人的意图
+        if not hasattr(self.intent_discoverer, '_known_intents'):
+            return
+
+        # 跑一次 discoverer, 但只取不在 INTENTS 中的
+        self.intent_discoverer.filter_known(INTENTS)
+        candidates = self.intent_discoverer.discover()
+
+        # 只需要有 >= 5 样本的稳定候选
+        new_intents = [
+            c for c in candidates
+            if c['n_samples'] >= 5 and c['name'] not in INTENTS
+        ]
+        if not new_intents:
+            return
+
+        old_effective = len([i for i in INTENTS if i != "CUSTOM"])
+
+        # 1. 追加到 INTENTS (末尾, 不改变已有索引)
+        new_names = []
+        for ni in new_intents:
+            name = ni['name']
+            if name not in INTENTS:
+                INTENTS.append(name)
+                # 同步 nanny.py 的 INTENTS
+                import agent.nanny as nanny
+                if name not in nanny.INTENTS:
+                    nanny.INTENTS.append(name)
+                new_names.append(name)
+
+        if not new_names:
+            return
+
+        # 2. 扩展 Conductor 分类头
+        effective = len([i for i in INTENTS if i != "CUSTOM"])
+        self.conductor.expand_intents(effective)
+
+        # 3. 扩展世界模型 (含 CUSTOM)
+        total_intents = len(INTENTS)
+        self.world_model.expand_intents(total_intents)
+
+        # 4. 为新意图注册奖励基础分
+        for name in new_names:
+            self.INTENT_REWARD_BASE[name] = 0.5
+            if 'INTENT_BASE_CONFIG' in dir() and name not in INTENT_BASE_CONFIG:
+                pass  # 可选: 加配置
+
+        # 5. 保存扩展后的 checkpoint
+        self.conductor.save(
+            os.path.join("checkpoints", "conductor", "online_aligned.pt"))
+        self.world_model.save(
+            os.path.join("checkpoints", "world_model", "latest.pt"))
+
+        print(f"  [SYSTEM] 已接入 {len(new_names)} 个新意图: {', '.join(new_names)}")
+        print(f"  [SYSTEM] 有效意图: {old_effective} → {effective}, 总意图: {total_intents}")
 
     def summarize(self) -> dict:
         """返回总统计"""

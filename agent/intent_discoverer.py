@@ -118,6 +118,11 @@ class IntentDiscoverer:
                 "state_example": sample_state,
             })
 
+        # P6.3: 过滤已知意图 (只汇报真正新的)
+        if hasattr(self, '_known_intents') and self._known_intents:
+            filtered = [d for d in discovered if d['name'] not in self._known_intents]
+            discovered = filtered
+
         # 按样本数降序
         discovered.sort(key=lambda x: -x["n_samples"])
         return discovered
@@ -144,6 +149,10 @@ class IntentDiscoverer:
             "timedatectl": "TIME_INFO",
         }
         return cmd_intent_map.get(cmd_base, f"{cmd_base.upper()}_{dir_hint.upper()}")
+
+    def filter_known(self, known_intents: list[str]):
+        """P6.3: 标记已知意图, 不影响 discover() 但可供调用方过滤"""
+        self._known_intents = set(known_intents)
 
     def _extract_template(self, cmd_base: str, full_command: str) -> list[str]:
         """从完整命令中提取模板 (参数用 {path} 代替)"""

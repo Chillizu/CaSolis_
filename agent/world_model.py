@@ -100,6 +100,32 @@ class WorldModel:
         self.running_errors: list[float] = []
         self.max_error = 1.0
 
+    # P6.4: 扩展意图数
+    def expand_intents(self, new_count: int):
+        """P6.4: 扩展世界模型以容纳新意图
+        Args:
+            new_count: 新的总意图数 (含CUSTOM)
+        """
+        if new_count <= self.n_intents:
+            return
+
+        old_first = self.predictor.shared[0]
+        old_in = old_first.in_features
+        new_in = old_in + (new_count - self.n_intents)
+
+        old_weight = old_first.weight.data   # (128, old_in)
+        old_bias = old_first.bias.data       # (128,)
+
+        new_first = nn.Linear(new_in, old_first.out_features).to(self.device)
+        new_first.weight.data[:, :old_in] = old_weight
+        new_first.bias.data = old_bias
+        # 新意图对应的输入列: 零初始化 (不影响已有预测)
+        nn.init.zeros_(new_first.weight.data[:, old_in:])
+
+        self.predictor.shared[0] = new_first
+        self.n_intents = new_count
+        print(f"  [WORLD_MODEL] 意图数扩展: 输入 {old_in} → {new_in}, n_intents={new_count}")
+
     # ── 工具方法 ──
 
     def _intent_to_onehot(self, intent_idx: int) -> torch.Tensor:
