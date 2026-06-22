@@ -432,24 +432,95 @@ class Workbench:
         return None
 
     def get_curiosity_probe(self, explored_paths: set[str] | None = None) -> Optional[tuple[str, dict]]:
-        """好奇心探针 (配置驱动, user_rules 可扩展)"""
+        """
+        P6.0: 元学习加权的探针选择
+
+        流程:
+          1. 构建候选探针列表 (配置优先级 + fallback)
+          2. 从 meta 读取历史效用分
+          3. 按 基础分 + 效用×2 - 已探索惩罚 - 近期使用惩罚 排序
+          4. 跳过总分 < -0.5 的探针
+          5. 新探针首次自动注册到 meta
+        """
         if explored_paths is None:
             return None
 
         probe_cfg = self.rules.get("curiosity_probes", {})
+        now = self._step_counter
+        candidates = []
 
-        # 优先从配置读取
-        for p in probe_cfg.get("priority", []):
-            if p not in explored_paths:
-                return ("CUSTOM", {"custom_args": ["cat", p], "cluster": "PROCFS"})
+        # 1. 配置里的高优先级文件路径
+        for rank, p in enumerate(probe_cfg.get("priority", [])):
+            cmd = ["cat", p]
+            path_key = "cat " + p
+            candidates.append({
+                "cmd": cmd,
+                "cluster": "PROCFS",
+                "path_key": path_key,
+                "base_score": 1.0 - rank * 0.05,
+            })
 
-        # 回退命令
+        # 2. 回退命令
         fallbacks = probe_cfg.get("fallback_commands", [])
-        if explored_paths and fallbacks:
-            phase = len(explored_paths) % len(fallbacks)
-            cmd = list(fallbacks[phase])
-            cluster = "FILE_FIND" if "find" in " ".join(cmd) else "FILE_LIST"
-            return ("CUSTOM", {"custom_args": cmd, "cluster": cluster})
+        if fallbacks:
+            phase = len(explored_paths) % max(len(fallbacks), 1)
+            for offset in range(len(fallbacks)):
+                idx = (phase + offset) % len(fallbacks)
+                cmd = list(fallbacks[idx])
+                path_key = " ".join(cmd)
+                candidates.append({
+                    "cmd": cmd,
+                    "cluster": "FILE_FIND" if "find" in path_key else "FILE_LIST",
+                    "path_key": path_key,
+                    "base_score": 0.35 - offset * 0.05,
+                })
+
+        # 3. 从元学习器取历史效用
+        meta_scores = {}
+        if self.meta:
+            for b in self.meta.get_best("probe_path", n=30, min_trials=2):
+                path = b.get("params", {}).get("path", "")
+                meta_scores[path] = b.get("utility", 0.0)
+
+        # 4. 打分并选择
+        scored = []
+        for c in candidates:
+            path_key = c["path_key"]
+            utility = meta_scores.get(path_key, 0.0)
+            score = c["base_score"] + utility * 2.0
+
+            # 已探索过的路径略降
+            if path_key in explored_paths:
+                score -= 0.25
+
+            # 近期使用惩罚
+            if self.meta:
+                probe_id = f"probe_{path_key[:40].replace(' ', '_')}"
+                last_step = self.meta.data.get(probe_id, {}).get("last_step", 0)
+                steps_ago = now - last_step
+                if steps_ago < 5:
+                    score -= 0.6
+                elif steps_ago < 15:
+                    score -= 0.2
+
+            scored.append((score, c))
+
+        scored.sort(key=lambda x: -x[0])
+
+        for score, c in scored:
+            if score < -0.5:
+                continue
+
+            # 首次出现则注册到 meta
+            if self.meta:
+                probe_id = f"probe_{c['path_key'][:40].replace(' ', '_')}"
+                self.meta.register(probe_id, "probe_path",
+                                   {"path": c["path_key"]}, now)
+
+            return ("CUSTOM", {
+                "custom_args": c["cmd"],
+                "cluster": c["cluster"],
+            })
 
         return None
 

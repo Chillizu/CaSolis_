@@ -1518,10 +1518,14 @@ class OnlineAgent:
         if self.multi_cmds_count > 0:
             print(f"  多命令步数: {self.multi_cmds_count}/{result['steps']} ({self.multi_cmds_count/result['steps']*100:.0f}%)")
 
-        # P1.5: 自适应采样率
-        cond_rate = self.ab_stats["conductor_success"] / max(self.ab_stats["conductor"], 1)
+        # P1.5: 自适应采样率 (对齐运行时公式)
+        n_cond = self.ab_stats["conductor"]
+        cond_rate = self.ab_stats["conductor_success"] / max(n_cond, 1)
         clf_rate = self.ab_stats["classifier_success"] / max(self.ab_stats["classifier"], 1)
-        p_cond = 0.2 + 0.6 * max(0, min(1.0, cond_rate / max(clf_rate, 0.01)))
+        if n_cond < 5:
+            p_cond = 0.1
+        else:
+            p_cond = 0.2 + 0.5 * max(0, min(1.0, cond_rate / max(clf_rate, 0.01)))
         print(f"  A/B 自适应: p_conductor={p_cond:.0%}  (Conductor胜率={cond_rate:.0%} vs 分类器胜率={clf_rate:.0%})")
         print(f"{'=' * 45}")
 
