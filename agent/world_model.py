@@ -242,8 +242,8 @@ class WorldModel:
     def update(self, state_emb: torch.Tensor, thought: torch.Tensor,
                intent_idx: int, output_text: str,
                exit_code: int, reward: float = 0.0,
-               next_thought: Optional[torch.Tensor] = None) -> float:
-        """从实际经验更新世界模型"""
+               next_thought: Optional[torch.Tensor] = None) -> tuple[float, Optional[torch.Tensor]]:
+        """从实际经验更新世界模型, 返回 (loss, 预测的next_thought)"""
         self.predictor.train()
         self.optimizer.zero_grad()
 
@@ -259,7 +259,10 @@ class WorldModel:
         self.optimizer.step()
 
         self.predictor.eval()
-        return loss.item()
+        
+        # P4: 同时返回预测的 next_thought (用于跨步持久化)
+        predicted_next = pred["next_thought"].squeeze(0).detach().clone()
+        return loss.item(), predicted_next
 
     def train_on_buffer(self, samples: list) -> float:
         """从缓冲区批量训练"""

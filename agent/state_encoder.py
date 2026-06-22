@@ -19,13 +19,15 @@ from typing import Optional
 class StateEncoder:
     """将环境状态编码为文本 (匹配分类器训练格式)"""
 
-    def __init__(self):
+    def __init__(self, workbench=None):
         self.conversation_history: list[dict] = []  # [{intent, command, output}]
         self.current_dir = "/"
         self.known_files: set[str] = set()
         self.current_goal = "探索系统"
         # P3: 缓存上次输出摘要
         self._last_output_summary: str = ""
+        # P4: 工作栏引用 (不拥有, 外部共享)
+        self.workbench = workbench
 
     def update(self, intent: str, command: str, output: str):
         """更新状态: 记录刚刚执行的命令和输出"""
@@ -53,7 +55,7 @@ class StateEncoder:
         # 提取第一个有意义的结果行
         for line in lines[:10]:
             line = line.strip()
-            if line and not line.startswith(("---", "total", "drwx", "-rw", "-")):
+            if line and not line.startswith(("---", "total", "drwx", "-rw", "-", "lrwx")):
                 return line[:80]
         
         # 没有有意义行, 用第一行
@@ -86,16 +88,27 @@ class StateEncoder:
         self.current_goal = goal
 
     def get_state_text(self) -> str:
-        """P3: 生成包含输出摘要和工作区的状态文本"""
+        """P3+P4: 生成包含输出摘要、工作栏事实和思考向量的状态文本"""
         hist = self._format_history()
-        # 已知文件: 最多3个, 优先最常见的
+        # 已知文件: 最多3个
         file_priority = sorted(self.known_files, key=lambda f: (not f.startswith(("etc", "proc", "tmp", "bin", "usr", "var"))))
         known = "/".join(file_priority[:3]) if self.known_files else "未知"
         ws = self._get_workspace_files() if self.current_dir != "/workspace" else "."
+        
+        # P4: 工作栏事实摘要
+        fact_summary = self.workbench.get_state_summary() if self.workbench else ""
+        fact_part = f"事实: {fact_summary} " if fact_summary and fact_summary != "无" else ""
+        
+        # P4: 后续方向 (如果有推荐)
+        follow_up = self.workbench.get_follow_up() if self.workbench else None
+        goal_part = f"方向: {follow_up[0]} " if follow_up else ""
+        
         return (
             f"当前目录: {self.current_dir} "
             f"已知文件: {known} "
             f"上步: {self.current_goal} "
+            f"{fact_part}"
+            f"{goal_part}"
             f"输出: {self._last_output_summary[:60]} "
             f"工作区: {ws} "
             f"历史: {hist}"
@@ -129,10 +142,14 @@ class StateEncoder:
         """RND 用: 更短的嵌入文本, 不含长历史"""
         known = "/".join(sorted(self.known_files)[:3]) if self.known_files else "未知"
         ws = self._get_workspace_files() if self.current_dir != "/workspace" else "."
+        # P4: 工作栏事实
+        fact_summary = self.workbench.get_state_summary(max_keys=2) if self.workbench else ""
+        fact_part = f"事实: {fact_summary} " if fact_summary and fact_summary != "无" else ""
         return (
             f"当前目录: {self.current_dir} "
             f"已知文件: {known} "
             f"上步: {self.current_goal} "
+            f"{fact_part}"
             f"输出: {self._last_output_summary[:40]} "
             f"工作区: {ws} "
         )

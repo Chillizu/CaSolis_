@@ -1,0 +1,2401 @@
+sample_idx,state_text,intent,intent_id
+0,系统概览: 查看进程信息 路径: /tmp 历史: grep → cat → cd,INFO,3
+1,沙箱状态: 需读取当前时间 当前: /opt 历史: 无,INFO,3
+2,当前目录: /tmp 需确认 curl 是否安装 历史: date → df,INSPECT,4
+3,当前目录: /etc 已知文件: apt/sources.list 上步: 检查系统信息 历史: 无,READ,0
+4,帮助查询: lsof 当前路径 /var/log 历史: 刚进入环境,HELP,7
+5,系统检查: 系统版本 位置 /home 历史: pwd → head → wc,INFO,3
+6,计数需求: index.html 在 /root 中 历史: head,COUNT,5
+7,准备使用 node 先检查是否存在 当前: /mnt 历史: 无,INSPECT,4
+8,沙箱诊断: 获取当前时间 当前路径 /var 历史: 无,INFO,3
+9,当前位于 /tmp 注意到文件 test.sh 历史: 无,READ,0
+10,当前路径 /dev 需搜索 config 相关条目 历史: 无,SEARCH,2
+11,检查 mysql 的安装路径 环境: /mnt 历史: 无,INSPECT,4
+12,查看进程信息以了解环境状态 当前: /var 历史: grep → uptime,INFO,3
+13,已了解 /opt 部分内容 准备继续探索 历史: pwd → grep,EXPLORE,6
+14,环境地图不完整 当前 /proc 需探索更多 历史: 无,EXPLORE,6
+15,沙箱中定位 netstat 当前目录 /etc 历史: 无,INSPECT,4
+16,沙箱目录 /usr/local/bin 存在文件 docker-compose 上步操作: 发现新目录 /usr/local/bin 历史: 无,READ,0
+17,刚进入 /var 准备查看目录内容 历史: 无,LIST,1
+18,需学习 netstat 命令 当前: /root 历史: ls,HELP,7
+19,在 /var/log 中需要了解目录布局 历史: 无,LIST,1
+20,帮助查询: find 当前路径 /home 历史: 无,HELP,7
+21,准备执行 git --help 当前: /dev 历史: uptime → grep,HELP,7
+22,/dev 附近可能有未发现的目录 准备探索 历史: 无,EXPLORE,6
+23,查看运行时间以了解环境状态 当前: /tmp 历史: 刚进入环境,INFO,3
+24,准备看 zip 的帮助 环境 /sys 历史: 刚进入环境,HELP,7
+25,想学习 netstat 的参数 当前目录 /usr/local/bin 历史: 无,HELP,7
+26,stat 行数统计 当前目录 /proc 历史: grep,COUNT,5
+27,环境: /var/log 准备获取 git 帮助信息 历史: 无,HELP,7
+28,/opt 附近可能有未发现的目录 准备探索 历史: 刚进入环境,EXPLORE,6
+29,系统概览: 查看进程信息 路径: /root 历史: head,INFO,3
+30,刚刚 cd 到 /home 需要看看里面有什么 历史: 刚进入环境,LIST,1
+31,位置: / 准备执行目录浏览 历史: 无,LIST,1
+32,/root 目录下找到 fstab 上步: 刚进入环境 历史: 刚进入环境,READ,0
+33,统计 /opt/scripts/backup.sh 的行数量 历史: head → cat /proc/cpuinfo → ps,COUNT,5
+34,需确认 netstat 命令是否存在 当前目录 /usr/local/bin 历史: 刚进入环境,INSPECT,4
+35,random 行数统计 当前目录 /dev 历史: 无,COUNT,5
+36,random 中可能包含 root 需搜索验证 历史: wc → cat → cd,SEARCH,2
+37,目标: 在 report.txt 中查找 failed 当前: /root 历史: head → df,SEARCH,2
+38,在 /sys 中需要了解目录布局 历史: 无,LIST,1
+39,文件 docker-compose 有多少行 当前: /usr/local/bin 历史: 无,COUNT,5
+40,准备看 ssh 的帮助 环境 /var/log 历史: 无,HELP,7
+41,想运行 htop 先确认安装 当前: /usr/bin 历史: 无,INSPECT,4
+42,"环境探索中 当前: /usr/local/bin 已访问 /, /home, /var/log, /var, /dev 历史: 刚进入环境",EXPLORE,6
+43,系统状态未知 需获取当前时间 当前: /home 历史: whoami → cat,INFO,3
+44,系统信息收集: 运行时间 位置: /root 历史: cd,INFO,3
+45,沙箱环境 验证 jq 安装 当前: /sys 历史: date,INSPECT,4
+46,需了解系统运行时间 环境: /home 历史: 无,INFO,3
+47,计数需求: test.sh 在 /tmp 中 历史: wc,COUNT,5
+48,环境显示 /var/log/auth.log 可读 历史: head,READ,0
+49,zip 命令参数不清楚 需 --help 当前: /opt 历史: df → cat,HELP,7
+50,在 /dev 中，文件 random 可能存在有用信息 历史: 无,READ,0
+51,当前目录: /tmp 需确认 ps 是否安装 历史: 无,INSPECT,4
+52,当前 /opt 准备查询用户信息 历史: 刚进入环境,INFO,3
+53,路径 /home 存在但内容未知 历史: 无,LIST,1
+54,当前位于 /root 注意到文件 bash 历史: 无,READ,0
+55,工作目录: /etc 目标文件: passwd 历史: 无,READ,0
+56,在 / 中准备查询进程信息 历史: 无,INFO,3
+57,环境诊断: 需要负载情况 当前路径: /var/log 历史: 刚进入环境,INFO,3
+58,scripts/backup.sh 有多少行数据 当前路径 /opt 历史: 无,COUNT,5
+59,当前 /root 准备查询负载情况 历史: 无,INFO,3
+60,环境诊断: curl 是否可用 当前 /proc 历史: 无,INSPECT,4
+61,统计 /opt/scripts/backup.sh 的行数量 历史: 刚进入环境,COUNT,5
+62,沙箱环境 /sys 下存在文本文件 devices/system/cpu/online 历史: 无,READ,0
+63,目录 /dev 中有文件 null 上步: 刚进入环境 历史: 刚进入环境,READ,0
+64,"/dev 下已访问: /usr/local/bin, /mnt 准备探索未知 历史: 无",EXPLORE,6
+65,在 /tmp 下统计 test.sh 行数 历史: 刚进入环境,COUNT,5
+66,jq 使用方法待了解 当前目录 /tmp 历史: 刚进入环境,HELP,7
+67,准备统计 /etc/passwd 的行 历史: 无,COUNT,5
+68,统计 /opt/scripts/backup.sh 的行数量 历史: cat,COUNT,5
+69,准备查看 /proc 中的 loadavg 历史: 无,READ,0
+70,需发现 /usr/local/bin 之外的新区域 历史: 无,EXPLORE,6
+71,需知道 config.yaml 的行数 当前: /root 历史: 无,COUNT,5
+72,需过滤 /tmp 中含 ssh 的行 历史: 无,SEARCH,2
+73,帮助查询: mysql 当前路径 / 历史: wc → grep,HELP,7
+74,文件 services 大小未知 先统计行数 当前: /etc 历史: 无,COUNT,5
+75,当前目录: /var/log 已知文件: boot.log 上步: pwd 确认当前位置 历史: 无,READ,0
+76,准备调用 lsof 先验证路径 当前: /opt 历史: 刚进入环境,INSPECT,4
+77,需了解 nginx 的数据量 当前 /usr/bin 历史: 刚进入环境,COUNT,5
+78,检查 jq 的安装路径 环境: /home 历史: 无,INSPECT,4
+79,系统检查: 磁盘信息 位置 / 历史: date → cat,INFO,3
+80,"探索模式: 从 /home 出发 已访问 /dev, /tmp, /root 历史: head",EXPLORE,6
+81,环境显示 /sys/class/net/eth0/address 可读 历史: 刚进入环境,READ,0
+82,准备执行 netstat --help 当前: / 历史: 无,HELP,7
+83,"当前目录: /dev 已访问: /home, /var, /mnt, /opt 准备探索新路径 历史: pwd → whoami",EXPLORE,6
+84,工作目录: /opt 目标文件: scripts/backup.sh 历史: head → ls,READ,0
+85,环境显示 /dev/zero 可读 历史: 无,READ,0
+86,环境 /opt 中查找 npm 的位置 历史: grep → wc → cd,INSPECT,4
+87,当前位于 /usr/local/bin 目录结构待查看 历史: 无,LIST,1
+88,文件 user/.bashrc 有多少行 当前: /home 历史: 无,COUNT,5
+89,目录 /proc 中有文件 stat 上步: pwd 确认当前位置 历史: whoami,READ,0
+90,需了解 bash 的数据量 当前 /usr/bin 历史: 刚进入环境,COUNT,5
+91,环境路径 /proc 需要列出子项 历史: 无,LIST,1
+92,沙箱目录 / 存在文件 hosts 上步操作: 刚进入环境 历史: 无,READ,0
+93,"已知路径: /var/log, /etc, /dev, /mnt 准备从 /var 出发探索 历史: cat",EXPLORE,6
+94,沙箱中 npm 是否可用 当前: /home 历史: 刚进入环境,INSPECT,4
+95,探索到 /sys 准备列出所有条目 历史: 无,LIST,1
+96,在 / 下查找包含 error 的内容 历史: 刚进入环境,SEARCH,2
+97,沙箱中 ps 如何使用 需查帮助 当前 /root 历史: 无,HELP,7
+98,想执行 grep 先检查安装位置 当前: /opt 历史: 刚进入环境,INSPECT,4
+99,当前目录: /var/log 历史: df → grep 需要查看系统系统版本,INFO,3
+100,查看负载情况以了解环境状态 当前: /var/log 历史: grep → cd → date,INFO,3
+101,需发现 /var 之外的新区域 历史: 刚进入环境,EXPLORE,6
+102,沙箱环境 验证 lsof 安装 当前: /opt 历史: 无,INSPECT,4
+103,pip3 中可能包含 docker 需搜索验证 历史: 无,SEARCH,2
+104,环境地图不完整 当前 /var/log 需探索更多 历史: head → wc,EXPLORE,6
+105,查看 ssh/sshd_config 行数 环境路径 /etc 历史: 刚进入环境,COUNT,5
+106,zero 有多少行数据 当前路径 /dev 历史: 刚进入环境,COUNT,5
+107,"沙箱探索继续 当前 /var/log 已访问 /proc, /var, /root, /tmp, /usr/bin 历史: 刚进入环境",EXPLORE,6
+108,环境 /opt 中查找 mysql 的位置 历史: cat /proc/cpuinfo → pwd → wc,INSPECT,4
+109,环境显示 /proc/loadavg 可读 历史: 无,READ,0
+110,环境分析需要运行时间 当前: /usr/local/bin 历史: 刚进入环境,INFO,3
+111,文件 nginx/access.log 可能包含 nginx 需确认 当前: /var/log 历史: 无,SEARCH,2
+112,在 /opt 下统计 scripts/backup.sh 行数 历史: 无,COUNT,5
+113,在 /etc 中，文件 services 可能存在有用信息 历史: cat,READ,0
+114,需确认当前时间 当前位于 /mnt 历史: 刚进入环境,INFO,3
+115,当前路径 /root 还有未探索的子目录 历史: 无,EXPLORE,6
+116,准备执行 python3 --help 当前: /home 历史: 刚进入环境,HELP,7
+117,文件 services 条目计数 环境: /etc 历史: 无,COUNT,5
+118,系统信息收集: 负载情况 位置: /mnt 历史: 刚进入环境,INFO,3
+119,统计 /sys/class/net/eth0/address 的行数量 历史: pwd → date → head,COUNT,5
+120,"准备离开 /etc 前往未知区域 已访问 /tmp, /dev, /var 历史: 无",EXPLORE,6
+121,目录 /sys 的内容尚未查看 历史: 刚进入环境,LIST,1
+122,需要在 /dev 下搜索 config 上步: 浏览目录 历史: 刚进入环境,SEARCH,2
+123,当前目录: / 需确认 ssh 是否安装 历史: 无,INSPECT,4
+124,统计 /var/log/syslog 的行数量 历史: 无,COUNT,5
+125,系统监控: 查看内存信息 位置: /tmp 历史: cd → uptime,INFO,3
+126,环境路径: /home 可访问文件: user/.bashrc 历史: 无,READ,0
+127,环境提示 / 中存在 127.0.0.1 需搜索 历史: 刚进入环境,SEARCH,2
+128,沙箱目录 /dev 存在文件 null 上步操作: head 查看文件头部 历史: ls → cd → whoami,READ,0
+129,需计数 uptime 中的条目数 当前: /root 历史: 无,COUNT,5
+130,查看 user/.bashrc 行数 环境路径 /home 历史: 刚进入环境,COUNT,5
+131,环境路径: /usr/bin 可访问文件: python3 历史: 无,READ,0
+132,"探索模式: 从 /usr/local/bin 出发 已访问 /, /dev, /var, /root 历史: 无",EXPLORE,6
+133,当前位于 /sys 目录结构待查看 历史: 无,LIST,1
+134,需确认磁盘信息 当前位于 /opt 历史: cd,INFO,3
+135,环境显示 /opt/app/config.yaml 可读 历史: uptime → wc,READ,0
+136,准备使用 git 先检查是否存在 当前: /proc 历史: 无,INSPECT,4
+137,环境路径 /proc 需要列出子项 历史: whoami → cat /proc/cpuinfo → date,LIST,1
+138,目录 /usr/bin 中可能有包含 localhost 的文件 历史: whoami → cat /proc/cpuinfo,SEARCH,2
+139,查看 /sys 下的 devices/system/cpu/online 可能有系统信息 历史: head,READ,0
+140,环境 /opt 中查找 grep 的位置 历史: 无,INSPECT,4
+141,文件 hosts 大小未知 先统计行数 当前: / 历史: 无,COUNT,5
+142,需发现 /mnt 之外的新区域 历史: 无,EXPLORE,6
+143,"沙箱探索继续 当前 /var 已访问 /mnt, /opt, /var/log, /usr/local/bin, / 历史: wc",EXPLORE,6
+144,已收集 /var/log 信息 准备探索新路径 历史: 无,EXPLORE,6
+145,/ 附近可能有未发现的目录 准备探索 历史: 无,EXPLORE,6
+146,沙箱环境 当前 /proc 搜索目标: root 历史: 无,SEARCH,2
+147,系统检查: 系统版本 位置 /root 历史: cat → cd → date,INFO,3
+148,需要在 /root 下搜索 password 上步: 检查系统信息 历史: cd,SEARCH,2
+149,已发现 127.0.0.1 需在 devices/system/cpu/online 中搜索更多 历史: 无,SEARCH,2
+150,curl 命令路径验证 环境: / 历史: 无,INSPECT,4
+151,已收集 /sys 信息 准备探索新路径 历史: 刚进入环境,EXPLORE,6
+152,当前目录: /usr/bin 已知文件: bash 需统计行数 历史: 刚进入环境,COUNT,5
+153,zip 使用方法待了解 当前目录 /home 历史: 无,HELP,7
+154,帮助查询: git 当前路径 /tmp 历史: 无,HELP,7
+155,user/.profile 内容长度未知 需计数 当前: /home 历史: 刚进入环境,COUNT,5
+156,沙箱环境 验证 curl 安装 当前: /usr/bin 历史: 无,INSPECT,4
+157,当前位于 /sys 注意到文件 class/net/eth0/address 历史: 无,READ,0
+158,在 /tmp 中，文件 test.sh 可能存在有用信息 历史: 无,READ,0
+159,沙箱环境显示当前目录为 /mnt 需查看列表 历史: cat,LIST,1
+160,文件 access.log 可能包含 root 需确认 当前: /root 历史: 无,SEARCH,2
+161,准备看 netstat 的帮助 环境 / 历史: ps,HELP,7
+162,想熟悉 awk 的用法 当前 /proc 历史: 无,HELP,7
+163,需确认系统版本 当前位于 /proc 历史: 刚进入环境,INFO,3
+164,定位 password 在 /mnt 中的位置 历史: 刚进入环境,SEARCH,2
+165,刚切换到 /usr/bin 尚未查看目录结构 历史: 无,LIST,1
+166,准备看 htop 的帮助 环境 / 历史: 无,HELP,7
+167,系统检查: 进程信息 位置 /dev 历史: 刚进入环境,INFO,3
+168,准备使用 nginx 需先定位 当前目录 / 历史: 无,INSPECT,4
+169,查看 curl 文档 当前: /tmp 历史: 刚进入环境,HELP,7
+170,"沙箱环境 已访问 /usr/bin, /dev 当前 /var 继续探索 历史: 无",EXPLORE,6
+171,刚切换到 /var/log 尚未查看目录结构 历史: 无,LIST,1
+172,scripts/backup.sh 行数统计 当前目录 /opt 历史: date → df → head,COUNT,5
+173,需计数 boot.log 中的条目数 当前: /var/log 历史: 刚进入环境,COUNT,5
+174,准备看 git 的帮助 环境 /usr/bin 历史: 刚进入环境,HELP,7
+175,目录 /var/log 中可能有包含 failed 的文件 历史: 无,SEARCH,2
+176,探索到 /proc 准备列出所有条目 历史: 无,LIST,1
+177,准备查看 mysql 的帮助页面 当前目录 /home 历史: 无,HELP,7
+178,环境: /var 准备获取 mysql 帮助信息 历史: 刚进入环境,HELP,7
+179,/var 目录中 log/auth.log 是上步发现的重要文件 历史: 无,READ,0
+180,准备统计 curl 的行数 当前目录 /mnt 历史: grep → whoami → ps,COUNT,5
+181,当前目录: /sys 已知文件: class/net/eth0/address 上步: 发现新目录 /sys 历史: 刚进入环境,READ,0
+182,当前路径 /tmp 发现配置文件 test.sh 历史: date,READ,0
+183,沙箱中还有更多未知区域 当前 /root 历史: 刚进入环境,EXPLORE,6
+184,"当前目录: /mnt 已访问: /opt, /dev 准备探索新路径 历史: 刚进入环境",EXPLORE,6
+185,log/dmesg 中可能包含 failed 需搜索验证 历史: 刚进入环境,SEARCH,2
+186,/var/log 目录下找到 dmesg 上步: ls 看到很多文件 历史: 无,READ,0
+187,"沙箱探索继续 当前 /proc 已访问 /opt, /mnt, /etc, /usr/bin 历史: 刚进入环境",EXPLORE,6
+188,当前 /root 准备查询内存信息 历史: ls → pwd → date,INFO,3
+189,"/tmp 下已访问: /root, /usr/bin 准备探索未知 历史: 无",EXPLORE,6
+190,/opt 目录中 scripts/backup.sh 是上步发现的重要文件 历史: 无,READ,0
+191,已发现 localhost 需在 cmdline 中搜索更多 历史: 无,SEARCH,2
+192,"当前目录: /opt 已访问: /usr/bin, /usr/local/bin, /mnt, /var/log, /var 准备探索新路径 历史: 无",EXPLORE,6
+193,需了解系统内存信息 环境: /home 历史: 刚进入环境,INFO,3
+194,位置: /var 准备执行目录浏览 历史: 刚进入环境,LIST,1
+195,需计数 dmesg 中的条目数 当前: /var/log 历史: 刚进入环境,COUNT,5
+196,沙箱环境 /dev 下存在文本文件 sda 历史: 无,READ,0
+197,/dev 目录下可能包含更多子目录 历史: 无,LIST,1
+198,/mnt 环境中 awk 命令路径检查 历史: 刚进入环境,INSPECT,4
+199,当前位于 /var/log 注意到文件 nginx/access.log 历史: 刚进入环境,READ,0
+200,路径 /tmp 存在但内容未知 历史: 无,LIST,1
+201,grep 命令帮助查询 当前: /usr/local/bin 历史: ps → ls,HELP,7
+202,当前路径 /opt 发现配置文件 app/config.yaml 历史: 刚进入环境,READ,0
+203,准备 npm --help 当前目录 /usr/local/bin 历史: 刚进入环境,HELP,7
+204,当前目录: /var 已知文件: log/syslog 上步: 看到文件含 localhost 历史: 无,SEARCH,2
+205,已发现 password 需在 log/auth.log 中搜索更多 历史: ls → whoami → wc,SEARCH,2
+206,需要当前时间来评估环境 当前: /usr/local/bin 历史: df → ps → head,INFO,3
+207,需学习 docker 命令 当前: /sys 历史: 无,HELP,7
+208,需了解 docker-compose 的数据量 当前 /usr/local/bin 历史: wc,COUNT,5
+209,统计 /proc/filesystems 的行数量 历史: ls → df → cat /proc/cpuinfo,COUNT,5
+210,查看 mysql 文档 当前: / 历史: 无,HELP,7
+211,想运行 nginx 先确认安装 当前: /var 历史: uptime → ls,INSPECT,4
+212,当前目录: /tmp 已知文件: output.txt 历史: 无,READ,0
+213,沙箱环境 验证 zip 安装 当前: /usr/bin 历史: ls,INSPECT,4
+214,需过滤 /root 中含 docker 的行 历史: 无,SEARCH,2
+215,数据量检查: test.sh 行数 当前 /tmp 历史: 无,COUNT,5
+216,app/config.yaml 有多少行数据 当前路径 /opt 历史: head → ps → pwd,COUNT,5
+217,当前位于 / 注意到文件 crontab 历史: 无,READ,0
+218,沙箱中 redis-cli 是否可用 当前: /var 历史: 无,INSPECT,4
+219,目标: 在 protocols 中查找 failed 当前: /etc 历史: 刚进入环境,SEARCH,2
+220,目录 /usr/local/bin 中可能有包含 ssh 的文件 历史: 无,SEARCH,2
+221,刚切换到 /dev 尚未查看目录结构 历史: 刚进入环境,LIST,1
+222,在 / 中计数 fstab 的行 历史: 无,COUNT,5
+223,沙箱中 zip 如何使用 需查帮助 当前 /tmp 历史: 刚进入环境,HELP,7
+224,沙箱中还有更多未知区域 当前 /dev 历史: 刚进入环境,EXPLORE,6
+225,当前位于 /var/log 目录结构待查看 历史: 无,LIST,1
+226,准备使用 awk 需先定位 当前目录 /var/log 历史: 无,INSPECT,4
+227,环境提示 /tmp 中存在 config 需搜索 历史: cat /proc/cpuinfo → wc → date,SEARCH,2
+228,沙箱中还有更多未知区域 当前 /var 历史: 无,EXPLORE,6
+229,正在分析 /tmp 中的 cache.json 内容 历史: uptime → wc,READ,0
+230,文件 kern.log 条目计数 环境: /var/log 历史: 无,COUNT,5
+231,fstab 有多少行数据 当前路径 / 历史: 无,COUNT,5
+232,"环境探索中 当前: /home 已访问 /proc, /usr/local/bin, /etc 历史: whoami → df",EXPLORE,6
+233,已进入 /mnt 准备查看文件清单 历史: 无,LIST,1
+234,检查 python3 是否存在 当前路径: / 历史: cd,INSPECT,4
+235,文件系统显示 docker-compose 在 /usr/local/bin 中 历史: 无,READ,0
+236,想运行 lsof 先确认安装 当前: /var 历史: wc,INSPECT,4
+237,沙箱环境 准备获取 docker 帮助 当前 /etc 历史: pwd,HELP,7
+238,准备 python3 --help 当前目录 /tmp 历史: 刚进入环境,HELP,7
+239,需发现 /var/log 之外的新区域 历史: 无,EXPLORE,6
+240,计数需求: hostname 在 / 中 历史: 刚进入环境,COUNT,5
+241,沙箱中定位 lsof 当前目录 /dev 历史: 无,INSPECT,4
+242,环境 /var 中查找 ssh 的位置 历史: ls → ps,INSPECT,4
+243,环境分析需要系统版本 当前: /dev 历史: 无,INFO,3
+244,位置: /opt 准备执行目录浏览 历史: cd → cat /proc/cpuinfo → wc,LIST,1
+245,想学习 find 的参数 当前目录 /dev 历史: 刚进入环境,HELP,7
+246,准备 grep ssh 在 /etc 下的文件中 历史: 刚进入环境,SEARCH,2
+247,需知道 random 的行数 当前: /dev 历史: 刚进入环境,COUNT,5
+248,准备 node --help 当前目录 /var 历史: whoami → date → wc,HELP,7
+249,当前目录: /tmp 已知文件: cache.json 需统计行数 历史: uptime → grep,COUNT,5
+250,/var 目录下可能包含更多子目录 历史: 无,LIST,1
+251,目录 /var 中可能有包含 ssh 的文件 历史: df,SEARCH,2
+252,环境提示 /usr/bin 中存在 root 需搜索 历史: ps,SEARCH,2
+253,需查看 ssh 的帮助文档 当前: /opt 历史: 无,HELP,7
+254,了解 python3 的可用选项 当前: /root 历史: 刚进入环境,HELP,7
+255,了解 npm 功能 需查帮助 当前路径 /etc 历史: 无,HELP,7
+256,lsof 命令参数不清楚 需 --help 当前: /usr/bin 历史: head → whoami → pwd,HELP,7
+257,/var/log 是新发现的路径 需要浏览 历史: 无,LIST,1
+258,需学习 tar 命令 当前: /proc 历史: cat /proc/cpuinfo → head → df,HELP,7
+259,/var/log 目录下找到 auth.log 上步: 发现新目录 /var/log 历史: 无,READ,0
+260,系统监控: 查看内存信息 位置: / 历史: 无,INFO,3
+261,在 /opt 中需要了解目录布局 历史: 刚进入环境,LIST,1
+262,想执行 node 先检查安装位置 当前: /usr/bin 历史: 刚进入环境,INSPECT,4
+263,awk 命令用法未知 需查看帮助 当前 /home 历史: 刚进入环境,HELP,7
+264,在 /usr/local/bin 下发现文件 pip3 历史: 无,READ,0
+265,需了解 curl 的数据量 当前 /usr/bin 历史: 无,COUNT,5
+266,沙箱中 lsof 是否可用 当前: /usr/local/bin 历史: cat,INSPECT,4
+267,准备检查 docker 可执行性 当前: /tmp 历史: 无,INSPECT,4
+268,准备检查 jq 可执行性 当前: /usr/local/bin 历史: 无,INSPECT,4
+269,环境监测: 当前时间 当前目录 /usr/bin 历史: 无,INFO,3
+270,定位 password 在 /sys 中的位置 历史: 无,SEARCH,2
+271,环境 / 中查找 ssh 的位置 历史: df,INSPECT,4
+272,需计数 services 中的条目数 当前: /etc 历史: 无,COUNT,5
+273,"沙箱环境 已访问 /var/log, /sys, /usr/bin, /tmp 当前 /var 继续探索 历史: 无",EXPLORE,6
+274,环境 /etc 中查找 zip 的位置 历史: 无,INSPECT,4
+275,诊断需求: 当前时间 当前目录: /sys 历史: ps,INFO,3
+276,文件 group 有多少行 当前: /etc 历史: head → ps,COUNT,5
+277,环境路径 / 需要列出子项 历史: 无,LIST,1
+278,需知道 user/.bashrc 的行数 当前: /home 历史: 刚进入环境,COUNT,5
+279,确认 lsof 可执行文件位置 当前: /tmp 历史: 无,INSPECT,4
+280,探索到 / 准备列出所有条目 历史: 无,LIST,1
+281,"当前目录: /usr/local/bin 已访问: /etc, /mnt, /root, /opt, /home 准备探索新路径 历史: cat → grep",EXPLORE,6
+282,需学习 ps 命令 当前: /usr/bin 历史: 无,HELP,7
+283,已发现 connection 需在 fstab 中搜索更多 历史: grep,SEARCH,2
+284,沙箱诊断: 获取CPU信息 当前路径 /home 历史: date → head → df,INFO,3
+285,"准备离开 /usr/local/bin 前往未知区域 已访问 /opt, /mnt 历史: 刚进入环境",EXPLORE,6
+286,当前路径 /root 还有未探索的子目录 历史: wc → date → whoami,EXPLORE,6
+287,准备看 tar 的帮助 环境 /root 历史: pwd → head,HELP,7
+288,准备使用 htop 先检查是否存在 当前: /etc 历史: 刚进入环境,INSPECT,4
+289,文件 output.txt 行统计 环境 /tmp 历史: 无,COUNT,5
+290,需读取 /sys/class/net/eth0/address 获取信息 历史: 无,READ,0
+291,文件 boot.log 可能包含 config 需确认 当前: /var/log 历史: df → date → ls,SEARCH,2
+292,htop 命令帮助查询 当前: /proc 历史: 刚进入环境,HELP,7
+293,devices/system/cpu/online 有多少行数据 当前路径 /sys 历史: ls → wc → head,COUNT,5
+294,环境提示 /usr/bin 中存在 password 需搜索 历史: 无,SEARCH,2
+295,当前位于 /root 注意到文件 passwd 历史: 刚进入环境,READ,0
+296,位置: /var/log 准备执行目录浏览 历史: 无,LIST,1
+297,已定位文件 passwd 位于 / 历史: 无,READ,0
+298,当前 /var 搜索关键词 ssh 历史: df → head → ps,SEARCH,2
+299,环境监测: 用户信息 当前目录 /proc 历史: 无,INFO,3
+300,文件 syslog 有多少行 当前: /var/log 历史: 无,COUNT,5
+301,/ 目录中 hostname 是上步发现的重要文件 历史: 无,READ,0
+302,环境: /sys 需验证 sed 命令路径 历史: 刚进入环境,INSPECT,4
+303,"当前: /tmp 探索进度: 已访问 /mnt, /proc 需扩展 历史: 无",EXPLORE,6
+304,需要在 /var 中搜索 password 的出现 历史: 刚进入环境,SEARCH,2
+305,检查 zip 是否存在 当前路径: /opt 历史: 无,INSPECT,4
+306,检查 netstat 是否存在 当前路径: /usr/bin 历史: whoami → cd,INSPECT,4
+307,需读取 /sys/class/net/eth0/address 获取信息 历史: 无,READ,0
+308,"当前: /proc 探索进度: 已访问 /usr/bin, /mnt, /var, /root 需扩展 历史: 无",EXPLORE,6
+309,npm 命令帮助查询 当前: /var 历史: 无,HELP,7
+310,nginx/nginx.conf 行数统计 当前目录 /etc 历史: wc → uptime → cd,COUNT,5
+311,环境已熟悉 当前: /mnt 需要发现新区域 历史: 无,EXPLORE,6
+312,"已知路径: /dev, /tmp, /proc, /, /home 准备从 /etc 出发探索 历史: 刚进入环境",EXPLORE,6
+313,准备统计 /var/log/boot.log 的行 历史: 无,COUNT,5
+314,目录 /proc 中可能有包含 127.0.0.1 的文件 历史: 无,SEARCH,2
+315,准备执行 curl --help 当前: /proc 历史: 无,HELP,7
+316,当前目录: /mnt 准备了解 htop 命令用法 历史: head,HELP,7
+317,准备 grep config 在 /tmp 下的文件中 历史: date → ps → cd,SEARCH,2
+318,当前目录: /usr/local/bin 已知文件: docker-compose 上步: pwd 确认当前位置 历史: date → cd → df,READ,0
+319,准备检查 python3 可执行性 当前: /dev 历史: 无,INSPECT,4
+320,目录 /opt 中有文件 scripts/backup.sh 上步: 看到文件含 docker 历史: 无,READ,0
+321,目录 /var/log 中可能有包含 failed 的文件 历史: 刚进入环境,SEARCH,2
+322,系统状态未知 需获取进程信息 当前: /proc 历史: 刚进入环境,INFO,3
+323,目录 /var 中有文件 www/html/index.html 上步: 检查系统信息 历史: 刚进入环境,READ,0
+324,在 /etc 中需要了解目录布局 历史: 刚进入环境,LIST,1
+325,sed 命令路径验证 环境: /etc 历史: 刚进入环境,INSPECT,4
+326,文件系统显示 hosts 在 / 中 历史: 无,READ,0
+327,需要在 /mnt 下搜索 admin 上步: grep admin 历史: 无,SEARCH,2
+328,已了解 /tmp 部分内容 准备继续探索 历史: 无,EXPLORE,6
+329,环境显示 /proc/cmdline 可读 历史: 无,READ,0
+330,已了解 /usr/local/bin 部分内容 准备继续探索 历史: 刚进入环境,EXPLORE,6
+331,系统信息收集: 用户信息 位置: /etc 历史: 无,INFO,3
+332,/etc 目录下找到 hosts 上步: 读取 /etc/hosts 历史: 无,READ,0
+333,"当前目录: / 已访问: /var/log, /dev 准备探索新路径 历史: cd → ls → whoami",EXPLORE,6
+334,find 命令参数不清楚 需 --help 当前: /root 历史: head → cd → cat /proc/cpuinfo,HELP,7
+335,准备检查运行时间 沙箱路径: /home 历史: df → cat → cd,INFO,3
+336,文件 hostname 行统计 环境 /root 历史: 刚进入环境,COUNT,5
+337,计数需求: bash 在 /usr/bin 中 历史: 无,COUNT,5
+338,"探索阶段: 从 /usr/bin 扩展 已访问 /var, /home, /tmp 历史: 刚进入环境",EXPLORE,6
+339,当前位于 /dev 目录结构待查看 历史: 无,LIST,1
+340,已了解 /tmp 部分内容 准备继续探索 历史: grep → pwd,EXPLORE,6
+341,上步发现 admin 相关信息 当前: /var/log 历史: cat → whoami → cat /proc/cpuinfo,SEARCH,2
+342,mysql 使用方法待了解 当前目录 /var/log 历史: 无,HELP,7
+343,沙箱环境 /dev 下存在文本文件 zero 历史: 无,READ,0
+344,当前目录: /mnt 已知文件: sshd_config 历史: 无,READ,0
+345,"当前: /dev 探索进度: 已访问 /sys, /opt, /var, /tmp 需扩展 历史: 无",EXPLORE,6
+346,刚进入 /opt 准备查看目录内容 历史: 无,LIST,1
+347,上步发现 nginx 相关信息 当前: /root 历史: 无,SEARCH,2
+348,当前目录: /dev 已知文件: sda 需统计行数 历史: ls,COUNT,5
+349,沙箱中定位 jq 当前目录 /dev 历史: 无,INSPECT,4
+350,文件 output.txt 可能包含 localhost 需确认 当前: /tmp 历史: 刚进入环境,SEARCH,2
+351,需确认 git 命令是否存在 当前目录 /proc 历史: 无,INSPECT,4
+352,探索到 /etc 准备列出所有条目 历史: cat /proc/cpuinfo → pwd,LIST,1
+353,在 /proc 中准备查询系统版本 历史: 无,INFO,3
+354,准备 grep token 在 / 下的文件中 历史: cat /proc/cpuinfo → df → cd,SEARCH,2
+355,当前目录: /var/log 准备了解 lsof 命令用法 历史: 无,HELP,7
+356,当前 /etc 附近还有未知路径 历史: 无,EXPLORE,6
+357,查找 127.0.0.1: 当前目录 /usr/local/bin 已知文件 docker-compose 历史: 无,SEARCH,2
+358,准备统计 /var/log/auth.log 的行 历史: 刚进入环境,COUNT,5
+359,了解 netstat 功能 需查帮助 当前路径 / 历史: 无,HELP,7
+360,了解 tar 的可用选项 当前: /etc 历史: 无,HELP,7
+361,"沙箱探索继续 当前 / 已访问 /sys, /root, /etc 历史: 刚进入环境",EXPLORE,6
+362,沙箱环境 /proc 下存在文本文件 meminfo 历史: 无,READ,0
+363,"当前: /tmp 探索进度: 已访问 /var/log, /var, /mnt 需扩展 历史: 刚进入环境",EXPLORE,6
+364,刚进入 / 准备查看目录内容 历史: cd,LIST,1
+365,沙箱环境 验证 lsof 安装 当前: /opt 历史: 无,INSPECT,4
+366,目录 /proc 中可能有包含 timeout 的文件 历史: 无,SEARCH,2
+367,系统信息收集: 运行时间 位置: /tmp 历史: cat → head → uptime,INFO,3
+368,文件 nginx/access.log 有多少行 当前: /var/log 历史: head → whoami,COUNT,5
+369,当前 /dev 搜索关键词 config 历史: 无,SEARCH,2
+370,环境路径: /usr/local/bin 可访问文件: pip3 历史: 无,READ,0
+371,"探索模式: 从 /home 出发 已访问 /proc, /var/log 历史: 无",EXPLORE,6
+372,系统检查: 内存信息 位置 /opt 历史: 无,INFO,3
+373,环境地图不完整 当前 / 需探索更多 历史: 无,EXPLORE,6
+374,在 /home 中计数 user/documents/report.txt 的行 历史: head,COUNT,5
+375,工作目录: /var/log 目标文件: syslog 历史: 无,READ,0
+376,环境诊断: 需要运行时间 当前路径: /root 历史: 无,INFO,3
+377,"准备离开 /usr/bin 前往未知区域 已访问 /usr/local/bin, /, /dev, /var/log, /etc 历史: 刚进入环境",EXPLORE,6
+378,"沙箱环境 已访问 /, /proc 当前 /mnt 继续探索 历史: 无",EXPLORE,6
+379,环境分析需要负载情况 当前: /home 历史: 无,INFO,3
+380,在 /root 下查找包含 config 的内容 历史: 刚进入环境,SEARCH,2
+381,想熟悉 lsof 的用法 当前 /mnt 历史: 无,HELP,7
+382,想学习 curl 的参数 当前目录 /var/log 历史: cat /proc/cpuinfo,HELP,7
+383,环境路径: /opt 可访问文件: app/config.yaml 历史: 无,READ,0
+384,环境: /var/log 需验证 grep 命令路径 历史: 无,INSPECT,4
+385,在 /etc 下统计 protocols 行数 历史: 无,COUNT,5
+386,准备检查 jq 可执行性 当前: /etc 历史: pwd,INSPECT,4
+387,lsof 使用方法待了解 当前目录 /var/log 历史: df → ls → ps,HELP,7
+388,需读取 /dev/null 获取信息 历史: df → cat /proc/cpuinfo,READ,0
+389,检查 docker 的安装路径 环境: /var 历史: 刚进入环境,INSPECT,4
+390,路径 / 存在但内容未知 历史: 无,LIST,1
+391,到达 /usr/local/bin 准备浏览文件列表 历史: 无,LIST,1
+392,工作目录: /etc 目标文件: apt/sources.list 历史: 无,READ,0
+393,文件 user/.bashrc 大小未知 先统计行数 当前: /home 历史: 无,COUNT,5
+394,find 命令用法未知 需查看帮助 当前 /dev 历史: head → cat /proc/cpuinfo,HELP,7
+395,log/dmesg 内容长度未知 需计数 当前: /var 历史: 无,COUNT,5
+396,当前目录: /proc 已知文件: uptime 历史: pwd,READ,0
+397,路径 /mnt 存在但内容未知 历史: df → head,LIST,1
+398,/usr/local/bin 环境中 grep 命令路径检查 历史: 无,INSPECT,4
+399,/tmp 目录下找到 output.txt 上步: 空 历史: head,READ,0
+400,当前目录: /usr/bin 需确认 node 是否安装 历史: cd,INSPECT,4
+401,当前路径 /mnt 需搜索 token 相关条目 历史: 无,SEARCH,2
+402,环境监测: 用户信息 当前目录 /etc 历史: 无,INFO,3
+403,环境 /usr/bin 中查找 ping 的位置 历史: cat → head,INSPECT,4
+404,已收集 /dev 信息 准备探索新路径 历史: 无,EXPLORE,6
+405,定位 admin 在 / 中的位置 历史: 无,SEARCH,2
+406,了解 git 的可用选项 当前: /var/log 历史: 无,HELP,7
+407,需过滤 /dev 中含 error 的行 历史: whoami → cat /proc/cpuinfo → cat,SEARCH,2
+408,准备执行 docker --help 当前: / 历史: cat → ls → df,HELP,7
+409,当前目录: /tmp 需确认 zip 是否安装 历史: 无,INSPECT,4
+410,/opt 目录中 scripts/backup.sh 是上步发现的重要文件 历史: 刚进入环境,READ,0
+411,系统监控: 查看磁盘信息 位置: /usr/local/bin 历史: 无,INFO,3
+412,想学习 git 的参数 当前目录 /root 历史: uptime → date → cd,HELP,7
+413,需要在 /proc 下搜索 connection 上步: 读取 /proc/uptime 历史: 刚进入环境,SEARCH,2
+414,沙箱状态: 需读取用户信息 当前: / 历史: 无,INFO,3
+415,准备使用 grep 需先定位 当前目录 /opt 历史: cat /proc/cpuinfo → cat,INSPECT,4
+416,在 /usr/bin 中，文件 git 可能存在有用信息 历史: 刚进入环境,READ,0
+417,系统状态未知 需获取内存信息 当前: /mnt 历史: 无,INFO,3
+418,准备获取运行时间 当前: /usr/bin 历史: 刚进入环境,INFO,3
+419,上步发现 docker 相关信息 当前: /mnt 历史: 无,SEARCH,2
+420,"当前: /dev 探索进度: 已访问 /, /root, /var/log, /usr/local/bin 需扩展 历史: df → cat",EXPLORE,6
+421,沙箱中定位 python3 当前目录 /usr/bin 历史: date,INSPECT,4
+422,当前路径: /root 文件列表未知 历史: 无,LIST,1
+423,在 /mnt 下需要了解有哪些文件和目录 历史: 无,LIST,1
+424,需要在 /sys 中搜索 error 的出现 历史: 无,SEARCH,2
+425,环境 /var 中查找 nginx 的位置 历史: 刚进入环境,INSPECT,4
+426,计数需求: class/net/eth0/address 在 /sys 中 历史: uptime → date → cd,COUNT,5
+427,当前目录: /dev 已知文件: sda 历史: whoami → df → ps,READ,0
+428,"已知路径: /opt, /, /usr/local/bin, /var/log, /usr/bin 准备从 /home 出发探索 历史: pwd → ls → whoami",EXPLORE,6
+429,系统检查: CPU信息 位置 /mnt 历史: 无,INFO,3
+430,路径 /var 存在但内容未知 历史: 刚进入环境,LIST,1
+431,准备 find --help 当前目录 /root 历史: 无,HELP,7
+432,了解 node 的可用选项 当前: / 历史: cd,HELP,7
+433,准备检查 mysql 可执行性 当前: /var 历史: 刚进入环境,INSPECT,4
+434,环境监测: 用户信息 当前目录 /sys 历史: uptime → ls → cat,INFO,3
+435,上步发现 nginx 相关信息 当前: /opt 历史: 无,SEARCH,2
+436,系统信息收集: 进程信息 位置: /var 历史: 无,INFO,3
+437,当前 / 附近还有未知路径 历史: cat /proc/cpuinfo,EXPLORE,6
+438,沙箱环境 准备获取 nginx 帮助 当前 /var/log 历史: 无,HELP,7
+439,准备使用 python3 先检查是否存在 当前: /home 历史: head → df → cat /proc/cpuinfo,INSPECT,4
+440,系统概览: 查看内存信息 路径: /dev 历史: 无,INFO,3
+441,准备检查运行时间 沙箱路径: /etc 历史: cat,INFO,3
+442,帮助查询: zip 当前路径 /opt 历史: cat /proc/cpuinfo → date,HELP,7
+443,"已知路径: /mnt, /tmp, /proc, /, /opt 准备从 /var/log 出发探索 历史: 无",EXPLORE,6
+444,帮助查询: lsof 当前路径 /usr/bin 历史: cat /proc/cpuinfo → pwd,HELP,7
+445,文件 loadavg 有多少行 当前: /root 历史: 刚进入环境,COUNT,5
+446,系统信息收集: 用户信息 位置: /home 历史: 无,INFO,3
+447,沙箱环境 验证 grep 安装 当前: /usr/bin 历史: 无,INSPECT,4
+448,目录 /tmp 的内容尚未查看 历史: whoami → uptime → wc,LIST,1
+449,查找 admin: 当前目录 /mnt 已知文件 filesystems 历史: uptime → ps,SEARCH,2
+450,沙箱环境 准备获取 ps 帮助 当前 /proc 历史: 无,HELP,7
+451,刚刚 cd 到 /dev 需要看看里面有什么 历史: 无,LIST,1
+452,目标: 在 version 中查找 timeout 当前: /proc 历史: 刚进入环境,SEARCH,2
+453,系统信息收集: 当前时间 位置: /var 历史: 无,INFO,3
+454,filesystems 内容长度未知 需计数 当前: /proc 历史: uptime → date,COUNT,5
+455,环境: /mnt 准备获取 ping 帮助信息 历史: 刚进入环境,HELP,7
+456,了解 curl 功能 需查帮助 当前路径 /root 历史: 无,HELP,7
+457,"当前: / 探索进度: 已访问 /home, /root 需扩展 历史: 刚进入环境",EXPLORE,6
+458,准备 grep --help 当前目录 /root 历史: 无,HELP,7
+459,需了解 null 的数据量 当前 /root 历史: 刚进入环境,COUNT,5
+460,文件 hosts 有多少行 当前: / 历史: 无,COUNT,5
+461,docker 使用方法待了解 当前目录 / 历史: 刚进入环境,HELP,7
+462,沙箱目录 /root 存在文件 nginx 上步操作: ls 看到很多文件 历史: 无,READ,0
+463,查看 git 行数 环境路径 /usr/bin 历史: 无,COUNT,5
+464,确认 git 可执行文件位置 当前: /root 历史: 无,INSPECT,4
+465,刚进入 /home 准备查看目录内容 历史: 无,LIST,1
+466,hostname 中可能包含 token 需搜索验证 历史: 刚进入环境,SEARCH,2
+467,当前目录: / 历史: 无 需要查看系统磁盘信息,INFO,3
+468,准备使用 find 先检查是否存在 当前: /mnt 历史: 刚进入环境,INSPECT,4
+469,环境路径: /usr/local/bin 可访问文件: docker-compose 历史: 刚进入环境,READ,0
+470,想运行 lsof 先确认安装 当前: /usr/local/bin 历史: 无,INSPECT,4
+471,环境显示 /root/hosts 可读 历史: 无,READ,0
+472,需确认 node 命令是否存在 当前目录 /var/log 历史: 无,INSPECT,4
+473,上步发现 connection 相关信息 当前: /opt 历史: uptime → wc,SEARCH,2
+474,/home 目录中 user/documents/report.txt 是上步发现的重要文件 历史: 无,READ,0
+475,"环境探索中 当前: /mnt 已访问 /etc, /usr/local/bin 历史: 刚进入环境",EXPLORE,6
+476,查看负载情况以了解环境状态 当前: /home 历史: 刚进入环境,INFO,3
+477,/dev 附近可能有未发现的目录 准备探索 历史: 无,EXPLORE,6
+478,数据量检查: class/net/eth0/address 行数 当前 /sys 历史: cat → cat /proc/cpuinfo → grep,COUNT,5
+479,沙箱中 ping 如何使用 需查帮助 当前 /var 历史: 刚进入环境,HELP,7
+480,当前路径 /usr/local/bin 发现配置文件 docker-compose 历史: 刚进入环境,READ,0
+481,在 /root 的文件中搜索 timeout 模式 历史: 刚进入环境,SEARCH,2
+482,沙箱状态: 需读取内存信息 当前: /home 历史: 无,INFO,3
+483,位置: /home 准备执行目录浏览 历史: 无,LIST,1
+484,"/dev 下已访问: /home, /var, /opt 准备探索未知 历史: 无",EXPLORE,6
+485,文件系统显示 user/.profile 在 /home 中 历史: 刚进入环境,READ,0
+486,沙箱环境显示当前目录为 /home 需查看列表 历史: grep,LIST,1
+487,检查 npm 是否存在 当前路径: /home 历史: 无,INSPECT,4
+488,环境: /etc 准备获取 nginx 帮助信息 历史: 刚进入环境,HELP,7
+489,文件 log/auth.log 条目计数 环境: /var 历史: 无,COUNT,5
+490,/home 是新发现的路径 需要浏览 历史: whoami,LIST,1
+491,查看进程信息以了解环境状态 当前: /home 历史: 无,INFO,3
+492,沙箱中 /proc 的内容需要浏览 历史: 无,LIST,1
+493,沙箱中还有更多未知区域 当前 /home 历史: 无,EXPLORE,6
+494,需了解系统当前时间 环境: /var/log 历史: 刚进入环境,INFO,3
+495,帮助查询: jq 当前路径 /etc 历史: ls,HELP,7
+496,在 /opt 下发现文件 app/config.yaml 历史: 刚进入环境,READ,0
+497,正在分析 /proc 中的 version 内容 历史: 刚进入环境,READ,0
+498,在 / 中需要了解目录布局 历史: 刚进入环境,LIST,1
+499,环境诊断: 需要进程信息 当前路径: /tmp 历史: ps → cd → head,INFO,3
+500,上步发现 password 相关信息 当前: /root 历史: cat → head,SEARCH,2
+501,统计 /var/www/html/index.html 的行数量 历史: 无,COUNT,5
+502,需了解系统CPU信息 环境: /var 历史: 无,INFO,3
+503,文件 python3 行统计 环境 /usr/bin 历史: 刚进入环境,COUNT,5
+504,准备看 sed 的帮助 环境 /proc 历史: 刚进入环境,HELP,7
+505,了解 mysql 功能 需查帮助 当前路径 /sys 历史: 无,HELP,7
+506,沙箱中还有更多未知区域 当前 /tmp 历史: 无,EXPLORE,6
+507,需知道 pip3 的行数 当前: /usr/local/bin 历史: 刚进入环境,COUNT,5
+508,当前 /dev 准备查询内存信息 历史: 无,INFO,3
+509,"探索模式: 从 /sys 出发 已访问 /home, /root, /tmp 历史: 无",EXPLORE,6
+510,沙箱状态: 需读取系统版本 当前: /home 历史: 刚进入环境,INFO,3
+511,环境监测: 系统版本 当前目录 /home 历史: cat /proc/cpuinfo,INFO,3
+512,当前目录: /dev 已知文件: null 历史: 无,READ,0
+513,已了解 /var/log 部分内容 准备继续探索 历史: 无,EXPLORE,6
+514,需过滤 /usr/bin 中含 127.0.0.1 的行 历史: 无,SEARCH,2
+515,查看 services 行数 环境路径 /mnt 历史: 无,COUNT,5
+516,准备 grep password 在 /proc 下的文件中 历史: 无,SEARCH,2
+517,"环境探索中 当前: /usr/bin 已访问 /home, /sys, /tmp 历史: date → uptime → cat /proc/cpuinfo",EXPLORE,6
+518,需确认 ps 命令是否存在 当前目录 / 历史: 刚进入环境,INSPECT,4
+519,"沙箱探索继续 当前 /opt 已访问 /sys, /dev, /var/log 历史: 无",EXPLORE,6
+520,当前目录: /home 已知文件: user/documents/report.txt 上步: 看到文件含 connection 历史: 无,READ,0
+521,环境: /root 需验证 ps 命令路径 历史: 刚进入环境,INSPECT,4
+522,目标: 在 app/config.yaml 中查找 connection 当前: /opt 历史: 刚进入环境,SEARCH,2
+523,环境地图不完整 当前 /etc 需探索更多 历史: 无,EXPLORE,6
+524,需要在 /sys 下搜索 failed 上步: 无操作 历史: ps → cat,SEARCH,2
+525,"当前目录: /root 已访问: /tmp, /opt, /home, /usr/bin 准备探索新路径 历史: 刚进入环境",EXPLORE,6
+526,文件系统显示 nginx/access.log 在 /var/log 中 历史: 无,READ,0
+527,当前位于 /sys 注意到文件 class/net/eth0/address 历史: 刚进入环境,READ,0
+528,想执行 redis-cli 先检查安装位置 当前: /etc 历史: cat → head,INSPECT,4
+529,工作目录: /dev 目标文件: sda 历史: 无,READ,0
+530,查看 npm 文档 当前: /var/log 历史: 刚进入环境,HELP,7
+531,系统状态未知 需获取负载情况 当前: /opt 历史: 无,INFO,3
+532,"探索模式: 从 /mnt 出发 已访问 /sys, /proc, /opt 历史: cat /proc/cpuinfo → cd → uptime",EXPLORE,6
+533,当前目录: /var 需确认 lsof 是否安装 历史: 刚进入环境,INSPECT,4
+534,当前位于 /mnt 目录结构待查看 历史: 刚进入环境,LIST,1
+535,scripts/backup.sh 内容长度未知 需计数 当前: /opt 历史: 刚进入环境,COUNT,5
+536,已进入 /etc 准备查看文件清单 历史: 无,LIST,1
+537,/tmp 目录下可能包含更多子目录 历史: head → df,LIST,1
+538,需要在 /home 中搜索 connection 的出现 历史: 无,SEARCH,2
+539,在 /var/log 的文件中搜索 failed 模式 历史: cd,SEARCH,2
+540,在 cache.json 中发现 docker 关键字 当前目录: /tmp 历史: 无,SEARCH,2
+541,目录 / 中可能有包含 timeout 的文件 历史: 无,SEARCH,2
+542,sda 中可能包含 ssh 需搜索验证 历史: 无,SEARCH,2
+543,系统状态未知 需获取运行时间 当前: /proc 历史: 刚进入环境,INFO,3
+544,已了解 /mnt 部分内容 准备继续探索 历史: 无,EXPLORE,6
+545,文件 class/net/eth0/address 有多少行 当前: /sys 历史: 无,COUNT,5
+546,/ 附近可能有未发现的目录 准备探索 历史: 无,EXPLORE,6
+547,文件 uptime 有多少行 当前: /proc 历史: whoami → uptime → pwd,COUNT,5
+548,目录 /dev 的内容尚未查看 历史: 刚进入环境,LIST,1
+549,需了解系统进程信息 环境: /home 历史: date,INFO,3
+550,位置: /proc 准备执行目录浏览 历史: wc,LIST,1
+551,准备检查 sed 可执行性 当前: /usr/local/bin 历史: df → cd,INSPECT,4
+552,系统状态未知 需获取当前时间 当前: /opt 历史: 无,INFO,3
+553,环境提示 /dev 中存在 error 需搜索 历史: 无,SEARCH,2
+554,沙箱目录 /dev 存在文件 zero 上步操作: 看到文件含 ssh 历史: pwd → head → cd,READ,0
+555,"沙箱环境 已访问 /sys, /dev, /tmp, /mnt, /usr/local/bin 当前 /home 继续探索 历史: 无",EXPLORE,6
+556,环境分析需要磁盘信息 当前: /var/log 历史: cat → wc → ps,INFO,3
+557,环境 /tmp 中查找 curl 的位置 历史: 刚进入环境,INSPECT,4
+558,当前目录: /opt 上步: ls 看到很多文件 历史: grep → cat → date,LIST,1
+559,awk 命令用法未知 需查看帮助 当前 /tmp 历史: 无,HELP,7
+560,沙箱中还有更多未知区域 当前 /tmp 历史: 刚进入环境,EXPLORE,6
+561,需了解 output.txt 的数据量 当前 /tmp 历史: 无,COUNT,5
+562,系统监控: 查看运行时间 位置: /home 历史: 无,INFO,3
+563,沙箱目录 /opt 存在文件 app/config.yaml 上步操作: 刚进入环境 历史: 无,READ,0
+564,沙箱中 zip 如何使用 需查帮助 当前 /opt 历史: 无,HELP,7
+565,数据量检查: passwd 行数 当前 / 历史: 无,COUNT,5
+566,环境监测: 负载情况 当前目录 /mnt 历史: 无,INFO,3
+567,准备执行 docker --help 当前: /var/log 历史: df → head,HELP,7
+568,准备调用 curl 先验证路径 当前: /usr/bin 历史: cd → cat /proc/cpuinfo,INSPECT,4
+569,统计 /home/user/.profile 的行数量 历史: 刚进入环境,COUNT,5
+570,到达 /var/log 准备浏览文件列表 历史: 无,LIST,1
+571,环境 /var/log 中查找 tar 的位置 历史: 无,INSPECT,4
+572,查看 /dev 下的 sda 可能有系统信息 历史: 刚进入环境,READ,0
+573,沙箱中 / 的内容需要浏览 历史: 刚进入环境,LIST,1
+574,环境监测: CPU信息 当前目录 /etc 历史: 刚进入环境,INFO,3
+575,需要在 /sys 下搜索 root 上步: pwd 确认当前位置 历史: 刚进入环境,SEARCH,2
+576,准备 mysql --help 当前目录 /dev 历史: 无,HELP,7
+577,在 /dev 下查找包含 timeout 的内容 历史: 无,SEARCH,2
+578,需知道 user/documents/report.txt 的行数 当前: /home 历史: df → date,COUNT,5
+579,当前路径: /var 文件列表未知 历史: 无,LIST,1
+580,了解 zip 功能 需查帮助 当前路径 /root 历史: 无,HELP,7
+581,当前 /sys 准备查询磁盘信息 历史: 无,INFO,3
+582,在 /mnt 中，文件 hosts 可能存在有用信息 历史: 无,READ,0
+583,准备检查 redis-cli 可执行性 当前: /opt 历史: 无,INSPECT,4
+584,当前 /opt 搜索关键词 password 历史: ps → cat → grep,SEARCH,2
+585,"探索阶段: 从 /proc 扩展 已访问 /usr/local/bin, /etc, /dev, /var/log, /usr/bin 历史: cat",EXPLORE,6
+586,沙箱中还有更多未知区域 当前 /etc 历史: 刚进入环境,EXPLORE,6
+587,文件 pip3 有多少行 当前: /usr/local/bin 历史: 无,COUNT,5
+588,文件 app/config.yaml 可能包含 admin 需确认 当前: /opt 历史: 无,SEARCH,2
+589,沙箱中 lsof 如何使用 需查帮助 当前 /root 历史: cat → wc,HELP,7
+590,沙箱环境 /var 下存在文本文件 spool/cron/crontabs/root 历史: pwd,READ,0
+591,当前目录: /etc 需确认 ps 是否安装 历史: 无,INSPECT,4
+592,需过滤 /tmp 中含 docker 的行 历史: 无,SEARCH,2
+593,需要运行时间来评估环境 当前: /var/log 历史: wc → head → pwd,INFO,3
+594,系统检查: CPU信息 位置 /etc 历史: 无,INFO,3
+595,帮助查询: netstat 当前路径 /sys 历史: 无,HELP,7
+596,"已知路径: /sys, /usr/local/bin, /tmp, /var, /proc 准备从 /dev 出发探索 历史: wc",EXPLORE,6
+597,环境显示 /etc/ssh/sshd_config 可读 历史: 无,READ,0
+598,沙箱中 mysql 是否可用 当前: / 历史: 无,INSPECT,4
+599,在 /usr/bin 的文件中搜索 failed 模式 历史: uptime → whoami → date,SEARCH,2
+600,想熟悉 redis-cli 的用法 当前 /usr/bin 历史: 刚进入环境,HELP,7
+601,当前路径 /mnt 需搜索 ssh 相关条目 历史: 刚进入环境,SEARCH,2
+602,环境地图不完整 当前 /home 需探索更多 历史: 无,EXPLORE,6
+603,"当前目录: /mnt 已访问: /home, /proc, /sys, /, /opt 准备探索新路径 历史: 无",EXPLORE,6
+604,准备 wc -l uptime 当前: /proc 历史: 无,COUNT,5
+605,进入目录 /var/log 上步: ls 看到很多文件 历史: 无,LIST,1
+606,需过滤 /usr/local/bin 中含 failed 的行 历史: 无,SEARCH,2
+607,查看CPU信息以了解环境状态 当前: /var/log 历史: 刚进入环境,INFO,3
+608,了解 ping 的可用选项 当前: /etc 历史: 无,HELP,7
+609,准备统计 /sys/class/net/eth0/address 的行 历史: grep → wc,COUNT,5
+610,当前目录: /var/log 已知文件: syslog 需统计行数 历史: cd → whoami → pwd,COUNT,5
+611,需确认 tar 命令是否存在 当前目录 /etc 历史: cat → head → wc,INSPECT,4
+612,需查看 jq 的帮助文档 当前: /opt 历史: uptime,HELP,7
+613,当前目录: /var 历史: 刚进入环境 需要查看系统用户信息,INFO,3
+614,当前位于 /etc 目录结构待查看 历史: 刚进入环境,LIST,1
+615,git 命令路径验证 环境: /etc 历史: 无,INSPECT,4
+616,目录 /usr/bin 中可能有包含 docker 的文件 历史: 无,SEARCH,2
+617,"准备离开 /usr/bin 前往未知区域 已访问 /sys, /dev, /root, /opt 历史: uptime",EXPLORE,6
+618,已进入 /home 准备查看文件清单 历史: 无,LIST,1
+619,刚切换到 /mnt 尚未查看目录结构 历史: 无,LIST,1
+620,当前目录: /mnt 准备了解 find 命令用法 历史: cd → whoami → cat,HELP,7
+621,/opt 目录中 scripts/backup.sh 是上步发现的重要文件 历史: 无,READ,0
+622,在 /usr/local/bin 下需要了解有哪些文件和目录 历史: 无,LIST,1
+623,需发现 /var 之外的新区域 历史: 无,EXPLORE,6
+624,文件 cmdline 行统计 环境 /root 历史: cat /proc/cpuinfo → uptime,COUNT,5
+625,已定位文件 shadow 位于 /etc 历史: cat /proc/cpuinfo → grep,READ,0
+626,需学习 ssh 命令 当前: /var/log 历史: date,HELP,7
+627,在 /etc 下需要了解有哪些文件和目录 历史: 无,LIST,1
+628,文件 log/dmesg 可能包含 admin 需确认 当前: /var 历史: 无,SEARCH,2
+629,环境诊断: 需要内存信息 当前路径: /proc 历史: cat /proc/cpuinfo → pwd → grep,INFO,3
+630,当前位于 /root 目录结构待查看 历史: 刚进入环境,LIST,1
+631,当前目录: /var 需确认 sed 是否安装 历史: 无,INSPECT,4
+632,当前路径 /home 还有未探索的子目录 历史: 刚进入环境,EXPLORE,6
+633,沙箱目录 /sys 存在文件 devices/system/cpu/online 上步操作: 浏览目录 历史: 无,READ,0
+634,需知道 dmesg 的行数 当前: /var/log 历史: 无,COUNT,5
+635,文件 test.sh 有多少行 当前: /tmp 历史: 刚进入环境,COUNT,5
+636,目录 /sys 中有文件 devices/system/cpu/online 上步: grep password 历史: 无,READ,0
+637,环境提示 /var/log 中存在 error 需搜索 历史: 无,SEARCH,2
+638,需确认用户信息 当前位于 /var/log 历史: uptime,INFO,3
+639,想运行 mysql 先确认安装 当前: /sys 历史: 无,INSPECT,4
+640,沙箱环境显示当前目录为 /opt 需查看列表 历史: head → grep,LIST,1
+641,帮助查询: ps 当前路径 /var/log 历史: 无,HELP,7
+642,确认 lsof 可执行文件位置 当前: /mnt 历史: uptime → df → head,INSPECT,4
+643,"已知路径: /etc, /var/log, /opt, /tmp 准备从 /usr/local/bin 出发探索 历史: whoami",EXPLORE,6
+644,已定位文件 log/syslog 位于 /var 历史: cat → grep → whoami,READ,0
+645,工作目录: /sys 目标文件: devices/system/cpu/online 历史: 刚进入环境,READ,0
+646,user/.profile 有多少行数据 当前路径 /home 历史: 无,COUNT,5
+647,/root 环境中 zip 命令路径检查 历史: 无,INSPECT,4
+648,目录 /usr/local/bin 的内容尚未查看 历史: 无,LIST,1
+649,目标: 在 class/net/eth0/address 中查找 token 当前: /sys 历史: 无,SEARCH,2
+650,系统概览: 查看运行时间 路径: / 历史: 无,INFO,3
+651,在 /home 下查找包含 timeout 的内容 历史: 无,SEARCH,2
+652,环境: /usr/local/bin 准备获取 netstat 帮助信息 历史: 刚进入环境,HELP,7
+653,/usr/bin 是新发现的路径 需要浏览 历史: 无,LIST,1
+654,沙箱中 htop 是否可用 当前: / 历史: df → pwd → grep,INSPECT,4
+655,环境: /etc 准备获取 tar 帮助信息 历史: whoami,HELP,7
+656,find 使用方法待了解 当前目录 /home 历史: wc,HELP,7
+657,环境监测: 内存信息 当前目录 /var 历史: 无,INFO,3
+658,沙箱状态: 需读取运行时间 当前: /tmp 历史: ps,INFO,3
+659,当前路径 / 需搜索 admin 相关条目 历史: df → cat,SEARCH,2
+660,在 /etc 下发现文件 hostname 历史: 刚进入环境,READ,0
+661,在 /opt 下发现文件 app/config.yaml 历史: 无,READ,0
+662,沙箱中 nginx 是否可用 当前: /home 历史: 无,INSPECT,4
+663,在 /dev 的文件中搜索 token 模式 历史: cat /proc/cpuinfo,SEARCH,2
+664,/home 是新发现的路径 需要浏览 历史: 刚进入环境,LIST,1
+665,系统状态未知 需获取CPU信息 当前: /var/log 历史: 刚进入环境,INFO,3
+666,/root 附近可能有未发现的目录 准备探索 历史: 无,EXPLORE,6
+667,"环境探索中 当前: / 已访问 /usr/bin, /root, /dev, /sys, /usr/local/bin 历史: 无",EXPLORE,6
+668,当前路径: /proc 文件列表未知 历史: 刚进入环境,LIST,1
+669,沙箱中 python3 是否可用 当前: /tmp 历史: 无,INSPECT,4
+670,文件系统显示 pip3 在 /usr/local/bin 中 历史: 刚进入环境,READ,0
+671,检查 redis-cli 是否存在 当前路径: /usr/bin 历史: cat /proc/cpuinfo → date → ls,INSPECT,4
+672,了解 ps 的可用选项 当前: /etc 历史: ls → df,HELP,7
+673,当前位于 /usr/bin 注意到文件 vim 历史: 刚进入环境,READ,0
+674,/root 目录下找到 .bashrc 上步: grep localhost 历史: 无,READ,0
+675,文件 passwd 大小未知 先统计行数 当前: / 历史: head → cat,COUNT,5
+676,目录 /proc 中有文件 uptime 上步: 检查系统信息 历史: 刚进入环境,READ,0
+677,/proc 目录中 cmdline 是上步发现的重要文件 历史: uptime,READ,0
+678,在 docker-compose 中发现 token 关键字 当前目录: /usr/local/bin 历史: 无,SEARCH,2
+679,已定位文件 pip3 位于 /usr/local/bin 历史: 无,READ,0
+680,环境: /tmp 需验证 htop 命令路径 历史: 无,INSPECT,4
+681,test.sh 行数统计 当前目录 /tmp 历史: 无,COUNT,5
+682,文件系统显示 hostname 在 / 中 历史: 无,READ,0
+683,当前路径: /sys 文件列表未知 历史: ps,LIST,1
+684,当前路径: /tmp 文件列表未知 历史: 无,LIST,1
+685,环境显示 /usr/local/bin/docker-compose 可读 历史: head,READ,0
+686,沙箱中 netstat 是否可用 当前: /opt 历史: grep → wc,INSPECT,4
+687,random 有多少行数据 当前路径 /dev 历史: 刚进入环境,COUNT,5
+688,准备 wc -l docker-compose 当前: /usr/local/bin 历史: 无,COUNT,5
+689,在 /sys 中需要了解目录布局 历史: 无,LIST,1
+690,目录 /var 的内容尚未查看 历史: 无,LIST,1
+691,刚进入 /opt 准备查看目录内容 历史: 无,LIST,1
+692,环境提示 /etc 中存在 password 需搜索 历史: 无,SEARCH,2
+693,计数需求: version 在 /proc 中 历史: 无,COUNT,5
+694,在 /usr/local/bin 下发现文件 docker-compose 历史: 无,READ,0
+695,在 /home 下需要了解有哪些文件和目录 历史: 刚进入环境,LIST,1
+696,当前 /sys 搜索关键词 root 历史: 无,SEARCH,2
+697,准备检查 grep 可执行性 当前: /var/log 历史: 无,INSPECT,4
+698,文件系统显示 fstab 在 / 中 历史: 无,READ,0
+699,工作目录: /usr/local/bin 目标文件: pip3 历史: wc → date,READ,0
+700,准备执行 redis-cli --help 当前: /sys 历史: 无,HELP,7
+701,目录 /var/log 的内容尚未查看 历史: pwd → uptime → cat /proc/cpuinfo,LIST,1
+702,在 /mnt 下需要了解有哪些文件和目录 历史: grep,LIST,1
+703,定位 connection 在 /usr/bin 中的位置 历史: 无,SEARCH,2
+704,"当前: /home 探索进度: 已访问 /root, /tmp 需扩展 历史: 无",EXPLORE,6
+705,已收集 /tmp 信息 准备探索新路径 历史: 无,EXPLORE,6
+706,文件系统显示 null 在 /mnt 中 历史: 无,READ,0
+707,准备执行 lsof --help 当前: /opt 历史: 无,HELP,7
+708,环境地图不完整 当前 / 需探索更多 历史: 无,EXPLORE,6
+709,沙箱中还有更多未知区域 当前 /var 历史: uptime,EXPLORE,6
+710,sshd_config 有多少行数据 当前路径 /mnt 历史: 刚进入环境,COUNT,5
+711,需检查 ps 是否在 PATH 中 当前 /root 历史: 无,INSPECT,4
+712,环境: /home 需验证 docker 命令路径 历史: ps → whoami,INSPECT,4
+713,nginx 命令路径验证 环境: /proc 历史: 刚进入环境,INSPECT,4
+714,准备使用 awk 需先定位 当前目录 /tmp 历史: 无,INSPECT,4
+715,在 /root 中需要了解目录布局 历史: 无,LIST,1
+716,npm 命令路径验证 环境: /sys 历史: uptime → grep → cat /proc/cpuinfo,INSPECT,4
+717,环境 /var/log 中查找 ping 的位置 历史: wc → cat → ps,INSPECT,4
+718,当前目录: /proc 已知文件: uptime 上步: 进入 /proc 历史: 刚进入环境,READ,0
+719,当前位于 /var 目录结构待查看 历史: 无,LIST,1
+720,环境提示 /mnt 中存在 failed 需搜索 历史: 无,SEARCH,2
+721,文件系统显示 docker-compose 在 /usr/local/bin 中 历史: cd → grep,READ,0
+722,确认 grep 可执行文件位置 当前: /etc 历史: 刚进入环境,INSPECT,4
+723,环境已熟悉 当前: /etc 需要发现新区域 历史: 无,EXPLORE,6
+724,系统概览: 查看当前时间 路径: /usr/bin 历史: 无,INFO,3
+725,"当前: /tmp 探索进度: 已访问 /var/log, /etc, /home 需扩展 历史: ls",EXPLORE,6
+726,环境地图不完整 当前 /home 需探索更多 历史: 刚进入环境,EXPLORE,6
+727,环境已熟悉 当前: / 需要发现新区域 历史: wc → whoami,EXPLORE,6
+728,在 random 中发现 connection 关键字 当前目录: /dev 历史: grep → cd,SEARCH,2
+729,已进入 /proc 准备查看文件清单 历史: 无,LIST,1
+730,沙箱中定位 ping 当前目录 /mnt 历史: 刚进入环境,INSPECT,4
+731,需读取 /usr/bin/vim 获取信息 历史: head → whoami → df,READ,0
+732,路径 /tmp 存在但内容未知 历史: 刚进入环境,LIST,1
+733,查看负载情况以了解环境状态 当前: /proc 历史: date,INFO,3
+734,需了解 sshd_config 的数据量 当前 /mnt 历史: cat → pwd → date,COUNT,5
+735,当前目录: /tmp 已知文件: output.txt 上步: 空 历史: 无,READ,0
+736,准备调用 lsof 先验证路径 当前: /sys 历史: pwd → uptime,INSPECT,4
+737,进入目录 /opt 上步: 刚进入环境 历史: 无,LIST,1
+738,nginx/access.log 内容长度未知 需计数 当前: /var/log 历史: 无,COUNT,5
+739,准备 wc -l loadavg 当前: /mnt 历史: df → date → cd,COUNT,5
+740,沙箱中 docker 如何使用 需查帮助 当前 /proc 历史: 无,HELP,7
+741,当前 /proc 附近还有未知路径 历史: 刚进入环境,EXPLORE,6
+742,当前 /mnt 搜索关键词 localhost 历史: uptime → whoami,SEARCH,2
+743,在 log/auth.log 中发现 nginx 关键字 当前目录: /var 历史: 无,SEARCH,2
+744,数据量检查: random 行数 当前 /dev 历史: 刚进入环境,COUNT,5
+745,需计数 boot.log 中的条目数 当前: /var/log 历史: 无,COUNT,5
+746,当前目录: /opt 已知文件: scripts/backup.sh 需统计行数 历史: df → head,COUNT,5
+747,cache.json 有多少行数据 当前路径 /tmp 历史: 刚进入环境,COUNT,5
+748,在 /home 下发现文件 user/.bashrc 历史: head → df,READ,0
+749,ping 命令路径验证 环境: /sys 历史: 无,INSPECT,4
+750,了解 netstat 功能 需查帮助 当前路径 /dev 历史: wc → ps → head,HELP,7
+751,系统信息收集: 运行时间 位置: /var 历史: head → wc,INFO,3
+752,文件 user/documents/report.txt 有多少行 当前: /home 历史: 无,COUNT,5
+753,准备 npm --help 当前目录 /var/log 历史: 无,HELP,7
+754,刚切换到 /sys 尚未查看目录结构 历史: ps → cat /proc/cpuinfo,LIST,1
+755,检查 npm 的安装路径 环境: /dev 历史: cd → ls,INSPECT,4
+756,系统检查: 负载情况 位置 /sys 历史: 无,INFO,3
+757,文件 scripts/backup.sh 可能包含 token 需确认 当前: /opt 历史: 无,SEARCH,2
+758,进入目录 /etc 上步: 空 历史: 无,LIST,1
+759,环境地图不完整 当前 /mnt 需探索更多 历史: uptime → pwd → ps,EXPLORE,6
+760,定位 docker 在 /dev 中的位置 历史: 无,SEARCH,2
+761,系统概览: 查看用户信息 路径: /mnt 历史: head → grep → ps,INFO,3
+762,"沙箱环境 已访问 /root, /tmp, /, /opt, /proc 当前 /etc 继续探索 历史: 刚进入环境",EXPLORE,6
+763,当前路径 /var 还有未探索的子目录 历史: cd → cat /proc/cpuinfo,EXPLORE,6
+764,在 /dev 下需要了解有哪些文件和目录 历史: 无,LIST,1
+765,在 app/config.yaml 中发现 admin 关键字 当前目录: /opt 历史: ps,SEARCH,2
+766,需计数 resolv.conf 中的条目数 当前: / 历史: 无,COUNT,5
+767,需学习 netstat 命令 当前: /root 历史: 刚进入环境,HELP,7
+768,刚切换到 /proc 尚未查看目录结构 历史: 无,LIST,1
+769,准备统计 /usr/bin/journalctl 的行 历史: cat → ls → whoami,COUNT,5
+770,探索到 /var 准备列出所有条目 历史: 无,LIST,1
+771,数据量检查: cmdline 行数 当前 /proc 历史: 无,COUNT,5
+772,统计 /opt/scripts/backup.sh 的行数量 历史: 刚进入环境,COUNT,5
+773,文件 kern.log 行统计 环境 /var/log 历史: grep → pwd → cd,COUNT,5
+774,系统状态未知 需获取运行时间 当前: /var/log 历史: df,INFO,3
+775,需读取 /opt/app/config.yaml 获取信息 历史: grep → date,READ,0
+776,沙箱环境 当前 /proc 搜索目标: failed 历史: 刚进入环境,SEARCH,2
+777,当前路径 /mnt 发现配置文件 passwd 历史: 无,READ,0
+778,当前 /tmp 准备查询进程信息 历史: 无,INFO,3
+779,需了解 resolv.conf 的数据量 当前 / 历史: 无,COUNT,5
+780,find 命令路径验证 环境: /var 历史: cd → pwd,INSPECT,4
+781,当前目录: /opt 历史: head 需要查看系统当前时间,INFO,3
+782,统计 /mnt/kern.log 的行数量 历史: 无,COUNT,5
+783,环境地图不完整 当前 /root 需探索更多 历史: grep → ls,EXPLORE,6
+784,环境: /root 需验证 npm 命令路径 历史: 无,INSPECT,4
+785,在 /var 下查找包含 admin 的内容 历史: 无,SEARCH,2
+786,上步发现 nginx 相关信息 当前: /mnt 历史: 无,SEARCH,2
+787,准备统计 app/config.yaml 的行数 当前目录 /opt 历史: 无,COUNT,5
+788,环境显示 /usr/bin/curl 可读 历史: 无,READ,0
+789,刚进入 /usr/bin 准备查看目录内容 历史: 刚进入环境,LIST,1
+790,已收集 /var/log 信息 准备探索新路径 历史: 无,EXPLORE,6
+791,准备调用 ssh 先验证路径 当前: /opt 历史: 无,INSPECT,4
+792,文件系统显示 random 在 /dev 中 历史: 无,READ,0
+793,想运行 python3 先确认安装 当前: /proc 历史: 刚进入环境,INSPECT,4
+794,当前 /var/log 准备查询磁盘信息 历史: 无,INFO,3
+795,准备查看 /var 中的 log/syslog 历史: 无,READ,0
+796,诊断需求: 运行时间 当前目录: /opt 历史: 无,INFO,3
+797,在 /home 下发现文件 user/.profile 历史: 无,READ,0
+798,系统检查: 运行时间 位置 /etc 历史: 无,INFO,3
+799,在 / 的文件中搜索 ssh 模式 历史: grep → ps → pwd,SEARCH,2
+800,环境 / 中查找 ping 的位置 历史: 无,INSPECT,4
+801,/usr/local/bin 是新发现的路径 需要浏览 历史: 刚进入环境,LIST,1
+802,文件 bash 大小未知 先统计行数 当前: /usr/bin 历史: 无,COUNT,5
+803,/var 环境中 tar 命令路径检查 历史: df → head,INSPECT,4
+804,环境 /home 中查找 htop 的位置 历史: head,INSPECT,4
+805,刚切换到 /root 尚未查看目录结构 历史: 无,LIST,1
+806,grep 使用方法待了解 当前目录 /usr/bin 历史: 无,HELP,7
+807,在 /opt 下发现文件 app/config.yaml 历史: 无,READ,0
+808,准备统计 /proc/filesystems 的行 历史: 无,COUNT,5
+809,在 /usr/bin 下查找包含 token 的内容 历史: 无,SEARCH,2
+810,探索到 /var/log 准备列出所有条目 历史: 无,LIST,1
+811,文件系统显示 .profile 在 /mnt 中 历史: uptime,READ,0
+812,沙箱中 /dev 的内容需要浏览 历史: 无,LIST,1
+813,查看 ping 文档 当前: /home 历史: 刚进入环境,HELP,7
+814,沙箱状态: 需读取当前时间 当前: /etc 历史: 无,INFO,3
+815,在 output.txt 中发现 root 关键字 当前目录: /tmp 历史: cat /proc/cpuinfo → ps → pwd,SEARCH,2
+816,沙箱诊断: 获取系统版本 当前路径 /home 历史: uptime,INFO,3
+817,"/dev 下已访问: /home, /usr/local/bin, /proc, /sys 准备探索未知 历史: 无",EXPLORE,6
+818,文件 boot.log 大小未知 先统计行数 当前: /var/log 历史: 无,COUNT,5
+819,环境监测: 用户信息 当前目录 /root 历史: 无,INFO,3
+820,沙箱中 curl 如何使用 需查帮助 当前 /var 历史: 刚进入环境,HELP,7
+821,想运行 git 先确认安装 当前: /usr/bin 历史: ps → grep,INSPECT,4
+822,文件 zero 可能包含 connection 需确认 当前: /dev 历史: uptime → whoami → wc,SEARCH,2
+823,zip 使用方法待了解 当前目录 /mnt 历史: 无,HELP,7
+824,当前目录: / 需确认 curl 是否安装 历史: 刚进入环境,INSPECT,4
+825,环境 /proc 中查找 htop 的位置 历史: date,INSPECT,4
+826,目录 / 的内容尚未查看 历史: cat /proc/cpuinfo → wc → df,LIST,1
+827,当前目录: /var/log 需确认 mysql 是否安装 历史: 无,INSPECT,4
+828,已进入 /sys 准备查看文件清单 历史: 刚进入环境,LIST,1
+829,已进入 /root 准备查看文件清单 历史: 无,LIST,1
+830,准备调用 curl 先验证路径 当前: /dev 历史: 无,INSPECT,4
+831,环境: /sys 准备获取 python3 帮助信息 历史: 无,HELP,7
+832,"沙箱环境 已访问 /usr/local/bin, /dev, /sys 当前 /root 继续探索 历史: 无",EXPLORE,6
+833,查看 cmdline 行数 环境路径 /proc 历史: 无,COUNT,5
+834,需确认 mysql 命令是否存在 当前目录 /tmp 历史: 无,INSPECT,4
+835,沙箱环境 验证 jq 安装 当前: /usr/local/bin 历史: 无,INSPECT,4
+836,"准备离开 /var 前往未知区域 已访问 /mnt, /etc, /proc, /home, /sys 历史: pwd → ps → cat",EXPLORE,6
+837,"沙箱环境 已访问 /usr/bin, /var/log, /opt, /etc 当前 / 继续探索 历史: pwd → ps",EXPLORE,6
+838,需过滤 /usr/local/bin 中含 nginx 的行 历史: date → cd → pwd,SEARCH,2
+839,"沙箱探索继续 当前 /var/log 已访问 /usr/local/bin, /home 历史: 无",EXPLORE,6
+840,沙箱目录 /mnt 存在文件 hostname 上步操作: 刚进入环境 历史: 刚进入环境,READ,0
+841,当前目录: /mnt 已知文件: cmdline 上步: cat 输出包含 config 历史: 无,READ,0
+842,环境: /mnt 需验证 docker 命令路径 历史: 刚进入环境,INSPECT,4
+843,了解 nginx 功能 需查帮助 当前路径 /opt 历史: 无,HELP,7
+844,当前 /usr/local/bin 准备查询负载情况 历史: cat /proc/cpuinfo → ps,INFO,3
+845,目录 /tmp 中可能有包含 localhost 的文件 历史: 无,SEARCH,2
+846,在 zero 中发现 token 关键字 当前目录: /dev 历史: 刚进入环境,SEARCH,2
+847,已发现 docker 需在 user/.profile 中搜索更多 历史: 无,SEARCH,2
+848,准备检查运行时间 沙箱路径: /tmp 历史: 无,INFO,3
+849,环境分析需要运行时间 当前: / 历史: 无,INFO,3
+850,准备查看 /usr/bin 中的 git 历史: 刚进入环境,READ,0
+851,了解 ssh 的可用选项 当前: /usr/bin 历史: 无,HELP,7
+852,"当前: /proc 探索进度: 已访问 /sys, /dev, /etc 需扩展 历史: 无",EXPLORE,6
+853,查看 /var 下的 spool/cron/crontabs/root 可能有系统信息 历史: 刚进入环境,READ,0
+854,需知道 cpuinfo 的行数 当前: /mnt 历史: date → head → df,COUNT,5
+855,刚刚 cd 到 /proc 需要看看里面有什么 历史: 无,LIST,1
+856,文件 output.txt 大小未知 先统计行数 当前: /tmp 历史: 无,COUNT,5
+857,文件 test.sh 大小未知 先统计行数 当前: /tmp 历史: date → head,COUNT,5
+858,确认 netstat 可执行文件位置 当前: /tmp 历史: 无,INSPECT,4
+859,目标: 在 user/data.csv 中查找 ssh 当前: /home 历史: ls,SEARCH,2
+860,环境诊断: htop 是否可用 当前 /var/log 历史: 无,INSPECT,4
+861,准备看 zip 的帮助 环境 /tmp 历史: 无,HELP,7
+862,需发现 /sys 之外的新区域 历史: cd,EXPLORE,6
+863,/etc 环境中 npm 命令路径检查 历史: 无,INSPECT,4
+864,当前目录: /usr/bin 已知文件: vim 需统计行数 历史: grep → date → cat,COUNT,5
+865,在 /root 的文件中搜索 127.0.0.1 模式 历史: ls → cd → cat /proc/cpuinfo,SEARCH,2
+866,准备看 lsof 的帮助 环境 /etc 历史: 无,HELP,7
+867,文件系统显示 curl 在 /usr/bin 中 历史: 刚进入环境,READ,0
+868,已定位文件 class/net/eth0/address 位于 /sys 历史: 无,READ,0
+869,环境监测: 磁盘信息 当前目录 /var/log 历史: 无,INFO,3
+870,当前 /proc 准备查询CPU信息 历史: whoami → wc → ls,INFO,3
+871,探索到 /tmp 准备列出所有条目 历史: 无,LIST,1
+872,环境 /sys 中查找 find 的位置 历史: 无,INSPECT,4
+873,在 /var 下统计 log/dmesg 行数 历史: head,COUNT,5
+874,准备使用 awk 先检查是否存在 当前: /opt 历史: wc → whoami,INSPECT,4
+875,确认 git 可执行文件位置 当前: / 历史: 刚进入环境,INSPECT,4
+876,准备 grep localhost 在 /opt 下的文件中 历史: 刚进入环境,SEARCH,2
+877,准备查看 nginx 的帮助页面 当前目录 /etc 历史: 无,HELP,7
+878,/usr/bin 目录下找到 bash 上步: 进入 /usr/bin 历史: 刚进入环境,READ,0
+879,hostname 有多少行数据 当前路径 /etc 历史: 无,COUNT,5
+880,查看进程信息以了解环境状态 当前: /proc 历史: 无,INFO,3
+881,位置: /usr/local/bin 准备执行目录浏览 历史: 无,LIST,1
+882,需要磁盘信息来评估环境 当前: /var/log 历史: pwd → ls → whoami,INFO,3
+883,/var/log 目录下可能包含更多子目录 历史: 刚进入环境,LIST,1
+884,"沙箱探索继续 当前 /var/log 已访问 /mnt, /var, /root, /usr/local/bin 历史: pwd",EXPLORE,6
+885,想学习 tar 的参数 当前目录 /etc 历史: 无,HELP,7
+886,沙箱中还有更多未知区域 当前 /tmp 历史: head,EXPLORE,6
+887,进入目录 /var 上步: cat 输出包含 connection 历史: head → date → grep,LIST,1
+888,user/.bashrc 内容长度未知 需计数 当前: /home 历史: 无,COUNT,5
+889,环境路径: /sys 可访问文件: devices/system/cpu/online 历史: 无,READ,0
+890,nginx 中可能包含 ssh 需搜索验证 历史: 无,SEARCH,2
+891,沙箱中 ps 是否可用 当前: / 历史: whoami → pwd,INSPECT,4
+892,需学习 npm 命令 当前: /usr/bin 历史: 无,HELP,7
+893,沙箱中 npm 是否可用 当前: /tmp 历史: 刚进入环境,INSPECT,4
+894,已了解 /var/log 部分内容 准备继续探索 历史: 无,EXPLORE,6
+895,目标: 在 app/config.yaml 中查找 localhost 当前: /opt 历史: ls,SEARCH,2
+896,ping 命令路径验证 环境: /var 历史: 无,INSPECT,4
+897,查看运行时间以了解环境状态 当前: /home 历史: 刚进入环境,INFO,3
+898,需确认 grep 命令是否存在 当前目录 /usr/bin 历史: 无,INSPECT,4
+899,已发现 localhost 需在 docker-compose 中搜索更多 历史: pwd → head,SEARCH,2
+900,devices/system/cpu/online 有多少行数据 当前路径 /sys 历史: 无,COUNT,5
+901,环境监测: CPU信息 当前目录 / 历史: whoami → pwd,INFO,3
+902,上步发现 127.0.0.1 相关信息 当前: /usr/bin 历史: 无,SEARCH,2
+903,当前路径 /var 发现配置文件 log/syslog 历史: 无,READ,0
+904,需计数 devices/system/cpu/online 中的条目数 当前: /sys 历史: 无,COUNT,5
+905,准备查看 ps 的帮助页面 当前目录 /mnt 历史: 刚进入环境,HELP,7
+906,沙箱中 ps 是否可用 当前: /var 历史: cat → df,INSPECT,4
+907,null 行数统计 当前目录 /dev 历史: head → cd,COUNT,5
+908,沙箱环境 当前 / 搜索目标: failed 历史: 无,SEARCH,2
+909,在 /home 的文件中搜索 root 模式 历史: cd,SEARCH,2
+910,沙箱环境显示当前目录为 /etc 需查看列表 历史: 无,LIST,1
+911,当前目录: /etc 已知文件: apt/sources.list 上步: 发现新目录 /etc 历史: 无,READ,0
+912,/mnt 环境中 mysql 命令路径检查 历史: 无,INSPECT,4
+913,/root 目录中 os-release 是上步发现的重要文件 历史: 刚进入环境,READ,0
+914,诊断需求: 运行时间 当前目录: /var 历史: 无,INFO,3
+915,查看 log/dmesg 行数 环境路径 /var 历史: wc,COUNT,5
+916,检查 nginx 的安装路径 环境: /dev 历史: 无,INSPECT,4
+917,想执行 git 先检查安装位置 当前: /proc 历史: whoami → uptime → ls,INSPECT,4
+918,/proc 附近可能有未发现的目录 准备探索 历史: 无,EXPLORE,6
+919,文件 app/config.yaml 有多少行 当前: /opt 历史: 无,COUNT,5
+920,"沙箱探索继续 当前 /etc 已访问 /, /tmp, /usr/local/bin, /opt 历史: 无",EXPLORE,6
+921,帮助查询: lsof 当前路径 /tmp 历史: 无,HELP,7
+922,当前目录: /usr/local/bin 需确认 awk 是否安装 历史: grep → df → cat,INSPECT,4
+923,docker 命令参数不清楚 需 --help 当前: /opt 历史: 无,HELP,7
+924,当前目录: /mnt 上步: 浏览目录 历史: wc → pwd → whoami,LIST,1
+925,环境监测: 负载情况 当前目录 /tmp 历史: 无,INFO,3
+926,沙箱中 python3 是否可用 当前: /var/log 历史: 无,INSPECT,4
+927,查看 /opt 下的 app/config.yaml 可能有系统信息 历史: 刚进入环境,READ,0
+928,文件 docker-compose 大小未知 先统计行数 当前: /usr/local/bin 历史: 无,COUNT,5
+929,/usr/bin 附近可能有未发现的目录 准备探索 历史: pwd → whoami,EXPLORE,6
+930,需了解 auth.log 的数据量 当前 /var/log 历史: 无,COUNT,5
+931,环境诊断: 需要当前时间 当前路径: /usr/local/bin 历史: 无,INFO,3
+932,文件 backup.sh 条目计数 环境: /root 历史: 无,COUNT,5
+933,resolv.conf 有多少行数据 当前路径 / 历史: 刚进入环境,COUNT,5
+934,"沙箱环境 已访问 /home, /opt 当前 / 继续探索 历史: 刚进入环境",EXPLORE,6
+935,准备查看 /etc 中的 apt/sources.list 历史: 无,READ,0
+936,需确认 python3 命令是否存在 当前目录 /tmp 历史: 无,INSPECT,4
+937,准备使用 lsof 需先定位 当前目录 /proc 历史: 无,INSPECT,4
+938,检查 ping 的安装路径 环境: /sys 历史: 无,INSPECT,4
+939,检查 node 是否存在 当前路径: /proc 历史: 刚进入环境,INSPECT,4
+940,位置: /mnt 准备执行目录浏览 历史: 刚进入环境,LIST,1
+941,/proc 目录下找到 uptime 上步: cat 输出包含 failed 历史: 刚进入环境,READ,0
+942,环境路径 /home 需要列出子项 历史: pwd → wc,LIST,1
+943,沙箱状态: 需读取CPU信息 当前: /usr/bin 历史: 无,INFO,3
+944,环境地图不完整 当前 /proc 需探索更多 历史: 刚进入环境,EXPLORE,6
+945,在 /mnt 下查找包含 ssh 的内容 历史: 无,SEARCH,2
+946,/var 环境中 tar 命令路径检查 历史: 无,INSPECT,4
+947,沙箱中 zip 是否可用 当前: /tmp 历史: 无,INSPECT,4
+948,环境诊断: 需要负载情况 当前路径: / 历史: 刚进入环境,INFO,3
+949,当前路径 /etc 需搜索 token 相关条目 历史: 刚进入环境,SEARCH,2
+950,"/usr/bin 下已访问: /opt, /etc, /root 准备探索未知 历史: 无",EXPLORE,6
+951,环境路径 /tmp 需要列出子项 历史: 无,LIST,1
+952,系统监控: 查看磁盘信息 位置: /opt 历史: 无,INFO,3
+953,在 /sys 中计数 devices/system/cpu/online 的行 历史: cat /proc/cpuinfo,COUNT,5
+954,准备使用 git 需先定位 当前目录 /home 历史: 无,INSPECT,4
+955,需检查 grep 是否在 PATH 中 当前 /opt 历史: 刚进入环境,INSPECT,4
+956,文件 null 行统计 环境 /dev 历史: 无,COUNT,5
+957,在 /root 下需要了解有哪些文件和目录 历史: 无,LIST,1
+958,当前路径 /tmp 还有未探索的子目录 历史: 无,EXPLORE,6
+959,当前位于 /usr/bin 注意到文件 vim 历史: 刚进入环境,READ,0
+960,准备执行 redis-cli --help 当前: /mnt 历史: 刚进入环境,HELP,7
+961,到达 / 准备浏览文件列表 历史: wc → ls,LIST,1
+962,在 /var/log 中准备查询CPU信息 历史: whoami,INFO,3
+963,沙箱环境 当前 /var/log 搜索目标: connection 历史: 无,SEARCH,2
+964,在 /root 下需要了解有哪些文件和目录 历史: cat /proc/cpuinfo → head → df,LIST,1
+965,系统检查: 进程信息 位置 /etc 历史: cat /proc/cpuinfo,INFO,3
+966,pip3 行数统计 当前目录 /usr/local/bin 历史: 刚进入环境,COUNT,5
+967,准备 ps --help 当前目录 /home 历史: date → cat /proc/cpuinfo → uptime,HELP,7
+968,到达 /usr/local/bin 准备浏览文件列表 历史: 无,LIST,1
+969,环境诊断: 需要当前时间 当前路径: /var 历史: 无,INFO,3
+970,诊断需求: 当前时间 当前目录: /tmp 历史: uptime,INFO,3
+971,文件 pip3 行统计 环境 /usr/local/bin 历史: 无,COUNT,5
+972,环境路径 / 需要列出子项 历史: 无,LIST,1
+973,当前目录: /home 已知文件: user/data.csv 需统计行数 历史: cd → df,COUNT,5
+974,帮助查询: grep 当前路径 /opt 历史: 无,HELP,7
+975,需计数 null 中的条目数 当前: /dev 历史: 无,COUNT,5
+976,沙箱环境 准备获取 htop 帮助 当前 /opt 历史: 刚进入环境,HELP,7
+977,"探索阶段: 从 /root 扩展 已访问 /mnt, /tmp 历史: df → uptime → cat /proc/cpuinfo",EXPLORE,6
+978,需检查 python3 是否在 PATH 中 当前 /home 历史: df → grep,INSPECT,4
+979,当前目录: /usr/bin 上步: 浏览目录 历史: wc,LIST,1
+980,文件 group 大小未知 先统计行数 当前: /etc 历史: 无,COUNT,5
+981,想执行 ssh 先检查安装位置 当前: /opt 历史: whoami → grep → head,INSPECT,4
+982,"已知区域: /usr/bin, /, /mnt 当前 /opt 需扩大范围 历史: cd",EXPLORE,6
+983,准备调用 docker 先验证路径 当前: /etc 历史: 无,INSPECT,4
+984,刚刚 cd 到 /dev 需要看看里面有什么 历史: 无,LIST,1
+985,在 cache.json 中发现 nginx 关键字 当前目录: /tmp 历史: ps → df,SEARCH,2
+986,netstat 命令用法未知 需查看帮助 当前 /sys 历史: 无,HELP,7
+987,文件 scripts/backup.sh 有多少行 当前: /opt 历史: grep → pwd → cd,COUNT,5
+988,系统检查: 用户信息 位置 /proc 历史: 无,INFO,3
+989,到达 /home 准备浏览文件列表 历史: 刚进入环境,LIST,1
+990,沙箱中 /tmp 的内容需要浏览 历史: 无,LIST,1
+991,"探索阶段: 从 /home 扩展 已访问 /mnt, /usr/local/bin, /root, /var, /proc 历史: 刚进入环境",EXPLORE,6
+992,当前目录: / 需确认 npm 是否安装 历史: 无,INSPECT,4
+993,探索到 /etc 准备列出所有条目 历史: ls → uptime → cat /proc/cpuinfo,LIST,1
+994,"环境探索中 当前: /mnt 已访问 /proc, /usr/bin 历史: 刚进入环境",EXPLORE,6
+995,准备调用 grep 先验证路径 当前: /var 历史: grep → pwd,INSPECT,4
+996,环境诊断: 需要当前时间 当前路径: /usr/local/bin 历史: 无,INFO,3
+997,在 /usr/bin 下查找包含 error 的内容 历史: 无,SEARCH,2
+998,当前目录: /etc 已知文件: shadow 历史: 刚进入环境,READ,0
+999,/var/log 是新发现的路径 需要浏览 历史: 无,LIST,1
+1000,检查 awk 的安装路径 环境: / 历史: 刚进入环境,INSPECT,4
+1001,docker-compose 有多少行数据 当前路径 /usr/local/bin 历史: 无,COUNT,5
+1002,确认 curl 可执行文件位置 当前: /dev 历史: 刚进入环境,INSPECT,4
+1003,需读取 /mnt/vim 获取信息 历史: 刚进入环境,READ,0
+1004,当前目录: /usr/local/bin 历史: 刚进入环境 需要查看系统当前时间,INFO,3
+1005,准备检查 sed 可执行性 当前: /sys 历史: wc,INSPECT,4
+1006,在 /root 下发现文件 hosts 历史: 无,READ,0
+1007,文件系统显示 output.txt 在 /tmp 中 历史: 无,READ,0
+1008,刚刚 cd 到 / 需要看看里面有什么 历史: 无,LIST,1
+1009,准备 grep timeout 在 /var 下的文件中 历史: date → whoami → pwd,SEARCH,2
+1010,目标: 在 services 中查找 root 当前: /etc 历史: 无,SEARCH,2
+1011,文件 config.yaml 条目计数 环境: /mnt 历史: 无,COUNT,5
+1012,需读取 /proc/cmdline 获取信息 历史: cat → pwd,READ,0
+1013,需要CPU信息来评估环境 当前: /proc 历史: whoami,INFO,3
+1014,刚进入 /home 准备查看目录内容 历史: 无,LIST,1
+1015,环境路径 /mnt 需要列出子项 历史: 无,LIST,1
+1016,系统状态未知 需获取负载情况 当前: /usr/bin 历史: 刚进入环境,INFO,3
+1017,文件 nginx/access.log 行统计 环境 /var/log 历史: ps,COUNT,5
+1018,统计 /var/www/html/index.html 的行数量 历史: cat /proc/cpuinfo → ps,COUNT,5
+1019,沙箱环境 /mnt 下存在文本文件 hosts 历史: 刚进入环境,READ,0
+1020,pip3 有多少行数据 当前路径 /root 历史: cat /proc/cpuinfo → head → whoami,COUNT,5
+1021,准备查看 ps 的帮助页面 当前目录 / 历史: cat /proc/cpuinfo → cat → pwd,HELP,7
+1022,想熟悉 awk 的用法 当前 /etc 历史: 刚进入环境,HELP,7
+1023,需确认当前时间 当前位于 /home 历史: 无,INFO,3
+1024,想熟悉 ps 的用法 当前 /home 历史: 刚进入环境,HELP,7
+1025,hosts 内容长度未知 需计数 当前: /mnt 历史: ls → cd,COUNT,5
+1026,"当前: /mnt 探索进度: 已访问 /proc, /var 需扩展 历史: ls → cat /proc/cpuinfo",EXPLORE,6
+1027,了解 netstat 功能 需查帮助 当前路径 /var 历史: 刚进入环境,HELP,7
+1028,需读取 /etc/group 获取信息 历史: 刚进入环境,READ,0
+1029,"沙箱探索继续 当前 /mnt 已访问 /proc, /root, /usr/bin 历史: 刚进入环境",EXPLORE,6
+1030,沙箱状态: 需读取负载情况 当前: /var 历史: 无,INFO,3
+1031,"环境探索中 当前: /proc 已访问 /opt, /, /usr/local/bin 历史: pwd → uptime",EXPLORE,6
+1032,已定位文件 python3 位于 /mnt 历史: cat /proc/cpuinfo → wc → df,READ,0
+1033,当前目录: /proc 已知文件: uptime 历史: 无,READ,0
+1034,沙箱状态: 需读取内存信息 当前: /home 历史: 刚进入环境,INFO,3
+1035,系统监控: 查看CPU信息 位置: /proc 历史: 刚进入环境,INFO,3
+1036,准备查看 /proc 中的 uptime 历史: df → pwd,READ,0
+1037,ssh 命令帮助查询 当前: /etc 历史: 无,HELP,7
+1038,"当前目录: /var 已访问: /var/log, /usr/bin, /etc 准备探索新路径 历史: 无",EXPLORE,6
+1039,想执行 node 先检查安装位置 当前: /root 历史: grep,INSPECT,4
+1040,环境诊断: git 是否可用 当前 /sys 历史: 无,INSPECT,4
+1041,确认 netstat 可执行文件位置 当前: / 历史: 无,INSPECT,4
+1042,目录 /mnt 中可能有包含 127.0.0.1 的文件 历史: cat,SEARCH,2
+1043,准备检查进程信息 沙箱路径: /root 历史: 无,INFO,3
+1044,沙箱环境 /etc 下存在文本文件 ssh/sshd_config 历史: 刚进入环境,READ,0
+1045,定位 localhost 在 /var/log 中的位置 历史: 无,SEARCH,2
+1046,环境诊断: 需要磁盘信息 当前路径: /dev 历史: 无,INFO,3
+1047,准备使用 awk 先检查是否存在 当前: /opt 历史: 刚进入环境,INSPECT,4
+1048,"探索模式: 从 /usr/bin 出发 已访问 /root, /tmp, /var, /opt, /mnt 历史: 无",EXPLORE,6
+1049,当前路径 /root 发现配置文件 bash 历史: whoami → grep,READ,0
+1050,需查看 ping 的帮助文档 当前: /dev 历史: 无,HELP,7
+1051,刚进入 /proc 准备查看目录内容 历史: 刚进入环境,LIST,1
+1052,已了解 /tmp 部分内容 准备继续探索 历史: 无,EXPLORE,6
+1053,系统监控: 查看用户信息 位置: /sys 历史: 无,INFO,3
+1054,确认 node 可执行文件位置 当前: / 历史: 无,INSPECT,4
+1055,准备查看 sed 的帮助页面 当前目录 /root 历史: 无,HELP,7
+1056,想学习 mysql 的参数 当前目录 /dev 历史: 刚进入环境,HELP,7
+1057,已发现 timeout 需在 spool/cron/crontabs/root 中搜索更多 历史: cd,SEARCH,2
+1058,/mnt 目录下可能包含更多子目录 历史: 无,LIST,1
+1059,需查看 curl 的帮助文档 当前: / 历史: 无,HELP,7
+1060,当前 /var 搜索关键词 docker 历史: 无,SEARCH,2
+1061,环境: /dev 准备获取 mysql 帮助信息 历史: 无,HELP,7
+1062,环境路径 /sys 需要列出子项 历史: 无,LIST,1
+1063,当前目录: /proc 上步: ls 看到很多文件 历史: 无,LIST,1
+1064,上步发现 nginx 相关信息 当前: /usr/local/bin 历史: 无,SEARCH,2
+1065,在 /usr/local/bin 中计数 node 的行 历史: 刚进入环境,COUNT,5
+1066,数据量检查: scripts/backup.sh 行数 当前 /opt 历史: pwd → cd → df,COUNT,5
+1067,当前 /mnt 附近还有未知路径 历史: whoami → uptime,EXPLORE,6
+1068,/opt 是新发现的路径 需要浏览 历史: 无,LIST,1
+1069,到达 /opt 准备浏览文件列表 历史: 无,LIST,1
+1070,统计 /usr/bin/nginx 的行数量 历史: 无,COUNT,5
+1071,查看进程信息以了解环境状态 当前: /opt 历史: wc → ps,INFO,3
+1072,确认 zip 可执行文件位置 当前: /mnt 历史: whoami → df → ls,INSPECT,4
+1073,需查看 jq 的帮助文档 当前: /etc 历史: 无,HELP,7
+1074,当前目录: /sys 准备了解 lsof 命令用法 历史: head → pwd,HELP,7
+1075,在 devices/system/cpu/online 中发现 password 关键字 当前目录: /sys 历史: 刚进入环境,SEARCH,2
+1076,在 /mnt 中，文件 nginx.conf 可能存在有用信息 历史: 无,READ,0
+1077,需要内存信息来评估环境 当前: /etc 历史: 无,INFO,3
+1078,已发现 config 需在 zero 中搜索更多 历史: ls → cat,SEARCH,2
+1079,需了解系统负载情况 环境: /etc 历史: 无,INFO,3
+1080,查看 log/syslog 行数 环境路径 /var 历史: 无,COUNT,5
+1081,沙箱目录 /sys 存在文件 class/net/eth0/address 上步操作: 读取 /sys/class/net/eth0/address 历史: cat → head → pwd,READ,0
+1082,系统状态未知 需获取负载情况 当前: /home 历史: 无,INFO,3
+1083,查找 docker: 当前目录 / 已知文件 fstab 历史: 无,SEARCH,2
+1084,/var/log 目录下可能包含更多子目录 历史: 无,LIST,1
+1085,环境 /dev 中查找 git 的位置 历史: 无,INSPECT,4
+1086,已定位文件 log/auth.log 位于 /var 历史: 无,READ,0
+1087,准备查看 git 的帮助页面 当前目录 /dev 历史: date → ls,HELP,7
+1088,当前目录: /mnt 上步: grep 127.0.0.1 历史: 无,LIST,1
+1089,刚进入 /usr/bin 准备查看目录内容 历史: 无,LIST,1
+1090,路径 /opt 存在但内容未知 历史: 无,LIST,1
+1091,需过滤 /usr/local/bin 中含 failed 的行 历史: 无,SEARCH,2
+1092,准备 grep ssh 在 /tmp 下的文件中 历史: 无,SEARCH,2
+1093,准备查看 awk 的帮助页面 当前目录 /var/log 历史: 刚进入环境,HELP,7
+1094,系统概览: 查看当前时间 路径: /var/log 历史: 无,INFO,3
+1095,正在分析 / 中的 resolv.conf 内容 历史: 无,READ,0
+1096,"已知路径: /mnt, /var/log, /var, /usr/bin 准备从 /opt 出发探索 历史: 无",EXPLORE,6
+1097,环境: /home 需验证 awk 命令路径 历史: df → cat,INSPECT,4
+1098,需计数 protocols 中的条目数 当前: /root 历史: 无,COUNT,5
+1099,"准备离开 /var/log 前往未知区域 已访问 /etc, /tmp 历史: 刚进入环境",EXPLORE,6
+1100,准备 grep nginx 在 /etc 下的文件中 历史: 刚进入环境,SEARCH,2
+1101,需发现 /tmp 之外的新区域 历史: cat → ps → date,EXPLORE,6
+1102,了解 git 的可用选项 当前: /etc 历史: ls → cat /proc/cpuinfo → head,HELP,7
+1103,awk 命令帮助查询 当前: /mnt 历史: cat /proc/cpuinfo,HELP,7
+1104,准备查看 awk 的帮助页面 当前目录 /sys 历史: 无,HELP,7
+1105,想运行 ping 先确认安装 当前: /etc 历史: 刚进入环境,INSPECT,4
+1106,需计数 resolv.conf 中的条目数 当前: / 历史: 无,COUNT,5
+1107,想运行 curl 先确认安装 当前: /etc 历史: 无,INSPECT,4
+1108,环境分析需要CPU信息 当前: /home 历史: grep,INFO,3
+1109,统计 /mnt/node 的行数量 历史: 无,COUNT,5
+1110,探索到 /sys 准备列出所有条目 历史: 刚进入环境,LIST,1
+1111,系统监控: 查看磁盘信息 位置: /var/log 历史: 刚进入环境,INFO,3
+1112,当前位于 /tmp 注意到文件 test.sh 历史: 刚进入环境,READ,0
+1113,环境地图不完整 当前 /root 需探索更多 历史: 无,EXPLORE,6
+1114,想运行 python3 先确认安装 当前: /var/log 历史: 刚进入环境,INSPECT,4
+1115,准备统计 zero 的行数 当前目录 /dev 历史: 刚进入环境,COUNT,5
+1116,准备 grep failed 在 /home 下的文件中 历史: date,SEARCH,2
+1117,查看当前时间以了解环境状态 当前: /sys 历史: 无,INFO,3
+1118,当前目录: /etc 准备了解 tar 命令用法 历史: 刚进入环境,HELP,7
+1119,准备 wc -l devices/system/cpu/online 当前: /sys 历史: ps → df,COUNT,5
+1120,环境 /usr/bin 中查找 python3 的位置 历史: 无,INSPECT,4
+1121,想执行 ssh 先检查安装位置 当前: /sys 历史: 无,INSPECT,4
+1122,文件 journalctl 有多少行 当前: /usr/bin 历史: 无,COUNT,5
+1123,沙箱环境显示当前目录为 /etc 需查看列表 历史: 刚进入环境,LIST,1
+1124,需了解系统内存信息 环境: /usr/bin 历史: grep → cat,INFO,3
+1125,python3 命令用法未知 需查看帮助 当前 /var 历史: 刚进入环境,HELP,7
+1126,系统信息收集: 当前时间 位置: /mnt 历史: 无,INFO,3
+1127,meminfo 内容长度未知 需计数 当前: /proc 历史: 无,COUNT,5
+1128,环境显示 /opt/scripts/backup.sh 可读 历史: pwd → ls → cat /proc/cpuinfo,READ,0
+1129,当前路径: /etc 文件列表未知 历史: 无,LIST,1
+1130,nginx/access.log 有多少行数据 当前路径 /var/log 历史: 无,COUNT,5
+1131,当前 /etc 准备查询内存信息 历史: 无,INFO,3
+1132,查找 failed: 当前目录 /root 已知文件 random 历史: 无,SEARCH,2
+1133,在 /proc 下查找包含 timeout 的内容 历史: 无,SEARCH,2
+1134,准备统计 log/syslog 的行数 当前目录 /var 历史: 无,COUNT,5
+1135,沙箱环境 当前 /usr/bin 搜索目标: root 历史: ps,SEARCH,2
+1136,当前目录: /etc 上步: 发现新目录 /etc 历史: ps,LIST,1
+1137,刚切换到 /var/log 尚未查看目录结构 历史: 刚进入环境,LIST,1
+1138,awk 命令路径验证 环境: /var 历史: date,INSPECT,4
+1139,准备获取运行时间 当前: /var 历史: ls → whoami,INFO,3
+1140,/ 目录中 crontab 是上步发现的重要文件 历史: 无,READ,0
+1141,当前路径 /sys 还有未探索的子目录 历史: whoami → grep,EXPLORE,6
+1142,需过滤 /mnt 中含 password 的行 历史: 无,SEARCH,2
+1143,当前 /dev 搜索关键词 ssh 历史: 无,SEARCH,2
+1144,文件 log/syslog 有多少行 当前: /var 历史: date,COUNT,5
+1145,"沙箱环境 已访问 /, /usr/local/bin, /tmp, /usr/bin 当前 /opt 继续探索 历史: 刚进入环境",EXPLORE,6
+1146,在 /usr/local/bin 中准备查询内存信息 历史: 刚进入环境,INFO,3
+1147,目标: 在 class/net/eth0/address 中查找 connection 当前: /sys 历史: ps → date,SEARCH,2
+1148,环境已熟悉 当前: /home 需要发现新区域 历史: 无,EXPLORE,6
+1149,需学习 npm 命令 当前: /usr/local/bin 历史: 无,HELP,7
+1150,在 /sys 下需要了解有哪些文件和目录 历史: 无,LIST,1
+1151,需计数 loadavg 中的条目数 当前: /proc 历史: 无,COUNT,5
+1152,路径 /proc 存在但内容未知 历史: 刚进入环境,LIST,1
+1153,已了解 /sys 部分内容 准备继续探索 历史: 无,EXPLORE,6
+1154,准备检查 nginx 可执行性 当前: /var/log 历史: 无,INSPECT,4
+1155,刚刚 cd 到 /mnt 需要看看里面有什么 历史: uptime → date,LIST,1
+1156,准备执行 awk --help 当前: /tmp 历史: 无,HELP,7
+1157,目标: 在 cache.json 中查找 password 当前: /mnt 历史: 无,SEARCH,2
+1158,hostname 行数统计 当前目录 /root 历史: whoami → date → ps,COUNT,5
+1159,当前目录: /opt 已知文件: scripts/backup.sh 上步: 看到文件含 nginx 历史: 无,SEARCH,2
+1160,探索到 /root 准备列出所有条目 历史: pwd → cd,LIST,1
+1161,环境分析需要当前时间 当前: /etc 历史: 无,INFO,3
+1162,当前 /mnt 搜索关键词 timeout 历史: date → grep → whoami,SEARCH,2
+1163,沙箱环境 验证 ping 安装 当前: /usr/local/bin 历史: pwd → ps → whoami,INSPECT,4
+1164,当前目录: /var/log 已知文件: kern.log 历史: 无,READ,0
+1165,环境提示 /var 中存在 root 需搜索 历史: 无,SEARCH,2
+1166,沙箱中还有更多未知区域 当前 /var 历史: 刚进入环境,EXPLORE,6
+1167,文件 output.txt 条目计数 环境: /tmp 历史: 无,COUNT,5
+1168,沙箱中 tar 是否可用 当前: / 历史: grep,INSPECT,4
+1169,刚切换到 /tmp 尚未查看目录结构 历史: uptime → head → ls,LIST,1
+1170,到达 /etc 准备浏览文件列表 历史: 刚进入环境,LIST,1
+1171,"当前: /usr/local/bin 探索进度: 已访问 /proc, /home, /tmp, /var 需扩展 历史: 刚进入环境",EXPLORE,6
+1172,在 version 中发现 password 关键字 当前目录: /proc 历史: 无,SEARCH,2
+1173,文件 python3 可能包含 token 需确认 当前: /usr/bin 历史: 刚进入环境,SEARCH,2
+1174,上步发现 timeout 相关信息 当前: /etc 历史: 刚进入环境,SEARCH,2
+1175,需要在 /tmp 下搜索 failed 上步: 进入 /tmp 历史: 刚进入环境,SEARCH,2
+1176,查看 syslog 行数 环境路径 /var/log 历史: 无,COUNT,5
+1177,诊断需求: 系统版本 当前目录: /home 历史: cd → date,INFO,3
+1178,位置: /mnt 准备执行目录浏览 历史: 刚进入环境,LIST,1
+1179,到达 /var/log 准备浏览文件列表 历史: 刚进入环境,LIST,1
+1180,计数需求: www/html/index.html 在 /var 中 历史: 无,COUNT,5
+1181,"沙箱探索继续 当前 /mnt 已访问 /usr/bin, /proc, /usr/local/bin 历史: 无",EXPLORE,6
+1182,find 命令帮助查询 当前: /root 历史: 刚进入环境,HELP,7
+1183,需要在 / 下搜索 timeout 上步: ls 看到很多文件 历史: 无,SEARCH,2
+1184,在 /usr/bin 下查找包含 error 的内容 历史: 无,SEARCH,2
+1185,htop 命令参数不清楚 需 --help 当前: /usr/local/bin 历史: 刚进入环境,HELP,7
+1186,查看 ssh 文档 当前: /dev 历史: ls,HELP,7
+1187,"准备离开 /sys 前往未知区域 已访问 /home, /root, /opt, /mnt 历史: 刚进入环境",EXPLORE,6
+1188,准备检查用户信息 沙箱路径: /dev 历史: cd,INFO,3
+1189,准备查看 jq 的帮助页面 当前目录 /sys 历史: 刚进入环境,HELP,7
+1190,当前位于 /etc 注意到文件 hostname 历史: 无,READ,0
+1191,系统检查: 进程信息 位置 /proc 历史: 刚进入环境,INFO,3
+1192,在 / 下发现文件 fstab 历史: pwd,READ,0
+1193,沙箱中还有更多未知区域 当前 /home 历史: 无,EXPLORE,6
+1194,在 /dev 中计数 random 的行 历史: 无,COUNT,5
+1195,准备看 ssh 的帮助 环境 /etc 历史: 刚进入环境,HELP,7
+1196,系统概览: 查看进程信息 路径: /mnt 历史: whoami → cat,INFO,3
+1197,准备查看 ssh 的帮助页面 当前目录 /tmp 历史: 无,HELP,7
+1198,当前路径: /tmp 文件列表未知 历史: 刚进入环境,LIST,1
+1199,当前 /opt 搜索关键词 config 历史: 无,SEARCH,2
+1200,计数需求: hostname 在 /etc 中 历史: 无,COUNT,5
+1201,沙箱环境 验证 awk 安装 当前: /usr/local/bin 历史: 无,INSPECT,4
+1202,需要在 / 中搜索 timeout 的出现 历史: 无,SEARCH,2
+1203,node 命令帮助查询 当前: /proc 历史: 无,HELP,7
+1204,目录 /var 中有文件 spool/cron/crontabs/root 上步: 刚进入环境 历史: whoami,READ,0
+1205,环境已熟悉 当前: /opt 需要发现新区域 历史: df → ps,EXPLORE,6
+1206,查看 test.sh 行数 环境路径 /tmp 历史: 无,COUNT,5
+1207,当前 /home 附近还有未知路径 历史: 无,EXPLORE,6
+1208,环境 /opt 中查找 ssh 的位置 历史: 无,INSPECT,4
+1209,docker-compose 有多少行数据 当前路径 /usr/local/bin 历史: 无,COUNT,5
+1210,文件 spool/cron/crontabs/root 条目计数 环境: /var 历史: wc,COUNT,5
+1211,准备调用 mysql 先验证路径 当前: /proc 历史: cd → wc → uptime,INSPECT,4
+1212,环境诊断: htop 是否可用 当前 /home 历史: cd → cat,INSPECT,4
+1213,/mnt 附近可能有未发现的目录 准备探索 历史: 无,EXPLORE,6
+1214,沙箱状态: 需读取运行时间 当前: /proc 历史: 无,INFO,3
+1215,在 /proc 中计数 version 的行 历史: 无,COUNT,5
+1216,"准备离开 /var 前往未知区域 已访问 /, /mnt, /root, /opt 历史: 刚进入环境",EXPLORE,6
+1217,沙箱中还有更多未知区域 当前 /root 历史: head → date,EXPLORE,6
+1218,redis-cli 命令用法未知 需查看帮助 当前 /dev 历史: 无,HELP,7
+1219,在 /tmp 中计数 cache.json 的行 历史: 无,COUNT,5
+1220,当前 /mnt 搜索关键词 timeout 历史: uptime,SEARCH,2
+1221,系统监控: 查看进程信息 位置: /home 历史: wc → grep → whoami,INFO,3
+1222,查找 127.0.0.1: 当前目录 /usr/local/bin 已知文件 node 历史: grep,SEARCH,2
+1223,文件 pip3 可能包含 127.0.0.1 需确认 当前: /usr/local/bin 历史: 刚进入环境,SEARCH,2
+1224,"环境探索中 当前: /proc 已访问 /sys, /usr/local/bin, /mnt, /root 历史: 无",EXPLORE,6
+1225,当前位于 /var/log 目录结构待查看 历史: head → ls → pwd,LIST,1
+1226,/usr/local/bin 目录下找到 pip3 上步: pwd 确认当前位置 历史: cat /proc/cpuinfo → ls,READ,0
+1227,系统监控: 查看系统版本 位置: /home 历史: uptime → ls → cd,INFO,3
+1228,文件 nginx/nginx.conf 有多少行 当前: /etc 历史: 无,COUNT,5
+1229,准备统计 /var/log/kern.log 的行 历史: 无,COUNT,5
+1230,在 syslog 中发现 failed 关键字 当前目录: /var/log 历史: 刚进入环境,SEARCH,2
+1231,查看 htop 文档 当前: /opt 历史: 刚进入环境,HELP,7
+1232,"已知路径: /root, /dev, /proc, / 准备从 /home 出发探索 历史: 无",EXPLORE,6
+1233,沙箱中还有更多未知区域 当前 /usr/bin 历史: 刚进入环境,EXPLORE,6
+1234,当前路径 /dev 需搜索 admin 相关条目 历史: 无,SEARCH,2
+1235,需过滤 /usr/local/bin 中含 timeout 的行 历史: wc,SEARCH,2
+1236,了解 netstat 功能 需查帮助 当前路径 /home 历史: 无,HELP,7
+1237,ps 命令路径验证 环境: /var 历史: 无,INSPECT,4
+1238,沙箱中 git 是否可用 当前: /usr/local/bin 历史: 无,INSPECT,4
+1239,准备查看 grep 的帮助页面 当前目录 /var/log 历史: 无,HELP,7
+1240,需要在 /usr/bin 中搜索 127.0.0.1 的出现 历史: 刚进入环境,SEARCH,2
+1241,环境: /opt 准备获取 netstat 帮助信息 历史: 刚进入环境,HELP,7
+1242,想运行 grep 先确认安装 当前: /var/log 历史: 刚进入环境,INSPECT,4
+1243,在 /usr/bin 下查找包含 config 的内容 历史: 刚进入环境,SEARCH,2
+1244,沙箱中定位 zip 当前目录 /proc 历史: 无,INSPECT,4
+1245,准备使用 jq 先检查是否存在 当前: /var 历史: date → grep,INSPECT,4
+1246,在 meminfo 中发现 token 关键字 当前目录: /proc 历史: pwd → wc → ps,SEARCH,2
+1247,数据量检查: random 行数 当前 /root 历史: 刚进入环境,COUNT,5
+1248,环境提示 /var 中存在 ssh 需搜索 历史: 刚进入环境,SEARCH,2
+1249,查找 failed: 当前目录 /opt 已知文件 scripts/backup.sh 历史: ps → wc,SEARCH,2
+1250,curl 命令参数不清楚 需 --help 当前: /root 历史: 无,HELP,7
+1251,在 /mnt 下查找包含 127.0.0.1 的内容 历史: date → cat /proc/cpuinfo,SEARCH,2
+1252,准备调用 awk 先验证路径 当前: /mnt 历史: 刚进入环境,INSPECT,4
+1253,/usr/bin 目录中 journalctl 是上步发现的重要文件 历史: df,READ,0
+1254,当前路径: /root 文件列表未知 历史: date,LIST,1
+1255,环境地图不完整 当前 /sys 需探索更多 历史: date → df → wc,EXPLORE,6
+1256,在 /var 中需要了解目录布局 历史: 刚进入环境,LIST,1
+1257,定位 ssh 在 /var 中的位置 历史: head → cat /proc/cpuinfo,SEARCH,2
+1258,在 /etc 下需要了解有哪些文件和目录 历史: 无,LIST,1
+1259,htop 命令路径验证 环境: /sys 历史: 无,INSPECT,4
+1260,沙箱状态: 需读取系统版本 当前: /sys 历史: 无,INFO,3
+1261,环境分析需要磁盘信息 当前: /proc 历史: 无,INFO,3
+1262,工作目录: /var 目标文件: log/syslog 历史: 无,READ,0
+1263,当前目录: /usr/bin 已知文件: python3 历史: 无,READ,0
+1264,准备执行 htop --help 当前: /sys 历史: whoami → wc,HELP,7
+1265,当前目录: /var 上步: 进入 /var 历史: 无,LIST,1
+1266,在 /var/log 下需要了解有哪些文件和目录 历史: 无,LIST,1
+1267,当前位于 /var 注意到文件 log/dmesg 历史: ls,READ,0
+1268,"探索阶段: 从 /home 扩展 已访问 /, /etc 历史: 无",EXPLORE,6
+1269,系统状态未知 需获取磁盘信息 当前: /var/log 历史: 刚进入环境,INFO,3
+1270,环境: /root 需验证 netstat 命令路径 历史: 无,INSPECT,4
+1271,环境诊断: ping 是否可用 当前 /sys 历史: whoami → date,INSPECT,4
+1272,pip3 有多少行数据 当前路径 /usr/local/bin 历史: 刚进入环境,COUNT,5
+1273,已收集 /home 信息 准备探索新路径 历史: 无,EXPLORE,6
+1274,已发现 docker 需在 loadavg 中搜索更多 历史: 无,SEARCH,2
+1275,目录 /root 的内容尚未查看 历史: 刚进入环境,LIST,1
+1276,当前目录: /root 已知文件: dmesg 历史: 无,READ,0
+1277,文件 ssh/sshd_config 条目计数 环境: /etc 历史: 无,COUNT,5
+1278,了解 tar 功能 需查帮助 当前路径 /usr/bin 历史: 无,HELP,7
+1279,正在分析 /var/log 中的 syslog 内容 历史: 无,READ,0
+1280,查看 find 文档 当前: /opt 历史: 刚进入环境,HELP,7
+1281,沙箱中 /opt 的内容需要浏览 历史: 无,LIST,1
+1282,沙箱环境 验证 python3 安装 当前: /var/log 历史: grep → df,INSPECT,4
+1283,/sys 环境中 git 命令路径检查 历史: 无,INSPECT,4
+1284,准备看 htop 的帮助 环境 /var 历史: 刚进入环境,HELP,7
+1285,环境路径 /usr/local/bin 需要列出子项 历史: 无,LIST,1
+1286,系统状态未知 需获取CPU信息 当前: /dev 历史: 无,INFO,3
+1287,想学习 zip 的参数 当前目录 /usr/local/bin 历史: whoami,HELP,7
+1288,查看 /etc 下的 shadow 可能有系统信息 历史: 刚进入环境,READ,0
+1289,了解 nginx 功能 需查帮助 当前路径 /usr/local/bin 历史: uptime → grep → whoami,HELP,7
+1290,curl 使用方法待了解 当前目录 /var/log 历史: grep → whoami,HELP,7
+1291,环境监测: 当前时间 当前目录 /etc 历史: wc → ps → cat,INFO,3
+1292,计数需求: hostname 在 /mnt 中 历史: ps,COUNT,5
+1293,沙箱环境 当前 /sys 搜索目标: error 历史: 无,SEARCH,2
+1294,/ 是新发现的路径 需要浏览 历史: 无,LIST,1
+1295,检查 netstat 是否存在 当前路径: /dev 历史: cat → uptime → grep,INSPECT,4
+1296,上步发现 failed 相关信息 当前: /tmp 历史: 刚进入环境,SEARCH,2
+1297,已收集 /var/log 信息 准备探索新路径 历史: 无,EXPLORE,6
+1298,awk 命令用法未知 需查看帮助 当前 /etc 历史: 无,HELP,7
+1299,统计 /mnt/nginx 的行数量 历史: 无,COUNT,5
+1300,系统检查: 内存信息 位置 /home 历史: cd → head,INFO,3
+1301,当前路径 /mnt 发现配置文件 protocols 历史: 无,READ,0
+1302,准备 grep docker 在 /opt 下的文件中 历史: 无,SEARCH,2
+1303,目录 /opt 中有文件 app/config.yaml 上步: head 查看文件头部 历史: 无,READ,0
+1304,当前路径 /usr/bin 需搜索 connection 相关条目 历史: cat /proc/cpuinfo → date,SEARCH,2
+1305,检查 ssh 的安装路径 环境: / 历史: whoami → ps → head,INSPECT,4
+1306,沙箱环境 准备获取 lsof 帮助 当前 /usr/local/bin 历史: cat /proc/cpuinfo → ls,HELP,7
+1307,已定位文件 nginx 位于 /usr/bin 历史: 无,READ,0
+1308,在 /usr/local/bin 中准备查询系统版本 历史: ls → head → grep,INFO,3
+1309,沙箱诊断: 获取磁盘信息 当前路径 /proc 历史: 无,INFO,3
+1310,需了解系统用户信息 环境: /var 历史: ps,INFO,3
+1311,沙箱环境显示当前目录为 /etc 需查看列表 历史: 无,LIST,1
+1312,需计数 scripts/backup.sh 中的条目数 当前: /opt 历史: cat → grep,COUNT,5
+1313,刚切换到 /proc 尚未查看目录结构 历史: 无,LIST,1
+1314,当前目录: /home 需确认 htop 是否安装 历史: 无,INSPECT,4
+1315,正在分析 /usr/local/bin 中的 docker-compose 内容 历史: 无,READ,0
+1316,find 命令帮助查询 当前: /mnt 历史: 刚进入环境,HELP,7
+1317,ping 使用方法待了解 当前目录 /proc 历史: 刚进入环境,HELP,7
+1318,已定位文件 filesystems 位于 /proc 历史: 刚进入环境,READ,0
+1319,目录 /var 的内容尚未查看 历史: 无,LIST,1
+1320,已发现 root 需在 git 中搜索更多 历史: 无,SEARCH,2
+1321,上步发现 config 相关信息 当前: /proc 历史: 无,SEARCH,2
+1322,需了解 meminfo 的数据量 当前 /proc 历史: pwd,COUNT,5
+1323,hostname 行数统计 当前目录 / 历史: 无,COUNT,5
+1324,需要CPU信息来评估环境 当前: /var 历史: 无,INFO,3
+1325,沙箱中还有更多未知区域 当前 /home 历史: 无,EXPLORE,6
+1326,需检查 npm 是否在 PATH 中 当前 /root 历史: grep → pwd → cd,INSPECT,4
+1327,沙箱环境显示当前目录为 /root 需查看列表 历史: cat /proc/cpuinfo,LIST,1
+1328,需过滤 /tmp 中含 password 的行 历史: uptime → grep → pwd,SEARCH,2
+1329,需确认磁盘信息 当前位于 /etc 历史: 无,INFO,3
+1330,random 有多少行数据 当前路径 /dev 历史: 无,COUNT,5
+1331,"当前: /proc 探索进度: 已访问 /usr/local/bin, /var 需扩展 历史: 无",EXPLORE,6
+1332,spool/cron/crontabs/root 行数统计 当前目录 /var 历史: ps,COUNT,5
+1333,当前目录: /opt 历史: 无 需要查看系统磁盘信息,INFO,3
+1334,刚切换到 /usr/bin 尚未查看目录结构 历史: 无,LIST,1
+1335,刚切换到 /root 尚未查看目录结构 历史: 无,LIST,1
+1336,沙箱诊断: 获取当前时间 当前路径 /var 历史: 无,INFO,3
+1337,查看 npm 文档 当前: /usr/bin 历史: whoami,HELP,7
+1338,沙箱状态: 需读取用户信息 当前: /mnt 历史: grep,INFO,3
+1339,正在分析 /sys 中的 devices/system/cpu/online 内容 历史: 无,READ,0
+1340,了解 grep 的可用选项 当前: /sys 历史: uptime → date,HELP,7
+1341,在 /usr/bin 中计数 bash 的行 历史: 无,COUNT,5
+1342,当前目录: /etc 已知文件: hostname 上步: 看到文件含 config 历史: df,READ,0
+1343,沙箱中 sed 是否可用 当前: /root 历史: cat /proc/cpuinfo → ps,INSPECT,4
+1344,在 /usr/bin 下需要了解有哪些文件和目录 历史: whoami,LIST,1
+1345,需要在 /usr/bin 下搜索 password 上步: 进入 /usr/bin 历史: 刚进入环境,SEARCH,2
+1346,文件 www/html/index.html 行统计 环境 /var 历史: wc → cat /proc/cpuinfo → grep,COUNT,5
+1347,想熟悉 node 的用法 当前 /root 历史: 无,HELP,7
+1348,想学习 nginx 的参数 当前目录 /root 历史: 无,HELP,7
+1349,需发现 /root 之外的新区域 历史: grep,EXPLORE,6
+1350,当前路径 /home 还有未探索的子目录 历史: 刚进入环境,EXPLORE,6
+1351,准备获取运行时间 当前: /opt 历史: 无,INFO,3
+1352,当前目录: /var 需确认 curl 是否安装 历史: 无,INSPECT,4
+1353,netstat 命令用法未知 需查看帮助 当前 /tmp 历史: ps,HELP,7
+1354,当前目录: /opt 准备了解 awk 命令用法 历史: 无,HELP,7
+1355,目录 /etc 中可能有包含 token 的文件 历史: 刚进入环境,SEARCH,2
+1356,准备获取负载情况 当前: /opt 历史: 无,INFO,3
+1357,位置: / 准备执行目录浏览 历史: 无,LIST,1
+1358,环境: /root 准备获取 mysql 帮助信息 历史: cat /proc/cpuinfo → wc,HELP,7
+1359,环境诊断: 需要当前时间 当前路径: /var/log 历史: 刚进入环境,INFO,3
+1360,需了解 user/.profile 的数据量 当前 /home 历史: cat → date → wc,COUNT,5
+1361,正在分析 /var 中的 log/auth.log 内容 历史: grep → head,READ,0
+1362,系统检查: 用户信息 位置 /sys 历史: pwd → cd,INFO,3
+1363,"已知区域: /mnt, /root 当前 /var/log 需扩大范围 历史: 无",EXPLORE,6
+1364,准备查看 /opt 中的 scripts/backup.sh 历史: 无,READ,0
+1365,想熟悉 tar 的用法 当前 /usr/bin 历史: 无,HELP,7
+1366,需检查 jq 是否在 PATH 中 当前 /proc 历史: 无,INSPECT,4
+1367,fstab 中可能包含 ssh 需搜索验证 历史: 无,SEARCH,2
+1368,文件 pip3 可能包含 failed 需确认 当前: /usr/local/bin 历史: cat /proc/cpuinfo → pwd,SEARCH,2
+1369,查看进程信息以了解环境状态 当前: /proc 历史: 刚进入环境,INFO,3
+1370,需过滤 /var/log 中含 127.0.0.1 的行 历史: 无,SEARCH,2
+1371,准备 grep docker 在 /tmp 下的文件中 历史: cd → date → ps,SEARCH,2
+1372,环境诊断: tar 是否可用 当前 /var/log 历史: 刚进入环境,INSPECT,4
+1373,准备使用 find 先检查是否存在 当前: /proc 历史: 刚进入环境,INSPECT,4
+1374,当前路径 /var/log 需搜索 error 相关条目 历史: pwd → cat /proc/cpuinfo,SEARCH,2
+1375,mysql 使用方法待了解 当前目录 /dev 历史: 无,HELP,7
+1376,redis-cli 命令参数不清楚 需 --help 当前: /etc 历史: 刚进入环境,HELP,7
+1377,想运行 docker 先确认安装 当前: /dev 历史: 无,INSPECT,4
+1378,当前路径 /usr/bin 需搜索 nginx 相关条目 历史: 无,SEARCH,2
+1379,刚刚 cd 到 /opt 需要看看里面有什么 历史: 刚进入环境,LIST,1
+1380,"探索阶段: 从 /var 扩展 已访问 /mnt, /, /var/log 历史: cat /proc/cpuinfo → pwd → whoami",EXPLORE,6
+1381,需检查 curl 是否在 PATH 中 当前 /etc 历史: 无,INSPECT,4
+1382,"沙箱环境 已访问 /usr/local/bin, /usr/bin, / 当前 /home 继续探索 历史: 无",EXPLORE,6
+1383,/home 目录下可能包含更多子目录 历史: 无,LIST,1
+1384,系统监控: 查看系统版本 位置: /root 历史: 无,INFO,3
+1385,正在分析 /usr/local/bin 中的 docker-compose 内容 历史: 无,READ,0
+1386,沙箱中定位 htop 当前目录 /var 历史: 刚进入环境,INSPECT,4
+1387,环境分析需要进程信息 当前: /usr/local/bin 历史: 无,INFO,3
+1388,帮助查询: docker 当前路径 /usr/bin 历史: cat /proc/cpuinfo → cat → uptime,HELP,7
+1389,环境诊断: htop 是否可用 当前 /proc 历史: 无,INSPECT,4
+1390,诊断需求: 负载情况 当前目录: /var/log 历史: 无,INFO,3
+1391,准备 grep 127.0.0.1 在 /proc 下的文件中 历史: 无,SEARCH,2
+1392,查看 ps 文档 当前: /usr/bin 历史: uptime → wc,HELP,7
+1393,正在分析 /etc 中的 services 内容 历史: 无,READ,0
+1394,上步发现 password 相关信息 当前: /root 历史: 刚进入环境,SEARCH,2
+1395,沙箱中 sed 是否可用 当前: /usr/local/bin 历史: 无,INSPECT,4
+1396,沙箱环境显示当前目录为 /var/log 需查看列表 历史: 无,LIST,1
+1397,目录 /etc 中可能有包含 localhost 的文件 历史: 无,SEARCH,2
+1398,刚切换到 /root 尚未查看目录结构 历史: df → ls → date,LIST,1
+1399,路径 /home 存在但内容未知 历史: 无,LIST,1
+1400,工作目录: / 目标文件: fstab 历史: 刚进入环境,READ,0
+1401,需了解系统用户信息 环境: /usr/bin 历史: df,INFO,3
+1402,当前位于 /dev 目录结构待查看 历史: 无,LIST,1
+1403,当前位于 /usr/local/bin 目录结构待查看 历史: ps,LIST,1
+1404,"当前: /usr/local/bin 探索进度: 已访问 /tmp, /dev, /var/log, /etc 需扩展 历史: cat /proc/cpuinfo → df",EXPLORE,6
+1405,user/data.csv 行数统计 当前目录 /home 历史: df,COUNT,5
+1406,沙箱中 /opt 的内容需要浏览 历史: 无,LIST,1
+1407,刚刚 cd 到 / 需要看看里面有什么 历史: 刚进入环境,LIST,1
+1408,"环境探索中 当前: /home 已访问 /mnt, /opt, /var/log, /dev 历史: cat → uptime → cat /proc/cpuinfo",EXPLORE,6
+1409,mysql 命令路径验证 环境: /tmp 历史: uptime → cd → whoami,INSPECT,4
+1410,准备 wc -l zero 当前: /dev 历史: 无,COUNT,5
+1411,刚刚 cd 到 /mnt 需要看看里面有什么 历史: uptime,LIST,1
+1412,在 zero 中发现 ssh 关键字 当前目录: /dev 历史: 无,SEARCH,2
+1413,当前路径 /usr/bin 需搜索 config 相关条目 历史: 刚进入环境,SEARCH,2
+1414,"环境探索中 当前: /home 已访问 /etc, /usr/local/bin, /usr/bin, /tmp 历史: 刚进入环境",EXPLORE,6
+1415,查看 /var 下的 log/auth.log 可能有系统信息 历史: 无,READ,0
+1416,passwd 中可能包含 password 需搜索验证 历史: 无,SEARCH,2
+1417,沙箱中 curl 是否可用 当前: /dev 历史: 无,INSPECT,4
+1418,环境 /usr/local/bin 中查找 redis-cli 的位置 历史: 无,INSPECT,4
+1419,"准备离开 /usr/bin 前往未知区域 已访问 /usr/local/bin, /sys 历史: 无",EXPLORE,6
+1420,当前位于 /usr/bin 目录结构待查看 历史: head,LIST,1
+1421,查看当前时间以了解环境状态 当前: /usr/bin 历史: 刚进入环境,INFO,3
+1422,数据量检查: zero 行数 当前 /dev 历史: 无,COUNT,5
+1423,沙箱环境 / 下存在文本文件 resolv.conf 历史: 刚进入环境,READ,0
+1424,位置: /usr/bin 准备执行目录浏览 历史: 无,LIST,1
+1425,在 /mnt 下统计 nginx 行数 历史: wc → pwd → head,COUNT,5
+1426,当前目录: /home 已知文件: user/data.csv 上步: 无操作 历史: 无,READ,0
+1427,沙箱环境 验证 nginx 安装 当前: /tmp 历史: 无,INSPECT,4
+1428,当前 /mnt 搜索关键词 nginx 历史: 无,SEARCH,2
+1429,需检查 git 是否在 PATH 中 当前 /var/log 历史: 无,INSPECT,4
+1430,需了解系统运行时间 环境: /tmp 历史: 无,INFO,3
+1431,"沙箱探索继续 当前 /usr/bin 已访问 /var, /home, /opt, /usr/local/bin, /mnt 历史: 刚进入环境",EXPLORE,6
+1432,环境显示 /etc/passwd 可读 历史: 无,READ,0
+1433,需检查 npm 是否在 PATH 中 当前 /tmp 历史: uptime → wc,INSPECT,4
+1434,当前 /usr/local/bin 搜索关键词 config 历史: ls → date → uptime,SEARCH,2
+1435,统计 /dev/random 的行数量 历史: 无,COUNT,5
+1436,想熟悉 npm 的用法 当前 /usr/local/bin 历史: 无,HELP,7
+1437,定位 nginx 在 /var/log 中的位置 历史: 无,SEARCH,2
+1438,已发现 config 需在 nginx 中搜索更多 历史: 刚进入环境,SEARCH,2
+1439,准备统计 class/net/eth0/address 的行数 当前目录 /sys 历史: 无,COUNT,5
+1440,"当前: /var/log 探索进度: 已访问 /dev, /opt 需扩展 历史: 刚进入环境",EXPLORE,6
+1441,已定位文件 log/auth.log 位于 /var 历史: ls → cat → cd,READ,0
+1442,当前位于 /usr/bin 注意到文件 git 历史: whoami → uptime,READ,0
+1443,"已知路径: /, /root 准备从 /usr/local/bin 出发探索 历史: 刚进入环境",EXPLORE,6
+1444,/etc 目录下可能包含更多子目录 历史: 无,LIST,1
+1445,/tmp 环境中 curl 命令路径检查 历史: wc,INSPECT,4
+1446,/sys 目录下找到 class/net/eth0/address 上步: pwd 确认当前位置 历史: 刚进入环境,READ,0
+1447,需查看 mysql 的帮助文档 当前: /opt 历史: 无,HELP,7
+1448,想执行 grep 先检查安装位置 当前: /usr/local/bin 历史: 无,INSPECT,4
+1449,准备使用 ssh 先检查是否存在 当前: /dev 历史: 刚进入环境,INSPECT,4
+1450,检查 curl 是否存在 当前路径: /var 历史: 无,INSPECT,4
+1451,需学习 awk 命令 当前: /proc 历史: date,HELP,7
+1452,环境地图不完整 当前 /etc 需探索更多 历史: ls,EXPLORE,6
+1453,需过滤 /mnt 中含 ssh 的行 历史: grep → pwd → ps,SEARCH,2
+1454,"沙箱探索继续 当前 /home 已访问 /tmp, /mnt, / 历史: cat",EXPLORE,6
+1455,当前目录: /dev 已知文件: null 上步: head 查看文件头部 历史: 无,READ,0
+1456,当前目录: /sys 已知文件: class/net/eth0/address 上步: 看到文件含 failed 历史: 无,READ,0
+1457,在 /var/log 下查找包含 connection 的内容 历史: 无,SEARCH,2
+1458,当前路径 /proc 还有未探索的子目录 历史: 无,EXPLORE,6
+1459,当前目录: /var 已知文件: www/html/index.html 上步: cat 输出包含 password 历史: 刚进入环境,READ,0
+1460,环境路径: /tmp 可访问文件: cache.json 历史: 无,READ,0
+1461,需确认 npm 命令是否存在 当前目录 /sys 历史: 无,INSPECT,4
+1462,"探索阶段: 从 /mnt 扩展 已访问 /etc, /usr/bin, /dev, /var/log, /root 历史: pwd → ps → wc",EXPLORE,6
+1463,在 /var/log 中计数 nginx/access.log 的行 历史: 刚进入环境,COUNT,5
+1464,系统检查: 运行时间 位置 /usr/bin 历史: 无,INFO,3
+1465,目标: 在 user/documents/report.txt 中查找 nginx 当前: /home 历史: cd,SEARCH,2
+1466,计数需求: hostname 在 /etc 中 历史: 刚进入环境,COUNT,5
+1467,路径 /sys 存在但内容未知 历史: grep → ls,LIST,1
+1468,想熟悉 htop 的用法 当前 /usr/bin 历史: 无,HELP,7
+1469,环境诊断: 需要用户信息 当前路径: /dev 历史: cat → cd,INFO,3
+1470,"当前目录: /tmp 已访问: /etc, /home, /usr/local/bin 准备探索新路径 历史: df → cat → date",EXPLORE,6
+1471,沙箱环境 /proc 下存在文本文件 loadavg 历史: 无,READ,0
+1472,诊断需求: 运行时间 当前目录: /sys 历史: 刚进入环境,INFO,3
+1473,准备统计 pip3 的行数 当前目录 /usr/local/bin 历史: 刚进入环境,COUNT,5
+1474,当前路径 /mnt 还有未探索的子目录 历史: 刚进入环境,EXPLORE,6
+1475,"已知区域: /usr/local/bin, /mnt, /tmp 当前 /opt 需扩大范围 历史: 无",EXPLORE,6
+1476,系统状态未知 需获取磁盘信息 当前: /etc 历史: wc → grep,INFO,3
+1477,刚进入 /etc 准备查看目录内容 历史: 无,LIST,1
+1478,文件 protocols 有多少行 当前: /etc 历史: 无,COUNT,5
+1479,"当前: /etc 探索进度: 已访问 /sys, /opt, /var, /mnt, /root 需扩展 历史: 无",EXPLORE,6
+1480,在 /home 中准备查询用户信息 历史: 无,INFO,3
+1481,正在分析 /home 中的 user/.profile 内容 历史: 无,READ,0
+1482,环境诊断: 需要负载情况 当前路径: /opt 历史: 刚进入环境,INFO,3
+1483,想运行 node 先确认安装 当前: /home 历史: grep,INSPECT,4
+1484,redis-cli 使用方法待了解 当前目录 /etc 历史: 刚进入环境,HELP,7
+1485,需检查 lsof 是否在 PATH 中 当前 /opt 历史: 无,INSPECT,4
+1486,沙箱环境 验证 mysql 安装 当前: /usr/local/bin 历史: 刚进入环境,INSPECT,4
+1487,devices/system/cpu/online 有多少行数据 当前路径 /sys 历史: ls → cat /proc/cpuinfo → date,COUNT,5
+1488,当前目录: /sys 需确认 mysql 是否安装 历史: 无,INSPECT,4
+1489,当前 /root 附近还有未知路径 历史: 无,EXPLORE,6
+1490,系统监控: 查看磁盘信息 位置: /usr/local/bin 历史: 无,INFO,3
+1491,文件 git 可能包含 timeout 需确认 当前: /usr/bin 历史: 无,SEARCH,2
+1492,准备统计 /sys/devices/system/cpu/online 的行 历史: whoami → cd,COUNT,5
+1493,系统检查: 磁盘信息 位置 /proc 历史: head,INFO,3
+1494,"已知路径: /, /var/log, /tmp, /sys 准备从 /proc 出发探索 历史: 刚进入环境",EXPLORE,6
+1495,目录 /var/log 的内容尚未查看 历史: 无,LIST,1
+1496,上步发现 password 相关信息 当前: /sys 历史: date → head → ps,SEARCH,2
+1497,准备获取用户信息 当前: /var/log 历史: 刚进入环境,INFO,3
+1498,刚进入 /etc 准备查看目录内容 历史: 无,LIST,1
+1499,沙箱状态: 需读取CPU信息 当前: /usr/local/bin 历史: 刚进入环境,INFO,3
+1500,"沙箱探索继续 当前 /mnt 已访问 /tmp, /usr/bin, /dev 历史: 无",EXPLORE,6
+1501,准备执行 lsof --help 当前: /proc 历史: 无,HELP,7
+1502,ssh 命令路径验证 环境: /var/log 历史: 刚进入环境,INSPECT,4
+1503,目录 /root 中可能有包含 timeout 的文件 历史: 无,SEARCH,2
+1504,hosts 内容长度未知 需计数 当前: / 历史: 刚进入环境,COUNT,5
+1505,准备 wc -l shadow 当前: /etc 历史: 无,COUNT,5
+1506,确认 git 可执行文件位置 当前: /proc 历史: 刚进入环境,INSPECT,4
+1507,/usr/bin 是新发现的路径 需要浏览 历史: head → wc,LIST,1
+1508,路径 /dev 存在但内容未知 历史: 无,LIST,1
+1509,需了解 cache.json 的数据量 当前 /tmp 历史: whoami → head,COUNT,5
+1510,准备执行 ps --help 当前: /dev 历史: 无,HELP,7
+1511,在 /home 中需要了解目录布局 历史: 无,LIST,1
+1512,准备看 nginx 的帮助 环境 /var/log 历史: 无,HELP,7
+1513,/home 目录下可能包含更多子目录 历史: 无,LIST,1
+1514,环境 /tmp 中查找 htop 的位置 历史: whoami → date → df,INSPECT,4
+1515,当前目录: /usr/bin 已知文件: journalctl 上步: 看到文件含 admin 历史: ps → grep → head,SEARCH,2
+1516,沙箱中 find 如何使用 需查帮助 当前 /root 历史: 刚进入环境,HELP,7
+1517,需读取 /tmp/test.sh 获取信息 历史: 刚进入环境,READ,0
+1518,需发现 /home 之外的新区域 历史: 无,EXPLORE,6
+1519,已收集 /dev 信息 准备探索新路径 历史: wc,EXPLORE,6
+1520,已收集 /root 信息 准备探索新路径 历史: cd → date,EXPLORE,6
+1521,环境分析需要用户信息 当前: /root 历史: 刚进入环境,INFO,3
+1522,需学习 npm 命令 当前: /mnt 历史: date,HELP,7
+1523,需知道 log/dmesg 的行数 当前: /var 历史: 无,COUNT,5
+1524,了解 python3 的可用选项 当前: / 历史: 无,HELP,7
+1525,检查 git 是否存在 当前路径: /usr/local/bin 历史: 刚进入环境,INSPECT,4
+1526,准备 nginx --help 当前目录 /home 历史: 无,HELP,7
+1527,当前目录: /usr/local/bin 需确认 awk 是否安装 历史: 刚进入环境,INSPECT,4
+1528,沙箱环境 当前 /tmp 搜索目标: ssh 历史: 无,SEARCH,2
+1529,"探索阶段: 从 /opt 扩展 已访问 /tmp, /etc, / 历史: 刚进入环境",EXPLORE,6
+1530,已了解 /sys 部分内容 准备继续探索 历史: 无,EXPLORE,6
+1531,到达 /sys 准备浏览文件列表 历史: 无,LIST,1
+1532,已进入 / 准备查看文件清单 历史: grep → wc → date,LIST,1
+1533,需要在 /mnt 下搜索 password 上步: 执行 cat 历史: 无,SEARCH,2
+1534,正在分析 /usr/local/bin 中的 pip3 内容 历史: 无,READ,0
+1535,查看 lsof 文档 当前: /proc 历史: 刚进入环境,HELP,7
+1536,/usr/bin 是新发现的路径 需要浏览 历史: 无,LIST,1
+1537,刚切换到 /home 尚未查看目录结构 历史: 无,LIST,1
+1538,test.sh 行数统计 当前目录 /mnt 历史: 无,COUNT,5
+1539,沙箱中定位 git 当前目录 /usr/local/bin 历史: 无,INSPECT,4
+1540,位置: /sys 准备执行目录浏览 历史: 无,LIST,1
+1541,当前目录: /etc 已知文件: protocols 需统计行数 历史: 无,COUNT,5
+1542,准备获取运行时间 当前: /mnt 历史: grep,INFO,3
+1543,需确认磁盘信息 当前位于 /proc 历史: 刚进入环境,INFO,3
+1544,上步发现 failed 相关信息 当前: / 历史: 无,SEARCH,2
+1545,工作目录: /usr/local/bin 目标文件: pip3 历史: 无,READ,0
+1546,系统状态未知 需获取磁盘信息 当前: / 历史: 无,INFO,3
+1547,在 /etc 的文件中搜索 127.0.0.1 模式 历史: 刚进入环境,SEARCH,2
+1548,系统信息收集: 内存信息 位置: / 历史: date → whoami → pwd,INFO,3
+1549,刚刚 cd 到 /etc 需要看看里面有什么 历史: 无,LIST,1
+1550,当前目录: /home 准备了解 docker 命令用法 历史: 无,HELP,7
+1551,统计 /sys/class/net/eth0/address 的行数量 历史: 无,COUNT,5
+1552,数据量检查: python3 行数 当前 /usr/bin 历史: pwd,COUNT,5
+1553,当前目录: /mnt 上步: ls 看到很多文件 历史: 无,LIST,1
+1554,"已知区域: /opt, / 当前 /root 需扩大范围 历史: 无",EXPLORE,6
+1555,定位 localhost 在 /root 中的位置 历史: 刚进入环境,SEARCH,2
+1556,当前目录: /usr/bin 准备了解 jq 命令用法 历史: ps → df → cat,HELP,7
+1557,"已知区域: /mnt, /dev 当前 /proc 需扩大范围 历史: 无",EXPLORE,6
+1558,在 cache.json 中发现 localhost 关键字 当前目录: /tmp 历史: ls → df,SEARCH,2
+1559,准备 wc -l cmdline 当前: /proc 历史: cd → wc → cat,COUNT,5
+1560,"当前: /opt 探索进度: 已访问 /usr/local/bin, /root 需扩展 历史: 刚进入环境",EXPLORE,6
+1561,准备获取内存信息 当前: /proc 历史: 刚进入环境,INFO,3
+1562,正在分析 / 中的 resolv.conf 内容 历史: df,READ,0
+1563,查找 nginx: 当前目录 /opt 已知文件 scripts/backup.sh 历史: wc → ps,SEARCH,2
+1564,当前目录: /usr/local/bin 已知文件: docker-compose 历史: 无,READ,0
+1565,查看 python3 文档 当前: /usr/bin 历史: 无,HELP,7
+1566,git 使用方法待了解 当前目录 / 历史: cat /proc/cpuinfo → cat → head,HELP,7
+1567,需要在 /etc 中搜索 password 的出现 历史: 无,SEARCH,2
+1568,"环境探索中 当前: /root 已访问 /, /proc 历史: 刚进入环境",EXPLORE,6
+1569,需学习 ping 命令 当前: /mnt 历史: df,HELP,7
+1570,目录 /proc 中有文件 stat 上步: grep ssh 历史: 无,READ,0
+1571,/root 是新发现的路径 需要浏览 历史: 无,LIST,1
+1572,环境: /mnt 需验证 node 命令路径 历史: 刚进入环境,INSPECT,4
+1573,目标: 在 hostname 中查找 error 当前: /etc 历史: 无,SEARCH,2
+1574,当前目录: /home 已知文件: user/.bashrc 上步: 检查系统信息 历史: 无,READ,0
+1575,查看 netstat 文档 当前: /sys 历史: 无,HELP,7
+1576,当前 /var/log 附近还有未知路径 历史: 无,EXPLORE,6
+1577,在 /usr/local/bin 下查找包含 docker 的内容 历史: 刚进入环境,SEARCH,2
+1578,确认 ssh 可执行文件位置 当前: /var/log 历史: wc,INSPECT,4
+1579,了解 python3 功能 需查帮助 当前路径 / 历史: cd,HELP,7
+1580,准备获取运行时间 当前: /dev 历史: 无,INFO,3
+1581,文件 version 条目计数 环境: /root 历史: ls → grep,COUNT,5
+1582,正在分析 /proc 中的 loadavg 内容 历史: 无,READ,0
+1583,在 meminfo 中发现 failed 关键字 当前目录: /root 历史: uptime → cat,SEARCH,2
+1584,在 /etc 下查找包含 failed 的内容 历史: 刚进入环境,SEARCH,2
+1585,准备 python3 --help 当前目录 /proc 历史: 无,HELP,7
+1586,统计 /proc/stat 的行数量 历史: 无,COUNT,5
+1587,当前 /var 附近还有未知路径 历史: 无,EXPLORE,6
+1588,"/var/log 下已访问: /dev, /etc, /sys, /mnt, /root 准备探索未知 历史: pwd → df",EXPLORE,6
+1589,grep 命令路径验证 环境: /proc 历史: 刚进入环境,INSPECT,4
+1590,当前位于 /home 目录结构待查看 历史: 无,LIST,1
+1591,/opt 目录下找到 app/config.yaml 上步: 空 历史: 无,READ,0
+1592,准备看 lsof 的帮助 环境 /dev 历史: uptime → wc → date,HELP,7
+1593,需发现 /usr/bin 之外的新区域 历史: 无,EXPLORE,6
+1594,查看 user/data.csv 行数 环境路径 /home 历史: uptime,COUNT,5
+1595,"已知区域: /sys, /opt, /mnt 当前 /var/log 需扩大范围 历史: 无",EXPLORE,6
+1596,沙箱状态: 需读取内存信息 当前: / 历史: wc → ls → head,INFO,3
+1597,需了解 stat 的数据量 当前 /proc 历史: ls,COUNT,5
+1598,netstat 命令用法未知 需查看帮助 当前 /var/log 历史: grep → cat /proc/cpuinfo,HELP,7
+1599,在 /proc 下需要了解有哪些文件和目录 历史: 刚进入环境,LIST,1
+1600,"当前: /dev 探索进度: 已访问 /mnt, /root, /opt, /var/log, /home 需扩展 历史: 无",EXPLORE,6
+1601,准备执行 git --help 当前: /sys 历史: 刚进入环境,HELP,7
+1602,路径 /dev 存在但内容未知 历史: 无,LIST,1
+1603,路径 /home 存在但内容未知 历史: uptime,LIST,1
+1604,需计数 log/auth.log 中的条目数 当前: /var 历史: 刚进入环境,COUNT,5
+1605,curl 中可能包含 127.0.0.1 需搜索验证 历史: df,SEARCH,2
+1606,已收集 /opt 信息 准备探索新路径 历史: 无,EXPLORE,6
+1607,文件 class/net/eth0/address 可能包含 admin 需确认 当前: /sys 历史: date,SEARCH,2
+1608,检查 netstat 是否存在 当前路径: /usr/bin 历史: 无,INSPECT,4
+1609,在 /mnt 中准备查询当前时间 历史: ps → date → ls,INFO,3
+1610,检查 nginx 是否存在 当前路径: /sys 历史: 刚进入环境,INSPECT,4
+1611,准备 wc -l journalctl 当前: /root 历史: 无,COUNT,5
+1612,环境: /root 准备获取 sed 帮助信息 历史: whoami → cat /proc/cpuinfo,HELP,7
+1613,确认 zip 可执行文件位置 当前: /var 历史: 无,INSPECT,4
+1614,环境提示 /tmp 中存在 connection 需搜索 历史: 刚进入环境,SEARCH,2
+1615,需了解系统运行时间 环境: /home 历史: 刚进入环境,INFO,3
+1616,刚刚 cd 到 /dev 需要看看里面有什么 历史: 刚进入环境,LIST,1
+1617,需知道 null 的行数 当前: /mnt 历史: 无,COUNT,5
+1618,需读取 /etc/apt/sources.list 获取信息 历史: ls → cat /proc/cpuinfo → date,READ,0
+1619,当前目录: /var 已知文件: spool/cron/crontabs/root 上步: 看到文件含 failed 历史: cat → uptime → ps,SEARCH,2
+1620,环境监测: 内存信息 当前目录 /opt 历史: head → ps,INFO,3
+1621,"已知区域: /tmp, /root, /usr/local/bin 当前 /home 需扩大范围 历史: df → pwd → wc",EXPLORE,6
+1622,沙箱中还有更多未知区域 当前 /tmp 历史: 无,EXPLORE,6
+1623,刚进入 /usr/local/bin 准备查看目录内容 历史: 无,LIST,1
+1624,/etc 附近可能有未发现的目录 准备探索 历史: 刚进入环境,EXPLORE,6
+1625,准备统计 nginx.conf 的行数 当前目录 /mnt 历史: 无,COUNT,5
+1626,sed 命令路径验证 环境: /proc 历史: 无,INSPECT,4
+1627,准备统计 /usr/bin/nginx 的行 历史: 刚进入环境,COUNT,5
+1628,沙箱目录 /dev 存在文件 sda 上步操作: 刚进入环境 历史: 无,READ,0
+1629,在 /opt 下需要了解有哪些文件和目录 历史: 无,LIST,1
+1630,环境分析需要内存信息 当前: /usr/bin 历史: 无,INFO,3
+1631,想学习 tar 的参数 当前目录 /proc 历史: 无,HELP,7
+1632,环境路径 /tmp 需要列出子项 历史: 刚进入环境,LIST,1
+1633,正在分析 /proc 中的 cmdline 内容 历史: 无,READ,0
+1634,"探索模式: 从 /opt 出发 已访问 /var, /usr/bin 历史: 无",EXPLORE,6
+1635,环境显示 /proc/stat 可读 历史: date → ps,READ,0
+1636,环境显示 /opt/scripts/backup.sh 可读 历史: df → ps,READ,0
+1637,当前目录: /mnt 上步: 刚进入环境 历史: 无,LIST,1
+1638,想熟悉 htop 的用法 当前 /proc 历史: 无,HELP,7
+1639,/home 目录下可能包含更多子目录 历史: ls → df,LIST,1
+1640,crontab 内容长度未知 需计数 当前: / 历史: 刚进入环境,COUNT,5
+1641,当前目录: /usr/bin 上步: 进入 /usr/bin 历史: whoami → df,LIST,1
+1642,需发现 /mnt 之外的新区域 历史: 无,EXPLORE,6
+1643,正在分析 /home 中的 user/documents/report.txt 内容 历史: 无,READ,0
+1644,当前目录: /usr/bin 准备了解 tar 命令用法 历史: 刚进入环境,HELP,7
+1645,/root 是新发现的路径 需要浏览 历史: date → cat /proc/cpuinfo,LIST,1
+1646,文件 random 可能包含 root 需确认 当前: /dev 历史: cat /proc/cpuinfo → ls,SEARCH,2
+1647,刚进入 /mnt 准备查看目录内容 历史: 刚进入环境,LIST,1
+1648,查看 ssh 文档 当前: / 历史: cd → whoami → uptime,HELP,7
+1649,刚进入 /opt 准备查看目录内容 历史: uptime,LIST,1
+1650,环境提示 /mnt 中存在 127.0.0.1 需搜索 历史: 无,SEARCH,2
+1651,准备统计 /usr/local/bin/pip3 的行 历史: head,COUNT,5
+1652,当前 /dev 附近还有未知路径 历史: 无,EXPLORE,6
+1653,进入目录 /etc 上步: ls 看到很多文件 历史: 无,LIST,1
+1654,"探索阶段: 从 /usr/local/bin 扩展 已访问 /proc, /sys 历史: grep",EXPLORE,6
+1655,当前 /var 附近还有未知路径 历史: 刚进入环境,EXPLORE,6
+1656,需确认磁盘信息 当前位于 /proc 历史: 无,INFO,3
+1657,准备 grep admin 在 /root 下的文件中 历史: 无,SEARCH,2
+1658,"环境探索中 当前: /usr/local/bin 已访问 /dev, /root, /var, /home, / 历史: 刚进入环境",EXPLORE,6
+1659,帮助查询: docker 当前路径 /opt 历史: 刚进入环境,HELP,7
+1660,需要在 /mnt 中搜索 docker 的出现 历史: 无,SEARCH,2
+1661,在 /tmp 下统计 cache.json 行数 历史: whoami → wc → head,COUNT,5
+1662,准备看 find 的帮助 环境 /var/log 历史: 无,HELP,7
+1663,文件 hostname 可能包含 docker 需确认 当前: /etc 历史: 无,SEARCH,2
+1664,devices/system/cpu/online 行数统计 当前目录 /sys 历史: date → pwd → ls,COUNT,5
+1665,redis-cli 使用方法待了解 当前目录 /tmp 历史: 无,HELP,7
+1666,在 / 中需要了解目录布局 历史: 无,LIST,1
+1667,已发现 ssh 需在 sshd_config 中搜索更多 历史: df,SEARCH,2
+1668,"准备离开 /home 前往未知区域 已访问 /dev, /usr/local/bin 历史: 无",EXPLORE,6
+1669,准备获取CPU信息 当前: /usr/local/bin 历史: 无,INFO,3
+1670,需知道 hosts 的行数 当前: / 历史: wc → ls,COUNT,5
+1671,文件系统显示 cmdline 在 /proc 中 历史: 刚进入环境,READ,0
+1672,环境诊断: 需要负载情况 当前路径: /opt 历史: 刚进入环境,INFO,3
+1673,"沙箱环境 已访问 /sys, /opt, /usr/local/bin 当前 /var/log 继续探索 历史: date → df → ps",EXPLORE,6
+1674,查看 sed 文档 当前: / 历史: 无,HELP,7
+1675,在 /sys 中计数 class/net/eth0/address 的行 历史: 无,COUNT,5
+1676,环境: /sys 准备获取 awk 帮助信息 历史: 无,HELP,7
+1677,准备调用 nginx 先验证路径 当前: /root 历史: 无,INSPECT,4
+1678,准备查看 redis-cli 的帮助页面 当前目录 /tmp 历史: ls,HELP,7
+1679,当前 /root 准备查询系统版本 历史: 无,INFO,3
+1680,准备看 docker 的帮助 环境 /usr/local/bin 历史: cd → head,HELP,7
+1681,查看 /tmp 下的 output.txt 可能有系统信息 历史: 无,READ,0
+1682,cache.json 行数统计 当前目录 /tmp 历史: ps → ls → uptime,COUNT,5
+1683,lsof 命令用法未知 需查看帮助 当前 /tmp 历史: 无,HELP,7
+1684,检查 npm 是否存在 当前路径: /mnt 历史: grep,INSPECT,4
+1685,准备查看 /var 中的 log/auth.log 历史: 刚进入环境,READ,0
+1686,"准备离开 /tmp 前往未知区域 已访问 /var, /etc, /sys 历史: 无",EXPLORE,6
+1687,目录 /proc 的内容尚未查看 历史: 无,LIST,1
+1688,沙箱环境 /dev 下存在文本文件 sda 历史: 刚进入环境,READ,0
+1689,需确认 node 命令是否存在 当前目录 /usr/bin 历史: 刚进入环境,INSPECT,4
+1690,在 /var/log 下发现文件 syslog 历史: 刚进入环境,READ,0
+1691,准备统计 /sys/class/net/eth0/address 的行 历史: 无,COUNT,5
+1692,"/proc 下已访问: /dev, /var 准备探索未知 历史: 无",EXPLORE,6
+1693,需检查 awk 是否在 PATH 中 当前 /usr/local/bin 历史: 无,INSPECT,4
+1694,环境分析需要用户信息 当前: /proc 历史: date → ps → cd,INFO,3
+1695,需确认系统版本 当前位于 /proc 历史: cd,INFO,3
+1696,jq 命令路径验证 环境: /root 历史: 无,INSPECT,4
+1697,系统状态未知 需获取进程信息 当前: /dev 历史: grep,INFO,3
+1698,需读取 /var/log/auth.log 获取信息 历史: date → cd → df,READ,0
+1699,准备查看 /var 中的 log/dmesg 历史: pwd,READ,0
+1700,文件 spool/cron/crontabs/root 可能包含 password 需确认 当前: /var 历史: pwd → cat /proc/cpuinfo → uptime,SEARCH,2
+1701,准备检查磁盘信息 沙箱路径: /opt 历史: 无,INFO,3
+1702,环境提示 /sys 中存在 failed 需搜索 历史: df → cd → whoami,SEARCH,2
+1703,nginx 命令参数不清楚 需 --help 当前: /home 历史: date → cat → cd,HELP,7
+1704,沙箱环境显示当前目录为 /mnt 需查看列表 历史: 无,LIST,1
+1705,诊断需求: 系统版本 当前目录: /sys 历史: head,INFO,3
+1706,当前目录: /usr/bin 已知文件: bash 上步: pwd 确认当前位置 历史: 刚进入环境,READ,0
+1707,准备 ps --help 当前目录 /home 历史: 刚进入环境,HELP,7
+1708,准备调用 ssh 先验证路径 当前: /opt 历史: 无,INSPECT,4
+1709,/sys 是新发现的路径 需要浏览 历史: 无,LIST,1
+1710,环境诊断: 需要系统版本 当前路径: /var/log 历史: 无,INFO,3
+1711,环境提示 /var/log 中存在 failed 需搜索 历史: 无,SEARCH,2
+1712,环境提示 /tmp 中存在 root 需搜索 历史: 无,SEARCH,2
+1713,环境分析需要运行时间 当前: /mnt 历史: 刚进入环境,INFO,3
+1714,沙箱诊断: 获取CPU信息 当前路径 /mnt 历史: head → grep → wc,INFO,3
+1715,刚切换到 /root 尚未查看目录结构 历史: 无,LIST,1
+1716,需检查 awk 是否在 PATH 中 当前 /usr/local/bin 历史: 无,INSPECT,4
+1717,在 /etc 中需要了解目录布局 历史: 无,LIST,1
+1718,当前 /usr/local/bin 附近还有未知路径 历史: 无,EXPLORE,6
+1719,准备使用 node 先检查是否存在 当前: /root 历史: 无,INSPECT,4
+1720,准备统计 /mnt/root 的行 历史: 无,COUNT,5
+1721,环境提示 /mnt 中存在 nginx 需搜索 历史: 无,SEARCH,2
+1722,/tmp 目录中 output.txt 是上步发现的重要文件 历史: 刚进入环境,READ,0
+1723,沙箱中还有更多未知区域 当前 /proc 历史: 无,EXPLORE,6
+1724,进入目录 /mnt 上步: 浏览目录 历史: 无,LIST,1
+1725,进入目录 /root 上步: 读取 /var/log/auth.log 历史: 刚进入环境,LIST,1
+1726,沙箱环境 /root 下存在文本文件 nginx 历史: 刚进入环境,READ,0
+1727,环境: /mnt 需验证 grep 命令路径 历史: 无,INSPECT,4
+1728,环境路径 / 需要列出子项 历史: 刚进入环境,LIST,1
+1729,系统概览: 查看系统版本 路径: /usr/local/bin 历史: 无,INFO,3
+1730,想熟悉 jq 的用法 当前 / 历史: 刚进入环境,HELP,7
+1731,文件 hostname 行统计 环境 /mnt 历史: 刚进入环境,COUNT,5
+1732,"准备离开 /tmp 前往未知区域 已访问 /etc, /proc, /usr/local/bin 历史: 无",EXPLORE,6
+1733,沙箱状态: 需读取系统版本 当前: /home 历史: 无,INFO,3
+1734,了解 sed 的可用选项 当前: /usr/local/bin 历史: 无,HELP,7
+1735,"环境探索中 当前: /opt 已访问 /tmp, /proc 历史: 无",EXPLORE,6
+1736,当前 /usr/bin 搜索关键词 connection 历史: uptime,SEARCH,2
+1737,ssh 命令帮助查询 当前: /usr/local/bin 历史: 无,HELP,7
+1738,检查 awk 是否存在 当前路径: / 历史: 无,INSPECT,4
+1739,当前目录: /usr/local/bin 准备了解 docker 命令用法 历史: 无,HELP,7
+1740,当前路径 /mnt 还有未探索的子目录 历史: grep,EXPLORE,6
+1741,目录 /etc 中可能有包含 docker 的文件 历史: cd,SEARCH,2
+1742,当前 /root 附近还有未知路径 历史: 刚进入环境,EXPLORE,6
+1743,当前位于 /var 目录结构待查看 历史: head → pwd → df,LIST,1
+1744,环境 /opt 中查找 find 的位置 历史: wc,INSPECT,4
+1745,tar 命令用法未知 需查看帮助 当前 /var/log 历史: 无,HELP,7
+1746,log/auth.log 有多少行数据 当前路径 /var 历史: whoami → head → cat,COUNT,5
+1747,查看 /opt 下的 scripts/backup.sh 可能有系统信息 历史: 刚进入环境,READ,0
+1748,在 /usr/bin 下查找包含 nginx 的内容 历史: cd → head,SEARCH,2
+1749,系统监控: 查看运行时间 位置: /home 历史: 刚进入环境,INFO,3
+1750,output.txt 中可能包含 127.0.0.1 需搜索验证 历史: ps → cat /proc/cpuinfo → cat,SEARCH,2
+1751,"/usr/bin 下已访问: /etc, /, /home, /dev, /opt 准备探索未知 历史: 刚进入环境",EXPLORE,6
+1752,文件 scripts/backup.sh 可能包含 timeout 需确认 当前: /opt 历史: 刚进入环境,SEARCH,2
+1753,准备统计 /mnt/nginx.conf 的行 历史: 刚进入环境,COUNT,5
+1754,沙箱目录 /home 存在文件 user/.profile 上步操作: pwd 确认当前位置 历史: 无,READ,0
+1755,沙箱环境 /home 下存在文本文件 user/.profile 历史: 无,READ,0
+1756,需过滤 /var 中含 connection 的行 历史: wc → ls → ps,SEARCH,2
+1757,系统概览: 查看磁盘信息 路径: /var 历史: 无,INFO,3
+1758,当前路径 /var/log 还有未探索的子目录 历史: whoami → wc,EXPLORE,6
+1759,当前路径 /var 发现配置文件 www/html/index.html 历史: 无,READ,0
+1760,探索到 /home 准备列出所有条目 历史: 无,LIST,1
+1761,"探索模式: 从 / 出发 已访问 /home, /usr/local/bin, /sys, /tmp 历史: 无",EXPLORE,6
+1762,当前路径 /var/log 还有未探索的子目录 历史: 无,EXPLORE,6
+1763,当前目录: / 历史: 无 需要查看系统运行时间,INFO,3
+1764,需检查 sed 是否在 PATH 中 当前 /etc 历史: 刚进入环境,INSPECT,4
+1765,沙箱诊断: 获取用户信息 当前路径 /etc 历史: uptime,INFO,3
+1766,诊断需求: 磁盘信息 当前目录: /sys 历史: ls → cd → df,INFO,3
+1767,/tmp 目录下可能包含更多子目录 历史: 刚进入环境,LIST,1
+1768,目录 /usr/bin 的内容尚未查看 历史: 无,LIST,1
+1769,"沙箱环境 已访问 /var, /var/log, /dev 当前 /etc 继续探索 历史: uptime → head",EXPLORE,6
+1770,已了解 /proc 部分内容 准备继续探索 历史: 无,EXPLORE,6
+1771,想熟悉 python3 的用法 当前 /tmp 历史: 刚进入环境,HELP,7
+1772,需确认CPU信息 当前位于 /usr/local/bin 历史: 刚进入环境,INFO,3
+1773,/var 是新发现的路径 需要浏览 历史: 刚进入环境,LIST,1
+1774,需查看 tar 的帮助文档 当前: /dev 历史: wc,HELP,7
+1775,"已知路径: /sys, /home, /mnt 准备从 /root 出发探索 历史: 刚进入环境",EXPLORE,6
+1776,已收集 /root 信息 准备探索新路径 历史: pwd → head,EXPLORE,6
+1777,awk 命令参数不清楚 需 --help 当前: /root 历史: pwd,HELP,7
+1778,当前目录: /proc 需确认 tar 是否安装 历史: 无,INSPECT,4
+1779,沙箱中 /tmp 的内容需要浏览 历史: grep → head,LIST,1
+1780,"已知路径: /var, /etc 准备从 /opt 出发探索 历史: 刚进入环境",EXPLORE,6
+1781,系统检查: 运行时间 位置 /home 历史: 刚进入环境,INFO,3
+1782,沙箱中 python3 是否可用 当前: /root 历史: cd,INSPECT,4
+1783,环境分析需要用户信息 当前: /proc 历史: 无,INFO,3
+1784,准备查看 sed 的帮助页面 当前目录 /tmp 历史: 无,HELP,7
+1785,想学习 find 的参数 当前目录 /proc 历史: 刚进入环境,HELP,7
+1786,需查看 npm 的帮助文档 当前: /dev 历史: head → df → uptime,HELP,7
+1787,当前目录: /var 已知文件: log/auth.log 上步: 看到文件含 127.0.0.1 历史: 无,SEARCH,2
+1788,在 /opt 下统计 scripts/backup.sh 行数 历史: ls → cd,COUNT,5
+1789,环境显示 /opt/app/config.yaml 可读 历史: 无,READ,0
+1790,当前目录: /usr/local/bin 已知文件: docker-compose 上步: 看到文件含 password 历史: 无,SEARCH,2
+1791,想学习 lsof 的参数 当前目录 /dev 历史: 无,HELP,7
+1792,当前路径 / 发现配置文件 crontab 历史: 无,READ,0
+1793,环境已熟悉 当前: /usr/bin 需要发现新区域 历史: wc → head,EXPLORE,6
+1794,protocols 行数统计 当前目录 /etc 历史: head → date → cd,COUNT,5
+1795,grep 命令用法未知 需查看帮助 当前 /var 历史: 无,HELP,7
+1796,/tmp 目录下可能包含更多子目录 历史: 无,LIST,1
+1797,环境监测: 运行时间 当前目录 /tmp 历史: 无,INFO,3
+1798,查找 admin: 当前目录 /opt 已知文件 scripts/backup.sh 历史: df → whoami → head,SEARCH,2
+1799,系统概览: 查看用户信息 路径: /usr/local/bin 历史: wc → uptime → date,INFO,3
+1800,当前目录: /mnt 准备了解 ssh 命令用法 历史: 无,HELP,7
+1801,准备获取当前时间 当前: /tmp 历史: 刚进入环境,INFO,3
+1802,当前位于 /home 目录结构待查看 历史: whoami,LIST,1
+1803,需读取 /mnt/fstab 获取信息 历史: cat /proc/cpuinfo → ps → cd,READ,0
+1804,当前目录: /var 已知文件: www/html/index.html 上步: 看到文件含 error 历史: 刚进入环境,SEARCH,2
+1805,"当前目录: /usr/local/bin 已访问: /, /home, /etc, /mnt, /sys 准备探索新路径 历史: head",EXPLORE,6
+1806,需确认负载情况 当前位于 /mnt 历史: 无,INFO,3
+1807,统计 /usr/local/bin/pip3 的行数量 历史: date,COUNT,5
+1808,准备统计 cache.json 的行数 当前目录 /tmp 历史: 无,COUNT,5
+1809,查看 /etc 下的 services 可能有系统信息 历史: 无,READ,0
+1810,需检查 ping 是否在 PATH 中 当前 / 历史: 刚进入环境,INSPECT,4
+1811,在 /var 中，文件 www/html/index.html 可能存在有用信息 历史: 无,READ,0
+1812,环境路径: /mnt 可访问文件: group 历史: cat /proc/cpuinfo,READ,0
+1813,环境显示 /usr/bin/python3 可读 历史: 无,READ,0
+1814,进入目录 /sys 上步: cat 输出包含 failed 历史: ls → uptime,LIST,1
+1815,环境提示 /tmp 中存在 failed 需搜索 历史: 无,SEARCH,2
+1816,需查看 netstat 的帮助文档 当前: /var 历史: 刚进入环境,HELP,7
+1817,需读取 /proc/loadavg 获取信息 历史: 刚进入环境,READ,0
+1818,查看 /sys 下的 devices/system/cpu/online 可能有系统信息 历史: 无,READ,0
+1819,查看 /opt 下的 app/config.yaml 可能有系统信息 历史: ps → grep → whoami,READ,0
+1820,进入目录 /etc 上步: head 查看文件头部 历史: 无,LIST,1
+1821,"当前目录: /usr/bin 已访问: /opt, /var 准备探索新路径 历史: 无",EXPLORE,6
+1822,/usr/bin 附近可能有未发现的目录 准备探索 历史: cat /proc/cpuinfo → uptime → head,EXPLORE,6
+1823,/etc 目录下可能包含更多子目录 历史: 无,LIST,1
+1824,环境已熟悉 当前: /home 需要发现新区域 历史: 无,EXPLORE,6
+1825,环境已熟悉 当前: /dev 需要发现新区域 历史: pwd → whoami → cd,EXPLORE,6
+1826,"已知路径: /root, /mnt, /opt, /etc 准备从 /tmp 出发探索 历史: 无",EXPLORE,6
+1827,查看 python3 文档 当前: /sys 历史: pwd → wc,HELP,7
+1828,环境分析需要CPU信息 当前: /var/log 历史: 无,INFO,3
+1829,查看 tar 文档 当前: /tmp 历史: 刚进入环境,HELP,7
+1830,random 有多少行数据 当前路径 /dev 历史: 刚进入环境,COUNT,5
+1831,沙箱目录 /etc 存在文件 nginx/nginx.conf 上步操作: 空 历史: cat /proc/cpuinfo → ps → uptime,READ,0
+1832,awk 命令用法未知 需查看帮助 当前 /root 历史: ls → ps,HELP,7
+1833,需过滤 /opt 中含 nginx 的行 历史: 刚进入环境,SEARCH,2
+1834,docker-compose 有多少行数据 当前路径 /usr/local/bin 历史: 刚进入环境,COUNT,5
+1835,环境分析需要磁盘信息 当前: / 历史: 刚进入环境,INFO,3
+1836,准备 wc -l nginx/nginx.conf 当前: /etc 历史: whoami → wc,COUNT,5
+1837,环境路径 /var 需要列出子项 历史: 无,LIST,1
+1838,当前目录: /dev 准备了解 redis-cli 命令用法 历史: 无,HELP,7
+1839,环境分析需要当前时间 当前: /var/log 历史: 无,INFO,3
+1840,沙箱环境 当前 /var 搜索目标: error 历史: head → ls,SEARCH,2
+1841,/mnt 环境中 sed 命令路径检查 历史: whoami → cat,INSPECT,4
+1842,探索到 /root 准备列出所有条目 历史: 刚进入环境,LIST,1
+1843,当前目录: /home 已知文件: user/documents/report.txt 上步: 进入 /home 历史: 无,READ,0
+1844,计数需求: output.txt 在 /tmp 中 历史: 刚进入环境,COUNT,5
+1845,/home 是新发现的路径 需要浏览 历史: grep,LIST,1
+1846,了解 nginx 的可用选项 当前: /var/log 历史: df,HELP,7
+1847,准备查看 sed 的帮助页面 当前目录 /home 历史: df,HELP,7
+1848,了解 python3 的可用选项 当前: / 历史: head,HELP,7
+1849,沙箱中还有更多未知区域 当前 /proc 历史: 刚进入环境,EXPLORE,6
+1850,/home 附近可能有未发现的目录 准备探索 历史: 无,EXPLORE,6
+1851,沙箱环境 准备获取 docker 帮助 当前 /etc 历史: head → whoami,HELP,7
+1852,沙箱环境 /root 下存在文本文件 hostname 历史: 无,READ,0
+1853,环境地图不完整 当前 /tmp 需探索更多 历史: 无,EXPLORE,6
+1854,文件 random 大小未知 先统计行数 当前: /dev 历史: 刚进入环境,COUNT,5
+1855,准备查看 /usr/local/bin 中的 node 历史: uptime → df → wc,READ,0
+1856,sed 命令参数不清楚 需 --help 当前: /opt 历史: wc,HELP,7
+1857,统计 /opt/app/config.yaml 的行数量 历史: cat /proc/cpuinfo → grep → head,COUNT,5
+1858,当前位于 / 注意到文件 hosts 历史: 无,READ,0
+1859,工作目录: /mnt 目标文件: hosts 历史: 刚进入环境,READ,0
+1860,需过滤 /usr/local/bin 中含 docker 的行 历史: ls → cat /proc/cpuinfo → whoami,SEARCH,2
+1861,沙箱中定位 ssh 当前目录 /sys 历史: df → head → whoami,INSPECT,4
+1862,当前路径 /proc 还有未探索的子目录 历史: 刚进入环境,EXPLORE,6
+1863,了解 find 的可用选项 当前: /mnt 历史: 无,HELP,7
+1864,系统信息收集: 磁盘信息 位置: /var 历史: 无,INFO,3
+1865,"探索阶段: 从 /proc 扩展 已访问 /usr/local/bin, /etc, /home, /root, /opt 历史: 刚进入环境",EXPLORE,6
+1866,检查 docker 是否存在 当前路径: /tmp 历史: grep → uptime,INSPECT,4
+1867,系统状态未知 需获取磁盘信息 当前: /sys 历史: ps → whoami,INFO,3
+1868,在 /sys 中准备查询负载情况 历史: 无,INFO,3
+1869,"当前: /home 探索进度: 已访问 /var, /opt, /sys, /etc 需扩展 历史: 无",EXPLORE,6
+1870,目录 /sys 中有文件 devices/system/cpu/online 上步: 发现新目录 /sys 历史: 刚进入环境,READ,0
+1871,沙箱中还有更多未知区域 当前 / 历史: 无,EXPLORE,6
+1872,准备执行 npm --help 当前: /var/log 历史: 刚进入环境,HELP,7
+1873,准备获取磁盘信息 当前: /dev 历史: 无,INFO,3
+1874,当前 /usr/local/bin 搜索关键词 password 历史: grep,SEARCH,2
+1875,需读取 /var/log/auth.log 获取信息 历史: cat /proc/cpuinfo → cd → grep,READ,0
+1876,在 /proc 下需要了解有哪些文件和目录 历史: 无,LIST,1
+1877,当前位于 /dev 注意到文件 zero 历史: ls,READ,0
+1878,准备看 curl 的帮助 环境 / 历史: ps,HELP,7
+1879,当前位于 /dev 注意到文件 sda 历史: 刚进入环境,READ,0
+1880,沙箱环境 当前 / 搜索目标: connection 历史: uptime → ls,SEARCH,2
+1881,"当前: /sys 探索进度: 已访问 /proc, /opt, /tmp 需扩展 历史: 无",EXPLORE,6
+1882,目录 /etc 中有文件 services 上步: 看到文件含 docker 历史: date → cd,READ,0
+1883,查看 fstab 行数 环境路径 / 历史: date,COUNT,5
+1884,需学习 node 命令 当前: /root 历史: 无,HELP,7
+1885,环境显示 /sys/class/net/eth0/address 可读 历史: 无,READ,0
+1886,在 /sys 的文件中搜索 localhost 模式 历史: head → ps,SEARCH,2
+1887,需查看 curl 的帮助文档 当前: /root 历史: 无,HELP,7
+1888,在 /sys 中计数 devices/system/cpu/online 的行 历史: wc,COUNT,5
+1889,app/config.yaml 有多少行数据 当前路径 /opt 历史: 刚进入环境,COUNT,5
+1890,沙箱环境 当前 /var 搜索目标: admin 历史: 无,SEARCH,2
+1891,沙箱环境 当前 /root 搜索目标: token 历史: 无,SEARCH,2
+1892,目录 /usr/local/bin 的内容尚未查看 历史: 无,LIST,1
+1893,系统状态未知 需获取运行时间 当前: / 历史: 无,INFO,3
+1894,想熟悉 awk 的用法 当前 /usr/bin 历史: 刚进入环境,HELP,7
+1895,app/config.yaml 内容长度未知 需计数 当前: /opt 历史: 刚进入环境,COUNT,5
+1896,当前位于 /proc 目录结构待查看 历史: 刚进入环境,LIST,1
+1897,查看 os-release 行数 环境路径 / 历史: 无,COUNT,5
+1898,当前路径 / 发现配置文件 crontab 历史: 无,READ,0
+1899,"探索阶段: 从 /opt 扩展 已访问 /proc, /home, /tmp 历史: 无",EXPLORE,6
+1900,查看 /root 下的 python3 可能有系统信息 历史: 刚进入环境,READ,0
+1901,目录 /dev 的内容尚未查看 历史: grep → pwd,LIST,1
+1902,路径 /root 存在但内容未知 历史: 无,LIST,1
+1903,沙箱中定位 npm 当前目录 /usr/local/bin 历史: 刚进入环境,INSPECT,4
+1904,已收集 /sys 信息 准备探索新路径 历史: 无,EXPLORE,6
+1905,已收集 / 信息 准备探索新路径 历史: 无,EXPLORE,6
+1906,当前目录: /proc 准备了解 htop 命令用法 历史: 刚进入环境,HELP,7
+1907,到达 /usr/local/bin 准备浏览文件列表 历史: 无,LIST,1
+1908,"当前: /mnt 探索进度: 已访问 /root, /sys 需扩展 历史: 刚进入环境",EXPLORE,6
+1909,查看 /home 下的 user/documents/report.txt 可能有系统信息 历史: cat /proc/cpuinfo → ps → df,READ,0
+1910,沙箱中 /usr/bin 的内容需要浏览 历史: grep → cat,LIST,1
+1911,文件 user/.profile 有多少行 当前: /home 历史: 无,COUNT,5
+1912,"环境探索中 当前: /home 已访问 /usr/local/bin, /proc, /, /usr/bin 历史: 无",EXPLORE,6
+1913,位置: /etc 准备执行目录浏览 历史: 刚进入环境,LIST,1
+1914,沙箱环境 准备获取 ps 帮助 当前 / 历史: 无,HELP,7
+1915,当前路径: /proc 文件列表未知 历史: 无,LIST,1
+1916,"已知区域: /etc, /tmp, /mnt, /usr/bin 当前 /var 需扩大范围 历史: df",EXPLORE,6
+1917,环境: /tmp 准备获取 awk 帮助信息 历史: 无,HELP,7
+1918,沙箱环境 当前 /opt 搜索目标: config 历史: df → ps → wc,SEARCH,2
+1919,已定位文件 devices/system/cpu/online 位于 /sys 历史: 无,READ,0
+1920,查看 output.txt 行数 环境路径 /tmp 历史: 无,COUNT,5
+1921,需查看 docker 的帮助文档 当前: /dev 历史: 无,HELP,7
+1922,沙箱诊断: 获取内存信息 当前路径 /proc 历史: 刚进入环境,INFO,3
+1923,环境路径: /var/log 可访问文件: boot.log 历史: 无,READ,0
+1924,"准备离开 / 前往未知区域 已访问 /tmp, /root, /dev, /proc, /usr/bin 历史: cat /proc/cpuinfo → head",EXPLORE,6
+1925,想执行 ping 先检查安装位置 当前: /root 历史: wc → pwd → cd,INSPECT,4
+1926,当前目录: /proc 历史: 刚进入环境 需要查看系统负载情况,INFO,3
+1927,当前 /usr/bin 准备查询内存信息 历史: 无,INFO,3
+1928,"沙箱环境 已访问 /usr/local/bin, /root, /dev, /sys 当前 /mnt 继续探索 历史: ls → ps",EXPLORE,6
+1929,在 / 下统计 hostname 行数 历史: 无,COUNT,5
+1930,准备获取负载情况 当前: /etc 历史: 无,INFO,3
+1931,"探索模式: 从 /usr/local/bin 出发 已访问 /etc, /tmp, /root, /usr/bin 历史: 无",EXPLORE,6
+1932,了解 jq 的可用选项 当前: /home 历史: cat /proc/cpuinfo → pwd,HELP,7
+1933,"沙箱探索继续 当前 /home 已访问 /proc, /mnt 历史: 无",EXPLORE,6
+1934,在 /etc 下需要了解有哪些文件和目录 历史: pwd,LIST,1
+1935,查找 failed: 当前目录 /mnt 已知文件 node 历史: 刚进入环境,SEARCH,2
+1936,准备调用 ping 先验证路径 当前: /usr/local/bin 历史: 无,INSPECT,4
+1937,"已知区域: /mnt, /etc, / 当前 /root 需扩大范围 历史: 无",EXPLORE,6
+1938,系统检查: 内存信息 位置 / 历史: 无,INFO,3
+1939,探索到 /opt 准备列出所有条目 历史: 无,LIST,1
+1940,沙箱环境 当前 /dev 搜索目标: 127.0.0.1 历史: cat → cat /proc/cpuinfo,SEARCH,2
+1941,统计 /var/log/syslog 的行数量 历史: 刚进入环境,COUNT,5
+1942,当前目录: /home 已知文件: user/data.csv 需统计行数 历史: 刚进入环境,COUNT,5
+1943,到达 /sys 准备浏览文件列表 历史: 无,LIST,1
+1944,npm 命令参数不清楚 需 --help 当前: / 历史: 刚进入环境,HELP,7
+1945,环境分析需要负载情况 当前: /dev 历史: 刚进入环境,INFO,3
+1946,刚刚 cd 到 /sys 需要看看里面有什么 历史: 无,LIST,1
+1947,/var/log 是新发现的路径 需要浏览 历史: df,LIST,1
+1948,git 命令路径验证 环境: /var/log 历史: 无,INSPECT,4
+1949,"准备离开 /var 前往未知区域 已访问 /, /usr/bin, /etc, /tmp, /proc 历史: wc → ps",EXPLORE,6
+1950,当前目录: /root 已知文件: pip3 上步: 看到文件含 connection 历史: 无,SEARCH,2
+1951,环境诊断: ssh 是否可用 当前 /sys 历史: pwd,INSPECT,4
+1952,当前目录: /root 已知文件: null 历史: 刚进入环境,READ,0
+1953,当前目录: /mnt 历史: grep 需要查看系统系统版本,INFO,3
+1954,目录 /dev 的内容尚未查看 历史: 无,LIST,1
+1955,上步发现 nginx 相关信息 当前: /usr/bin 历史: pwd → ps → ls,SEARCH,2
+1956,python3 命令帮助查询 当前: /root 历史: uptime → head,HELP,7
+1957,需计数 nginx/access.log 中的条目数 当前: /var/log 历史: 无,COUNT,5
+1958,devices/system/cpu/online 内容长度未知 需计数 当前: /sys 历史: 无,COUNT,5
+1959,沙箱中 redis-cli 如何使用 需查帮助 当前 /sys 历史: 无,HELP,7
+1960,准备查看 /proc 中的 stat 历史: 无,READ,0
+1961,文件系统显示 pip3 在 /usr/local/bin 中 历史: 刚进入环境,READ,0
+1962,沙箱环境 当前 /proc 搜索目标: failed 历史: 刚进入环境,SEARCH,2
+1963,环境诊断: 需要系统版本 当前路径: /usr/local/bin 历史: 刚进入环境,INFO,3
+1964,准备 htop --help 当前目录 /var/log 历史: 无,HELP,7
+1965,系统监控: 查看进程信息 位置: /tmp 历史: whoami → cat → wc,INFO,3
+1966,pip3 有多少行数据 当前路径 /usr/local/bin 历史: 无,COUNT,5
+1967,目录 /dev 的内容尚未查看 历史: 刚进入环境,LIST,1
+1968,需了解 python3 的数据量 当前 /usr/bin 历史: 无,COUNT,5
+1969,想学习 node 的参数 当前目录 /usr/bin 历史: 无,HELP,7
+1970,路径 /usr/local/bin 存在但内容未知 历史: 刚进入环境,LIST,1
+1971,刚进入 /home 准备查看目录内容 历史: 刚进入环境,LIST,1
+1972,环境诊断: ssh 是否可用 当前 /mnt 历史: uptime,INSPECT,4
+1973,"探索模式: 从 /mnt 出发 已访问 /var, /sys, /proc, /etc 历史: head → grep → cd",EXPLORE,6
+1974,刚刚 cd 到 /usr/local/bin 需要看看里面有什么 历史: 无,LIST,1
+1975,准备统计 /mnt/crontab 的行 历史: 无,COUNT,5
+1976,统计 /var/log/auth.log 的行数量 历史: 无,COUNT,5
+1977,需了解 user/.bashrc 的数据量 当前 /home 历史: 无,COUNT,5
+1978,在 /home 中需要了解目录布局 历史: 无,LIST,1
+1979,系统监控: 查看系统版本 位置: /var/log 历史: 无,INFO,3
+1980,想学习 mysql 的参数 当前目录 / 历史: 无,HELP,7
+1981,"当前目录: /mnt 已访问: /usr/local/bin, /var/log 准备探索新路径 历史: 刚进入环境",EXPLORE,6
+1982,node 使用方法待了解 当前目录 /mnt 历史: 刚进入环境,HELP,7
+1983,系统信息收集: 负载情况 位置: /mnt 历史: whoami,INFO,3
+1984,帮助查询: curl 当前路径 /var/log 历史: wc → df,HELP,7
+1985,环境监测: 负载情况 当前目录 /usr/local/bin 历史: 刚进入环境,INFO,3
+1986,需发现 /usr/local/bin 之外的新区域 历史: 无,EXPLORE,6
+1987,当前位于 /sys 注意到文件 devices/system/cpu/online 历史: 无,READ,0
+1988,目录 /dev 的内容尚未查看 历史: 无,LIST,1
+1989,当前路径 /root 发现配置文件 dmesg 历史: 刚进入环境,READ,0
+1990,"当前目录: /root 已访问: /etc, /usr/bin, /var/log 准备探索新路径 历史: 无",EXPLORE,6
+1991,文件 boot.log 大小未知 先统计行数 当前: /var/log 历史: date → uptime,COUNT,5
+1992,/opt 是新发现的路径 需要浏览 历史: 无,LIST,1
+1993,目录 /sys 的内容尚未查看 历史: 无,LIST,1
+1994,沙箱环境 验证 sed 安装 当前: /usr/bin 历史: 刚进入环境,INSPECT,4
+1995,需检查 find 是否在 PATH 中 当前 /opt 历史: pwd → df,INSPECT,4
+1996,准备使用 sed 需先定位 当前目录 / 历史: wc,INSPECT,4
+1997,路径 /var 存在但内容未知 历史: 无,LIST,1
+1998,环境 /var/log 中查找 ping 的位置 历史: ps,INSPECT,4
+1999,刚切换到 /var/log 尚未查看目录结构 历史: grep → wc,LIST,1
+2000,/etc 目录中 nginx/nginx.conf 是上步发现的重要文件 历史: 无,READ,0
+2001,刚刚 cd 到 /usr/bin 需要看看里面有什么 历史: cd,LIST,1
+2002,目标: 在 node 中查找 password 当前: /usr/local/bin 历史: 无,SEARCH,2
+2003,文件 uptime 大小未知 先统计行数 当前: /proc 历史: 无,COUNT,5
+2004,系统状态未知 需获取系统版本 当前: /mnt 历史: 无,INFO,3
+2005,当前 /usr/local/bin 附近还有未知路径 历史: 无,EXPLORE,6
+2006,环境已熟悉 当前: /var 需要发现新区域 历史: 无,EXPLORE,6
+2007,准备使用 jq 需先定位 当前目录 /usr/bin 历史: 无,INSPECT,4
+2008,环境诊断: 需要运行时间 当前路径: /mnt 历史: 无,INFO,3
+2009,需要在 /root 中搜索 nginx 的出现 历史: 刚进入环境,SEARCH,2
+2010,当前目录: /usr/bin 已知文件: curl 上步: ls 看到很多文件 历史: 无,READ,0
+2011,文件 stat 可能包含 nginx 需确认 当前: /proc 历史: 无,SEARCH,2
+2012,文件 log/dmesg 有多少行 当前: /var 历史: whoami → wc → date,COUNT,5
+2013,mysql 命令帮助查询 当前: /home 历史: 刚进入环境,HELP,7
+2014,上步发现 nginx 相关信息 当前: /tmp 历史: 无,SEARCH,2
+2015,"沙箱探索继续 当前 /root 已访问 /opt, / 历史: 无",EXPLORE,6
+2016,grep 命令参数不清楚 需 --help 当前: /proc 历史: 刚进入环境,HELP,7
+2017,当前目录: /var/log 上步: head 查看文件头部 历史: 无,LIST,1
+2018,计数需求: curl 在 /usr/bin 中 历史: 刚进入环境,COUNT,5
+2019,沙箱中 zip 如何使用 需查帮助 当前 /proc 历史: 无,HELP,7
+2020,当前目录: /mnt 已知文件: sshd_config 历史: 无,READ,0
+2021,沙箱状态: 需读取系统版本 当前: /mnt 历史: cat /proc/cpuinfo → head,INFO,3
+2022,当前位于 /usr/bin 注意到文件 python3 历史: 刚进入环境,READ,0
+2023,环境: /opt 准备获取 ping 帮助信息 历史: 刚进入环境,HELP,7
+2024,git 命令路径验证 环境: /sys 历史: 无,INSPECT,4
+2025,准备 grep ssh 在 / 下的文件中 历史: 无,SEARCH,2
+2026,文件系统显示 sshd_config 在 /mnt 中 历史: 无,READ,0
+2027,需查看 grep 的帮助文档 当前: /usr/bin 历史: 无,HELP,7
+2028,环境分析需要内存信息 当前: /dev 历史: 刚进入环境,INFO,3
+2029,系统检查: 磁盘信息 位置 /var/log 历史: whoami → grep,INFO,3
+2030,当前路径: /var 文件列表未知 历史: grep → head → ls,LIST,1
+2031,沙箱中 /root 的内容需要浏览 历史: wc,LIST,1
+2032,当前路径: / 文件列表未知 历史: ls → uptime → df,LIST,1
+2033,统计 /mnt/git 的行数量 历史: 无,COUNT,5
+2034,在 filesystems 中发现 timeout 关键字 当前目录: /proc 历史: 无,SEARCH,2
+2035,系统信息收集: 内存信息 位置: /sys 历史: cd → pwd,INFO,3
+2036,准备调用 ssh 先验证路径 当前: /etc 历史: 刚进入环境,INSPECT,4
+2037,awk 命令帮助查询 当前: /mnt 历史: 无,HELP,7
+2038,到达 /proc 准备浏览文件列表 历史: ls,LIST,1
+2039,准备 wc -l curl 当前: /usr/bin 历史: 刚进入环境,COUNT,5
+2040,沙箱环境 当前 /usr/bin 搜索目标: admin 历史: 刚进入环境,SEARCH,2
+2041,当前目录: /usr/bin 已知文件: vim 历史: 无,READ,0
+2042,当前目录: /opt 历史: 刚进入环境 需要查看系统运行时间,INFO,3
+2043,查看 /opt 下的 app/config.yaml 可能有系统信息 历史: uptime,READ,0
+2044,沙箱环境 准备获取 python3 帮助 当前 /var 历史: ls → ps,HELP,7
+2045,了解 ping 的可用选项 当前: /usr/local/bin 历史: 无,HELP,7
+2046,"探索模式: 从 /root 出发 已访问 /proc, /tmp 历史: 无",EXPLORE,6
+2047,沙箱中 netstat 是否可用 当前: / 历史: 无,INSPECT,4
+2048,想学习 ping 的参数 当前目录 /usr/local/bin 历史: df,HELP,7
+2049,准备执行 curl --help 当前: /opt 历史: wc → cat,HELP,7
+2050,/proc 目录中 version 是上步发现的重要文件 历史: cat /proc/cpuinfo → cat → pwd,READ,0
+2051,在 /tmp 中计数 test.sh 的行 历史: grep,COUNT,5
+2052,路径 /sys 存在但内容未知 历史: uptime,LIST,1
+2053,在 log/auth.log 中发现 token 关键字 当前目录: /var 历史: 刚进入环境,SEARCH,2
+2054,沙箱状态: 需读取系统版本 当前: / 历史: 无,INFO,3
+2055,当前 /mnt 附近还有未知路径 历史: 无,EXPLORE,6
+2056,查看 user/.bashrc 行数 环境路径 /home 历史: 无,COUNT,5
+2057,/home 目录下可能包含更多子目录 历史: 无,LIST,1
+2058,环境分析需要用户信息 当前: /opt 历史: 无,INFO,3
+2059,正在分析 /usr/local/bin 中的 pip3 内容 历史: cat /proc/cpuinfo,READ,0
+2060,当前目录: /opt 历史: 无 需要查看系统磁盘信息,INFO,3
+2061,当前目录: /dev 已知文件: random 上步: 看到文件含 failed 历史: 刚进入环境,SEARCH,2
+2062,当前 /proc 附近还有未知路径 历史: 无,EXPLORE,6
+2063,沙箱中 sed 是否可用 当前: /proc 历史: 刚进入环境,INSPECT,4
+2064,当前路径 /proc 还有未探索的子目录 历史: grep → uptime,EXPLORE,6
+2065,"探索阶段: 从 /dev 扩展 已访问 /sys, /var, /tmp, /usr/local/bin 历史: 刚进入环境",EXPLORE,6
+2066,当前路径 /var 发现配置文件 log/syslog 历史: 无,READ,0
+2067,在 /sys 下发现文件 class/net/eth0/address 历史: wc → pwd,READ,0
+2068,环境: /tmp 准备获取 docker 帮助信息 历史: 无,HELP,7
+2069,需了解系统系统版本 环境: /etc 历史: pwd → wc,INFO,3
+2070,沙箱环境 /root 下存在文本文件 services 历史: whoami → pwd → uptime,READ,0
+2071,系统监控: 查看运行时间 位置: /root 历史: 刚进入环境,INFO,3
+2072,帮助查询: ps 当前路径 /proc 历史: 无,HELP,7
+2073,查看内存信息以了解环境状态 当前: /etc 历史: 无,INFO,3
+2074,"环境探索中 当前: /proc 已访问 /var, /tmp, /, /sys 历史: 无",EXPLORE,6
+2075,准备看 redis-cli 的帮助 环境 /usr/bin 历史: 刚进入环境,HELP,7
+2076,准备检查内存信息 沙箱路径: /usr/local/bin 历史: 无,INFO,3
+2077,准备看 nginx 的帮助 环境 /etc 历史: 刚进入环境,HELP,7
+2078,帮助查询: git 当前路径 /var/log 历史: ps → pwd → cat /proc/cpuinfo,HELP,7
+2079,docker-compose 有多少行数据 当前路径 /usr/local/bin 历史: grep,COUNT,5
+2080,在 /proc 下查找包含 127.0.0.1 的内容 历史: 刚进入环境,SEARCH,2
+2081,刚进入 /usr/local/bin 准备查看目录内容 历史: 无,LIST,1
+2082,位置: /sys 准备执行目录浏览 历史: 刚进入环境,LIST,1
+2083,准备统计 /usr/bin/vim 的行 历史: 无,COUNT,5
+2084,准备执行 ping --help 当前: /usr/bin 历史: grep → ls → cd,HELP,7
+2085,ping 命令路径验证 环境: /proc 历史: 无,INSPECT,4
+2086,查看 passwd 行数 环境路径 /root 历史: uptime → cat /proc/cpuinfo,COUNT,5
+2087,环境诊断: 需要进程信息 当前路径: /sys 历史: cat /proc/cpuinfo → head,INFO,3
+2088,在 /dev 中，文件 null 可能存在有用信息 历史: 无,READ,0
+2089,沙箱目录 /sys 存在文件 devices/system/cpu/online 上步操作: ls 看到很多文件 历史: 刚进入环境,READ,0
+2090,沙箱诊断: 获取负载情况 当前路径 /sys 历史: 刚进入环境,INFO,3
+2091,沙箱状态: 需读取进程信息 当前: /sys 历史: 无,INFO,3
+2092,当前路径: /mnt 文件列表未知 历史: 无,LIST,1
+2093,lsof 命令参数不清楚 需 --help 当前: /mnt 历史: grep → pwd,HELP,7
+2094,环境诊断: htop 是否可用 当前 /tmp 历史: 刚进入环境,INSPECT,4
+2095,环境 /usr/bin 中查找 find 的位置 历史: 无,INSPECT,4
+2096,当前路径: /var 文件列表未知 历史: ls → grep,LIST,1
+2097,想运行 zip 先确认安装 当前: /dev 历史: 无,INSPECT,4
+2098,沙箱中 mysql 如何使用 需查帮助 当前 /usr/bin 历史: 无,HELP,7
+2099,/root 附近可能有未发现的目录 准备探索 历史: 刚进入环境,EXPLORE,6
+2100,到达 /usr/local/bin 准备浏览文件列表 历史: 刚进入环境,LIST,1
+2101,cache.json 中可能包含 nginx 需搜索验证 历史: pwd,SEARCH,2
+2102,需要当前时间来评估环境 当前: /proc 历史: 无,INFO,3
+2103,环境: /tmp 准备获取 grep 帮助信息 历史: 无,HELP,7
+2104,需过滤 /home 中含 password 的行 历史: ls → df → cat /proc/cpuinfo,SEARCH,2
+2105,环境显示 /sys/devices/system/cpu/online 可读 历史: 无,READ,0
+2106,系统信息收集: 系统版本 位置: / 历史: 无,INFO,3
+2107,查看 node 行数 环境路径 /usr/local/bin 历史: 刚进入环境,COUNT,5
+2108,系统概览: 查看系统版本 路径: /mnt 历史: cat,INFO,3
+2109,准备检查 curl 可执行性 当前: /var/log 历史: 无,INSPECT,4
+2110,了解 sed 的可用选项 当前: /usr/local/bin 历史: 无,HELP,7
+2111,需读取 /usr/local/bin/docker-compose 获取信息 历史: ls,READ,0
+2112,准备看 git 的帮助 环境 /usr/local/bin 历史: 无,HELP,7
+2113,/var 是新发现的路径 需要浏览 历史: 无,LIST,1
+2114,位置: /usr/bin 准备执行目录浏览 历史: date → wc → pwd,LIST,1
+2115,"沙箱探索继续 当前 /dev 已访问 /var/log, /usr/bin 历史: 无",EXPLORE,6
+2116,沙箱状态: 需读取进程信息 当前: /var 历史: 无,INFO,3
+2117,需确认 tar 命令是否存在 当前目录 / 历史: 无,INSPECT,4
+2118,环境已熟悉 当前: /tmp 需要发现新区域 历史: head → cd → grep,EXPLORE,6
+2119,目标: 在 node 中查找 error 当前: /usr/local/bin 历史: uptime → date,SEARCH,2
+2120,数据量检查: user/data.csv 行数 当前 /home 历史: 无,COUNT,5
+2121,在 /proc 下查找包含 127.0.0.1 的内容 历史: grep → pwd,SEARCH,2
+2122,准备获取进程信息 当前: /home 历史: 刚进入环境,INFO,3
+2123,"准备离开 /mnt 前往未知区域 已访问 /etc, /sys, /usr/local/bin, /var, / 历史: 刚进入环境",EXPLORE,6
+2124,已定位文件 ssh/sshd_config 位于 /etc 历史: 无,READ,0
+2125,准备统计 /usr/local/bin/node 的行 历史: 无,COUNT,5
+2126,沙箱状态: 需读取运行时间 当前: /dev 历史: 刚进入环境,INFO,3
+2127,沙箱中 /mnt 的内容需要浏览 历史: 无,LIST,1
+2128,检查 redis-cli 的安装路径 环境: /etc 历史: 无,INSPECT,4
+2129,已发现 localhost 需在 scripts/backup.sh 中搜索更多 历史: 无,SEARCH,2
+2130,沙箱目录 /sys 存在文件 class/net/eth0/address 上步操作: 执行 grep 历史: grep → ps,READ,0
+2131,需检查 netstat 是否在 PATH 中 当前 /root 历史: df → uptime → wc,INSPECT,4
+2132,想学习 node 的参数 当前目录 /tmp 历史: 无,HELP,7
+2133,沙箱环境 验证 awk 安装 当前: /tmp 历史: 无,INSPECT,4
+2134,沙箱中定位 ssh 当前目录 /proc 历史: 刚进入环境,INSPECT,4
+2135,需了解 www/html/index.html 的数据量 当前 /var 历史: 无,COUNT,5
+2136,系统信息收集: 运行时间 位置: /dev 历史: ls,INFO,3
+2137,user/.profile 行数统计 当前目录 /home 历史: 刚进入环境,COUNT,5
+2138,检查 curl 是否存在 当前路径: /var/log 历史: 无,INSPECT,4
+2139,当前 /usr/local/bin 附近还有未知路径 历史: 无,EXPLORE,6
+2140,"探索模式: 从 /root 出发 已访问 /dev, /tmp, /home 历史: 刚进入环境",EXPLORE,6
+2141,已收集 /usr/local/bin 信息 准备探索新路径 历史: 无,EXPLORE,6
+2142,python3 命令参数不清楚 需 --help 当前: /etc 历史: 无,HELP,7
+2143,/mnt 目录下找到 curl 上步: 发现新目录 /mnt 历史: 无,READ,0
+2144,"已知路径: /mnt, /var, /home 准备从 /proc 出发探索 历史: date → head",EXPLORE,6
+2145,"探索阶段: 从 /home 扩展 已访问 /opt, /mnt, /proc, /dev 历史: 刚进入环境",EXPLORE,6
+2146,沙箱诊断: 获取进程信息 当前路径 /usr/local/bin 历史: 无,INFO,3
+2147,检查 htop 的安装路径 环境: / 历史: cd,INSPECT,4
+2148,在 /usr/bin 中计数 python3 的行 历史: 无,COUNT,5
+2149,检查 awk 的安装路径 环境: /opt 历史: whoami,INSPECT,4
+2150,在 cache.json 中发现 timeout 关键字 当前目录: /tmp 历史: 无,SEARCH,2
+2151,当前 /mnt 搜索关键词 localhost 历史: 无,SEARCH,2
+2152,在 /root 中准备查询磁盘信息 历史: 刚进入环境,INFO,3
+2153,准备使用 tar 先检查是否存在 当前: /var 历史: 无,INSPECT,4
+2154,沙箱环境 验证 ping 安装 当前: /usr/local/bin 历史: 无,INSPECT,4
+2155,系统概览: 查看当前时间 路径: /mnt 历史: 无,INFO,3
+2156,/opt 目录下可能包含更多子目录 历史: 无,LIST,1
+2157,已定位文件 log/auth.log 位于 /var 历史: wc → cat /proc/cpuinfo → ps,READ,0
+2158,准备使用 zip 需先定位 当前目录 /proc 历史: 无,INSPECT,4
+2159,准备统计 /tmp/test.sh 的行 历史: 无,COUNT,5
+2160,zero 行数统计 当前目录 /dev 历史: cat → pwd,COUNT,5
+2161,/ 环境中 sed 命令路径检查 历史: 无,INSPECT,4
+2162,在 /var 下统计 spool/cron/crontabs/root 行数 历史: 无,COUNT,5
+2163,需要当前时间来评估环境 当前: /var 历史: head → cat → cat /proc/cpuinfo,INFO,3
+2164,准备 zip --help 当前目录 /sys 历史: 无,HELP,7
+2165,在 /dev 中准备查询进程信息 历史: cat /proc/cpuinfo → cat → cd,INFO,3
+2166,查看内存信息以了解环境状态 当前: / 历史: 刚进入环境,INFO,3
+2167,沙箱环境 当前 /tmp 搜索目标: error 历史: head → ps,SEARCH,2
+2168,想执行 git 先检查安装位置 当前: /root 历史: whoami → grep,INSPECT,4
+2169,"已知区域: /proc, /, /usr/local/bin, /mnt 当前 /dev 需扩大范围 历史: 无",EXPLORE,6
+2170,当前路径 /etc 需搜索 password 相关条目 历史: 无,SEARCH,2
+2171,沙箱目录 /usr/local/bin 存在文件 docker-compose 上步操作: 进入 /usr/local/bin 历史: cat /proc/cpuinfo,READ,0
+2172,沙箱目录 / 存在文件 hostname 上步操作: ls 看到很多文件 历史: 无,READ,0
+2173,准备查看 nginx 的帮助页面 当前目录 /opt 历史: 无,HELP,7
+2174,当前目录: /tmp 历史: 无 需要查看系统内存信息,INFO,3
+2175,沙箱中 curl 是否可用 当前: /etc 历史: 无,INSPECT,4
+2176,环境诊断: 需要CPU信息 当前路径: /usr/local/bin 历史: cat → date,INFO,3
+2177,沙箱目录 /tmp 存在文件 cache.json 上步操作: head 查看文件头部 历史: 无,READ,0
+2178,在 output.txt 中发现 failed 关键字 当前目录: /tmp 历史: 无,SEARCH,2
+2179,"当前: /home 探索进度: 已访问 /proc, /tmp, /mnt, /etc 需扩展 历史: grep → cat → ps",EXPLORE,6
+2180,"沙箱环境 已访问 /dev, /var/log, /proc, /usr/local/bin, /tmp 当前 /usr/bin 继续探索 历史: 无",EXPLORE,6
+2181,文件 meminfo 大小未知 先统计行数 当前: /proc 历史: ps → head,COUNT,5
+2182,在 / 下需要了解有哪些文件和目录 历史: 无,LIST,1
+2183,查看内存信息以了解环境状态 当前: /home 历史: whoami → wc,INFO,3
+2184,环境已熟悉 当前: /sys 需要发现新区域 历史: 无,EXPLORE,6
+2185,需确认 sed 命令是否存在 当前目录 /mnt 历史: 无,INSPECT,4
+2186,当前目录: /proc 上步: ls 看到很多文件 历史: 无,LIST,1
+2187,在 /mnt 下查找包含 token 的内容 历史: 刚进入环境,SEARCH,2
+2188,"当前: /usr/bin 探索进度: 已访问 /root, /dev, /var/log, / 需扩展 历史: whoami → ls",EXPLORE,6
+2189,准备检查 awk 可执行性 当前: /proc 历史: 无,INSPECT,4
+2190,沙箱环境 验证 netstat 安装 当前: /dev 历史: cd → grep → cat,INSPECT,4
+2191,想运行 awk 先确认安装 当前: /mnt 历史: 无,INSPECT,4
+2192,目录 /usr/local/bin 的内容尚未查看 历史: cd → ps,LIST,1
+2193,沙箱环境 /home 下存在文本文件 user/data.csv 历史: 刚进入环境,READ,0
+2194,已进入 /proc 准备查看文件清单 历史: ps → date → cat /proc/cpuinfo,LIST,1
+2195,准备检查 lsof 可执行性 当前: /usr/local/bin 历史: cd → df,INSPECT,4
+2196,"沙箱环境 已访问 /proc, /var/log, / 当前 /dev 继续探索 历史: pwd",EXPLORE,6
+2197,需计数 scripts/backup.sh 中的条目数 当前: /opt 历史: 无,COUNT,5
+2198,"沙箱环境 已访问 /var, /usr/local/bin, /home, /usr/bin 当前 /mnt 继续探索 历史: 无",EXPLORE,6
+2199,需了解 python3 的数据量 当前 /usr/bin 历史: 无,COUNT,5
+2200,"已知区域: /var, /home 当前 /usr/bin 需扩大范围 历史: 无",EXPLORE,6
+2201,定位 docker 在 /mnt 中的位置 历史: 无,SEARCH,2
+2202,当前目录: /usr/local/bin 上步: 浏览目录 历史: cat /proc/cpuinfo → ls,LIST,1
+2203,需确认运行时间 当前位于 /proc 历史: pwd,INFO,3
+2204,stat 内容长度未知 需计数 当前: /mnt 历史: 无,COUNT,5
+2205,准备检查负载情况 沙箱路径: /proc 历史: cd → grep,INFO,3
+2206,在 /tmp 下发现文件 cache.json 历史: 无,READ,0
+2207,ping 命令用法未知 需查看帮助 当前 /usr/bin 历史: cat /proc/cpuinfo → head → pwd,HELP,7
+2208,刚刚 cd 到 /dev 需要看看里面有什么 历史: 刚进入环境,LIST,1
+2209,在 /usr/bin 中，文件 curl 可能存在有用信息 历史: uptime → grep,READ,0
+2210,文件 class/net/eth0/address 可能包含 admin 需确认 当前: /sys 历史: 无,SEARCH,2
+2211,需发现 /etc 之外的新区域 历史: ls → uptime,EXPLORE,6
+2212,需了解系统负载情况 环境: /usr/local/bin 历史: 刚进入环境,INFO,3
+2213,定位 root 在 /var 中的位置 历史: whoami → date → wc,SEARCH,2
+2214,/dev 目录下可能包含更多子目录 历史: 无,LIST,1
+2215,环境 /etc 中查找 jq 的位置 历史: 无,INSPECT,4
+2216,沙箱中 curl 如何使用 需查帮助 当前 /tmp 历史: 刚进入环境,HELP,7
+2217,准备使用 git 需先定位 当前目录 /dev 历史: 无,INSPECT,4
+2218,在 /home 下需要了解有哪些文件和目录 历史: whoami → pwd → wc,LIST,1
+2219,/home 目录下找到 user/.profile 上步: 发现新目录 /home 历史: 无,READ,0
+2220,hosts 中可能包含 error 需搜索验证 历史: 刚进入环境,SEARCH,2
+2221,系统检查: 运行时间 位置 /root 历史: 刚进入环境,INFO,3
+2222,"探索模式: 从 / 出发 已访问 /proc, /usr/bin, /dev 历史: wc → grep",EXPLORE,6
+2223,需了解 scripts/backup.sh 的数据量 当前 /opt 历史: wc → uptime → cat /proc/cpuinfo,COUNT,5
+2224,需了解 cache.json 的数据量 当前 /tmp 历史: 刚进入环境,COUNT,5
+2225,在 /root 中计数 filesystems 的行 历史: 无,COUNT,5
+2226,沙箱环境 准备获取 grep 帮助 当前 /mnt 历史: 刚进入环境,HELP,7
+2227,在 /mnt 中需要了解目录布局 历史: pwd → wc → cd,LIST,1
+2228,需过滤 /root 中含 connection 的行 历史: 刚进入环境,SEARCH,2
+2229,查看内存信息以了解环境状态 当前: /mnt 历史: 无,INFO,3
+2230,"探索模式: 从 /proc 出发 已访问 /etc, /sys, /usr/bin, /home 历史: 刚进入环境",EXPLORE,6
+2231,环境 /tmp 中查找 jq 的位置 历史: ps → uptime,INSPECT,4
+2232,环境提示 /proc 中存在 127.0.0.1 需搜索 历史: 无,SEARCH,2
+2233,帮助查询: node 当前路径 /root 历史: 刚进入环境,HELP,7
+2234,在 /root 中计数 journalctl 的行 历史: 无,COUNT,5
+2235,已发现 localhost 需在 output.txt 中搜索更多 历史: 刚进入环境,SEARCH,2
+2236,在 / 的文件中搜索 localhost 模式 历史: wc → uptime,SEARCH,2
+2237,系统信息收集: 当前时间 位置: /dev 历史: 无,INFO,3
+2238,位置: /home 准备执行目录浏览 历史: 刚进入环境,LIST,1
+2239,准备 git --help 当前目录 /home 历史: 无,HELP,7
+2240,文件 user/.bashrc 可能包含 token 需确认 当前: /home 历史: 无,SEARCH,2
+2241,环境 /mnt 中查找 grep 的位置 历史: 无,INSPECT,4
+2242,系统检查: 用户信息 位置 / 历史: 刚进入环境,INFO,3
+2243,准备获取当前时间 当前: /dev 历史: 无,INFO,3
+2244,/proc 是新发现的路径 需要浏览 历史: 刚进入环境,LIST,1
+2245,当前 /mnt 准备查询负载情况 历史: 刚进入环境,INFO,3
+2246,环境地图不完整 当前 /root 需探索更多 历史: 无,EXPLORE,6
+2247,准备 grep password 在 /home 下的文件中 历史: 无,SEARCH,2
+2248,/tmp 附近可能有未发现的目录 准备探索 历史: 无,EXPLORE,6
+2249,/root 目录中 syslog 是上步发现的重要文件 历史: 无,READ,0
+2250,需了解 spool/cron/crontabs/root 的数据量 当前 /var 历史: 刚进入环境,COUNT,5
+2251,当前 /usr/bin 附近还有未知路径 历史: pwd → whoami,EXPLORE,6
+2252,准备使用 awk 先检查是否存在 当前: /etc 历史: wc,INSPECT,4
+2253,刚进入 /var/log 准备查看目录内容 历史: df → head → grep,LIST,1
+2254,刚刚 cd 到 /root 需要看看里面有什么 历史: 无,LIST,1
+2255,需了解 data.csv 的数据量 当前 /mnt 历史: 无,COUNT,5
+2256,查找 password: 当前目录 / 已知文件 fstab 历史: 无,SEARCH,2
+2257,准备统计 /tmp/cache.json 的行 历史: date → cat,COUNT,5
+2258,刚进入 /sys 准备查看目录内容 历史: 刚进入环境,LIST,1
+2259,环境诊断: 需要用户信息 当前路径: /sys 历史: cat /proc/cpuinfo,INFO,3
+2260,"环境探索中 当前: /mnt 已访问 /etc, /proc, /home 历史: 刚进入环境",EXPLORE,6
+2261,环境路径: /home 可访问文件: user/.bashrc 历史: head → pwd,READ,0
+2262,"准备离开 /mnt 前往未知区域 已访问 /root, /var, /usr/bin 历史: 无",EXPLORE,6
+2263,探索到 /var/log 准备列出所有条目 历史: 刚进入环境,LIST,1
+2264,系统概览: 查看系统版本 路径: /usr/local/bin 历史: 无,INFO,3
+2265,需确认 find 命令是否存在 当前目录 / 历史: 刚进入环境,INSPECT,4
+2266,沙箱中还有更多未知区域 当前 /tmp 历史: 无,EXPLORE,6
+2267,当前目录: /sys 已知文件: class/net/eth0/address 需统计行数 历史: head → ls → whoami,COUNT,5
+2268,/proc 是新发现的路径 需要浏览 历史: cat /proc/cpuinfo,LIST,1
+2269,需学习 tar 命令 当前: / 历史: wc,HELP,7
+2270,已发现 127.0.0.1 需在 shadow 中搜索更多 历史: grep → uptime,SEARCH,2
+2271,进入目录 / 上步: 读取 /etc/passwd 历史: cat → uptime → head,LIST,1
+2272,当前路径 /dev 还有未探索的子目录 历史: grep,EXPLORE,6
+2273,沙箱中定位 curl 当前目录 /home 历史: df → date → cat /proc/cpuinfo,INSPECT,4
+2274,当前路径 /var/log 还有未探索的子目录 历史: pwd,EXPLORE,6
+2275,沙箱中定位 awk 当前目录 /tmp 历史: 无,INSPECT,4
+2276,沙箱环境 准备获取 htop 帮助 当前 /proc 历史: 刚进入环境,HELP,7
+2277,查找 nginx: 当前目录 /dev 已知文件 sda 历史: df → whoami,SEARCH,2
+2278,准备统计 /sys/class/net/eth0/address 的行 历史: pwd,COUNT,5
+2279,当前目录: /root 已知文件: services 上步: 无操作 历史: 无,READ,0
+2280,查看CPU信息以了解环境状态 当前: /home 历史: df → cat /proc/cpuinfo,INFO,3
+2281,需发现 /home 之外的新区域 历史: 无,EXPLORE,6
+2282,需确认 ping 命令是否存在 当前目录 /tmp 历史: 无,INSPECT,4
+2283,环境路径: /usr/local/bin 可访问文件: docker-compose 历史: 无,READ,0
+2284,定位 failed 在 /root 中的位置 历史: 刚进入环境,SEARCH,2
+2285,uptime 内容长度未知 需计数 当前: /proc 历史: 无,COUNT,5
+2286,目录 /dev 的内容尚未查看 历史: 刚进入环境,LIST,1
+2287,当前目录: /opt 已知文件: app/config.yaml 历史: ls → date,READ,0
+2288,在 /proc 中，文件 uptime 可能存在有用信息 历史: 刚进入环境,READ,0
+2289,环境: /dev 需验证 find 命令路径 历史: wc,INSPECT,4
+2290,当前目录: /var/log 需确认 docker 是否安装 历史: 刚进入环境,INSPECT,4
+2291,位置: /mnt 准备执行目录浏览 历史: 无,LIST,1
+2292,环境路径 /dev 需要列出子项 历史: cat /proc/cpuinfo → cat → df,LIST,1
+2293,准备 awk --help 当前目录 /mnt 历史: 刚进入环境,HELP,7
+2294,文件系统显示 vim 在 /usr/bin 中 历史: 无,READ,0
+2295,工作目录: /sys 目标文件: devices/system/cpu/online 历史: 无,READ,0
+2296,工作目录: /sys 目标文件: class/net/eth0/address 历史: 无,READ,0
+2297,环境分析需要系统版本 当前: /etc 历史: 无,INFO,3
+2298,目标: 在 .profile 中查找 127.0.0.1 当前: /root 历史: 无,SEARCH,2
+2299,系统检查: 进程信息 位置 /opt 历史: 无,INFO,3
+2300,在 /opt 下统计 scripts/backup.sh 行数 历史: 无,COUNT,5
+2301,需要在 /usr/bin 下搜索 ssh 上步: 读取 /usr/bin/python3 历史: head → cat → cat /proc/cpuinfo,SEARCH,2
+2302,刚刚 cd 到 /usr/local/bin 需要看看里面有什么 历史: 无,LIST,1
+2303,确认 mysql 可执行文件位置 当前: /mnt 历史: wc → ps,INSPECT,4
+2304,环境分析需要磁盘信息 当前: /usr/local/bin 历史: cat /proc/cpuinfo → df → cd,INFO,3
+2305,在 bash 中发现 error 关键字 当前目录: /usr/bin 历史: 无,SEARCH,2
+2306,当前位于 /dev 注意到文件 zero 历史: 无,READ,0
+2307,准备调用 curl 先验证路径 当前: /dev 历史: cat /proc/cpuinfo → pwd → cd,INSPECT,4
+2308,sda 内容长度未知 需计数 当前: /dev 历史: 无,COUNT,5
+2309,沙箱中 /var/log 的内容需要浏览 历史: df → head → cat,LIST,1
+2310,系统信息收集: 用户信息 位置: /proc 历史: 无,INFO,3
+2311,在 /proc 中，文件 filesystems 可能存在有用信息 历史: 无,READ,0
+2312,沙箱环境 当前 /var 搜索目标: 127.0.0.1 历史: ls → whoami → head,SEARCH,2
+2313,/mnt 目录下找到 os-release 上步: 检查系统信息 历史: df → whoami,READ,0
+2314,目录 /proc 的内容尚未查看 历史: 刚进入环境,LIST,1
+2315,沙箱环境 /var 下存在文本文件 log/auth.log 历史: 刚进入环境,READ,0
+2316,上步发现 docker 相关信息 当前: /root 历史: ps → cat /proc/cpuinfo,SEARCH,2
+2317,系统信息收集: 运行时间 位置: /usr/bin 历史: 刚进入环境,INFO,3
+2318,沙箱环境 验证 ping 安装 当前: / 历史: 无,INSPECT,4
+2319,沙箱中 find 是否可用 当前: /sys 历史: 无,INSPECT,4
+2320,"准备离开 /home 前往未知区域 已访问 /usr/local/bin, /sys, /mnt, /tmp 历史: 无",EXPLORE,6
+2321,需了解系统系统版本 环境: /root 历史: 刚进入环境,INFO,3
+2322,vim 中可能包含 config 需搜索验证 历史: cat /proc/cpuinfo → date,SEARCH,2
+2323,目录 /home 中可能有包含 docker 的文件 历史: 刚进入环境,SEARCH,2
+2324,文件 null 可能包含 token 需确认 当前: /dev 历史: 刚进入环境,SEARCH,2
+2325,在 /opt 下发现文件 scripts/backup.sh 历史: uptime → whoami,READ,0
+2326,vim 有多少行数据 当前路径 /usr/bin 历史: whoami → ls → df,COUNT,5
+2327,了解 jq 的可用选项 当前: /proc 历史: grep → wc,HELP,7
+2328,已定位文件 access.log 位于 /root 历史: ps,READ,0
+2329,需知道 scripts/backup.sh 的行数 当前: /opt 历史: 无,COUNT,5
+2330,/dev 目录下找到 random 上步: 浏览目录 历史: ls → wc,READ,0
+2331,当前目录: /var/log 已知文件: syslog 历史: grep → ps → head,READ,0
+2332,沙箱状态: 需读取系统版本 当前: /dev 历史: pwd → df,INFO,3
+2333,python3 命令参数不清楚 需 --help 当前: /sys 历史: 刚进入环境,HELP,7
+2334,探索到 /usr/bin 准备列出所有条目 历史: 刚进入环境,LIST,1
+2335,"已知路径: /var, /usr/bin, /, /mnt, /var/log 准备从 /dev 出发探索 历史: whoami → ls → cat /proc/cpuinfo",EXPLORE,6
+2336,沙箱中定位 zip 当前目录 /var 历史: 无,INSPECT,4
+2337,output.txt 行数统计 当前目录 /tmp 历史: 无,COUNT,5
+2338,数据量检查: shadow 行数 当前 /etc 历史: whoami,COUNT,5
+2339,准备看 tar 的帮助 环境 /dev 历史: 无,HELP,7
+2340,系统信息收集: 磁盘信息 位置: /tmp 历史: 无,INFO,3
+2341,"探索阶段: 从 /usr/local/bin 扩展 已访问 /opt, /etc, /tmp 历史: 无",EXPLORE,6
+2342,"/usr/local/bin 下已访问: /dev, /sys 准备探索未知 历史: cd → wc",EXPLORE,6
+2343,计数需求: os-release 在 / 中 历史: 无,COUNT,5
+2344,查看 app/config.yaml 行数 环境路径 /opt 历史: 无,COUNT,5
+2345,环境路径 /opt 需要列出子项 历史: 刚进入环境,LIST,1
+2346,在 /tmp 的文件中搜索 ssh 模式 历史: uptime,SEARCH,2
+2347,需要在 /opt 中搜索 127.0.0.1 的出现 历史: 刚进入环境,SEARCH,2
+2348,沙箱环境 准备获取 mysql 帮助 当前 /etc 历史: 无,HELP,7
+2349,系统状态未知 需获取系统版本 当前: /usr/bin 历史: 刚进入环境,INFO,3
+2350,沙箱环境 当前 /etc 搜索目标: password 历史: 无,SEARCH,2
+2351,tar 命令帮助查询 当前: /usr/local/bin 历史: 无,HELP,7
+2352,环境: /var 需验证 redis-cli 命令路径 历史: cat,INSPECT,4
+2353,需学习 docker 命令 当前: / 历史: 无,HELP,7
+2354,环境监测: CPU信息 当前目录 /home 历史: 无,INFO,3
+2355,已发现 error 需在 docker-compose 中搜索更多 历史: 无,SEARCH,2
+2356,准备使用 redis-cli 先检查是否存在 当前: /usr/local/bin 历史: 无,INSPECT,4
+2357,当前 /mnt 准备查询用户信息 历史: cat → wc,INFO,3
+2358,准备 wc -l random 当前: /dev 历史: ls → whoami,COUNT,5
+2359,/usr/bin 环境中 htop 命令路径检查 历史: 无,INSPECT,4
+2360,环境: /tmp 准备获取 redis-cli 帮助信息 历史: 无,HELP,7
+2361,目录 /mnt 中可能有包含 root 的文件 历史: 无,SEARCH,2
+2362,需计数 filesystems 中的条目数 当前: /proc 历史: 无,COUNT,5
+2363,/usr/local/bin 环境中 ssh 命令路径检查 历史: whoami → wc → ls,INSPECT,4
+2364,在 /proc 下发现文件 cpuinfo 历史: 无,READ,0
+2365,查看 nginx 文档 当前: / 历史: 无,HELP,7
+2366,工作目录: /opt 目标文件: scripts/backup.sh 历史: 无,READ,0
+2367,准备查看 / 中的 os-release 历史: 无,READ,0
+2368,/var/log 目录下可能包含更多子目录 历史: 无,LIST,1
+2369,准备获取系统版本 当前: /var/log 历史: 无,INFO,3
+2370,系统检查: 运行时间 位置 /etc 历史: 无,INFO,3
+2371,准备统计 crontab 的行数 当前目录 / 历史: 无,COUNT,5
+2372,当前位于 /var/log 目录结构待查看 历史: 无,LIST,1
+2373,当前目录: /var/log 上步: 空 历史: 无,LIST,1
+2374,需过滤 /var 中含 password 的行 历史: 无,SEARCH,2
+2375,"当前目录: /tmp 已访问: /etc, /usr/bin 准备探索新路径 历史: 刚进入环境",EXPLORE,6
+2376,准备看 ssh 的帮助 环境 /var/log 历史: 无,HELP,7
+2377,准备统计 /home/user/data.csv 的行 历史: 无,COUNT,5
+2378,环境 /home 中查找 find 的位置 历史: cat → pwd,INSPECT,4
+2379,了解 nginx 功能 需查帮助 当前路径 /etc 历史: grep → date,HELP,7
+2380,当前位于 /opt 注意到文件 scripts/backup.sh 历史: 无,READ,0
+2381,"探索模式: 从 /usr/local/bin 出发 已访问 /var/log, /root, /tmp, /var, / 历史: 无",EXPLORE,6
+2382,想学习 node 的参数 当前目录 /tmp 历史: 无,HELP,7
+2383,已定位文件 passwd 位于 /mnt 历史: uptime → df,READ,0
+2384,app/config.yaml 中可能包含 error 需搜索验证 历史: 无,SEARCH,2
+2385,当前位于 / 注意到文件 fstab 历史: whoami,READ,0
+2386,/var 是新发现的路径 需要浏览 历史: cat → wc,LIST,1
+2387,mysql 命令帮助查询 当前: / 历史: 无,HELP,7
+2388,/dev 目录下可能包含更多子目录 历史: whoami → df,LIST,1
+2389,docker 使用方法待了解 当前目录 /root 历史: 无,HELP,7
+2390,沙箱目录 /root 存在文件 node 上步操作: 执行 cat 历史: wc,READ,0
+2391,class/net/eth0/address 有多少行数据 当前路径 /sys 历史: 无,COUNT,5
+2392,"探索模式: 从 /tmp 出发 已访问 /usr/local/bin, /var/log, /opt, /etc 历史: 刚进入环境",EXPLORE,6
+2393,"沙箱探索继续 当前 /var 已访问 /sys, /usr/bin, /root, / 历史: 无",EXPLORE,6
+2394,文件系统显示 git 在 /mnt 中 历史: 刚进入环境,READ,0
+2395,"已知区域: /var/log, /mnt, /proc, /opt, /root 当前 /var 需扩大范围 历史: 无",EXPLORE,6
+2396,需要在 /var/log 中搜索 ssh 的出现 历史: cd → wc → grep,SEARCH,2
+2397,环境: /etc 需验证 sed 命令路径 历史: 无,INSPECT,4
+2398,"沙箱环境 已访问 /tmp, /root 当前 /etc 继续探索 历史: 无",EXPLORE,6
+2399,文件 node 条目计数 环境: /usr/local/bin 历史: 刚进入环境,COUNT,5

@@ -46,6 +46,7 @@ from agent.command_clusterer import CommandClusterer
 from agent.command_miner import CommandMiner
 from agent.world_model import WorldModel
 from agent.intent_discoverer import IntentDiscoverer
+from agent.workbench import Workbench
 from benchmark.param_extractor import ParameterExtractor
 from benchmark.template_engine import TemplateEngine, ExecResult
 from collections import deque
@@ -159,7 +160,8 @@ class OnlineAgent:
         self.classifier = IntentClassifier(classifier_checkpoint)
         self.param_extractor = ParameterExtractor()
         self.engine = TemplateEngine(dry_run=False, sandbox=self.sandbox)
-        self.state_encoder = StateEncoder()
+        # P4: 状态编码器 + 工作栏
+        self.state_encoder = StateEncoder(workbench=self.workbench)
         self.rnd = RND(embed_dim=384)
         self.buffer = ExperienceBuffer(max_size=buffer_size)
         # 分层命令选择器 (替代 flat CommandSelector)
@@ -180,6 +182,8 @@ class OnlineAgent:
                 print(f"  ✅ 世界模型已加载: {wm_ckpt}")
             except Exception as e:
                 print(f"  ⚠️ 世界模型加载失败: {e}")
+        # P4: 工作栏 (事实存储 + 逻辑链)
+        self.workbench = Workbench()
         self.intent_discoverer = IntentDiscoverer(min_trajectories=30)
 
         # 训练配置
@@ -251,6 +255,9 @@ class OnlineAgent:
             self.conductor_trajectories = []
             self.conductor_reward_baseline = {}
 
+        # P4: 持久思考向量 (跨步传递)
+        self.persistent_thought = torch.zeros(16)
+
         # 统计
         self.step_count = 0
         self.total_reward = 0.0
@@ -261,37 +268,42 @@ class OnlineAgent:
         self._failure_log: dict[str, int] = {}  # key→step_number_last_tried
         self._failure_cooldown = 50  # 步数冷卻
 
-        # 自动探索目标池
+        # P4: 工作栏驱动的目标池
         self.explore_targets = [
-            ("查看 /etc/hostname 的内容", "READ"),
-            ("查看 CPU 信息", "INFO"),
-            ("查看内存信息", "INFO"),
-            ("查看磁盘使用情况", "INFO"),
-            ("列出 / 目录", "LIST"),
-            ("列出 /etc 目录", "LIST"),
-            ("统计 /etc/passwd 的行数", "COUNT"),
-            ("在 /etc/passwd 中搜索 root", "SEARCH"),
-            ("检查 python3 是否安装", "INSPECT"),
-            ("查看 ls 的帮助文档", "HELP"),
-            ("探索 /tmp 目录", "EXPLORE"),
-            ("获取当前时间", "INFO"),
-            ("查看当前用户", "INFO"),
-            ("查看系统信息", "INFO"),
+            "查看 /etc/hostname 的内容",
+            "查看 CPU 信息",
+            "查看内存信息",
+            "查看磁盘使用情况",
+            "列出 / 目录",
+            "列出 /etc 目录",
+            "统计 /etc/passwd 的行数",
+            "在 /etc/passwd 中搜索 root",
+            "检查 python3 是否安装",
+            "探索 /tmp 目录",
+            "获取当前时间",
+            "查看当前用户",
+            "查看系统信息",
         ]
         self.goal_idx = 0
 
     def _get_next_goal(self) -> str:
-        """获取下一个探索目标 (RND 新颖度驱动)"""
+        """获取下一个探索目标 (工作栏 + RND 新颖度 + 轮转)"""
+        # P4: 工作栏推荐优先
+        if self.workbench:
+            follow_up = self.workbench.get_follow_up()
+            if follow_up:
+                intent_name, _ = follow_up
+                return f"验证发现: {intent_name}"
+        
         # 如果有缓冲区, 找新颖度最高的目标方向
         if self.buffer.size > 5:
             novel_exps = self.buffer.sample_novel(3)
             for exp in novel_exps:
                 if exp.novelty > 0.1:
-                    # 回到高新颖度的状态附近
                     return f"探索系统: 上次发现 {exp.state_text[:50]}"
 
         # 否则轮转预定目标
-        goal = self.explore_targets[self.goal_idx % len(self.explore_targets)][0]
+        goal = self.explore_targets[self.goal_idx % len(self.explore_targets)]
         self.goal_idx += 1
         return goal
 
@@ -489,7 +501,7 @@ class OnlineAgent:
                     for s in sample:
                         s_emb = self.classifier.get_embedding(s[0]).clone()
                         i_idx = INTENTS.index(s[1]) if s[1] in INTENTS else 0
-                        sim = self.world_model.simulate(s_emb, thought_vector, i_idx)
+                        sim = self.world_model.simulate(s_emb, self.persistent_thought, i_idx)
                         wm_values.append(sim["value"])
                     wm_t = torch.tensor(wm_values)
                 except Exception:
@@ -590,11 +602,13 @@ class OnlineAgent:
         state_text = self.state_encoder.get_state_text()
         state_emb = self.classifier.get_embedding(state_text).detach().clone()
 
-        # V3: 获取思考向量 (世界模型需要)
-        thought_vector = torch.zeros(16)
+        # V3 + P4: 思考向量 — 跨步持续 + 当前指挥家新鲜混合
+        thought_vector = self.persistent_thought.clone()
         if self.conductor_path_active:
             try:
-                thought_vector, _ = self.nanny.think(state_text)
+                fresh_thought, _ = self.nanny.think(state_text)
+                # 70% 持久方向 + 30% 新鲜状态
+                thought_vector = 0.7 * thought_vector + 0.3 * fresh_thought
             except Exception:
                 pass
 
@@ -663,6 +677,15 @@ class OnlineAgent:
                 if "cmd" not in params and intent in ("INSPECT", "HELP"):
                     params["cmd"] = "python3" if intent == "INSPECT" else "ls"
             self.ab_stats["classifier"] += 1
+
+        # P4: 工作栏后续推荐 — 覆盖浅层意图
+        if self.workbench and intent in ("LS_TMP", "READ_ETC", "INFO"):
+            follow_up = self.workbench.get_follow_up()
+            if follow_up:
+                fu_intent, fu_params = follow_up
+                intent = fu_intent
+                params = fu_params
+                print(f"  [WB] 工作栏推荐: {fu_intent} ← 覆盖 {intent}")
 
         # V3: 世界模型心理模拟 — 多步 rollout
         if intent is not None and self.step_count > 5:
@@ -803,6 +826,13 @@ class OnlineAgent:
         self.state_encoder.update(intent, cmd_summary, output)
         self.state_encoder.set_goal(self._get_next_goal())
 
+        # P4: 从输出提取事实到工作栏
+        cmd_name = str(params.get("custom_args", [intent]))
+        if isinstance(cmd_name, list):
+            cmd_name = " ".join(cmd_name)
+        if result.exit_code == 0:
+            self.workbench.extract_facts(intent, cmd_name, output, params, self.step_count)
+
         # 6. 世界模型好奇心 + RND 新颖度
         next_state_text = self.state_encoder.get_state_text()
 
@@ -830,11 +860,13 @@ class OnlineAgent:
         # 9. 计算奖励
         reward = self._compute_reward(result, intent, combined_curiosity, intent_diversity)
 
-        # 9a. 更新世界模型 (含真实 reward)
-        self.world_model.update(
+        # 9a. 更新世界模型 (含真实 reward), 获取预测的 next_thought
+        _, predicted_next = self.world_model.update(
             state_emb, thought_vector, intent_idx,
             output, result.exit_code, reward
         )
+        # P4: 持久思考 — 混合世界模型预测 + 当前思考
+        self.persistent_thought = 0.8 * predicted_next + 0.2 * thought_vector
 
         # 10. 存储经验 (含嵌入用于世界模型训练)
         self.buffer.add(Experience(
