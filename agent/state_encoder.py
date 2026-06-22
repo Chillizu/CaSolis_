@@ -28,6 +28,8 @@ class StateEncoder:
         self._last_output_summary: str = ""
         # P4: 工作栏引用 (不拥有, 外部共享)
         self.workbench = workbench
+        # P4.3: 已探索路径追踪
+        self.explored_paths: set[str] = set()
 
     def update(self, intent: str, command: str, output: str):
         """更新状态: 记录刚刚执行的命令和输出"""
@@ -44,6 +46,9 @@ class StateEncoder:
 
         # P3: 从输出中自动发现已知文件
         self._discover_files_from_output(intent, output)
+        
+        # P4.3: 记录已探索路径
+        self._track_explored_path(intent, command)
 
     def _summarize_output(self, intent: str, output: str) -> str:
         """将命令输出压缩成 1-2 行摘要"""
@@ -106,6 +111,10 @@ class StateEncoder:
         # P4.1: 思考标签
         thought_part = f"思考: {thought_label} " if thought_label else ""
         
+        # P4.3: 探索覆盖率
+        explore_summary = self.get_exploration_summary()
+        explore_part = f"探索: {explore_summary} " if explore_summary and explore_summary != "未探索" else ""
+        
         return (
             f"当前目录: {self.current_dir} "
             f"已知文件: {known} "
@@ -113,10 +122,51 @@ class StateEncoder:
             f"{thought_part}"
             f"{fact_part}"
             f"{goal_part}"
+            f"{explore_part}"
             f"输出: {self._last_output_summary[:60]} "
             f"工作区: {ws} "
             f"历史: {hist}"
         )
+
+    def _track_explored_path(self, intent: str, command: str):
+        """从命令中提取已探索的文件路径"""
+        # 小心正则反斜杠
+        import re
+        for match in re.finditer(r"/(?:[a-zA-Z0-9_./-]+)", command):
+            p = match.group(0)
+            if any(p.startswith(d) for d in ("/etc/", "/proc/", "/sys/", "/tmp/", "/dev/", "/var/", "/usr/")):
+                self.explored_paths.add(p)
+        # INFO 模板的已知路径
+        if intent == "INFO":
+            self.explored_paths.update(["/proc/cpuinfo", "/proc/meminfo"])
+
+    def get_unexplored_suggestions(self, n: int = 3) -> list[str]:
+        """推荐未探索的路径 (从常见系统路径中筛选)"""
+        # 常见可探索路径池
+        common_paths = [
+            "/etc/hostname", "/etc/hosts", "/etc/os-release", "/etc/fstab",
+            "/etc/resolv.conf", "/etc/passwd", "/etc/group", "/etc/shadow",
+            "/proc/version", "/proc/uptime", "/proc/loadavg", "/proc/stat",
+            "/proc/meminfo", "/proc/cpuinfo", "/proc/self/status",
+            "/proc/sys/kernel/hostname", "/sys/class/dmi/id/product_name",
+        ]
+        unexplored = [p for p in common_paths if p not in self.explored_paths]
+        # 如果常见路径都探索过了, 从 /proc 动态发现
+        if not unexplored:
+            return ["ls /proc/", "ls /sys/", "ls /etc/"]
+        return unexplored[:n]
+
+    def get_exploration_summary(self) -> str:
+        """探索覆盖率摘要"""
+        if not self.explored_paths:
+            return "未探索"
+        # 按目录分组
+        dirs = {}
+        for p in self.explored_paths:
+            d = p.rsplit("/", 2)[0] if "/" in p else "/"
+            dirs[d] = dirs.get(d, 0) + 1
+        parts = [f"{d}({c})" for d, c in sorted(dirs.items())]
+        return ", ".join(parts[:5])
 
     def _get_workspace_files(self) -> str:
         """查询 /workspace 文件列表"""

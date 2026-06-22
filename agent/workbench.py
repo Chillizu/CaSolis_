@@ -422,6 +422,39 @@ class Workbench:
 
         return None
 
+    def get_curiosity_probe(self, explored_paths: set[str] | None = None) -> Optional[tuple[str, dict]]:
+        """
+        好奇心探针: 当工作栏 idle 时推荐一个未探索的路径
+        从常见系统路径中挑一个没读过的
+        """
+        if explored_paths is None:
+            return None
+        
+        # 优先探索 /proc 的动态文件
+        proc_probes = [
+            "/proc/version", "/proc/uptime", "/proc/loadavg", "/proc/stat",
+            "/proc/self/status", "/proc/self/environ", 
+            "/proc/sys/kernel/hostname",
+        ]
+        for p in proc_probes:
+            if p not in explored_paths:
+                return ("CUSTOM", {"custom_args": ["cat", p], "cluster": "PROCFS"})
+        
+        # 然后 /etc 的基础文件
+        etc_probes = [
+            "/etc/hostname", "/etc/hosts", "/etc/os-release", "/etc/fstab",
+            "/etc/resolv.conf",
+        ]
+        for p in etc_probes:
+            if p not in explored_paths:
+                return ("CUSTOM", {"custom_args": ["cat", p], "cluster": "FILE_READ"})
+        
+        # 都看过了: 扫描 /proc 找新文件
+        if explored_paths:
+            return ("CUSTOM", {"custom_args": ["find", "/proc", "-maxdepth", "2", "-type", "f", "2>/dev/null", "|", "head", "-10"], "cluster": "FILE_FIND"})
+        
+        return None
+
     def check_chain_completed(self, executed_intent: str, executed_params: dict) -> bool:
         """检查链步骤完成 (chain_step满3后自动重置)"""
         if self.last_follow_up is None or self.chain_step >= 3:

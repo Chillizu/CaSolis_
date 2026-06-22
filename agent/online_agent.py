@@ -645,6 +645,15 @@ class OnlineAgent:
                 cs = self.workbench.chain_step
                 label = f"链{cs+1}/3" if cs > 0 else "新发现"
                 print(f"  [GOAL] {intent} ({label})")
+        elif self.workbench and self.step_count % 3 == 0:
+            # P4.3: 好奇心探针 — 工作栏空闲时探索未读文件
+            probe = self.workbench.get_curiosity_probe(self.state_encoder.explored_paths)
+            if probe:
+                intent, params = probe
+                params = dict(params)
+                used_goal = True
+                self.ab_stats["goal_driven"] += 1
+                print(f"  [PROBE] {intent} {params.get('custom_args', ['?'])}")
 
         if not used_goal:
             # Fallback: A/B 切换 + 指挥家/分类器
