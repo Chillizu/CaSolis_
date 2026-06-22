@@ -734,31 +734,49 @@ class OnlineAgent:
         if random.random() < self.explore_prob:
             return random.choice([i for i in INTENTS if i not in ("HELP",)])
         
-        intent = self.classifier.predict(state_text)
+        # P5.4: 元学习效用偏置 — 获取 logits (13维, 不含CUSTOM) 并加权
+        emb = self.classifier.get_embedding(state_text)
+        with torch.no_grad():
+            logits = self.classifier.head(emb)  # (13,) — 对应 INTENTS[0:13]
         
-        # HELP 已被禁用: 分类器选到 HELP 时重定向到第二高置信度的非 HELP 意图
+        # 收集元学习效用分作为 logit bias
+        utility_bias = torch.zeros(13)  # 匹配 classifier head 维度
+        if self.meta and len(self.meta.data) > 0:
+            for bid, b in self.meta.data.items():
+                if b.get("type") == "intent_choice":
+                    iname = b.get("params", {}).get("intent", "")
+                    if not iname or iname not in INTENTS or iname == "CUSTOM":
+                        continue
+                    u = b.get("utility", 0.0)
+                    n = b.get("n", 0)
+                    if n < 3:
+                        u *= n / 3.0
+                    # INTENTS[0:13] 不含 CUSTOM, idx 直接映射
+                    idx = INTENTS.index(iname)  # CUSTOM=13, 已跳过
+                    if idx < 13:
+                        utility_bias[idx] += u * 0.3
+        
+        biased_logits = logits + utility_bias.unsqueeze(0).to(logits.device)
+        # 从13维中选最佳, 然后映射回 INTENTS[0:13]
+        intent = INTENTS[biased_logits.argmax().item()]
+        
+        # HELP 禁用: 重定向到次优
         if intent == "HELP":
-            emb = self.classifier.get_embedding(state_text)
-            with torch.no_grad():
-                logits = self.classifier.head(emb)
             alternatives = [i for i in INTENTS if i not in ("HELP", "CUSTOM")]
-            sorted_idx = logits.argsort(descending=True).flatten()
+            sorted_idx = biased_logits.argsort(descending=True).flatten()
             for idx in sorted_idx.tolist():
                 alt = INTENTS[idx]
                 if alt in alternatives:
                     return alt
-            return "INFO"  # 全 fail 兜底
+            return "INFO"
         
-        # INSPECT 也做低置信度保护 (保留)
+        # INSPECT 低置信度保护
         if intent == "INSPECT":
-            emb = self.classifier.get_embedding(state_text)
-            with torch.no_grad():
-                logits = self.classifier.head(emb)
-                probs = torch.nn.functional.softmax(logits, dim=-1)
-                confidence = probs.max().item()
+            probs = torch.nn.functional.softmax(biased_logits, dim=-1)
+            confidence = probs.max().item()
             if confidence < 0.7:
                 alternatives = [i for i in INTENTS if i not in ("HELP", "INSPECT", "CUSTOM")]
-                sorted_idx = logits.argsort(descending=True).flatten()
+                sorted_idx = biased_logits.argsort(descending=True).flatten()
                 for idx in sorted_idx.tolist():
                     alt = INTENTS[idx]
                     if alt in alternatives:
@@ -1178,20 +1196,29 @@ class OnlineAgent:
             self._create_and_run_script()
 
         # P5.4: 元学习 — 记录步效用 + 定期淘汰
-        # 记录探针效用
-        if self._last_action_source == "probe":
+        asrc = self._last_action_source
+        # 提取本次是否产生了新事实 (用于更准确的成功定义)
+        new_fact_this_step = self.workbench.get_current_discovery() is not None
+        
+        # 记录探针效用 (Kimi: 成功=提取到新事实, 非 exit=0)
+        if asrc == "probe":
             probe_cmd = params.get("custom_args", [intent])
             probe_path = " ".join(str(a) for a in probe_cmd)[:50]
             probe_id = f"probe_{probe_path[:40].replace(' ', '_')}"
             self.meta.register(probe_id, "probe_path",
                               {"path": probe_path}, self.step_count)
-            self.meta.record(probe_id, 0.5 if step_success else -0.3, self.step_count)
-        # 记录意图效用
-        asrc = self._last_action_source
-        if asrc in ("classifier", "conductor"):
+            # 提取到新事实 = 成功, 否则 = 弱失败
+            probe_utility = 0.5 if (step_success and new_fact_this_step) else (-0.2 if step_success else -0.5)
+            self.meta.record(probe_id, probe_utility, self.step_count)
+        # 记录意图效用 (所有来源: classifier + conductor + imagination)
+        if asrc in ("classifier", "conductor", "imagination"):
             self.meta.register(f"intent_{intent}_{asrc}", "intent_choice",
                               {"intent": intent, "source": asrc}, self.step_count)
-            delta = 0.3 if step_success else -0.3
+            # 成功且产生新事实 = 高;
+            # 成功但无新事实 = 边际;
+            # 失败 = 负
+            delta = 0.5 if (step_success and new_fact_this_step) else \
+                    (0.1 if step_success else -0.4)
             self.meta.record(f"intent_{intent}_{asrc}", delta, self.step_count)
         # 每50步淘汰 + 保存 + 打印摘要
         if self.step_count > 0 and self.step_count % 50 == 0:
