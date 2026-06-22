@@ -274,6 +274,7 @@ class OnlineAgent:
         self.intent_history: list[str] = []
         self.success_count = 0
         self._last_action_source = "classifier"  # P5.4: 'probe'|'goal'|'imagination'|'conductor'|'classifier'
+        self._last_was_imagined = False  # P5.2: 当前步是否来自想象力
 
         # 失败抑制: 同一 intent+params 失败后 N 步内不再尝试
         self._failure_log: dict[str, int] = {}  # key→step_number_last_tried
@@ -800,6 +801,7 @@ class OnlineAgent:
     def step(self) -> tuple[bool, float]:
         """执行一步: A/B 切换 + 指挥家/分类器 → 执行"""
         self.step_count += 1
+        self._last_was_imagined = False  # P5.2: 每步重置
 
         # 1. 编码当前状态
         # P4.1: 先无思考标签生成 state_text (给指挥家用)
@@ -902,6 +904,7 @@ class OnlineAgent:
                         thought, logits = self.nanny.think(state_text)
                         probs = torch.nn.functional.softmax(logits, dim=-1)
                         best_prob = probs.max().item()
+                        cond_intent = INTENTS[logits.argmax().item()]
                         # P5.5: gate 0.5, 非 0.7
                         if best_prob > 0.5:
                             raw_intent, nanny_params, _ = self.nanny.translate(thought, logits, state_text=state_text)
@@ -921,8 +924,9 @@ class OnlineAgent:
                                 used_conductor = True
                                 self.ab_stats["conductor"] += 1
                                 self._last_cond_logits = logits.detach().clone()
-                    except:
-                        pass
+                    except Exception as e:
+                        if self.step_count % 10 == 0:
+                            print(f"  [CONDUCTOR-ERR] {e}")
 
             if not used_conductor:
                 intent = self._select_intent(state_text)
@@ -1187,7 +1191,7 @@ class OnlineAgent:
                 self.ab_stats["goal_driven_success"] += 1
             elif used_conductor:
                 self.ab_stats["conductor_success"] += 1
-            elif self.ab_stats.get("imagined", 0) > self.ab_stats.get("imagined_success", 0) + self.ab_stats.get("imagined_failed", 0):
+            elif self._last_was_imagined:
                 self.ab_stats["imagined_success"] += 1
             else:
                 self.ab_stats["classifier_success"] += 1

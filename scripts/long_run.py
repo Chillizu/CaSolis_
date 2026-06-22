@@ -74,9 +74,14 @@ def main():
             }
 
             # A/B 自适应率
-            cond_rate = agent.ab_stats["conductor_success"] / max(agent.ab_stats["conductor"], 1)
+            n_cond = agent.ab_stats["conductor"]
+            cond_rate = agent.ab_stats["conductor_success"] / max(n_cond, 1)
             clf_rate = agent.ab_stats["classifier_success"] / max(agent.ab_stats["classifier"], 1)
-            snapshot["p_conductor"] = 0.2 + 0.6 * max(0, min(1.0, cond_rate / max(clf_rate, 0.01)))
+            # 与 online_agent.py 相同的公式
+            if n_cond < 5:
+                snapshot["p_conductor"] = 0.1
+            else:
+                snapshot["p_conductor"] = 0.2 + 0.5 * max(0, min(1.0, cond_rate / max(clf_rate, 0.01)))
             snapshot["conductor_success_rate"] = cond_rate
             snapshot["classifier_success_rate"] = clf_rate
 
@@ -120,10 +125,14 @@ def main():
         "snapshots": snapshots,
     }
 
-    # A/B 自适应率
-    cond_rate = agent.ab_stats["conductor_success"] / max(agent.ab_stats["conductor"], 1)
+    # A/B 自适应率 (对齐 online_agent.py 公式)
+    n_cond = agent.ab_stats["conductor"]
+    cond_rate = agent.ab_stats["conductor_success"] / max(n_cond, 1)
     clf_rate = agent.ab_stats["classifier_success"] / max(agent.ab_stats["classifier"], 1)
-    final_report["p_conductor_final"] = 0.2 + 0.6 * max(0, min(1.0, cond_rate / max(clf_rate, 0.01)))
+    if n_cond < 5:
+        final_report["p_conductor_final"] = 0.1
+    else:
+        final_report["p_conductor_final"] = 0.2 + 0.5 * max(0, min(1.0, cond_rate / max(clf_rate, 0.01)))
 
     report_path = f"{log_dir}/report.json"
     with open(report_path, "w") as f:
