@@ -37,6 +37,8 @@ class IntentDiscoverer:
         self.min_trajectories = min_trajectories
         self.n_clusters = n_clusters
         self.trajectories: list[dict] = []
+        self._reported_intents: set[str] = set()  # P6.3: 已汇报过的候选, 避免刷屏
+        self._known_intents: set[str] = set()
         self._encoder = SentenceTransformer("all-MiniLM-L6-v2", local_files_only=True)
 
     def add_custom_trajectory(
@@ -118,10 +120,11 @@ class IntentDiscoverer:
                 "state_example": sample_state,
             })
 
-        # P6.3: 过滤已知意图 (只汇报真正新的)
-        if hasattr(self, '_known_intents') and self._known_intents:
-            filtered = [d for d in discovered if d['name'] not in self._known_intents]
-            discovered = filtered
+        # P6.3: 过滤已知意图 + 已汇报过的 (只汇报真正新的)
+        if self._known_intents:
+            discovered = [d for d in discovered if d['name'] not in self._known_intents]
+        if self._reported_intents:
+            discovered = [d for d in discovered if d['name'] not in self._reported_intents]
 
         # 按样本数降序
         discovered.sort(key=lambda x: -x["n_samples"])
@@ -153,6 +156,10 @@ class IntentDiscoverer:
     def filter_known(self, known_intents: list[str]):
         """P6.3: 标记已知意图, 不影响 discover() 但可供调用方过滤"""
         self._known_intents = set(known_intents)
+
+    def mark_reported(self, intent_names: list[str]):
+        """P6.3: 标记已汇报过的候选意图, 避免重复刷屏"""
+        self._reported_intents.update(intent_names)
 
     def _extract_template(self, cmd_base: str, full_command: str) -> list[str]:
         """从完整命令中提取模板 (参数用 {path} 代替)"""

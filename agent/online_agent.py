@@ -94,6 +94,29 @@ class IntentClassifier:
             print(f"  ⚠️ 分类器checkpoint加载部分失败, 新head随机初始化")
         self.head.to(self.device)
         self.head.eval()
+        self.checkpoint_path = checkpoint
+
+    def save(self, path: str = None):
+        import torch
+        torch.save(self.head.state_dict(), path or self.checkpoint_path)
+
+    def expand_intents(self, new_n: int):
+        """P6.4: 扩展分类头输出层以容纳新意图"""
+        import torch.nn as nn
+        old_head = self.head.net[-1]
+        old_n = old_head.out_features
+        if new_n <= old_n:
+            return
+
+        old_weight = old_head.weight.data  # (old_n, 128)
+        old_bias = old_head.bias.data      # (old_n,)
+        new_head = nn.Linear(128, new_n).to(self.device)
+        new_head.weight.data[:old_n] = old_weight
+        new_head.bias.data[:old_n] = old_bias
+        nn.init.normal_(new_head.weight.data[old_n:], std=0.01)
+        nn.init.zeros_(new_head.bias.data[old_n:])
+        self.head.net[-1] = new_head
+        print(f"  [Classifier] 分类头扩展: {old_n} → {new_n} 个输出")
 
     def predict(self, state_text: str) -> str:
         emb = self.encoder.encode(state_text, convert_to_tensor=True, device=self.device)
@@ -1121,29 +1144,12 @@ class OnlineAgent:
                         print(f"\n  🆕 发现 {len(new_intents)} 个候选意图!")
                         for ni in new_intents:
                             print(f"     {ni['name']:20s} ({ni['n_samples']}条, 例: {ni['cmd_base']})")
+                        # P6.3: 标记已汇报, 避免每步刷屏
+                        self.intent_discoverer.mark_reported([ni['name'] for ni in new_intents])
                         # P6.4: 自动接入稳定新意图 (>=5样本)
                         stable = [ni for ni in new_intents if ni['n_samples'] >= 5]
                         if stable:
-                            _old_intents = list(INTENTS)
-                            for ni in stable:
-                                name = ni['name']
-                                if name not in INTENTS:
-                                    INTENTS.append(name)
-                                    import agent.nanny as nanny
-                                    if name not in nanny.INTENTS:
-                                        nanny.INTENTS.append(name)
-                            if INTENTS != _old_intents:
-                                effective = len([i for i in INTENTS if i != 'CUSTOM'])
-                                self.conductor.expand_intents(effective)
-                                total_intents = len(INTENTS)
-                                self.world_model.expand_intents(total_intents)
-                                for ni in stable:
-                                    self.INTENT_REWARD_BASE[ni['name']] = 0.5
-                                self.conductor.save(
-                                    'checkpoints/conductor/online_aligned.pt')
-                                self.world_model.save(
-                                    'checkpoints/world_model/latest.pt')
-                                print(f"  [SYSTEM] 接入 {len(stable)} 个新意图: {', '.join(ni['name'] for ni in stable)}")
+                            self._expand_intents(stable)
 
         # 5. 更新状态
         cmd_summary = f"{intent} depth={depth}" if depth > 1 else f"{intent} {params}"
@@ -1512,33 +1518,16 @@ class OnlineAgent:
             self.buffer.load(exp_path)
             print(f"  ✅ 已加载经验: {self.buffer.size} 条")
 
-    def _try_expand_intents(self):
-        """P6.4: 检查 discoverer 发现的新意图, 如有则扩展系统"""
-        # 从 discoverer 获取未接人的意图
-        if not hasattr(self.intent_discoverer, '_known_intents'):
-            return
-
-        # 跑一次 discoverer, 但只取不在 INTENTS 中的
-        self.intent_discoverer.filter_known(INTENTS)
-        candidates = self.intent_discoverer.discover()
-
-        # 只需要有 >= 5 样本的稳定候选
-        new_intents = [
-            c for c in candidates
-            if c['n_samples'] >= 5 and c['name'] not in INTENTS
-        ]
-        if not new_intents:
-            return
-
+    def _expand_intents(self, stable_new_intents: list[dict]):
+        """P6.4: 将稳定新意图接入系统 (INTENTS + 分类头 + WM + Conductor + 训练)"""
         old_effective = len([i for i in INTENTS if i != "CUSTOM"])
 
         # 1. 追加到 INTENTS (末尾, 不改变已有索引)
         new_names = []
-        for ni in new_intents:
+        for ni in stable_new_intents:
             name = ni['name']
             if name not in INTENTS:
                 INTENTS.append(name)
-                # 同步 nanny.py 的 INTENTS
                 import agent.nanny as nanny
                 if name not in nanny.INTENTS:
                     nanny.INTENTS.append(name)
@@ -1555,20 +1544,98 @@ class OnlineAgent:
         total_intents = len(INTENTS)
         self.world_model.expand_intents(total_intents)
 
-        # 4. 为新意图注册奖励基础分
+        # 4. 扩展 IntentClassifier 分类头
+        self.classifier.expand_intents(effective)
+
+        # 5. 为新意图注册奖励基础分
         for name in new_names:
             self.INTENT_REWARD_BASE[name] = 0.5
-            if 'INTENT_BASE_CONFIG' in dir() and name not in INTENT_BASE_CONFIG:
-                pass  # 可选: 加配置
 
-        # 5. 保存扩展后的 checkpoint
+        # 6. 用 discoverer 的真实轨迹生成训练数据, 增量训练
+        training_data = self._generate_training_for_new_intents(new_names)
+        if training_data:
+            self._quick_train_new_intents(training_data)
+
+        # 7. 保存所有扩展后的 checkpoint
         self.conductor.save(
             os.path.join("checkpoints", "conductor", "online_aligned.pt"))
         self.world_model.save(
             os.path.join("checkpoints", "world_model", "latest.pt"))
+        self.classifier.save(
+            os.path.join("checkpoints", "intent_classifier", "best_head.pt"))
 
-        print(f"  [SYSTEM] 已接入 {len(new_names)} 个新意图: {', '.join(new_names)}")
+        print(f"  [SYSTEM] 接入 {len(new_names)} 个新意图: {', '.join(new_names)}")
         print(f"  [SYSTEM] 有效意图: {old_effective} → {effective}, 总意图: {total_intents}")
+
+    def _generate_training_for_new_intents(self, new_names: list[str]) -> list:
+        """P6.4: 从 discoverer 的真实轨迹生成新意图训练样本"""
+        if not hasattr(self.intent_discoverer, 'trajectories'):
+            return []
+        samples = []
+        # 新意图对应的命令基名 (从 discoverer 的 cmd_intent_map 反查)
+        rev = {v: k for k, v in {
+            "cat": "READ_ETC", "file": "CHECK_TYPE", "stat": "FILE_STAT",
+            "du": "DISK_USAGE", "ps": "PROCESS_LIST", "mount": "MOUNT_INFO",
+            "lspci": "PCI_DEVICES", "lsusb": "USB_DEVICES", "lsmod": "KERNEL_MODULES",
+            "dns": "DNS_CONFIG", "env": "ENV_VARS", "timedatectl": "TIME_INFO",
+        }.items()}
+        for name in new_names:
+            cmd_base = rev.get(name, "")
+            for t in self.intent_discoverer.trajectories:
+                if t.get("cmd_base", "") == cmd_base:
+                    intent_id = INTENTS.index(name) if name in INTENTS else -1
+                    samples.append({
+                        "state_text": t["state_text"],
+                        "intent": name,
+                        "intent_id": intent_id,
+                    })
+        return samples
+
+    def _quick_train_new_intents(self, training_data: list):
+        """P6.4: 用生成的数据对新意图做小批量训练"""
+        if not training_data:
+            return
+        import torch
+        import torch.nn.functional as F
+
+        self.classifier.head.train()
+        optimizer = torch.optim.AdamW(
+            self.classifier.head.parameters(), lr=1e-3, weight_decay=1e-4)
+
+        embs = []
+        labels = []
+        for s in training_data:
+            emb = self.classifier.encoder.encode(
+                s["state_text"], convert_to_tensor=True, device=self.device)
+            embs.append(emb)
+            labels.append(s["intent_id"])
+
+        if not embs:
+            return
+
+        X = torch.stack(embs).to(self.device)
+        y = torch.tensor(labels, device=self.device)
+
+        for epoch in range(20):
+            optimizer.zero_grad()
+            logits = self.classifier.head(X)
+            loss = F.cross_entropy(logits, y)
+            loss.backward()
+            torch.nn.utils.clip_grad_norm_(self.classifier.head.parameters(), 1.0)
+            optimizer.step()
+
+        self.classifier.head.eval()
+        print(f"  [TRAIN] 新意图增量训练: {len(training_data)} 样本 + 20 epoch")
+
+    def _try_expand_intents(self):
+        """P6.4: 检查并扩展新意图 (供 run() 调用)"""
+        if not hasattr(self.intent_discoverer, '_known_intents'):
+            return
+        self.intent_discoverer.filter_known(INTENTS)
+        candidates = self.intent_discoverer.discover()
+        stable = [c for c in candidates if c['n_samples'] >= 5 and c['name'] not in INTENTS]
+        if stable:
+            self._expand_intents(stable)
 
     def summarize(self) -> dict:
         """返回总统计"""
