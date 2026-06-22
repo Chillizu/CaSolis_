@@ -57,6 +57,8 @@ class SandboxExecutor:
     def __init__(self, image: str = SANDBOX_IMAGE, name: str = CONTAINER_NAME):
         self.image = image
         self.name = name
+        self._installed_packages: set[str] = set()
+        self._unavailable_commands: set[str] = set()
         self._ensure_image()
         self._ensure_container()
 
@@ -136,22 +138,14 @@ class SandboxExecutor:
             return ExecResult("", str(e), -1)
 
     def _try_auto_install(self, cmd: str, result: ExecResult):
-        """检测 stderr 中 'not found' 并尝试安装"""
+        """检测 stderr 中 'not found' 并记录不可用命令
+        (容器只读+无网络, apt-get 不可用, 仅跟踪)"""
         stderr = result.stderr
         for cmd_name, pkg in COMMAND_PACKAGE_MAP.items():
             if cmd_name in self._unavailable_commands:
                 continue
             if f"{cmd_name}: not found" in stderr or f"{cmd_name}: command not found" in stderr:
-                if pkg in self._installed_packages:
-                    self._unavailable_commands.add(cmd_name)
-                    return
-                print(f"  \U0001f4e6 安装 {cmd_name} -> {pkg}")
-                self.execute(f"apt-get install -y -qq {pkg} 2>/dev/null || true", timeout=30)
-                self._installed_packages.add(pkg)
-                # 验证安装
-                check = self.execute(f"which {cmd_name} 2>/dev/null || echo 'MISSING'", timeout=5)
-                if "MISSING" in (check.stdout or ""):
-                    self._unavailable_commands.add(cmd_name)
+                self._unavailable_commands.add(cmd_name)
 
     def execute_list(self, args: list[str], timeout: int = 10) -> ExecResult:
         """在容器内执行命令 (参数列表形式)"""

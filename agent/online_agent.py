@@ -221,7 +221,7 @@ class OnlineAgent:
             "ARCH_INFO":1.0,
             "HELP":    -0.8,
         }
-        self.device = "cpu"
+        self.device = self.classifier.device
 
         # 指挥家 + 保姆 (A/B 路径)
         self.conductor_path_active = False
@@ -322,14 +322,21 @@ class OnlineAgent:
 
     INTENT_REWARD_BASE = {
         # 有用: 获取系统信息
-        "INFO":    1.5,
-        "SEARCH":  1.5,
-        "COUNT":   1.2,
-        "READ":    1.0,
-        "LIST":    1.0,
+        "INFO":    1.2,
+        "SEARCH":  1.2,
+        "COUNT":   1.0,
+        "READ":    0.8,
+        "LIST":    0.8,
         # 中性
-        "EXPLORE": 0.8,
-        # 低价值 (容易偷懒, 严重惩罚)
+        "EXPLORE": 0.6,
+        "ARCH_INFO": 0.8,
+        "DISK_USAGE": 0.8,
+        "USB_DEVICES": 0.8,
+        "READ_ETC": 0.8,
+        # P5.5: LS_TMP/CUSTOM 信息量低, 基础分极低
+        "LS_TMP":  0.05,
+        "CUSTOM":  0.1,
+        # 低价值
         "INSPECT": 0.1,
         "HELP":   -0.8,
     }
@@ -377,12 +384,18 @@ class OnlineAgent:
         diversity_weight = 0.5 if use_creative else 0.3
         reward += intent_diversity * diversity_weight
 
-        # 连续重复惩罚: 同一个意图连续出现 >3 次
-        recent = self.intent_history[-4:] if len(self.intent_history) >= 4 else []
-        if len(recent) >= 4 and len(set(recent)) == 1:
-            if use_creative:
-                reward *= 0.2  # 创意模式更狠
-            else:
+        # P5.5: 强重复惩罚: 同一个意图连续 >2 次就递减
+        recent = self.intent_history[-5:] if len(self.intent_history) >= 5 else []
+        if recent:
+            seq_count = 0
+            for h in reversed(recent):
+                if h == intent:
+                    seq_count += 1
+                else:
+                    break
+            if seq_count >= 3:
+                reward *= 0.2  # 连续3次以上, 几乎归零
+            elif seq_count == 2:
                 reward *= 0.5
 
         # HELP 连续惩罚: 连续 HELP 越多, 惩罚越大
@@ -869,11 +882,17 @@ class OnlineAgent:
         if not used_goal:
             # Fallback: A/B 切换 + 指挥家/分类器
             used_conductor = False
-            # P1.5: A/B 自适应采样率
+            # P5.5: A/B 自适应采样率 (Wilson 下限, 小样本抑制)
             if self.conductor_path_active:
-                cond_rate = self.ab_stats["conductor_success"] / max(self.ab_stats["conductor"], 1)
-                clf_rate = self.ab_stats["classifier_success"] / max(self.ab_stats["classifier"], 1)
-                p_conductor = 0.2 + 0.6 * max(0, min(1.0, cond_rate / max(clf_rate, 0.01)))
+                n_cond = self.ab_stats["conductor"]
+                n_clf = self.ab_stats["classifier"]
+                cond_rate = self.ab_stats["conductor_success"] / max(n_cond, 1)
+                clf_rate = self.ab_stats["classifier_success"] / max(n_clf, 1)
+                # 小样本不信任: 至少5次样本才考虑 Conductor
+                if n_cond < 5:
+                    p_conductor = 0.1  # 低样本量, 低概率
+                else:
+                    p_conductor = 0.2 + 0.5 * max(0, min(1.0, cond_rate / max(clf_rate, 0.01)))
                 if self.mode in ("creative", "auto"):
                     recent = self.intent_history[-20:] if self.intent_history else []
                     if recent and len(set(recent)) / max(len(recent), 1) < 0.2:
@@ -883,8 +902,8 @@ class OnlineAgent:
                         thought, logits = self.nanny.think(state_text)
                         probs = torch.nn.functional.softmax(logits, dim=-1)
                         best_prob = probs.max().item()
-                        cond_intent = INTENTS[logits.argmax().item()]
-                        if best_prob > self.conductor_gate:
+                        # P5.5: gate 0.5, 非 0.7
+                        if best_prob > 0.5:
                             raw_intent, nanny_params, _ = self.nanny.translate(thought, logits, state_text=state_text)
                             if raw_intent != "HELP":
                                 intent = raw_intent
@@ -1078,6 +1097,9 @@ class OnlineAgent:
         cmd_name = str(params.get("custom_args", [intent]))
         if isinstance(cmd_name, list):
             cmd_name = " ".join(cmd_name)
+        # P5.5: 提取前记录事实数, 用于 success 判断
+        facts_before = len(self.workbench.facts)
+        discovery_before = self.workbench.get_current_discovery()
         if result.exit_code == 0:
             self.workbench.extract_facts(intent, cmd_name, output, params, self.step_count)
 
@@ -1112,9 +1134,21 @@ class OnlineAgent:
             if chain_bonus > 0:
                 print(f"  [CHAIN] +{chain_bonus:.1f} (step={self.workbench.chain_step})")
 
-        # 9. 计算奖励 (含链奖励)
+        # P5.5: 重复惩罚 key
+        repeat_key = f"{intent}:{str(params)[:40]}"
+        recent_repeats = sum(1 for k in self.intent_history[-10:] if k == intent)
+        is_repeat = (repeat_key in getattr(self, "_recent_actions", set()))
+        if not hasattr(self, "_recent_actions"):
+            self._recent_actions = set()
+        self._recent_actions.add(repeat_key)
+        if len(self._recent_actions) > 50:
+            self._recent_actions = set(list(self._recent_actions)[-30:])
+
+        # 9. 计算奖励 (含链奖励 + 重复惩罚)
         reward = self._compute_reward(result, intent, combined_curiosity, intent_diversity,
                                       chain_bonus=chain_bonus)
+        if is_repeat and recent_repeats > 2:
+            reward *= 0.3  # 重复严重惩罚
 
         # 9a. 更新世界模型 (含真实 reward), 获取预测的 next_thought
         _, predicted_next = self.world_model.update(
@@ -1141,9 +1175,12 @@ class OnlineAgent:
         # 9. 记录统计
         self.total_reward += reward
         self.intent_history.append(intent)
-        # 多命令: 用 all_exit_ok, 单命令: exit_code==0
-        step_success = all_exit_ok if multi_results else (result.exit_code == 0)
-        step_success = step_success and bool(output)
+        # P5.5: step_success 基础 = exit==0 + 有输出
+        facts_after = len(self.workbench.facts)
+        new_fact_this_step = facts_after > facts_before
+        new_discovery = self.workbench.get_current_discovery() and \
+                        self.workbench.get_current_discovery() != discovery_before
+        step_success = (result.exit_code == 0) and bool(output)
         if step_success:
             self.success_count += 1
             if used_goal:
@@ -1197,8 +1234,6 @@ class OnlineAgent:
 
         # P5.4: 元学习 — 记录步效用 + 定期淘汰
         asrc = self._last_action_source
-        # 提取本次是否产生了新事实 (用于更准确的成功定义)
-        new_fact_this_step = self.workbench.get_current_discovery() is not None
         
         # 记录探针效用 (Kimi: 成功=提取到新事实, 非 exit=0)
         if asrc == "probe":

@@ -484,7 +484,6 @@ class Workbench:
         if self.chain_step > 0 and self.chain_step < 3 and self.last_follow_up:
             return self.last_follow_up
         return self.get_follow_up()  # 链满, 重置
-        return True
 
     def get_chain_bonus(self) -> float:
         """链奖励递减: 第1步+1.5, 第2步+1.0, 第3步+0.5"""

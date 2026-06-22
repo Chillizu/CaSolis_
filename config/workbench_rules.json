@@ -316,6 +316,12 @@
       "pattern": "passwd_line_count",
       "key": "passwd_line_count",
       "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "users",
+      "key": "users",
+      "category": "script"
     }
   ]
 }
