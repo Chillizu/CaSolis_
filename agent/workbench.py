@@ -37,7 +37,7 @@ class Workbench:
 
     def extract_facts(self, intent: str, cmd_name: str, output: str,
                       params: dict | None = None, step: int = 0):
-        """从命令输出自动提取事实"""
+        """从命令输出自动提取事实 (内容优先, 命令名辅助)"""
         self._step_counter = step
         if not output or len(output.strip()) < 2:
             return
@@ -45,58 +45,92 @@ class Workbench:
         lower = cmd_name.lower()
         text = output.strip()
 
-        # 1. cat /etc/hostname — 主机名
-        if "hostname" in lower and ("cat" in lower or "read" in lower):
-            self._extract_hostname_file(text, intent, cmd_name, step)
+        # ── 内容优先的提取 (不依赖命令名) ──
 
-        # 2. uname -a — 内核 + 主机名 + 架构
-        if lower.startswith("uname"):
-            self._extract_uname(text, intent, cmd_name, step)
+        # uname -a 输出: Linux hostname 7.0.11-arch ...
+        text_lines = text.splitlines()
+        text_stripped = "\n".join(
+            l for l in text_lines
+            if not l.startswith("---")
+        ).strip()
+        first_line = text_lines[0] if text_lines else ""
+        
+        # 多命令输出: 跳过 --- [N] --- 包装, 取每段实际内容
+        segments = []
+        current = []
+        for line in text_lines:
+            if line.startswith("--- [") and line.endswith("] ---"):
+                if current:
+                    segments.append("\n".join(current))
+                    current = []
+            else:
+                current.append(line)
+        if current:
+            segments.append("\n".join(current))
 
-        # 3. cat /etc/os-release 或 cat /etc/*release
-        if "release" in lower and "cat" in lower:
-            self._extract_os_release(text, intent, cmd_name, step)
+        for seg_text in segments:
+            seg = seg_text.strip()
+            if not seg:
+                continue
+            
+            # uname -a (最少 4 个词: Linux hostname 5.x.y arch)
+            if seg.startswith("Linux ") and len(seg.split()) >= 4:
+                self._extract_uname(seg, intent, cmd_name, step)
+                continue
 
-        # 4. free, free -h — 内存
-        if lower.startswith("free"):
-            self._extract_free(text, intent, cmd_name, step)
+            # os-release
+            if seg.startswith("PRETTY_NAME") or (
+                "release" in seg[:60] and any(
+                    k in seg for k in ("PRETTY_NAME", "VERSION_ID", "VERSION_CODENAME")
+                )
+            ):
+                self._extract_os_release(seg, intent, cmd_name, step)
+                continue
 
-        # 5. df, df -h — 磁盘
-        if lower.startswith("df"):
-            self._extract_df(text, intent, cmd_name, step)
+            # free
+            if seg.startswith("Mem:") or "Mem:" in seg[:20]:
+                self._extract_free(seg, intent, cmd_name, step)
+                continue
 
-        # 6. ls /tmp, ls /etc, ls /proc, ls / — 目录内容
-        if lower.startswith("ls"):
-            path = ""
-            if params and "path" in params:
-                path = params["path"]
-            elif params and "custom_args" in params:
-                args = params["custom_args"]
-                if len(args) > 1 and args[0] == "ls":
-                    path = args[1]
-            self._extract_ls(text, intent, cmd_name, step, path)
+            # df
+            seg_first = seg.splitlines()[0] if seg.splitlines() else ""
+            if seg.startswith("/dev/") or seg_first.startswith("Filesystem"):
+                self._extract_df(seg, intent, cmd_name, step)
+                continue
 
-        # 7. hostname (裸命令)
+            # ls
+            if seg_first.startswith(("total", "drwx", "-rw", "-r-", "lrwx", "crw", "brw", "srw")):
+                path = ""
+                if params and "path" in params:
+                    path = params["path"]
+                self._extract_ls(seg, intent, cmd_name, step, path)
+                continue
+
+            # cpuinfo
+            if seg_first.startswith("processor") or "processor" in seg[:20]:
+                self._extract_cpuinfo(seg, intent, cmd_name, step)
+                continue
+
+            # passwd
+            if "root:x:0:0" in seg[:60]:
+                self._extract_passwd(seg, intent, cmd_name, step)
+                continue
+
+        # ── 命令名辅助的提取 (单命令 / CUSTOM) ──
+
+        # hostname (裸命令)
         if lower.strip() == "hostname":
             val = text.splitlines()[0].strip() if text.strip() else ""
             if val and len(val) < 80:
                 self._add_fact("hostname_cmd", val, intent, cmd_name, step,
                                category="system")
 
-        # 8. cat /proc/cpuinfo
-        if "cpuinfo" in lower or "cpu info" in lower:
-            self._extract_cpuinfo(text, intent, cmd_name, step)
-
-        # 9. cat /etc/passwd
-        if "passwd" in lower and ("cat" in lower or "etc" in lower):
-            self._extract_passwd(text, intent, cmd_name, step)
-
-        # 10. ip addr or ifconfig
-        if lower.startswith("ip addr") or lower.startswith("ifconfig"):
+        # ip addr or ifconfig
+        if any(k in lower for k in ("ip addr", "ifconfig", "ip a")):
             self._extract_network(text, intent, cmd_name, step)
 
-        # 11. read /etc/hosts
-        if "hosts" in lower and ("cat" in lower or "read" in lower):
+        # /etc/hosts
+        if "127.0.0.1" in text or "localhost" in text:
             self._extract_etchosts(text, intent, cmd_name, step)
 
     # ── 各提取规则 ──
