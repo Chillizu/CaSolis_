@@ -205,23 +205,25 @@ class OnlineAgent:
         self.conductor_gate = conductor_gate  # A/B 切换阈值
 
         # 创意模式: 降低确定性意图的奖励, 鼓励探索
+        # P5.6: CUSTOM/LS_TMP 不再高基础分, 新颖性由 _tried_custom_cmds 加成
         self.INTENT_REWARD_CREATIVE = {
-            "READ":     0.2,   # 大幅降低 (太容易偷懒)
+            "READ":     0.2,
             "LIST":     0.3,
             "INFO":     0.5,
-            "SEARCH":   0.8,
-            "COUNT":    0.6,
-            "INSPECT":  0.4,
-            "EXPLORE":  1.2,   # 探索性意图高奖励
-            "CUSTOM":   1.5,   # 自由命令最高奖励
-            "USB_DEVICES":1.2,
+            "SEARCH":   0.6,
+            "COUNT":    0.4,
+            "INSPECT":  0.3,
+            "EXPLORE":  1.0,
+            "CUSTOM":   0.1,   # 基础分极低, 新颖命令靠新命令奖励
+            "USB_DEVICES":0.8,
             "READ_ETC": 0.3,
-            "DISK_USAGE":0.6,
-            "LS_TMP":   1.0,
-            "ARCH_INFO":1.0,
+            "DISK_USAGE":0.5,
+            "LS_TMP":   0.05,  # 同 stable
+            "ARCH_INFO":0.8,
             "HELP":    -0.8,
         }
         self.device = self.classifier.device
+        self._tried_custom_cmds: set[str] = set()  # P5.6: 追踪已试过的 CUSTOM 命令
 
         # 指挥家 + 保姆 (A/B 路径)
         self.conductor_path_active = False
@@ -343,7 +345,8 @@ class OnlineAgent:
     }
 
     def _compute_reward(self, result: ExecResult, intent: str, novelty: float,
-                        intent_diversity: float = 0.0, chain_bonus: float = 0.0) -> float:
+                        intent_diversity: float = 0.0, chain_bonus: float = 0.0,
+                        params: dict = None) -> float:
         """计算奖励: 意图价值 + 成功信号 + 新颖度 - 重复惩罚"""
         # 双模式: 根据 recent 多样性自动切换
         if self.mode == "auto":
@@ -384,6 +387,13 @@ class OnlineAgent:
         # 创意模式: 强多样性奖励
         diversity_weight = 0.5 if use_creative else 0.3
         reward += intent_diversity * diversity_weight
+
+        # P5.6: 命令级新颖性奖励 — CUSTOM 命令第一次被尝试
+        if intent == "CUSTOM" and success and hasattr(self, "_tried_custom_cmds") and params:
+            cmd_str = str(params.get("custom_args", ""))[:40]
+            if cmd_str not in self._tried_custom_cmds:
+                reward += 1.0
+                self._tried_custom_cmds.add(cmd_str)
 
         # P5.5: 强重复惩罚: 同一个意图连续 >2 次就递减
         recent = self.intent_history[-5:] if len(self.intent_history) >= 5 else []
@@ -647,6 +657,22 @@ class OnlineAgent:
                     category="script",
                 )
                 print(f"  \U0001f9f0 新规则: {key}={val} (来自 {script_name})")
+
+    def _get_untried_custom_cmds(self) -> list[str]:
+        """P5.6: 获取未尝试过的自定义命令"""
+        untried = []
+        # 从 selector 历史中找未试过的
+        if hasattr(self.cmd_selector, "history"):
+            for cmd, meta in self.cmd_selector.history.items():
+                if meta.get("tries", 0) == 0 and cmd not in self._tried_custom_cmds:
+                    untried.append(cmd)
+        # 从 clusterer 的 mined 命令中找
+        if hasattr(self.clusterer, "clusters"):
+            for cluster_name, cmds in self.clusterer.clusters.items():
+                for cmd in cmds:
+                    if cmd not in self._tried_custom_cmds and cmd not in untried:
+                        untried.append(cmd)
+        return untried[:20]  # 限制数量
 
     def _imagine_intent(self, state_text: str, temperature: float = 1.5) -> str | None:
         """
@@ -932,8 +958,14 @@ class OnlineAgent:
                 intent = self._select_intent(state_text)
                 goal = self.state_encoder.current_goal
                 if intent == "CUSTOM":
-                    cluster, cmd_args = self.cmd_selector.select()
-                    params = {"custom_args": cmd_args, "cluster": cluster}
+                    # P5.6: 偶尔试未用过的命令
+                    untried = self._get_untried_custom_cmds()
+                    if untried and random.random() < 0.3:
+                        cmd = random.choice(untried)
+                        params = {"custom_args": [cmd], "cluster": "NOVEL"}
+                    else:
+                        cluster, cmd_args = self.cmd_selector.select()
+                        params = {"custom_args": cmd_args, "cluster": cluster}
                 else:
                     params = self.param_extractor.extract(intent, goal)
                     if "path" not in params and intent in ("READ", "COUNT", "SEARCH"):
@@ -997,6 +1029,11 @@ class OnlineAgent:
                 params["depth"] = 2
             else:
                 params["depth"] = 1
+
+        # P5.6: 追踪已试过的 CUSTOM 命令
+        if intent == "CUSTOM":
+            custom_cmd = str(params.get("custom_args", ""))[:40]
+            self._tried_custom_cmds.add(custom_cmd)
 
         # 4. 执行 (多命令组合 P1)
         depth = params.get("depth", 1)
@@ -1150,7 +1187,7 @@ class OnlineAgent:
 
         # 9. 计算奖励 (含链奖励 + 重复惩罚)
         reward = self._compute_reward(result, intent, combined_curiosity, intent_diversity,
-                                      chain_bonus=chain_bonus)
+                                      chain_bonus=chain_bonus, params=params)
         if is_repeat and recent_repeats > 2:
             reward *= 0.3  # 重复严重惩罚
 

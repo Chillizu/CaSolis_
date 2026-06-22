@@ -561,7 +561,8 @@ class Workbench:
                                   {"key": key, "pattern": pattern, "trigger": trigger}, step)
             if trigger == "output_contains" and pattern in output:
                 idx = output.find(pattern) + len(pattern)
-                val = output[idx:idx+60].strip().split()[0] if idx > 0 else ""
+                after = output[idx:idx+60].strip()
+                val = after.split()[0] if after else ""
                 if val and len(val) < 40:
                     self._add_fact(key, val, intent, cmd_name, step, confidence=0.5, category=cat)
                     if self.meta:
