@@ -48,6 +48,7 @@ from agent.command_miner import CommandMiner
 from agent.world_model import WorldModel
 from agent.meta_learner import MetaLearner
 from agent.intent_discoverer import IntentDiscoverer
+from agent.error_recovery import ErrorRecovery
 from agent.workbench import Workbench
 from benchmark.param_extractor import ParameterExtractor
 from benchmark.template_engine import TemplateEngine, ExecResult
@@ -233,6 +234,11 @@ class OnlineAgent:
             except Exception as e:
                 print(f"  ⚠️ 世界模型加载失败: {e}")
         self.intent_discoverer = IntentDiscoverer(min_trajectories=30)
+        # P8.0: 失败恢复模块
+        self.error_recovery = ErrorRecovery(
+            sandbox=self.sandbox,
+            workbench=self.workbench,
+        )
 
         # 训练配置
         self.train_interval = train_interval
@@ -1102,6 +1108,17 @@ class OnlineAgent:
         else:
             cmd_name = str(params.get("path", params.get("cmd", intent)))
 
+        # P8.0: 失败后自动恢复
+        if result.exit_code != 0 and hasattr(self, 'error_recovery'):
+            new_result, recovery_info = self.error_recovery.recover(
+                result, intent, params, cmd_name
+            )
+            if new_result and new_result.exit_code == 0:
+                result = new_result
+                output = (result.stdout or result.stderr or "")
+                if self.step_count % 5 == 0:
+                    print(f"  [RECOVER] {recovery_info.get('action', '?')} -> OK")
+
         # 全量日志 (含正确步数)
         _log_execution(intent, params, result, output, state_text, step=self.step_count)
         
@@ -1688,6 +1705,15 @@ class OnlineAgent:
         else:
             p_cond = 0.2 + 0.5 * max(0, min(1.0, cond_rate / max(clf_rate, 0.01)))
         print(f"  A/B 自适应: p_conductor={p_cond:.0%}  (Conductor胜率={cond_rate:.0%} vs 分类器胜率={clf_rate:.0%})")
+        # P8.0: 失败恢复统计
+        try:
+            rec = self.error_recovery.get_stats()
+            if rec['recovery_attempts'] > 0:
+                print(f"  恢复: {rec['recovery_success']}/{rec['recovery_attempts']} ({rec['recovery_rate']:.0%})")
+                blk = self.error_recovery.get_blocked()
+                print(f"  黑名单: {rec['blocked_cmds']}命令, {rec['blocked_paths']}路径")
+        except Exception:
+            pass
         print(f"{'=' * 45}")
 
         return result
