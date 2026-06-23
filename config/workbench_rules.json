@@ -183,20 +183,6 @@
     }
   ],
   "curiosity_probes": {
-    "priority": [
-      "/proc/version",
-      "/proc/uptime",
-      "/proc/loadavg",
-      "/proc/stat",
-      "/proc/self/status",
-      "/proc/self/environ",
-      "/proc/sys/kernel/hostname",
-      "/etc/hostname",
-      "/etc/hosts",
-      "/etc/os-release",
-      "/etc/fstab",
-      "/etc/resolv.conf"
-    ],
     "fallback_commands": [
       [
         "find",

@@ -455,51 +455,152 @@ class Workbench:
 
         return None
 
+    def _build_dynamic_probes(self, explored_paths: set[str]) -> list[dict]:
+        """
+        P8.4: 动态构建探针候选 — 从工作栏事实推导, 替代固定 priority 列表
+
+        三层:
+          1. 目标驱动: 从 follow-up 链推导应读的文件
+          2. 类别补全: 已有哪些类别, 缺什么关键文件
+          3. 元学习历史高分探针
+        """
+        now = self._step_counter
+        candidates = []
+
+        # ── 已知文件集合 ──
+        known_paths = set()
+        for k, v in self.facts.items():
+            src = v.get("source_cmd", "")
+            if "/" in src:
+                parts = src.split()
+                for p in parts:
+                    if p.startswith("/") and len(p) > 4:
+                        known_paths.add(p)
+            # 从事实值里的路径猜测
+            val = v.get("value", "")
+            if "/" in val and len(val) < 60:
+                for word in val.split():
+                    if word.startswith("/") and len(word) > 4:
+                        known_paths.add(word)
+
+        # ── 1. 目标驱动探针: follow-up 翻译成文件读命令 ──
+        for intent, params in [self._compute_follow_up()] if self._compute_follow_up() else []:
+            if intent == "READ":
+                path = params.get("path", "")
+                if path and path not in known_paths:
+                    candidates.append({
+                        "cmd": ["cat", path],
+                        "cluster": "FILE_READ",
+                        "path_key": f"cat {path}",
+                        "base_score": 0.9,
+                    })
+            elif intent == "CUSTOM":
+                args = params.get("custom_args", [])
+                if args:
+                    path_key = " ".join(str(a) for a in args)
+                    candidates.append({
+                        "cmd": args,
+                        "cluster": params.get("cluster", "SYSTEM"),
+                        "path_key": path_key,
+                        "base_score": 0.8,
+                    })
+
+        # ── 2. 类别补全探针: 缺少什么关键系统文件 ──
+        key_files = {
+            "/etc/hostname": "hostname",
+            "/etc/hosts": "etchosts_hosts",
+            "/etc/os-release": "os_pretty_name",
+            "/proc/version": "kernel",
+            "/proc/cpuinfo": "cpu_cores",
+            "/proc/meminfo": "mem_total",
+            "/proc/loadavg": "loadavg",
+            "/proc/uptime": "uptime",
+            "/etc/resolv.conf": "dns_config",
+            "/etc/passwd": "users",
+            "/etc/group": "groups",
+            "/proc/modules": "kernel_modules",
+            "/proc/1/status": "init_process",
+            "/etc/fstab": "fstab",
+            "/etc/timezone": "timezone",
+            "/proc/partitions": "partitions",
+        }
+        for path, fact_key in key_files.items():
+            if fact_key not in self.facts and path not in known_paths:
+                # 先检查是否已读
+                if path not in explored_paths:
+                    decay = sum(1 for k in key_files if k != path and k not in explored_paths)
+                    base = max(0.3, 1.0 - decay * 0.1)
+                    candidates.append({
+                        "cmd": ["cat", path],
+                        "cluster": "PROCFS" if "/proc/" in path else "SYSTEM",
+                        "path_key": f"cat {path}",
+                        "base_score": base,
+                    })
+
+        # ── 3. 元学习历史高分探针 ──
+        if self.meta:
+            for b in self.meta.get_best("probe_path", n=15, min_trials=2):
+                path = b.get("params", {}).get("path", "")
+                if not path:
+                    continue
+                # 检查 path 是否已过度探索
+                if path in known_paths and path in explored_paths:
+                    continue
+                utility = b.get("utility", 0.0)
+                if utility > -0.1:  # 非负效用才复用
+                    candidates.append({
+                        "cmd": ["cat", path] if "/" in path else path.split(),
+                        "cluster": "PROCFS" if "/proc/" in path else "FILE_READ",
+                        "path_key": path,
+                        "base_score": 0.3 + utility * 2.0,
+                    })
+
+        # 去重 (按 path_key)
+        seen = set()
+        unique = []
+        for c in candidates:
+            if c["path_key"] not in seen:
+                seen.add(c["path_key"])
+                unique.append(c)
+
+        return unique
+
     def get_curiosity_probe(self, explored_paths: set[str] | None = None) -> Optional[tuple[str, dict]]:
         """
-        P6.0: 元学习加权的探针选择
+        P8.4: 动态探针 — 从工作栏事实推导候选, 替代固定 priority 列表
 
         流程:
-          1. 构建候选探针列表 (配置优先级 + fallback)
+          1. 构建动态候选探针 (目标驱动 + 类别补全 + 元学习高分)
           2. 从 meta 读取历史效用分
           3. 按 基础分 + 效用×2 - 已探索惩罚 - 近期使用惩罚 排序
           4. 跳过总分 < -0.5 的探针
-          5. 新探针首次自动注册到 meta
+          5. 回退到 fallback_commands (确保探索不枯竭)
         """
         if explored_paths is None:
             return None
 
-        probe_cfg = self.rules.get("curiosity_probes", {})
         now = self._step_counter
         candidates = []
 
-        # 1. 配置里的高优先级文件路径
-        for rank, p in enumerate(probe_cfg.get("priority", [])):
-            cmd = ["cat", p]
-            path_key = "cat " + p
-            candidates.append({
-                "cmd": cmd,
-                "cluster": "PROCFS",
-                "path_key": path_key,
-                "base_score": 1.0 - rank * 0.05,
-            })
+        # 1. P8.4: 动态构建候选探针
+        candidates = self._build_dynamic_probes(explored_paths)
 
-        # 2. 回退命令
+        # 2. 回退安全网 (动态候选不足时补充)
+        probe_cfg = self.rules.get("curiosity_probes", {})
         fallbacks = probe_cfg.get("fallback_commands", [])
-        if fallbacks:
-            phase = len(explored_paths) % max(len(fallbacks), 1)
-            for offset in range(len(fallbacks)):
-                idx = (phase + offset) % len(fallbacks)
-                cmd = list(fallbacks[idx])
+        if len(candidates) < 3 and fallbacks:
+            for fb in fallbacks:
+                cmd = list(fb)
                 path_key = " ".join(cmd)
-                candidates.append({
-                    "cmd": cmd,
-                    "cluster": "FILE_FIND" if "find" in path_key else "FILE_LIST",
-                    "path_key": path_key,
-                    "base_score": 0.35 - offset * 0.05,
-                })
+                if path_key not in set(c["path_key"] for c in candidates):
+                    candidates.append({
+                        "cmd": cmd,
+                        "cluster": "FILE_FIND" if "find" in path_key else "FILE_LIST",
+                        "path_key": path_key,
+                        "base_score": 0.25,
+                    })
 
-        # 3. 从元学习器取历史效用
+        # 3. 从元学习器取历史效用 (已使用过的探针)
         meta_scores = {}
         if self.meta:
             for b in self.meta.get_best("probe_path", n=30, min_trials=2):
