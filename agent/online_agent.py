@@ -795,15 +795,7 @@ class OnlineAgent:
             if imagined:
                 return imagined
 
-        # P7.0: 强多样性调度 — 检查全局意图覆盖 (CUSTOM 作为正常意图)
-        if len(self.intent_history) >= 30:
-            recent_all = self.intent_history[-30:]
-            covered = set(recent_all)
-            uncovered = [i for i in INTENTS if i not in covered and i != "HELP"]
-            if uncovered:
-                return random.choice(uncovered)
-
-        # 最近20步单一意图超过35%: 强制转向
+        # P8.2: 最近20步单一意图超过35%: 强制转向
         recent = self.intent_history[-20:] if len(self.intent_history) >= 20 else None
         if recent:
             usage = {i: recent.count(i) for i in set(recent)}
@@ -889,7 +881,28 @@ class OnlineAgent:
         intent = None
         params = {}
         used_conductor = False
-        if self.workbench and self.workbench.has_active_goal():
+        
+        # P8.2: 全局多样性 — 任何路径之前检查15步未覆盖意图
+        if len(self.intent_history) >= 15:
+            recent_all = self.intent_history[-15:]
+            covered = set(recent_all)
+            uncovered = [i for i in INTENTS if i not in covered and i != "HELP"]
+            if uncovered:
+                forced = random.choice(uncovered)
+                if forced != "CUSTOM":
+                    params = self.param_extractor.extract(
+                        forced, self.state_encoder.current_goal or "",
+                        workbench=self.workbench,
+                        known_files=self.state_encoder.explored_paths if hasattr(
+                            self.state_encoder, 'explored_paths') else None,
+                    )
+                    intent = forced
+                    used_goal = True
+                    self._last_action_source = "diversity"
+                    if self.step_count % 10 == 0:
+                        print(f"  [DIVERSITY] 强制 {forced} ({13-len(covered)}种未覆盖)")
+
+        if not used_goal and self.workbench and self.workbench.has_active_goal():
             fu = self.workbench.get_current_goal()
             if fu:
                 intent, params = fu

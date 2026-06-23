@@ -6,9 +6,9 @@
       "pattern": "os_id",
       "trigger": "output_contains"
     },
-    "utility": -0.10025,
-    "n": 21,
-    "last_step": 25,
+    "utility": -0.10523750000000001,
+    "n": 22,
+    "last_step": 100,
     "created_step": 1
   },
   "rule_os_version_id": {
@@ -54,8 +54,8 @@
       "pattern": "architecture",
       "trigger": "output_contains"
     },
-    "utility": 0.06599999999999998,
-    "n": 21,
+    "utility": 0.052699999999999976,
+    "n": 22,
     "last_step": 75,
     "created_step": 1
   },
@@ -66,9 +66,9 @@
       "pattern": "disk_etc_hosts",
       "trigger": "output_contains"
     },
-    "utility": -0.18378480694440869,
-    "n": 35,
-    "last_step": 100,
+    "utility": -0.18609749885396243,
+    "n": 38,
+    "last_step": 75,
     "created_step": 1
   },
   "rule_node_name": {
@@ -90,9 +90,9 @@
       "pattern": "disk_persistent",
       "trigger": "output_contains"
     },
-    "utility": -0.15882352941176475,
-    "n": 17,
-    "last_step": 50,
+    "utility": -0.16111111111111115,
+    "n": 18,
+    "last_step": 100,
     "created_step": 1
   },
   "rule_cpu_cores": {
@@ -115,7 +115,7 @@
       "trigger": "output_contains"
     },
     "utility": 0.5,
-    "n": 85,
+    "n": 86,
     "last_step": 100,
     "created_step": 1
   },
@@ -126,9 +126,9 @@
       "pattern": "ID",
       "trigger": "output_contains"
     },
-    "utility": 0.4747793638386097,
-    "n": 111,
-    "last_step": 150,
+    "utility": 0.4760403956466792,
+    "n": 112,
+    "last_step": 100,
     "created_step": 1
   },
   "intent_INFO_classifier": {
@@ -137,9 +137,9 @@
       "intent": "INFO",
       "source": "classifier"
     },
-    "utility": 0.16000000000000006,
-    "n": 10,
-    "last_step": 2,
+    "utility": 0.1545454545454546,
+    "n": 11,
+    "last_step": 1,
     "created_step": 1
   },
   "intent_READ_classifier": {
@@ -148,9 +148,9 @@
       "intent": "READ",
       "source": "classifier"
     },
-    "utility": 0.12321342812500002,
-    "n": 25,
-    "last_step": 2,
+    "utility": 0.07234011293867187,
+    "n": 28,
+    "last_step": 4,
     "created_step": 2
   },
   "probe_cat_/proc/version": {
@@ -158,9 +158,9 @@
     "params": {
       "path": "cat /proc/version"
     },
-    "utility": -0.1999999999996937,
-    "n": 519,
-    "last_step": 93,
+    "utility": -0.19999999999985807,
+    "n": 534,
+    "last_step": 96,
     "created_step": 3
   },
   "probe_CUSTOM": {
@@ -281,8 +281,8 @@
       "script": "discover_25.sh",
       "size": 414
     },
-    "utility": 0.951699779375,
-    "n": 24,
+    "utility": 0.95411479040625,
+    "n": 25,
     "last_step": 25,
     "created_step": 25
   },
@@ -362,8 +362,8 @@
       "script": "discover_50.sh",
       "size": 716
     },
-    "utility": 0.992099289375,
-    "n": 24,
+    "utility": 0.99249432490625,
+    "n": 25,
     "last_step": 50,
     "created_step": 50
   },
@@ -455,8 +455,8 @@
       "script": "discover_75.sh",
       "size": 849
     },
-    "utility": 0.9491578947368422,
-    "n": 19,
+    "utility": 0.9517000000000001,
+    "n": 20,
     "last_step": 75,
     "created_step": 75
   },
@@ -488,8 +488,8 @@
       "script": "discover_100.sh",
       "size": 752
     },
-    "utility": 0.9353684210526316,
-    "n": 19,
+    "utility": 0.9386000000000001,
+    "n": 20,
     "last_step": 100,
     "created_step": 100
   },
@@ -709,8 +709,8 @@
       "trigger": "output_contains"
     },
     "utility": 0.5,
-    "n": 56,
-    "last_step": 5,
+    "n": 60,
+    "last_step": 98,
     "created_step": 51
   },
   "intent_READ_ETC_conductor": {
@@ -805,8 +805,8 @@
       "source": "classifier"
     },
     "utility": 0.1,
-    "n": 3,
-    "last_step": 6,
+    "n": 4,
+    "last_step": 5,
     "created_step": 1
   },
   "intent_EXPLORE_classifier": {
@@ -1242,8 +1242,8 @@
       "source": "imagination"
     },
     "utility": 0.10000000000000003,
-    "n": 7,
-    "last_step": 90,
+    "n": 10,
+    "last_step": 45,
     "created_step": 41
   },
   "probe_INSPECT": {
@@ -1294,8 +1294,8 @@
       "source": "imagination"
     },
     "utility": 0.10000000000000002,
-    "n": 5,
-    "last_step": 91,
+    "n": 6,
+    "last_step": 30,
     "created_step": 21
   },
   "intent_LIST_conductor": {
@@ -1326,9 +1326,9 @@
       "intent": "CUSTOM",
       "source": "imagination"
     },
-    "utility": -0.4,
-    "n": 4,
-    "last_step": 92,
-    "created_step": 64
+    "utility": 0.1,
+    "n": 2,
+    "last_step": 100,
+    "created_step": 88
   }
 }
