@@ -926,7 +926,11 @@ class OnlineAgent:
             imagined = self._imagine_intent(state_text, temperature=temp)
             if imagined and imagined not in ("HELP",):
                 intent = imagined
-                params = self.param_extractor.extract(intent, self.state_encoder.current_goal or "")
+                params = self.param_extractor.extract(
+                    intent, self.state_encoder.current_goal or "",
+                    workbench=self.workbench,
+                    known_files=self.state_encoder.explored_paths if hasattr(self.state_encoder, 'explored_paths') else None,
+                )
                 if intent == "CUSTOM":
                     cluster, cmd_args = self.cmd_selector.select()
                     params = {"custom_args": cmd_args, "cluster": cluster}
@@ -1003,7 +1007,11 @@ class OnlineAgent:
                         cluster, cmd_args = self.cmd_selector.select()
                         params = {"custom_args": cmd_args, "cluster": cluster}
                 else:
-                    params = self.param_extractor.extract(intent, goal)
+                    params = self.param_extractor.extract(
+                        intent, goal,
+                        workbench=self.workbench,
+                        known_files=self.state_encoder.explored_paths if hasattr(self.state_encoder, 'explored_paths') else None,
+                    )
                     if "path" not in params and intent in ("READ", "COUNT", "SEARCH"):
                         params["path"] = "/etc/hostname"
                     if "cmd" not in params and intent in ("INSPECT", "HELP"):

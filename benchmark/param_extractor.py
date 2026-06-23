@@ -18,8 +18,18 @@ class ParameterExtractor:
         with open(rules_path, "r") as f:
             self.rules = json.load(f)
 
-    def extract(self, intent: str, text: str) -> dict[str, Any]:
-        """从描述文本中提取指定意图的参数"""
+    def extract(self, intent: str, text: str,
+                 workbench: Any = None,
+                 known_files: set[str] | None = None) -> dict[str, Any]:
+        """
+        P8.1: 从描述文本中提取意图参数, 支持工作栏事实推断
+        
+        Args:
+            intent: 意图名称
+            text: 描述文本
+            workbench: 可选, 用于从已发现事实推断参数
+            known_files: 可选, 已探索过的文件路径集合
+        """
         intent_rules = self.rules["intents"].get(intent)
         if not intent_rules:
             return {}
@@ -28,7 +38,7 @@ class ParameterExtractor:
         for rule in intent_rules["rules"]:
             param_name = rule["param"]
             if param_name in params:
-                continue  # 已提取
+                continue
 
             # 1. 尝试模式匹配
             patterns = rule.get("patterns", [])
@@ -36,31 +46,86 @@ class ParameterExtractor:
                 pattern = patterns[i]
                 if not pattern:
                     continue
-                # 如果有相邻的下一个元素是 flags (空字符串 = 无 flag)
                 m = re.search(pattern, text, re.IGNORECASE)
                 if m:
-                    # 如果有捕获组, 用第一个; 否则用整个匹配
                     value = m.group(1) if m.lastindex else m.group(0)
-                    # 特殊处理: single-word command names
                     if param_name in ("cmd",) and len(value.split()) > 1:
                         value = value.split()[0]
                     params[param_name] = value
                     break
 
-            # 2. 尝试 keyword_map (按关键词长度降序, 最精确的优先匹配)
+            # 2. 尝试 keyword_map
             if param_name not in params and "keyword_map" in intent_rules:
-                # 按长度降序排列, 确保 "当前时间" 优先于 "时间"
                 sorted_kws = sorted(intent_rules["keyword_map"].items(), key=lambda x: -len(x[0]))
                 for kw, value in sorted_kws:
                     if kw.lower() in text.lower():
                         params[param_name] = value
                         break
 
-            # 3. 使用默认值
+            # 3. P8.1: 从工作栏事实推断 (替代硬编码默认值)
+            if param_name not in params and workbench:
+                params[param_name] = self._infer_from_facts(
+                    param_name, intent, workbench, known_files
+                )
+
+            # 4. 使用默认值 (仅当工作栏也没推断出来)
             if param_name not in params and "default" in rule:
                 params[param_name] = rule["default"]
 
         return params
+
+    def _infer_from_facts(self, param_name: str, intent: str,
+                          workbench: Any,
+                          known_files: set[str] | None = None) -> str | None:
+        """P8.1: 从工作栏事实推断参数, 返回推断值或 None"""
+        facts = getattr(workbench, 'facts', {})
+        if not facts:
+            return None
+
+        if param_name == "path":
+            # 优先: 从已知目录选未探索的文件
+            known_dirs = {k: v['value'] for k, v in facts.items()
+                          if k.startswith('dir_')}
+            for k, v in known_dirs.items():
+                items = v.split(',')
+                for item in items:
+                    item = item.strip()
+                    if not item:
+                        continue
+                    candidate = f"/{k[4:]}/{item}" if k != 'dir_root' else f"/{item}"
+                    if known_files and candidate not in known_files:
+                        return candidate
+            # 次优: 用已知文件
+            for f_k in ('etchosts_hosts', 'hostname', 'kernel', 'os_pretty_name'):
+                if f_k in facts:
+                    return f"/etc/{f_k}"
+            # 兜底: 用已有事实的路径
+            for fk in facts:
+                if fk.startswith('dir_'):
+                    path = fk.replace('dir_', '/').replace('_', '/')
+                    return path
+            return None
+
+        if param_name == "pattern":
+            # 从事实提取搜索关键词
+            for key in ('hostname', 'kernel', 'os_name', 'os_pretty_name', 'users'):
+                if key in facts:
+                    val = str(facts[key]['value'])[:20]
+                    if len(val) >= 3:
+                        return val.split()[0]
+            return None
+
+        if param_name == "cmd":
+            # 从事实推断应检查的命令
+            cmds = []
+            if 'kernel' in facts:
+                cmds.append('python3')
+            if 'os_name' in facts and 'debian' in facts['os_name']['value'].lower():
+                cmds.append('bash')
+            cmds.append('ls')
+            return cmds[0] if cmds else None
+
+        return None
 
     def extract_from_hints(
         self, intent: str, hints: list[str], step: int
