@@ -262,6 +262,9 @@ class OnlineAgent:
         }
         self.device = self.classifier.device
         self._tried_custom_cmds: set[str] = set()  # P5.6: 追踪已试过的 CUSTOM 命令
+        # P7.2: 概率门控 — 让 A/B 决策拿回核心循环的主导权
+        self.probe_rate = 0.5       # 探针占用概率 (原100%)
+        self.imagination_rate = 0.5 # 想象力占用概率 (原100%)
 
         # 指挥家 + 保姆 (A/B 路径)
         self.conductor_path_active = False
@@ -890,19 +893,18 @@ class OnlineAgent:
                 cs = self.workbench.chain_step
                 label = f"链{cs+1}/3" if cs > 0 else "新发现"
                 print(f"  [GOAL] {intent} ({label})")
-        elif self.workbench and self.step_count % 3 == 0:
-            # P4.3: 好奇心探针 (每3步一次, 不设上限)
+        elif self.workbench and self.step_count % 3 == 0 and random.random() < self.probe_rate:
+            # P7.2: 探针概率门控 (原100%→50%), 不再无条件吃流量
             if not hasattr(self, "_probe_find_count"):
                 self._probe_find_count = 0
             probe = self.workbench.get_curiosity_probe(self.state_encoder.explored_paths)
             if probe:
                 p_args = probe[1].get("custom_args", [])
                 p_cmd = " ".join(str(a) for a in p_args) if isinstance(p_args, list) else str(p_args)
-                # 仅限制 find 无限重复
                 if "find" in p_cmd:
                     self._probe_find_count += 1
                     if self._probe_find_count > 20:
-                        probe = None  # find 重复过多, 跳过
+                        probe = None
                 if probe:
                     intent, params = probe
                     params = dict(params)
@@ -912,8 +914,8 @@ class OnlineAgent:
                     if self.step_count % 6 == 0:
                         print(f"  [PROBE] {params.get('custom_args', ['?'])}")
 
-        # P5.2: 世界模型想象力路径 — 当工作栏空闲时尝试
-        if not used_goal and self.step_count > 5 and self.step_count % 4 == 0:
+        # P7.2: 想象力概率门控, 不再每4步无条件触发
+        if not used_goal and self.step_count > 5 and self.step_count % 4 == 0 and random.random() < self.imagination_rate:
             temp = max(0.5, 2.0 - self.step_count * 0.003)
             imagined = self._imagine_intent(state_text, temperature=temp)
             if imagined and imagined not in ("HELP",):
@@ -936,9 +938,9 @@ class OnlineAgent:
                 n_clf = self.ab_stats["classifier"]
                 cond_rate = self.ab_stats["conductor_success"] / max(n_cond, 1)
                 clf_rate = self.ab_stats["classifier_success"] / max(n_clf, 1)
-                # 小样本不信任: 至少5次样本才考虑 Conductor
-                if n_cond < 5:
-                    p_conductor = 0.1  # 低样本量, 低概率
+                # P7.2: 小样本抑制降低 n<3, 让 Conductor 早点上场
+                if n_cond < 3:
+                    p_conductor = 0.25  # 原0.1, 给更多试炼机会
                 else:
                     p_conductor = 0.2 + 0.5 * max(0, min(1.0, cond_rate / max(clf_rate, 0.01)))
                 if self.mode in ("creative", "auto"):

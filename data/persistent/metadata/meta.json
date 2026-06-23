@@ -18,9 +18,9 @@
       "pattern": "os_version_id",
       "trigger": "output_contains"
     },
-    "utility": 0.09166666666666667,
-    "n": 12,
-    "last_step": 250,
+    "utility": 0.06923076923076923,
+    "n": 13,
+    "last_step": 125,
     "created_step": 1
   },
   "rule_os_version_codename": {
@@ -30,9 +30,9 @@
       "pattern": "os_version_codename",
       "trigger": "output_contains"
     },
-    "utility": -0.024999999999999994,
-    "n": 20,
-    "last_step": 100,
+    "utility": -0.042062499999999996,
+    "n": 22,
+    "last_step": 180,
     "created_step": 1
   },
   "rule_kernel": {
@@ -43,8 +43,8 @@
       "trigger": "output_contains"
     },
     "utility": 0.5,
-    "n": 30,
-    "last_step": 25,
+    "n": 31,
+    "last_step": 175,
     "created_step": 1
   },
   "rule_architecture": {
@@ -66,8 +66,8 @@
       "pattern": "disk_etc_hosts",
       "trigger": "output_contains"
     },
-    "utility": -0.16500000000000006,
-    "n": 20,
+    "utility": -0.17149228125000007,
+    "n": 24,
     "last_step": 150,
     "created_step": 1
   },
@@ -78,9 +78,9 @@
       "pattern": "node_name",
       "trigger": "output_contains"
     },
-    "utility": -0.067,
-    "n": 21,
-    "last_step": 75,
+    "utility": -0.0799675,
+    "n": 23,
+    "last_step": 125,
     "created_step": 1
   },
   "rule_disk_persistent": {
@@ -90,9 +90,9 @@
       "pattern": "disk_persistent",
       "trigger": "output_contains"
     },
-    "utility": -0.13636363636363635,
-    "n": 11,
-    "last_step": 50,
+    "utility": -0.14615384615384616,
+    "n": 13,
+    "last_step": 200,
     "created_step": 1
   },
   "rule_cpu_cores": {
@@ -115,8 +115,8 @@
       "trigger": "output_contains"
     },
     "utility": 0.5,
-    "n": 79,
-    "last_step": 100,
+    "n": 81,
+    "last_step": 175,
     "created_step": 1
   },
   "rule_ID": {
@@ -126,9 +126,9 @@
       "pattern": "ID",
       "trigger": "output_contains"
     },
-    "utility": 0.46388473549606246,
-    "n": 104,
-    "last_step": 100,
+    "utility": 0.4674059737851964,
+    "n": 106,
+    "last_step": 175,
     "created_step": 1
   },
   "intent_INFO_classifier": {
@@ -148,8 +148,8 @@
       "intent": "READ",
       "source": "classifier"
     },
-    "utility": 0.1352941176470589,
-    "n": 17,
+    "utility": 0.13157894736842113,
+    "n": 19,
     "last_step": 2,
     "created_step": 2
   },
@@ -158,9 +158,9 @@
     "params": {
       "path": "cat /proc/version"
     },
-    "utility": -0.19999999980367988,
-    "n": 393,
-    "last_step": 150,
+    "utility": -0.19999999996567838,
+    "n": 427,
+    "last_step": 189,
     "created_step": 3
   },
   "probe_CUSTOM": {
@@ -218,9 +218,9 @@
     "params": {
       "path": "INFO"
     },
-    "utility": -0.18148855362497124,
-    "n": 58,
-    "last_step": 127,
+    "utility": -0.1841287486642097,
+    "n": 61,
+    "last_step": 118,
     "created_step": 14
   },
   "probe_free_-h": {
@@ -281,8 +281,8 @@
       "script": "discover_25.sh",
       "size": 414
     },
-    "utility": 0.9375789473684211,
-    "n": 19,
+    "utility": 0.9407,
+    "n": 20,
     "last_step": 25,
     "created_step": 25
   },
@@ -311,9 +311,9 @@
     "params": {
       "path": "ARCH_INFO"
     },
-    "utility": -0.15977851189733408,
-    "n": 45,
-    "last_step": 131,
+    "utility": -0.1655151016379768,
+    "n": 48,
+    "last_step": 163,
     "created_step": 34
   },
   "probe_taskset": {
@@ -362,8 +362,8 @@
       "script": "discover_50.sh",
       "size": 716
     },
-    "utility": 0.9897894736842106,
-    "n": 19,
+    "utility": 0.9903000000000001,
+    "n": 20,
     "last_step": 50,
     "created_step": 50
   },
@@ -384,9 +384,9 @@
       "pattern": "hostname",
       "trigger": "output_contains"
     },
-    "utility": 0.3835757790034274,
-    "n": 69,
-    "last_step": 112,
+    "utility": 0.3073702315750573,
+    "n": 76,
+    "last_step": 104,
     "created_step": 51
   },
   "probe_cat_/etc/os-release": {
@@ -455,8 +455,8 @@
       "script": "discover_75.sh",
       "size": 849
     },
-    "utility": 0.931,
-    "n": 14,
+    "utility": 0.9356000000000001,
+    "n": 15,
     "last_step": 75,
     "created_step": 75
   },
@@ -488,8 +488,8 @@
       "script": "discover_100.sh",
       "size": 752
     },
-    "utility": 0.9122857142857144,
-    "n": 14,
+    "utility": 0.9181333333333334,
+    "n": 15,
     "last_step": 100,
     "created_step": 100
   },
@@ -499,8 +499,8 @@
       "script": "discover_125.sh",
       "size": 791
     },
-    "utility": 0.965,
-    "n": 8,
+    "utility": 0.9688888888888889,
+    "n": 9,
     "last_step": 125,
     "created_step": 125
   },
@@ -510,8 +510,8 @@
       "script": "discover_150.sh",
       "size": 495
     },
-    "utility": 0.9975000000000002,
-    "n": 8,
+    "utility": 0.9977777777777779,
+    "n": 9,
     "last_step": 150,
     "created_step": 150
   },
@@ -521,8 +521,8 @@
       "script": "discover_175.sh",
       "size": 418
     },
-    "utility": 0.9726666666666667,
-    "n": 6,
+    "utility": 0.9765714285714286,
+    "n": 7,
     "last_step": 175,
     "created_step": 175
   },
@@ -532,8 +532,8 @@
       "script": "discover_200.sh",
       "size": 264
     },
-    "utility": 0.8613333333333334,
-    "n": 6,
+    "utility": 0.8811428571428572,
+    "n": 7,
     "last_step": 200,
     "created_step": 200
   },
@@ -543,9 +543,9 @@
       "intent": "LS_TMP",
       "source": "imagination"
     },
-    "utility": -0.015710012820382792,
-    "n": 58,
-    "last_step": 149,
+    "utility": -0.04106861015362856,
+    "n": 69,
+    "last_step": 199,
     "created_step": 17
   },
   "probe_whoami": {
@@ -645,9 +645,9 @@
       "intent": "LS_TMP",
       "source": "conductor"
     },
-    "utility": -0.12222222222222223,
-    "n": 9,
-    "last_step": 263,
+    "utility": -0.12222222222222222,
+    "n": 18,
+    "last_step": 191,
     "created_step": 38
   },
   "probe_ls_/usr/bin": {
@@ -709,20 +709,9 @@
       "trigger": "output_contains"
     },
     "utility": 0.5,
-    "n": 44,
-    "last_step": 112,
+    "n": 47,
+    "last_step": 104,
     "created_step": 51
-  },
-  "intent_USB_DEVICES_conductor": {
-    "type": "intent_choice",
-    "params": {
-      "intent": "USB_DEVICES",
-      "source": "conductor"
-    },
-    "utility": -0.4,
-    "n": 2,
-    "last_step": 146,
-    "created_step": 61
   },
   "intent_READ_ETC_conductor": {
     "type": "intent_choice",
@@ -731,8 +720,8 @@
       "source": "conductor"
     },
     "utility": -0.4,
-    "n": 1,
-    "last_step": 62,
+    "n": 2,
+    "last_step": 158,
     "created_step": 62
   },
   "intent_ARCH_INFO_imagination": {
@@ -741,9 +730,9 @@
       "intent": "ARCH_INFO",
       "source": "imagination"
     },
-    "utility": 0.10000000000000003,
-    "n": 11,
-    "last_step": 29,
+    "utility": 0.10000000000000002,
+    "n": 12,
+    "last_step": 194,
     "created_step": 77
   },
   "intent_INFO_imagination": {
@@ -752,9 +741,9 @@
       "intent": "INFO",
       "source": "imagination"
     },
-    "utility": 0.10000000000000002,
-    "n": 8,
-    "last_step": 41,
+    "utility": 0.10000000000000003,
+    "n": 10,
+    "last_step": 186,
     "created_step": 89
   },
   "probe_at_-l": {
@@ -842,17 +831,6 @@
     "last_step": 1,
     "created_step": 2
   },
-  "intent_LIST_conductor": {
-    "type": "intent_choice",
-    "params": {
-      "intent": "LIST",
-      "source": "conductor"
-    },
-    "utility": -0.4,
-    "n": 4,
-    "last_step": 11,
-    "created_step": 82
-  },
   "intent_ARCH_INFO_conductor": {
     "type": "intent_choice",
     "params": {
@@ -860,8 +838,8 @@
       "source": "conductor"
     },
     "utility": 0.1,
-    "n": 1,
-    "last_step": 83,
+    "n": 3,
+    "last_step": 131,
     "created_step": 83
   },
   "intent_DISK_USAGE_classifier": {
@@ -886,17 +864,6 @@
     "last_step": 1,
     "created_step": 1
   },
-  "intent_READ_imagination": {
-    "type": "intent_choice",
-    "params": {
-      "intent": "READ",
-      "source": "imagination"
-    },
-    "utility": -0.4,
-    "n": 4,
-    "last_step": 77,
-    "created_step": 113
-  },
   "extract_disk_persistent": {
     "type": "extraction",
     "params": {
@@ -918,50 +885,6 @@
     "n": 1,
     "last_step": 140,
     "created_step": 140
-  },
-  "intent_EXPLORE_imagination": {
-    "type": "intent_choice",
-    "params": {
-      "intent": "EXPLORE",
-      "source": "imagination"
-    },
-    "utility": -0.4,
-    "n": 3,
-    "last_step": 101,
-    "created_step": 149
-  },
-  "intent_INSPECT_imagination": {
-    "type": "intent_choice",
-    "params": {
-      "intent": "INSPECT",
-      "source": "imagination"
-    },
-    "utility": -0.4,
-    "n": 2,
-    "last_step": 185,
-    "created_step": 161
-  },
-  "intent_COUNT_conductor": {
-    "type": "intent_choice",
-    "params": {
-      "intent": "COUNT",
-      "source": "conductor"
-    },
-    "utility": -0.4,
-    "n": 1,
-    "last_step": 166,
-    "created_step": 166
-  },
-  "intent_EXPLORE_conductor": {
-    "type": "intent_choice",
-    "params": {
-      "intent": "EXPLORE",
-      "source": "conductor"
-    },
-    "utility": -0.4,
-    "n": 1,
-    "last_step": 197,
-    "created_step": 197
   },
   "script_225": {
     "type": "script_output",
@@ -986,17 +909,6 @@
     "n": 2,
     "last_step": 250,
     "created_step": 250
-  },
-  "intent_INSPECT_conductor": {
-    "type": "intent_choice",
-    "params": {
-      "intent": "INSPECT",
-      "source": "conductor"
-    },
-    "utility": -0.4,
-    "n": 2,
-    "last_step": 83,
-    "created_step": 266
   },
   "script_275": {
     "type": "script_output",
@@ -1032,17 +944,6 @@
     "last_step": 15,
     "created_step": 7
   },
-  "intent_SEARCH_conductor": {
-    "type": "intent_choice",
-    "params": {
-      "intent": "SEARCH",
-      "source": "conductor"
-    },
-    "utility": -0.4,
-    "n": 2,
-    "last_step": 115,
-    "created_step": 62
-  },
   "intent_USB_DEVICES_imagination": {
     "type": "intent_choice",
     "params": {
@@ -1050,20 +951,9 @@
       "source": "imagination"
     },
     "utility": -0.4,
-    "n": 2,
-    "last_step": 149,
-    "created_step": 89
-  },
-  "intent_LIST_imagination": {
-    "type": "intent_choice",
-    "params": {
-      "intent": "LIST",
-      "source": "imagination"
-    },
-    "utility": -0.4,
     "n": 3,
-    "last_step": 41,
-    "created_step": 197
+    "last_step": 188,
+    "created_step": 89
   },
   "intent_READ_conductor": {
     "type": "intent_choice",
@@ -1072,60 +962,9 @@
       "source": "conductor"
     },
     "utility": -0.4,
-    "n": 1,
-    "last_step": 262,
+    "n": 2,
+    "last_step": 174,
     "created_step": 262
-  },
-  "intent_SEARCH_imagination": {
-    "type": "intent_choice",
-    "params": {
-      "intent": "SEARCH",
-      "source": "imagination"
-    },
-    "utility": -0.4,
-    "n": 1,
-    "last_step": 17,
-    "created_step": 17
-  },
-  "probe_COUNT": {
-    "type": "probe_path",
-    "params": {
-      "path": "COUNT"
-    },
-    "utility": -0.5,
-    "n": 2,
-    "last_step": 121,
-    "created_step": 31
-  },
-  "probe_LS_TMP": {
-    "type": "probe_path",
-    "params": {
-      "path": "LS_TMP"
-    },
-    "utility": -0.2,
-    "n": 3,
-    "last_step": 145,
-    "created_step": 70
-  },
-  "probe_USB_DEVICES": {
-    "type": "probe_path",
-    "params": {
-      "path": "USB_DEVICES"
-    },
-    "utility": -0.5,
-    "n": 3,
-    "last_step": 143,
-    "created_step": 71
-  },
-  "probe_READ_ETC": {
-    "type": "probe_path",
-    "params": {
-      "path": "READ_ETC"
-    },
-    "utility": -0.5,
-    "n": 2,
-    "last_step": 118,
-    "created_step": 79
   },
   "probe_DISK_USAGE": {
     "type": "probe_path",
@@ -1133,18 +972,157 @@
       "path": "DISK_USAGE"
     },
     "utility": -0.5,
-    "n": 1,
-    "last_step": 106,
+    "n": 3,
+    "last_step": 142,
     "created_step": 106
   },
-  "probe_READ": {
+  "intent_COUNT_imagination": {
+    "type": "intent_choice",
+    "params": {
+      "intent": "COUNT",
+      "source": "imagination"
+    },
+    "utility": -0.4,
+    "n": 3,
+    "last_step": 184,
+    "created_step": 17
+  },
+  "intent_READ_ETC_imagination": {
+    "type": "intent_choice",
+    "params": {
+      "intent": "READ_ETC",
+      "source": "imagination"
+    },
+    "utility": -0.4,
+    "n": 2,
+    "last_step": 198,
+    "created_step": 26
+  },
+  "probe_LIST": {
     "type": "probe_path",
     "params": {
-      "path": "READ"
+      "path": "LIST"
+    },
+    "utility": -0.5,
+    "n": 4,
+    "last_step": 140,
+    "created_step": 35
+  },
+  "probe_EXPLORE": {
+    "type": "probe_path",
+    "params": {
+      "path": "EXPLORE"
+    },
+    "utility": -0.5,
+    "n": 2,
+    "last_step": 119,
+    "created_step": 54
+  },
+  "intent_DISK_USAGE_imagination": {
+    "type": "intent_choice",
+    "params": {
+      "intent": "DISK_USAGE",
+      "source": "imagination"
+    },
+    "utility": -0.4,
+    "n": 2,
+    "last_step": 111,
+    "created_step": 77
+  },
+  "probe_SEARCH": {
+    "type": "probe_path",
+    "params": {
+      "path": "SEARCH"
     },
     "utility": -0.5,
     "n": 2,
     "last_step": 139,
-    "created_step": 107
+    "created_step": 101
+  },
+  "probe_INSPECT": {
+    "type": "probe_path",
+    "params": {
+      "path": "INSPECT"
+    },
+    "utility": -0.5,
+    "n": 3,
+    "last_step": 136,
+    "created_step": 103
+  },
+  "intent_LIST_imagination": {
+    "type": "intent_choice",
+    "params": {
+      "intent": "LIST",
+      "source": "imagination"
+    },
+    "utility": -0.4,
+    "n": 1,
+    "last_step": 109,
+    "created_step": 109
+  },
+  "intent_EXPLORE_imagination": {
+    "type": "intent_choice",
+    "params": {
+      "intent": "EXPLORE",
+      "source": "imagination"
+    },
+    "utility": -0.4,
+    "n": 4,
+    "last_step": 183,
+    "created_step": 110
+  },
+  "intent_INFO_conductor": {
+    "type": "intent_choice",
+    "params": {
+      "intent": "INFO",
+      "source": "conductor"
+    },
+    "utility": 0.1,
+    "n": 3,
+    "last_step": 154,
+    "created_step": 134
+  },
+  "intent_SEARCH_conductor": {
+    "type": "intent_choice",
+    "params": {
+      "intent": "SEARCH",
+      "source": "conductor"
+    },
+    "utility": -0.4,
+    "n": 3,
+    "last_step": 178,
+    "created_step": 153
+  },
+  "probe_LS_TMP": {
+    "type": "probe_path",
+    "params": {
+      "path": "LS_TMP"
+    },
+    "utility": -0.2,
+    "n": 1,
+    "last_step": 164,
+    "created_step": 164
+  },
+  "intent_DISK_USAGE_conductor": {
+    "type": "intent_choice",
+    "params": {
+      "intent": "DISK_USAGE",
+      "source": "conductor"
+    },
+    "utility": -0.4,
+    "n": 1,
+    "last_step": 173,
+    "created_step": 173
+  },
+  "intent_EXPLORE_conductor": {
+    "type": "intent_choice",
+    "params": {
+      "intent": "EXPLORE",
+      "source": "conductor"
+    },
+    "utility": -0.4,
+    "n": 1,
+    "last_step": 176,
+    "created_step": 176
   }
 }
