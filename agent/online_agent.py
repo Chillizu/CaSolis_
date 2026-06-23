@@ -295,6 +295,12 @@ class OnlineAgent:
         self.optimizer = torch.optim.AdamW(
             self.classifier.head.parameters(), lr=lr, weight_decay=1e-4
         )
+        # P8.3: LR 调度 — 损失停滞时降学习率
+        self.lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+            self.optimizer, mode='min', factor=0.5, patience=3,
+            threshold=0.01, min_lr=1e-6
+        )
+        self._train_losses: list[float] = []
 
         # Conductor 在线对齐训练
         if self.conductor_path_active:
@@ -1385,29 +1391,47 @@ class OnlineAgent:
         return step_success, reward
 
     def train_step(self):
-        """在线训练: 从缓冲区采样, 微调分类头"""
+        """P8.3: 在线训练 — UCB采样 + LR调度"""
         if self.buffer.size < self.batch_size:
             return 0.0
 
-        # 分层采样: 按意图类别平衡
         buffer_list = list(self.buffer.buffer)
         by_intent = {intent: [] for intent in INTENTS}
         for e in buffer_list:
             if e.intent in by_intent:
                 by_intent[e.intent].append(e)
 
-        # P7.0: 从每类采样, CUSTOM 现在是正常意图, 纳入训练
         train_intents = [i for i in INTENTS if i != "HELP"]
-        batch = []
-        samples_per_class = max(1, self.batch_size // len(train_intents))
+        
+        # P8.3: UCB采样 — 少样本意图获得更多权重
+        total = len(buffer_list)
+        n_intents = len(train_intents)
+        base_per_class = max(1, self.batch_size // n_intents)
+        
+        # 计算每个意图的 UCB 分数: 样本数越少, UCB 越高
+        intent_scores = {}
         for intent in train_intents:
+            n_samples = len(by_intent.get(intent, []))
+            if n_samples == 0:
+                intent_scores[intent] = 10.0  # 无样本 → 最高优先级
+            else:
+                ratio = n_samples / max(total, 1)
+                # UCB: 越少的类权重越大
+                intent_scores[intent] = 1.0 / max(ratio, 0.01)
+        
+        # 归一化权重 → 样本分配数
+        total_score = sum(intent_scores.values())
+        batch = []
+        for intent in train_intents:
+            weight = intent_scores[intent] / total_score
+            target_n = max(1, int(self.batch_size * weight))
             pool = by_intent.get(intent, [])
-            if len(pool) >= samples_per_class:
-                batch.extend(random.sample(pool, samples_per_class))
+            if len(pool) >= target_n:
+                batch.extend(random.sample(pool, target_n))
             else:
                 batch.extend(pool)
 
-        # 如果不够, 补充高奖励样本 (排除 HELP)
+        # 补充高奖励样本
         if len(batch) < self.batch_size:
             remaining = self.batch_size - len(batch)
             high_reward = self.buffer.sample_by_reward(remaining * 2, min_reward=0.5)
@@ -1417,11 +1441,9 @@ class OnlineAgent:
         random.shuffle(batch)
         batch = batch[:self.batch_size]
 
-        # 准备数据
         texts = [e.state_text for e in batch]
         labels = [INTENTS.index(e.intent) if e.intent in INTENTS else 0 for e in batch]
 
-        # 编码
         embs_np = self.classifier.encoder.encode(texts, convert_to_numpy=True)
         embs = torch.from_numpy(embs_np).float().to(self.device)
 
@@ -1437,6 +1459,12 @@ class OnlineAgent:
         loss.backward()
         torch.nn.utils.clip_grad_norm_(self.classifier.head.parameters(), 1.0)
         self.optimizer.step()
+
+        # P8.3: LR 调度 + 损失追踪
+        self._train_losses.append(loss.item())
+        if len(self._train_losses) >= 10:
+            avg_loss = sum(self._train_losses[-10:]) / 10
+            self.lr_scheduler.step(avg_loss)
 
         self.classifier.head.eval()
 
