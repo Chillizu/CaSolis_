@@ -957,16 +957,24 @@ class OnlineAgent:
                             if raw_intent != "HELP":
                                 intent = raw_intent
                                 params = nanny_params
+                                # P7.0: CUSTOM 由 Conductor 正常输出时, 补充命令
+                                if intent == "CUSTOM" and "custom_args" not in params:
+                                    cluster, cmd_args = self.cmd_selector.select()
+                                    params = {"custom_args": cmd_args, "cluster": cluster}
                                 used_conductor = True
                                 self._last_action_source = "conductor"
                                 self.ab_stats["conductor"] += 1
                                 self._last_cond_logits = logits.detach().clone()
-                        elif cond_intent not in ("HELP", "CUSTOM"):
+                        elif cond_intent not in ("HELP",):
                             clf_intent = self.classifier.predict(state_text)
                             if cond_intent == clf_intent:
                                 raw_intent, nanny_params, _ = self.nanny.translate(thought, logits, state_text=state_text)
                                 intent = raw_intent
                                 params = nanny_params
+                                # P7.0: CUSTOM 补充命令
+                                if intent == "CUSTOM" and "custom_args" not in params:
+                                    cluster, cmd_args = self.cmd_selector.select()
+                                    params = {"custom_args": cmd_args, "cluster": cluster}
                                 used_conductor = True
                                 self.ab_stats["conductor"] += 1
                                 self._last_cond_logits = logits.detach().clone()
@@ -1251,12 +1259,13 @@ class OnlineAgent:
         step_success = (result.exit_code == 0) and bool(output)
         if step_success:
             self.success_count += 1
-            if used_goal:
+            # P7.1: 修复归因优先级 — imagination 独立于 used_goal
+            if self._last_was_imagined:
+                self.ab_stats["imagined_success"] += 1
+            elif used_goal:
                 self.ab_stats["goal_driven_success"] += 1
             elif used_conductor:
                 self.ab_stats["conductor_success"] += 1
-            elif self._last_was_imagined:
-                self.ab_stats["imagined_success"] += 1
             else:
                 self.ab_stats["classifier_success"] += 1
         else:
