@@ -716,63 +716,28 @@ class Workbench:
             fact = self.facts.get(key)
             if not fact:
                 continue
-            val = fact["value"]
+            val = fact["value"][:40]
             cmd = fact.get("source_cmd", "") or ""
             
-            if key == "kernel":
-                lines.append(f"echo '=== Kernel Info ==='")
-                lines.append(f"echo 'Kernel: {val}'")
-                lines.append("uname -a")
-                lines.append("")
-            elif key == "cpu_cores":
-                lines.append(f"echo '=== CPU ==='")
-                lines.append(f"echo 'Online cores: $(nproc)'")
-                lines.append("cat /proc/loadavg")
-                lines.append("")
-            elif key == "mem_total":
-                lines.append(f"echo '=== Memory ==='")
-                lines.append("free -h")
-                lines.append("")
-            elif key == "disk_root":
-                lines.append(f"echo '=== Disk ==='")
-                lines.append(f"df -h | head -5")
-                lines.append("")
-            elif key == "hostname":
-                lines.append(f"echo '=== Host ==='")
-                lines.append(f"echo 'Hostname: {val}'")
-                lines.append(f"echo 'Hostname (cmd): $(hostname)'")
-                lines.append("")
-            elif key == "current_user":
-                lines.append(f"echo '=== User ==='")
-                lines.append(f"echo 'User: {val}'")
-                lines.append(f"id")
-                lines.append("")
-            elif key == "ip_addr":
-                lines.append(f"echo '=== Network ==='")
-                lines.append(f"echo 'IP: {val}'")
-                lines.append("cat /sys/class/net/*/address 2>/dev/null || ip link")
-                lines.append("")
-            elif key == "os_pretty_name":
-                lines.append(f"echo '=== OS ==='")
-                lines.append(f"echo '{val}'")
-                lines.append("cat /etc/os-release 2>/dev/null | head -3")
-                lines.append("")
-            else:
-                lines.append(f"echo '=== {key} ==='")
+            # P8.3: 通用模板 — 所有事实统一处理, 消除硬编码分支
+            lines.append(f"echo '=== {key} ==='")
+            lines.append(f"echo '{key}: {val}'")
+            
+            # 从 _find_command_for_key 获取推荐命令, 或用 source_cmd
+            script_cmd = self._find_command_for_key(key)
+            if not script_cmd:
                 if cmd and cmd.startswith("["):
-                    # 从列表表示提取: ['cat', '/etc/os-release']
                     import ast
                     try:
                         cmd_list = ast.literal_eval(cmd)
-                        if isinstance(cmd_list, list) and len(cmd_list) == 1:
-                            lines.append(self._find_command_for_key(key) or cmd_list[0])
-                        elif isinstance(cmd_list, list):
-                            lines.append(" ".join(cmd_list))
+                        if isinstance(cmd_list, list):
+                            script_cmd = " ".join(cmd_list)
                     except:
-                        lines.append(self._find_command_for_key(key) or cmd)
+                        script_cmd = cmd
                 else:
-                    lines.append(self._find_command_for_key(key) or cmd)
-                lines.append("")
+                    script_cmd = cmd or ":"  # noop fallback
+            lines.append(script_cmd)
+            lines.append("")
         
         # 总结: 所有选定事实
         lines.append("echo '=== Summary ==='")
