@@ -14,7 +14,7 @@ from sentence_transformers import SentenceTransformer
 
 N_DIMS = 16
 INTENTS = ["READ", "LIST", "SEARCH", "INFO", "INSPECT", "COUNT", "EXPLORE", "HELP", "READ_ETC", "USB_DEVICES", "DISK_USAGE", "LS_TMP", "ARCH_INFO", "CUSTOM"]
-N_INTENTS = 13  # 有效意图数 (不含 CUSTOM)
+N_INTENTS = 14  # P7.0: 有效意图数 (含 CUSTOM)
 
 
 class ConductorHead(nn.Module):
@@ -72,14 +72,20 @@ class Conductor:
 
         if checkpoint and os.path.exists(checkpoint):
             sd = torch.load(checkpoint, map_location=device, weights_only=True)
-            # 适配新旧intent数不同 (class_proj 可能尺寸不匹配)
-            try:
-                self.head.load_state_dict(sd)
-            except Exception:
+            # P7.0: 自动扩展 class_proj 维度 (旧13维 → 新14维)
+            old_n = sd['class_proj.weight'].size(0) if 'class_proj.weight' in sd else 13
+            new_n = self.head.class_proj.weight.size(0)
+            if old_n < new_n:
+                # 保存旧权重, 加载剩余的, 再恢复class_proj
+                old_w = sd.pop('class_proj.weight', None)
+                old_b = sd.pop('class_proj.bias', None)
                 self.head.load_state_dict(sd, strict=False)
-                print(f"  ⚠️ Conductor 加载部分权重 (class_proj 已扩展)")
+                self.head.class_proj.weight.data[:old_n] = old_w
+                self.head.class_proj.bias.data[:old_n] = old_b
+                print(f"  ✅ Conductor 分类头: {old_n}→{new_n} (自动扩展)")
             else:
-                print(f"  ✅ Conductor 已加载: {checkpoint}")
+                self.head.load_state_dict(sd)
+            print(f"  ✅ Conductor 已加载: {checkpoint}")
 
         self.head.eval()
 

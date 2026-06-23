@@ -56,11 +56,11 @@ from collections import deque
 
 # 意图列表
 INTENTS = ["READ", "LIST", "SEARCH", "INFO", "INSPECT", "COUNT", "EXPLORE", "HELP", "READ_ETC", "USB_DEVICES", "DISK_USAGE", "LS_TMP", "ARCH_INFO", "CUSTOM"]
-N_INTENTS = 13  # Conductor/分类器输出维度 (不含 CUSTOM)
+N_INTENTS = 14  # P7.0: Conductor/分类器输出维度 (含 CUSTOM)
 
 
 class IntentClassifier:
-    """MiniLM + MLP 意图分类器 (11 类)"""
+    """MiniLM + MLP 意图分类器 (N_INTENTS 类)"""
 
     def __init__(self, checkpoint: str = "checkpoints/intent_classifier/best_head.pt"):
         import torch.nn as nn
@@ -70,8 +70,11 @@ class IntentClassifier:
         self.encoder.to(self.device)
         self.encoder.eval()
 
+        # P7.0: 使用 N_INTENTS (含 CUSTOM) 作为分类器输出维度
+        n_out = N_INTENTS
+
         class MLPHead(nn.Module):
-            def __init__(self):
+            def __init__(self, n_classes):
                 super().__init__()
                 self.net = nn.Sequential(
                     nn.LayerNorm(384),
@@ -81,17 +84,29 @@ class IntentClassifier:
                     nn.Linear(128, 128),
                     nn.GELU(),
                     nn.Dropout(0.15),
-                    nn.Linear(128, 13),
+                    nn.Linear(128, n_classes),
                 )
             def forward(self, x):
                 return self.net(x)
 
-        self.head = MLPHead()
+        self.head = MLPHead(n_out)
         try:
             sd = torch.load(checkpoint, map_location=self.device, weights_only=True)
-            self.head.load_state_dict(sd, strict=False)  # 允许新旧intent数不同
-        except Exception:
-            print(f"  ⚠️ 分类器checkpoint加载部分失败, 新head随机初始化")
+            # P7.0: 自动扩展最后Linear层 (旧13→新n_out)
+            last_key = 'net.7.weight'
+            if last_key in sd and sd[last_key].size(0) < self.head.net[-1].weight.size(0):
+                old_n = sd[last_key].size(0)
+                new_n = self.head.net[-1].weight.size(0)
+                old_w = sd.pop('net.7.weight')
+                old_b = sd.pop('net.7.bias')
+                self.head.load_state_dict(sd, strict=False)
+                self.head.net[-1].weight.data[:old_n] = old_w
+                self.head.net[-1].bias.data[:old_n] = old_b
+                print(f"  ✅ 分类头: {old_n}→{new_n} (自动扩展)")
+            else:
+                self.head.load_state_dict(sd, strict=False)
+        except Exception as e:
+            print(f"  ⚠️ 分类器checkpoint加载部分失败: {e}")
         self.head.to(self.device)
         self.head.eval()
         self.checkpoint_path = checkpoint
@@ -478,8 +493,9 @@ class OnlineAgent:
         """收集 Conductor 和分类器一致的样本"""
         if not self.conductor_path_active:
             return
-        if executed_intent in ("HELP", "CUSTOM"):
-            return  # HELP/CUSTOM 不适合当训练信号
+        if executed_intent == "HELP":
+            return  # HELP 不适合当训练信号
+        # P7.0: CUSTOM 现在是正常意图, 允许收集一致性样本
 
         try:
             _, cond_logits = self.nanny.think(state_text)
@@ -545,8 +561,8 @@ class OnlineAgent:
             # ── 2. REINFORCE + entropy (轨迹数据) ──
             if n_traj >= 4:
                 sample = random.sample(self.conductor_trajectories, min(16, n_traj))
-                # 过滤掉 CUSTOM (Conductor 不输出 CUSTOM)
-                sample = [s for s in sample if s[1] != 'CUSTOM' and s[1] in INTENTS[:N_INTENTS]]
+                # P7.0: CUSTOM 是正常意图, 保留
+                sample = [s for s in sample if s[1] in INTENTS[:N_INTENTS]]
                 if len(sample) < 2:
                     continue
                 traj_texts = [s[0] for s in sample]
@@ -770,11 +786,11 @@ class OnlineAgent:
             if imagined:
                 return imagined
 
-        # P5.1: 强多样性调度 — 检查全局意图覆盖
+        # P7.0: 强多样性调度 — 检查全局意图覆盖 (CUSTOM 作为正常意图)
         if len(self.intent_history) >= 30:
             recent_all = self.intent_history[-30:]
             covered = set(recent_all)
-            uncovered = [i for i in INTENTS if i not in covered and i not in ("HELP", "CUSTOM")]
+            uncovered = [i for i in INTENTS if i not in covered and i != "HELP"]
             if uncovered:
                 return random.choice(uncovered)
 
@@ -785,67 +801,46 @@ class OnlineAgent:
             most_used = max(usage, key=usage.get)
             most_used_pct = usage[most_used] / len(recent)
             if most_used_pct > 0.35:
-                alternatives = [i for i in INTENTS if i != most_used and i not in ("HELP",)]
+                alternatives = [i for i in INTENTS if i != most_used and i != "HELP"]
                 return random.choice(alternatives)
-        
-        # 偶尔选 CUSTOM (新颖度低时更频繁)
-        rnd_stats = self.rnd.get_novelty_stats()
-        rnd_avg = rnd_stats.get("running_errors_avg", 0)
-        custom_prob = max(0.05, 0.15 - rnd_avg * 5)
-        if random.random() < custom_prob:
-            return "CUSTOM"
         
         # ε-贪心探索 (跳过 HELP)
         if random.random() < self.explore_prob:
-            return random.choice([i for i in INTENTS if i not in ("HELP",)])
+            return random.choice([i for i in INTENTS if i != "HELP"])
         
-        # P5.4: 元学习效用偏置 — 获取 logits (13维, 不含CUSTOM) 并加权
+        # P7.0: 元学习效用偏置 — logits (14维, 含CUSTOM)
         emb = self.classifier.get_embedding(state_text)
         with torch.no_grad():
-            logits = self.classifier.head(emb)  # (13,) — 对应 INTENTS[0:13]
+            logits = self.classifier.head(emb)  # (14,) — 对应 INTENTS[0:14]
         
         # 收集元学习效用分作为 logit bias
-        utility_bias = torch.zeros(13)  # 匹配 classifier head 维度
+        utility_bias = torch.zeros(N_INTENTS, device=logits.device)
         if self.meta and len(self.meta.data) > 0:
             for bid, b in self.meta.data.items():
                 if b.get("type") == "intent_choice":
                     iname = b.get("params", {}).get("intent", "")
-                    if not iname or iname not in INTENTS or iname == "CUSTOM":
+                    if not iname or iname not in INTENTS or iname == "HELP":
                         continue
                     u = b.get("utility", 0.0)
                     n = b.get("n", 0)
                     if n < 3:
                         u *= n / 3.0
-                    # INTENTS[0:13] 不含 CUSTOM, idx 直接映射
-                    idx = INTENTS.index(iname)  # CUSTOM=13, 已跳过
-                    if idx < 13:
+                    idx = INTENTS.index(iname)
+                    if idx < N_INTENTS:
                         utility_bias[idx] += u * 0.3
         
-        biased_logits = logits + utility_bias.unsqueeze(0).to(logits.device)
-        # 从13维中选最佳, 然后映射回 INTENTS[0:13]
+        biased_logits = logits + utility_bias
         intent = INTENTS[biased_logits.argmax().item()]
         
         # HELP 禁用: 重定向到次优
         if intent == "HELP":
-            alternatives = [i for i in INTENTS if i not in ("HELP", "CUSTOM")]
+            alternatives = [i for i in INTENTS if i != "HELP"]
             sorted_idx = biased_logits.argsort(descending=True).flatten()
             for idx in sorted_idx.tolist():
                 alt = INTENTS[idx]
                 if alt in alternatives:
                     return alt
             return "INFO"
-        
-        # INSPECT 低置信度保护
-        if intent == "INSPECT":
-            probs = torch.nn.functional.softmax(biased_logits, dim=-1)
-            confidence = probs.max().item()
-            if confidence < 0.7:
-                alternatives = [i for i in INTENTS if i not in ("HELP", "INSPECT", "CUSTOM")]
-                sorted_idx = biased_logits.argsort(descending=True).flatten()
-                for idx in sorted_idx.tolist():
-                    alt = INTENTS[idx]
-                    if alt in alternatives:
-                        return alt
         
         return intent
 
@@ -1352,9 +1347,8 @@ class OnlineAgent:
             if e.intent in by_intent:
                 by_intent[e.intent].append(e)
 
-        # 从每类采样, 排除 HELP (HELP 已经很稳定, 不需要在线训练)
-        # 排除 HELP 和 CUSTOM (CUSTOM 是 9 类, 分类器只有 8 个输出)
-        train_intents = [i for i in INTENTS if i not in ("HELP", "CUSTOM")]
+        # P7.0: 从每类采样, CUSTOM 现在是正常意图, 纳入训练
+        train_intents = [i for i in INTENTS if i != "HELP"]
         batch = []
         samples_per_class = max(1, self.batch_size // len(train_intents))
         for intent in train_intents:
@@ -1364,12 +1358,11 @@ class OnlineAgent:
             else:
                 batch.extend(pool)
 
-        # 如果不够, 补充高奖励的非 HELP/CUSTOM 样本
+        # 如果不够, 补充高奖励样本 (排除 HELP)
         if len(batch) < self.batch_size:
             remaining = self.batch_size - len(batch)
             high_reward = self.buffer.sample_by_reward(remaining * 2, min_reward=0.5)
-            # 过滤掉 HELP 和 CUSTOM
-            high_reward = [e for e in high_reward if e.intent not in ("HELP", "CUSTOM")]
+            high_reward = [e for e in high_reward if e.intent != "HELP"]
             batch.extend(high_reward[:remaining])
 
         random.shuffle(batch)
