@@ -1540,9 +1540,9 @@ class OnlineAgent:
         if not new_names:
             return
 
-        # 2. 扩展 Conductor 分类头
+        # 2. 扩展 Conductor 分类头 (通过 nanny 访问)
         effective = len([i for i in INTENTS if i != "CUSTOM"])
-        self.conductor.expand_intents(effective)
+        self.nanny.conductor.expand_intents(effective)
 
         # 3. 扩展世界模型 (含 CUSTOM)
         total_intents = len(INTENTS)
@@ -1561,7 +1561,7 @@ class OnlineAgent:
             self._quick_train_new_intents(training_data)
 
         # 7. 保存所有扩展后的 checkpoint
-        self.conductor.save(
+        self.nanny.conductor.save(
             os.path.join("checkpoints", "conductor", "online_aligned.pt"))
         self.world_model.save(
             os.path.join("checkpoints", "world_model", "latest.pt"))
