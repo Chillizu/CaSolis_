@@ -57,8 +57,8 @@ from collections import deque
 
 
 # 意图列表
-INTENTS = ["READ", "LIST", "SEARCH", "INFO", "INSPECT", "COUNT", "EXPLORE", "HELP", "READ_ETC", "USB_DEVICES", "DISK_USAGE", "LS_TMP", "ARCH_INFO", "CUSTOM"]
-N_INTENTS = 14  # P7.0: Conductor/分类器输出维度 (含 CUSTOM)
+INTENTS = ["READ", "LIST", "SEARCH", "INFO", "INSPECT", "COUNT", "EXPLORE", "HELP", "READ_ETC", "USB_DEVICES", "DISK_USAGE", "LS_TMP", "ARCH_INFO", "CUSTOM", "WRITE", "APPEND"]
+N_INTENTS = 16  # P9.2: Conductor/分类器输出维度 (含 WRITE/APPEND)
 
 
 class IntentClassifier:
@@ -380,6 +380,13 @@ class OnlineAgent:
         self.goal_idx += 1
         return goal
 
+    # P9.2: 创作意图基础奖励 (低于 INFO 但高于 LS_TMP, 确保被选中但不泛滥)
+    INTENT_REWARD_CREATE = {
+        "WRITE":   0.5,
+        "APPEND":  0.4,
+        "GENERATE": 0.6,
+    }
+
     INTENT_REWARD_BASE = {
         # 有用: 获取系统信息
         "INFO":    1.2,
@@ -440,6 +447,19 @@ class OnlineAgent:
         novelty_mult = 1.0 if use_creative else self.novelty_weight
         if novelty > novelty_threshold:
             reward += novelty * novelty_mult
+
+        # P9.2: 创作奖励 — WRITE/APPEND 成功写文件
+        if intent in ("WRITE", "APPEND", "GENERATE") and success:
+            written_bytes = self._get_written_file_size(result, params)
+            reward += 0.3  # 基础创作奖励
+            reward += min(0.5, written_bytes / 100.0 * 0.1)  # 字节奖励
+            # 重复写同一文件惩罚
+            write_key = f"write:{params.get('path','')}"
+            if getattr(self, "_recent_writes", {}).get(write_key, 0) > self.step_count - 30:
+                reward *= 0.3
+            if not hasattr(self, "_recent_writes"):
+                self._recent_writes = {}
+            self._recent_writes[write_key] = self.step_count
 
         # 创意模式: 强多样性奖励
         diversity_weight = 0.5 if use_creative else 0.3
@@ -770,6 +790,23 @@ class OnlineAgent:
         untried.extend(new_from_scan)
         return untried[:30]  # 限制30个 (原20)
 
+    def _get_written_file_size(self, result, params: dict) -> int:
+        """P9.2: 获取刚写入文件的字节数"""
+        # 从 stdout 获取 (write 模板输出字节数)
+        if hasattr(result, 'stdout') and result.stdout and result.stdout.strip().isdigit():
+            return int(result.stdout.strip())
+        # 从沙箱 stat
+        if self.sandbox and params:
+            path = params.get("path", "")
+            if path:
+                try:
+                    r = self.sandbox.execute(f"stat -c %s {path} 2>/dev/null || echo 0", timeout=5)
+                    if r.exit_code == 0 and r.stdout and r.stdout.strip().isdigit():
+                        return int(r.stdout.strip())
+                except Exception:
+                    pass
+        return 0
+
     def _rescue_params(self, intent: str, params: dict) -> dict:
         """
         P8.5b: 参数预校验 — 执行前替换无效参数
@@ -1020,7 +1057,8 @@ class OnlineAgent:
                     self._last_action_source = "diversity"
                     self.ab_stats["goal_driven"] = self.ab_stats.get("goal_driven", 0) + 1
                     if self.step_count % 10 == 0:
-                        print(f"  [DIVERSITY] 强制 {forced} ({13-len(covered)}种未覆盖)")
+                        n_total = len(INTENTS) - 1  # 去掉HELP
+                        print(f"  [DIVERSITY] 强制 {forced} ({n_total-len(covered)}种未覆盖)")
 
         if not used_goal and self.workbench and self.workbench.has_active_goal():
             fu = self.workbench.get_current_goal()
@@ -1243,7 +1281,8 @@ class OnlineAgent:
         multi_results = None
         all_exit_ok = False
 
-        if depth > 1 and intent not in ("CUSTOM", "HELP", "EXPLORE"):
+        # P9.2: WRITE/APPEND 跳过 multi-command (使用安全写入模板)
+        if depth > 1 and intent not in ("CUSTOM", "HELP", "EXPLORE", "WRITE", "APPEND"):
             try:
                 multi_results = self.engine.execute_multi(intent, params, depth)
             except Exception:

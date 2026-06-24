@@ -276,12 +276,12 @@ class TemplateEngine:
             import base64 as _b64
             content = params.get("content", "")
             path = params.get("path", "/tmp/output.txt")
-            op = ">" if intent == "WRITE" else ">>"
+            mode = "ab" if intent == "APPEND" else "wb"
             encoded = _b64.b64encode(content.encode()).decode()
             shell_cmd = (
                 f"python3 -c \"import base64; "
                 f"data=base64.b64decode('{encoded}'); "
-                f"f=open('{path}','a' if '{op}' == '>>' else 'wb'); "
+                f"f=open('{path}','{mode}'); "
                 f"f.write(data); f.close(); "
                 f"print(len(data))\""
             )

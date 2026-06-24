@@ -13,8 +13,8 @@ from sentence_transformers import SentenceTransformer
 
 
 N_DIMS = 16
-INTENTS = ["READ", "LIST", "SEARCH", "INFO", "INSPECT", "COUNT", "EXPLORE", "HELP", "READ_ETC", "USB_DEVICES", "DISK_USAGE", "LS_TMP", "ARCH_INFO", "CUSTOM"]
-N_INTENTS = 14  # P7.0: 有效意图数 (含 CUSTOM)
+INTENTS = ["READ", "LIST", "SEARCH", "INFO", "INSPECT", "COUNT", "EXPLORE", "HELP", "READ_ETC", "USB_DEVICES", "DISK_USAGE", "LS_TMP", "ARCH_INFO", "CUSTOM", "WRITE", "APPEND"]
+N_INTENTS = 16  # P9.2: 有效意图数 (含 WRITE, APPEND)
 
 
 class ConductorHead(nn.Module):
