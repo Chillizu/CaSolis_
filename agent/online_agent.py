@@ -54,6 +54,7 @@ from agent.workbench import Workbench
 from agent.meta_selector import MetaCognitiveSelector
 from agent.goal_generator import GoalGenerator
 from agent.world_model_v4 import GrowingWorldModel
+from agent.episodic_memory import EpisodicMemory
 from benchmark.param_extractor import ParameterExtractor
 from benchmark.template_engine import TemplateEngine, ExecResult
 from collections import deque
@@ -253,6 +254,10 @@ class OnlineAgent:
             if name != "HELP":
                 self.world_model_v4.add_intent(name)
         print(f"  \u2705 增长型WM V4: {len(self.world_model_v4.leaves)} 个意图叶")
+        # P10: 情景记忆 (初始禁用, V4 ready 后启用)
+        self.episodic_memory = EpisodicMemory()
+        print("  \u2705 情景记忆就绪 (初始禁用)")
+
         # 尝试加载 V4 checkpoint
         wm_v4_ckpt = "checkpoints/world_model/v4_latest.pt"
         if os.path.exists(wm_v4_ckpt):
@@ -1980,6 +1985,9 @@ class OnlineAgent:
             import os as _os
             _os.makedirs("checkpoints/world_model", exist_ok=True)
             self.world_model_v4.save("checkpoints/world_model/v4_latest.pt")
+            if self._v4_ready() and not self.episodic_memory.is_enabled():
+                self.episodic_memory.enable()
+                print(f"  \u2705 情景记忆已启用 (V4 ready)")
 
         # P9: 训练日志
         try:
