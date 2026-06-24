@@ -1,427 +1,428 @@
 {
-  "version": 1,
-  "description": "意图→参数提取规则 (确定性映射, 不依赖 LLM)",
-  "intents": {
-    "READ": {
-      "description": "读取文件内容",
-      "params": [
-        "path"
-      ],
-      "rules": [
-        {
-          "param": "path",
-          "priority": 10,
-          "patterns": [
-            "(?:/etc/|/var/|/tmp/|/proc/|/home/|/opt/|/dev/|/sys/|/usr/)?[a-zA-Z0-9_./-]+\\.(?:txt|log|conf|cfg|ini|json|yaml|yml|xml|sh|py|md)",
-            ""
-          ],
-          "note": "从描述中提取文件路径"
+    "version": 1,
+    "description": "意图→参数提取规则 (确定性映射, 不依赖 LLM)",
+    "intents": {
+        "READ": {
+            "description": "读取文件内容",
+            "params": [
+                "path"
+            ],
+            "rules": [
+                {
+                    "param": "path",
+                    "priority": 10,
+                    "patterns": [
+                        "(?:/etc/|/var/|/tmp/|/proc/|/home/|/opt/|/dev/|/sys/|/usr/)?[a-zA-Z0-9_./-]+\\.(?:txt|log|conf|cfg|ini|json|yaml|yml|xml|sh|py|md)",
+                        ""
+                    ],
+                    "note": "从描述中提取文件路径"
+                },
+                {
+                    "param": "path",
+                    "priority": 5,
+                    "patterns": [
+                        "/etc/passwd",
+                        "/etc/hostname",
+                        "/etc/hosts",
+                        "/proc/cpuinfo",
+                        "/proc/meminfo"
+                    ],
+                    "note": "常用系统文件关键字"
+                },
+                {
+                    "param": "path",
+                    "priority": 1,
+                    "default": "/etc/hostname",
+                    "note": "无匹配时的默认文件"
+                }
+            ],
+            "keyword_map": {
+                "hostname": "/etc/hostname",
+                "passwd": "/etc/passwd",
+                "hosts": "/etc/hosts",
+                "fstab": "/etc/fstab",
+                "group": "/etc/group",
+                "shadow": "/etc/shadow",
+                "syslog": "/var/log/syslog",
+                "cpuinfo": "/proc/cpuinfo",
+                "meminfo": "/proc/meminfo"
+            }
         },
-        {
-          "param": "path",
-          "priority": 5,
-          "patterns": [
-            "/etc/passwd",
-            "/etc/hostname",
-            "/etc/hosts",
-            "/proc/cpuinfo",
-            "/proc/meminfo"
-          ],
-          "note": "常用系统文件关键字"
+        "LIST": {
+            "description": "列出目录内容",
+            "params": [
+                "path"
+            ],
+            "rules": [
+                {
+                    "param": "path",
+                    "priority": 5,
+                    "patterns": [
+                        "(?:/etc|/tmp|/var|/opt|/home|/proc|/dev|/sys|/usr|/run|/mnt)",
+                        ""
+                    ],
+                    "note": "从描述中提取目录路径"
+                },
+                {
+                    "param": "path",
+                    "priority": 1,
+                    "default": "/",
+                    "note": "无匹配时默认根目录"
+                }
+            ],
+            "keyword_map": {
+                "根目录": "/",
+                "etc": "/etc",
+                "tmp": "/tmp",
+                "var": "/var",
+                "opt": "/opt",
+                "home": "/home",
+                "proc": "/proc"
+            }
         },
-        {
-          "param": "path",
-          "priority": 1,
-          "default": "/etc/hostname",
-          "note": "无匹配时的默认文件"
+        "SEARCH": {
+            "description": "在文件中搜索关键词",
+            "params": [
+                "pattern",
+                "path"
+            ],
+            "rules": [
+                {
+                    "param": "pattern",
+                    "priority": 10,
+                    "patterns": [
+                        "(?:搜索|找|找出|过滤|grep)\\s*(.*?)(?:在|的|的行)",
+                        "(?:包含|带|含有)\\s*([a-zA-Z0-9_.-]+)"
+                    ],
+                    "note": "从描述中提取搜索关键词"
+                },
+                {
+                    "param": "pattern",
+                    "priority": 5,
+                    "default": "root",
+                    "note": "无匹配时的默认关键词"
+                },
+                {
+                    "param": "path",
+                    "priority": 5,
+                    "patterns": [
+                        "(?:/etc/|/var/|/tmp/|/proc/)?[a-zA-Z0-9_./-]+"
+                    ],
+                    "note": "从描述中提取文件路径"
+                },
+                {
+                    "param": "path",
+                    "priority": 1,
+                    "default": "/etc/passwd",
+                    "note": "无匹配时的默认文件"
+                }
+            ],
+            "keyword_patterns": {
+                "error": "error",
+                "root": "root",
+                "admin": "admin",
+                "failed": "failed",
+                "warning": "warning",
+                "denied": "denied",
+                "localhost": "localhost"
+            }
+        },
+        "INFO": {
+            "description": "获取系统信息",
+            "params": [
+                "target"
+            ],
+            "rules": [
+                {
+                    "param": "target",
+                    "priority": 1,
+                    "default": "uname",
+                    "note": "默认系统信息"
+                }
+            ],
+            "keyword_map": {
+                "当前时间": "date",
+                "现在几点": "date",
+                "date": "date",
+                "cpu": "cpu",
+                "CPU": "cpu",
+                "处理器": "cpu",
+                "核心": "cpu",
+                "型号": "cpu",
+                "mem": "mem",
+                "内存": "mem",
+                "RAM": "mem",
+                "disk": "disk",
+                "磁盘": "disk",
+                "硬盘": "disk",
+                "df": "disk",
+                "使用": "disk",
+                "uptime": "uptime",
+                "运行": "uptime",
+                "已运行": "uptime",
+                "whoami": "whoami",
+                "用户": "whoami",
+                "当前用户": "whoami",
+                "uname": "uname",
+                "系统": "uname",
+                "内核": "uname",
+                "版本": "uname",
+                "hostname": "hostname",
+                "主机名": "hostname",
+                "内存信息": "mem",
+                "磁盘信息": "disk",
+                "CPU信息": "cpu",
+                "系统信息": "uname",
+                "network": "network",
+                "网络": "network",
+                "ip": "network",
+                "连接": "network",
+                "端口": "network",
+                "process": "process",
+                "进程": "process",
+                "ps": "process",
+                "运行中": "process"
+            }
+        },
+        "COUNT": {
+            "description": "统计文件行数",
+            "params": [
+                "path"
+            ],
+            "rules": [
+                {
+                    "param": "path",
+                    "priority": 5,
+                    "patterns": [
+                        "(?:/etc/|/var/|/tmp/|/proc/)?[a-zA-Z0-9_./-]+"
+                    ],
+                    "note": "从描述中提取文件路径"
+                },
+                {
+                    "param": "path",
+                    "priority": 1,
+                    "default": "/etc/passwd",
+                    "note": "无匹配时默认文件"
+                }
+            ],
+            "keyword_map": {
+                "passwd": "/etc/passwd",
+                "group": "/etc/group",
+                "shadow": "/etc/shadow",
+                "hosts": "/etc/hosts",
+                "syslog": "/var/log/syslog",
+                "services": "/etc/services"
+            }
+        },
+        "INSPECT": {
+            "description": "检查命令是否存在",
+            "params": [
+                "cmd"
+            ],
+            "rules": [
+                {
+                    "param": "cmd",
+                    "priority": 5,
+                    "patterns": [
+                        "(?:检查|确认|查看|检测|找|搜索)\\s*([a-zA-Z0-9_.-]+)",
+                        "([a-zA-Z0-9_.-]+)\\s*(?:是否|命令|能不能|状态|位置|存在|安装)"
+                    ],
+                    "note": "从描述中提取命令名"
+                },
+                {
+                    "param": "cmd",
+                    "priority": 1,
+                    "default": "python3",
+                    "note": "无匹配时默认命令"
+                }
+            ],
+            "keyword_map": {
+                "python3": "python3",
+                "git": "git",
+                "docker": "docker",
+                "curl": "curl",
+                "node": "node",
+                "gcc": "gcc",
+                "java": "java",
+                "nginx": "nginx",
+                "ssh": "ssh",
+                "vim": "vim",
+                "ruby": "ruby",
+                "perl": "perl",
+                "make": "make",
+                "cmake": "cmake"
+            }
+        },
+        "HELP": {
+            "description": "查看命令帮助",
+            "params": [
+                "cmd"
+            ],
+            "rules": [
+                {
+                    "param": "cmd",
+                    "priority": 5,
+                    "patterns": [
+                        "(?:查看|了解|学习|查阅|看)\\s*([a-zA-Z0-9_.-]+)\\s*(?:的帮助|的用法|的手册|有哪些|命令)",
+                        "([a-zA-Z0-9_.-]+)\\s*(?:的帮助|的用法|的手册|帮助|--help)"
+                    ],
+                    "note": "从描述中提取命令名"
+                },
+                {
+                    "param": "cmd",
+                    "priority": 1,
+                    "default": "ls",
+                    "note": "无匹配时默认命令"
+                }
+            ],
+            "keyword_map": {
+                "ls": "ls",
+                "cat": "cat",
+                "grep": "grep",
+                "find": "find",
+                "tar": "tar",
+                "ssh": "ssh",
+                "docker": "docker",
+                "git": "git",
+                "cp": "cp",
+                "mv": "mv",
+                "sed": "sed",
+                "awk": "awk"
+            }
+        },
+        "EXPLORE": {
+            "description": "探索目录",
+            "params": [
+                "path"
+            ],
+            "rules": [
+                {
+                    "param": "path",
+                    "priority": 5,
+                    "patterns": [
+                        "(?:探索|浏览|看|查看|寻找)\\s*(.*?)(?:目录|文件夹|里|的东西)",
+                        ""
+                    ],
+                    "note": "从描述中提取目录"
+                },
+                {
+                    "param": "path",
+                    "priority": 1,
+                    "default": "/",
+                    "note": "无匹配时默认根目录"
+                }
+            ],
+            "keyword_map": {
+                "根目录": "/",
+                "etc": "/etc",
+                "tmp": "/tmp",
+                "var": "/var",
+                "opt": "/opt",
+                "home": "/home",
+                "proc": "/proc"
+            }
+        },
+        "CUSTOM": {
+            "description": "自由命令探索",
+            "params": [
+                "cmd_name",
+                "path",
+                "target"
+            ],
+            "rules": [
+                {
+                    "param": "cmd_name",
+                    "priority": 5,
+                    "patterns": [
+                        "",
+                        ""
+                    ],
+                    "note": "由 CommandSelector 决定"
+                },
+                {
+                    "param": "cmd_name",
+                    "priority": 1,
+                    "default": "file",
+                    "note": "默认"
+                }
+            ],
+            "keyword_map": {
+                "文件": "file",
+                "目录": "du",
+                "进程": "ps",
+                "内存": "free",
+                "设备": "lspci",
+                "网络": "ip",
+                "模块": "lsmod"
+            }
+        },
+        "READ_ETC": {
+            "description": "读取 /etc 配置文件",
+            "params": [
+                "path"
+            ],
+            "rules": [
+                {
+                    "param": "path",
+                    "priority": 5,
+                    "patterns": [
+                        "(/etc/[\\w./-]+)",
+                        ""
+                    ],
+                    "note": "从描述提取路径"
+                },
+                {
+                    "param": "path",
+                    "priority": 1,
+                    "default": "/etc/passwd",
+                    "note": "默认"
+                }
+            ],
+            "keyword_map": {
+                "passwd": "/etc/passwd",
+                "hosts": "/etc/hosts",
+                "hostname": "/etc/hostname",
+                "shadow": "/etc/shadow",
+                "group": "/etc/group"
+            }
+        },
+        "USB_DEVICES": {
+            "description": "查看 USB 设备",
+            "params": [],
+            "rules": [],
+            "keyword_map": {}
+        },
+        "DISK_USAGE": {
+            "description": "查看磁盘使用量",
+            "params": [
+                "path"
+            ],
+            "rules": [
+                {
+                    "param": "path",
+                    "priority": 5,
+                    "patterns": [
+                        "(/[\\w/-]+)",
+                        "/etc|/var|/tmp|/home|/opt|/usr",
+                        ""
+                    ],
+                    "note": "从描述提取目录"
+                },
+                {
+                    "param": "path",
+                    "priority": 1,
+                    "default": "/",
+                    "note": "默认"
+                }
+            ],
+            "keyword_map": {
+                "etc": "/etc",
+                "var": "/var",
+                "tmp": "/tmp",
+                "home": "/home",
+                "opt": "/opt"
+            }
         }
-      ],
-      "keyword_map": {
-        "hostname": "/etc/hostname",
-        "passwd": "/etc/passwd",
-        "hosts": "/etc/hosts",
-        "fstab": "/etc/fstab",
-        "group": "/etc/group",
-        "shadow": "/etc/shadow",
-        "syslog": "/var/log/syslog",
-        "cpuinfo": "/proc/cpuinfo",
-        "meminfo": "/proc/meminfo"
-      }
     },
-    "LIST": {
-      "description": "列出目录内容",
-      "params": [
-        "path"
-      ],
-      "rules": [
-        {
-          "param": "path",
-          "priority": 5,
-          "patterns": [
-            "(?:/etc|/tmp|/var|/opt|/home|/proc|/dev|/sys|/usr|/run|/mnt)",
-            ""
-          ],
-          "note": "从描述中提取目录路径"
-        },
-        {
-          "param": "path",
-          "priority": 1,
-          "default": "/",
-          "note": "无匹配时默认根目录"
-        }
-      ],
-      "keyword_map": {
-        "根目录": "/",
-        "etc": "/etc",
-        "tmp": "/tmp",
-        "var": "/var",
-        "opt": "/opt",
-        "home": "/home",
-        "proc": "/proc"
-      }
-    },
-    "SEARCH": {
-      "description": "在文件中搜索关键词",
-      "params": [
-        "pattern",
-        "path"
-      ],
-      "rules": [
-        {
-          "param": "pattern",
-          "priority": 10,
-          "patterns": [
-            "(?:搜索|找|找出|过滤|grep)\\s*(.*?)(?:在|的|的行)",
-            "(?:包含|带|含有)\\s*([a-zA-Z0-9_.-]+)"
-          ],
-          "note": "从描述中提取搜索关键词"
-        },
-        {
-          "param": "pattern",
-          "priority": 5,
-          "default": "root",
-          "note": "无匹配时的默认关键词"
-        },
-        {
-          "param": "path",
-          "priority": 5,
-          "patterns": [
-            "(?:/etc/|/var/|/tmp/|/proc/)?[a-zA-Z0-9_./-]+"
-          ],
-          "note": "从描述中提取文件路径"
-        },
-        {
-          "param": "path",
-          "priority": 1,
-          "default": "/etc/passwd",
-          "note": "无匹配时的默认文件"
-        }
-      ],
-      "keyword_patterns": {
-        "error": "error",
-        "root": "root",
-        "admin": "admin",
-        "failed": "failed",
-        "warning": "warning",
-        "denied": "denied",
-        "localhost": "localhost"
-      }
-    },
-    "INFO": {
-      "description": "获取系统信息",
-      "params": [
-        "target"
-      ],
-      "rules": [
-        {
-          "param": "target",
-          "priority": 1,
-          "default": "uname",
-          "note": "默认系统信息"
-        }
-      ],
-      "keyword_map": {
-        "当前时间": "date",
-        "现在几点": "date",
-        "date": "date",
-        "cpu": "cpu",
-        "CPU": "cpu",
-        "处理器": "cpu",
-        "核心": "cpu",
-        "型号": "cpu",
-        "mem": "mem",
-        "内存": "mem",
-        "RAM": "mem",
-        "disk": "disk",
-        "磁盘": "disk",
-        "硬盘": "disk",
-        "df": "disk",
-        "使用": "disk",
-        "uptime": "uptime",
-        "运行": "uptime",
-        "已运行": "uptime",
-        "whoami": "whoami",
-        "用户": "whoami",
-        "当前用户": "whoami",
-        "uname": "uname",
-        "系统": "uname",
-        "内核": "uname",
-        "版本": "uname",
-        "hostname": "hostname",
-        "主机名": "hostname",
-        "内存信息": "mem",
-        "磁盘信息": "disk",
-        "CPU信息": "cpu",
-        "系统信息": "uname",
-        "network": "network",
-        "网络": "network",
-        "ip": "network",
-        "连接": "network",
-        "端口": "network",
-        "process": "process",
-        "进程": "process",
-        "ps": "process",
-        "运行中": "process"
-      }
-    },
-    "COUNT": {
-      "description": "统计文件行数",
-      "params": [
-        "path"
-      ],
-      "rules": [
-        {
-          "param": "path",
-          "priority": 5,
-          "patterns": [
-            "(?:/etc/|/var/|/tmp/|/proc/)?[a-zA-Z0-9_./-]+"
-          ],
-          "note": "从描述中提取文件路径"
-        },
-        {
-          "param": "path",
-          "priority": 1,
-          "default": "/etc/passwd",
-          "note": "无匹配时默认文件"
-        }
-      ],
-      "keyword_map": {
-        "passwd": "/etc/passwd",
-        "group": "/etc/group",
-        "shadow": "/etc/shadow",
-        "hosts": "/etc/hosts",
-        "syslog": "/var/log/syslog",
-        "services": "/etc/services"
-      }
-    },
-    "INSPECT": {
-      "description": "检查命令是否存在",
-      "params": [
-        "cmd"
-      ],
-      "rules": [
-        {
-          "param": "cmd",
-          "priority": 5,
-          "patterns": [
-            "(?:检查|确认|查看|检测|找|搜索)\\s*([a-zA-Z0-9_.-]+)",
-            "([a-zA-Z0-9_.-]+)\\s*(?:是否|命令|能不能|状态|位置|存在|安装)"
-          ],
-          "note": "从描述中提取命令名"
-        },
-        {
-          "param": "cmd",
-          "priority": 1,
-          "default": "python3",
-          "note": "无匹配时默认命令"
-        }
-      ],
-      "keyword_map": {
-        "python3": "python3",
-        "git": "git",
-        "docker": "docker",
-        "curl": "curl",
-        "node": "node",
-        "gcc": "gcc",
-        "java": "java",
-        "nginx": "nginx",
-        "ssh": "ssh",
-        "vim": "vim",
-        "ruby": "ruby",
-        "perl": "perl",
-        "make": "make",
-        "cmake": "cmake"
-      }
-    },
-    "HELP": {
-      "description": "查看命令帮助",
-      "params": [
-        "cmd"
-      ],
-      "rules": [
-        {
-          "param": "cmd",
-          "priority": 5,
-          "patterns": [
-            "(?:查看|了解|学习|查阅|看)\\s*([a-zA-Z0-9_.-]+)\\s*(?:的帮助|的用法|的手册|有哪些|命令)",
-            "([a-zA-Z0-9_.-]+)\\s*(?:的帮助|的用法|的手册|帮助|--help)"
-          ],
-          "note": "从描述中提取命令名"
-        },
-        {
-          "param": "cmd",
-          "priority": 1,
-          "default": "ls",
-          "note": "无匹配时默认命令"
-        }
-      ],
-      "keyword_map": {
-        "ls": "ls",
-        "cat": "cat",
-        "grep": "grep",
-        "find": "find",
-        "tar": "tar",
-        "ssh": "ssh",
-        "docker": "docker",
-        "git": "git",
-        "cp": "cp",
-        "mv": "mv",
-        "sed": "sed",
-        "awk": "awk"
-      }
-    },
-    "EXPLORE": {
-      "description": "探索目录",
-      "params": [
-        "path"
-      ],
-      "rules": [
-        {
-          "param": "path",
-          "priority": 5,
-          "patterns": [
-            "(?:探索|浏览|看|查看|寻找)\\s*(.*?)(?:目录|文件夹|里|的东西)",
-            ""
-          ],
-          "note": "从描述中提取目录"
-        },
-        {
-          "param": "path",
-          "priority": 1,
-          "default": "/",
-          "note": "无匹配时默认根目录"
-        }
-      ],
-      "keyword_map": {
-        "根目录": "/",
-        "etc": "/etc",
-        "tmp": "/tmp",
-        "var": "/var",
-        "opt": "/opt",
-        "home": "/home",
-        "proc": "/proc"
-      }
-    },
-    "CUSTOM": {
-      "description": "自由命令探索",
-      "params": [
-        "cmd_name",
-        "path",
-        "target"
-      ],
-      "rules": [
-        {
-          "param": "cmd_name",
-          "priority": 5,
-          "patterns": [
-            "",
-            ""
-          ],
-          "note": "由 CommandSelector 决定"
-        },
-        {
-          "param": "cmd_name",
-          "priority": 1,
-          "default": "file",
-          "note": "默认"
-        }
-      ],
-      "keyword_map": {
-        "文件": "file",
-        "目录": "du",
-        "进程": "ps",
-        "内存": "free",
-        "设备": "lspci",
-        "网络": "ip",
-        "模块": "lsmod"
-      }
-    },
-    "READ_ETC": {
-      "description": "读取 /etc 配置文件",
-      "params": [
-        "path"
-      ],
-      "rules": [
-        {
-          "param": "path",
-          "priority": 5,
-          "patterns": [
-            "(/etc/[\\w./-]+)",
-            ""
-          ],
-          "note": "从描述提取路径"
-        },
-        {
-          "param": "path",
-          "priority": 1,
-          "default": "/etc/passwd",
-          "note": "默认"
-        }
-      ],
-      "keyword_map": {
-        "passwd": "/etc/passwd",
-        "hosts": "/etc/hosts",
-        "hostname": "/etc/hostname",
-        "shadow": "/etc/shadow",
-        "group": "/etc/group"
-      }
-    },
-    "USB_DEVICES": {
-      "description": "查看 USB 设备",
-      "params": [],
-      "rules": [],
-      "keyword_map": {}
-    },
-    "DISK_USAGE": {
-      "description": "查看磁盘使用量",
-      "params": [
-        "path"
-      ],
-      "rules": [
-        {
-          "param": "path",
-          "priority": 5,
-          "patterns": [
-            "(/[\\w/-]+)",
-            "/etc|/var|/tmp|/home|/opt|/usr",
-            ""
-          ],
-          "note": "从描述提取目录"
-        },
-        {
-          "param": "path",
-          "priority": 1,
-          "default": "/",
-          "note": "默认"
-        }
-      ],
-      "keyword_map": {
-        "etc": "/etc",
-        "var": "/var",
-        "tmp": "/tmp",
-        "home": "/home",
-        "opt": "/opt"
-      }
-    }
-  }
+    "GENERATE": []
 }

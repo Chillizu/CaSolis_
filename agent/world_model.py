@@ -355,10 +355,37 @@ class WorldModel:
         }, path)
 
     def load(self, path: str):
-        """加载世界模型权重"""
+        """加载世界模型权重 (P9.6: 自动扩展维度)"""
         ckpt = torch.load(path, map_location=self.device, weights_only=True)
-        self.predictor.load_state_dict(ckpt["predictor"])
+        ckpt_sd = ckpt["predictor"]
+        # P9.6: 检查第一层维度并自动扩展
+        old_first = self.predictor.shared[0]
+        ckpt_first_w = ckpt_sd.get('shared.0.weight')
+        expanded = False
+        if ckpt_first_w is not None and ckpt_first_w.size(1) < old_first.weight.size(1):
+            old_in = ckpt_first_w.size(1)
+            new_in = old_first.weight.size(1)
+            # 复制旧权重, 新列零初始化
+            old_first.weight.data[:, :old_in] = ckpt_first_w[:, :old_in]
+            old_first.bias.data = ckpt_sd['shared.0.bias']
+            # 删除已处理的键, 其余正常加载
+            del ckpt_sd['shared.0.weight']
+            del ckpt_sd['shared.0.bias']
+            expanded = True
+        self.predictor.load_state_dict(ckpt_sd, strict=False)
         self.optimizer.load_state_dict(ckpt["optimizer"])
+        # P9.6: 扩展优化器状态 (Adam momentum 缓冲区)
+        if expanded:
+            for group in self.optimizer.param_groups:
+                for p in group['params']:
+                    if p is old_first.weight:
+                        state = self.optimizer.state.get(p)
+                        if state:
+                            for key in ('exp_avg', 'exp_avg_sq'):
+                                old_t = state[key]
+                                new_t = torch.zeros_like(p)
+                                new_t[:, :old_in] = old_t[:, :old_in]
+                                state[key] = new_t
         self.running_errors = ckpt.get("running_errors", [])
         self.max_error = ckpt.get("max_error", 1.0)
         self.predictor.eval()

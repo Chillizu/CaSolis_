@@ -14,7 +14,7 @@ from sentence_transformers import SentenceTransformer
 
 N_DIMS = 16
 INTENTS = ["READ", "LIST", "SEARCH", "INFO", "INSPECT", "COUNT", "EXPLORE", "HELP", "READ_ETC", "USB_DEVICES", "DISK_USAGE", "LS_TMP", "ARCH_INFO", "CUSTOM", "WRITE", "APPEND"]
-N_INTENTS = 16  # P9.2: 有效意图数 (含 WRITE, APPEND)
+N_INTENTS = 17  # P9.6: 有效意图数 (含 GENERATE)
 
 
 class ConductorHead(nn.Module):

@@ -57,8 +57,8 @@ from collections import deque
 
 
 # 意图列表
-INTENTS = ["READ", "LIST", "SEARCH", "INFO", "INSPECT", "COUNT", "EXPLORE", "HELP", "READ_ETC", "USB_DEVICES", "DISK_USAGE", "LS_TMP", "ARCH_INFO", "CUSTOM", "WRITE", "APPEND"]
-N_INTENTS = 16  # P9.2: Conductor/分类器输出维度 (含 WRITE/APPEND)
+INTENTS = ["READ", "LIST", "SEARCH", "INFO", "INSPECT", "COUNT", "EXPLORE", "HELP", "READ_ETC", "USB_DEVICES", "DISK_USAGE", "LS_TMP", "ARCH_INFO", "CUSTOM", "WRITE", "APPEND", "GENERATE"]
+N_INTENTS = 17  # P9.6: Conductor/分类器输出维度 (含 GENERATE)
 
 
 class IntentClassifier:
@@ -406,6 +406,7 @@ class OnlineAgent:
         # 低价值
         "INSPECT": 0.1,
         "HELP":   -0.8,
+        "GENERATE": 0.7,  # P9.6: 创作类
     }
 
     def _compute_reward(self, result: ExecResult, intent: str, novelty: float,
@@ -453,6 +454,8 @@ class OnlineAgent:
             written_bytes = self._get_written_file_size(result, params)
             reward += 0.3  # 基础创作奖励
             reward += min(0.5, written_bytes / 100.0 * 0.1)  # 字节奖励
+            if intent == "GENERATE":
+                reward += 0.3
             # 重复写同一文件惩罚
             write_key = f"write:{params.get('path','')}"
             if getattr(self, "_recent_writes", {}).get(write_key, 0) > self.step_count - 30:
@@ -928,14 +931,17 @@ class OnlineAgent:
                 fixed["cmd"] = "ls"
 
         # P0: 写操作路径白名单 + P3: 内容生成器
-        if intent in ("WRITE", "APPEND"):
+        if intent in ("WRITE", "APPEND", "GENERATE"):
             p = fixed.get("path", "")
             _safe_write_prefixes = ("/tmp/", "/workspace/", "/persistent/scripts/")
             if not any(p.startswith(prefix) for prefix in _safe_write_prefixes):
                 fixed["path"] = "/tmp/folunar_output.txt"
-            # P3: 从工作栏事实生成有价值的内容
+            # P3/P9.6: 从工作栏事实生成有价值的内容
             if hasattr(self, "workbench") and self.workbench:
-                content_info = self.workbench.build_write_content()
+                if intent == "GENERATE":
+                    content_info = self.workbench.build_generate_content()
+                else:
+                    content_info = self.workbench.build_write_content()
                 fixed["path"] = content_info["path"]
                 fixed["content"] = content_info["content"]
             else:
@@ -1370,7 +1376,7 @@ class OnlineAgent:
         all_exit_ok = False
 
         # P9.2: WRITE/APPEND 跳过 multi-command (使用安全写入模板)
-        if depth > 1 and intent not in ("CUSTOM", "HELP", "EXPLORE", "WRITE", "APPEND"):
+        if depth > 1 and intent not in ("CUSTOM", "HELP", "EXPLORE", "WRITE", "APPEND", "GENERATE"):
             try:
                 multi_results = self.engine.execute_multi(intent, params, depth)
             except Exception:

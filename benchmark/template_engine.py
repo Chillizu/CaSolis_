@@ -273,8 +273,8 @@ class TemplateEngine:
         if intent == "CUSTOM":
             return params.get("custom_args")
 
-        # P0: 安全写入 — base64 + python3, 避免 shell 注入
-        if intent in ("WRITE", "APPEND"):
+        # P0/P9.6: 安全写入 — base64 + python3, 避免 shell 注入
+        if intent in ("WRITE", "APPEND", "GENERATE"):
             import base64 as _b64
             content = params.get("content", "")
             path = params.get("path", "/tmp/output.txt")
