@@ -12,7 +12,7 @@ import json
 from typing import Optional
 from dataclasses import dataclass
 
-SANDBOX_IMAGE = "debian:bookworm-slim"
+SANDBOX_IMAGE = "folunar-sandbox:latest"  # P9: 预装 python3+curl
 CONTAINER_NAME = "folunar-sandbox"
 
 
@@ -91,21 +91,20 @@ class SandboxExecutor:
             capture_output=True, timeout=10
         )
 
-        # 启动新容器 (非特权, 只读根文件系统, 无网络, 自动清理)
+        # 启动新容器 (P9: 非只读, 预装python3+curl)
         subprocess.run(
             [
                 "docker", "run", "-d",
                 "--name", self.name,
-                "--read-only",              # 只读根文件系统
-                "--tmpfs", "/tmp",          # 可写 /tmp
-                "--tmpfs", "/workspace",    # 工作区 (持久跨步骤)
-                "-v", f"{os.getcwd()}/data/persistent:/persistent:rw",  # P5: 持久记忆
-                "--cap-drop", "ALL",        # 放弃所有能力
+                "--tmpfs", "/tmp",
+                "--tmpfs", "/workspace",
+                "-v", f"{os.getcwd()}/data/persistent:/persistent:rw",
+                "--cap-drop", "ALL",
                 "--security-opt", "no-new-privileges",
-                "--network", "none",        # 无网络
-                "--rm",                     # 停止时自动删除
+                "--network", "none",
+                "--rm",
                 self.image,
-                "sleep", "infinity",        # 保持运行
+                "sleep", "infinity",
             ],
             capture_output=True, timeout=30
         )

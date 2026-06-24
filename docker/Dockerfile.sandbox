@@ -1,0 +1,37 @@
+# Folunar 沙箱镜像 — debian bookworm + 可选工具
+# 构建: docker build -t folunar-sandbox:latest -f docker/Dockerfile.sandbox .
+# 提供: 可写根文件系统 + python3 + curl + 基础开发工具
+
+FROM debian:bookworm-slim
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    # 系统基础
+    coreutils \
+    util-linux \
+    procps \
+    findutils \
+    grep \
+    diffutils \
+    # 计算/文本处理
+    python3 \
+    python3-pip \
+    curl \
+    jq \
+    xxd \
+    bc \
+    # 文件工具
+    file \
+    tree \
+    zip \
+    unzip \
+    # 网络工具 (无网络时静默降级)
+    net-tools \
+    netcat-openbsd \
+    # Shell
+    bash \
+    bash-completion \
+    && rm -rf /var/lib/apt/lists/*
+
+# 验证关键工具
+RUN python3 --version && curl --version | head -1
+CMD ["sleep", "infinity"]

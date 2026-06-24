@@ -20,6 +20,7 @@ from sentence_transformers import SentenceTransformer
 
 from agent.state_encoder import StateEncoder
 from agent.rnd import RND
+from agent.detailed_logger import DetailedLogger
 from agent.experience import Experience, ExperienceBuffer
 
 # ── 全量执行日志 ──
@@ -332,6 +333,7 @@ class OnlineAgent:
         self._last_was_imagined = False  # P5.2: 当前步是否来自想象力
         self._discovered_commands: set[str] = set()  # P8.5d: 从沙箱扫到的新命令
         self._discovered_cmd_last_scan: int = 0
+        self.logger = DetailedLogger()  # P9: 超级日志
 
         # 失败抑制: 同一 intent+params 失败后 N 步内不再尝试
         self._failure_log: dict[str, int] = {}  # key→step_number_last_tried
@@ -1468,6 +1470,24 @@ class OnlineAgent:
             self.conductor_reward_baseline[intent] = 0.9 * old_base + 0.1 * reward
             self._last_cond_logits = None
 
+        # P9: 超级日志 — 每步记录
+        try:
+            self.logger.log_step(
+                step=self.step_count, intent=intent, params=params,
+                source=self._last_action_source,
+                cmd_name=cmd_name if 'cmd_name' in dir() else '',
+                output=output,
+                exit_code=result.exit_code,
+                reward=reward, novelty=combined_curiosity,
+                diversity=intent_diversity,
+                conductor_prob=p_conductor if 'p_conductor' in dir() else 0.0,
+                facts_before=facts_before, facts_after=len(self.workbench.facts),
+                ab_stats=self.ab_stats,
+                rnd_state=self.rnd.get_novelty_stats(),
+            )
+        except Exception:
+            pass
+
         # P5: 持久化工作栏状态 (每10步写一次, 降低IO)
         if self.step_count % 10 == 0:
             self.workbench.save()
@@ -1630,6 +1650,22 @@ class OnlineAgent:
             })
         wm_loss = self.world_model.train_on_buffer(wm_samples)
 
+        # P9: 训练日志
+        try:
+            intent_counts = {intent: len(by_intent.get(intent, []))
+                           for intent in INTENTS if intent != "HELP"}
+            self.logger.log_training(
+                step=self.step_count if hasattr(self, 'step_count') else 0,
+                loss=loss.item(),
+                lr=self.optimizer.param_groups[0]['lr'],
+                intent_counts=intent_counts,
+                buffer_size=self.buffer.size,
+                n_cond=self.ab_stats["conductor"],
+                n_clf=self.ab_stats["classifier"],
+            )
+        except Exception:
+            pass
+
         return loss.item()
 
     def run(self, n_steps: int = 100, verbose: bool = True):
@@ -1646,6 +1682,13 @@ class OnlineAgent:
             if i > 0 and i % self.train_interval == 0:
                 loss = self.train_step()
                 cond_loss = self._train_conductor_online()
+                # P9: 坍缩检测
+                if loss > 3.0:
+                    self.logger.log_alert(
+                        step=i, level="warning",
+                        message=f"训练loss异常: {loss:.4f}",
+                        metrics={"loss": loss, "cond_loss": cond_loss}
+                    )
                 if verbose:
                     rnd_stats = self.rnd.get_novelty_stats()
                     cond_info = f"  |  Conductor对齐={cond_loss:.4f}" if cond_loss > 0 else ""
@@ -1894,5 +1937,17 @@ class OnlineAgent:
         except Exception:
             pass
         print(f"{'=' * 45}")
+
+        # P9: 关闭日志
+        try:
+            self.logger.log_snapshot(
+                step=self.step_count,
+                success_rate=result['success_rate'],
+                intent_dist=result['intent_distribution'],
+                facts=list(self.workbench.facts.keys()),
+            )
+            self.logger.close()
+        except Exception:
+            pass
 
         return result
