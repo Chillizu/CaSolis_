@@ -465,64 +465,185 @@ class Workbench:
         """按类别查询所有事实 key"""
         return [k for k, v in self.facts.items() if v.get("category") == category]
 
+    # ── P9.5: 事实关联分析 ──
+
+    def _build_fact_analysis(self, keys: list[str]) -> str:
+        """
+        P9.5: 从一组事实 key 生成自然语言分析段落
+        """
+        def v(k):
+            return self.facts[k]["value"] if k in self.facts else None
+
+        parts = []
+
+        # 1. 操作系统摘要
+        os_name = v("os_name") or v("generic_os_name")
+        os_ver = v("os_version_id")
+        os_codename = v("os_version_codename") or v("generic_os_version_codename")
+        arch = v("architecture") or v("generic_architecture")
+        kernel = v("kernel") or v("generic_kernel")
+
+        os_parts = []
+        if os_name:
+            os_parts.append(os_name)
+        if os_ver:
+            os_parts.append(os_ver)
+        if os_codename:
+            os_parts.append(f"({os_codename})")
+        if os_parts:
+            s = "System: " + " ".join(os_parts)
+            if kernel:
+                s += f", kernel {kernel}"
+            if arch:
+                s += f", arch {arch}"
+            parts.append(s)
+
+        # 2. CPU 摘要
+        cpu_cores = v("cpu_cores")
+        cpu_model = v("cpu_model") or v("generic_cpu_model") or v("generic_model_name")
+        if cpu_cores or cpu_model:
+            s = "CPU: "
+            if cpu_cores:
+                s += f"{cpu_cores} cores"
+                if cpu_model:
+                    s += f" x {cpu_model}"
+            elif cpu_model:
+                s += cpu_model
+            parts.append(s)
+
+        # 3. 内存摘要
+        mem = v("mem_total") or v("generic_mem")
+        swap = v("swap_total") or v("generic_swap")
+        if mem or swap:
+            s = "Memory: "
+            mem_items = []
+            if mem:
+                mem_items.append(f"RAM {mem}")
+            if swap:
+                mem_items.append(f"Swap {swap}")
+            s += ", ".join(mem_items)
+            parts.append(s)
+
+        # 4. 磁盘摘要
+        disk_keys = [k for k in self.facts if k.startswith("disk_") or k == "generic_size"]
+        if disk_keys:
+            s = "Disk: " + ", ".join(
+                f"{k.replace('disk_','')}={self.facts[k]['value']}" for k in disk_keys[:3]
+            )
+            parts.append(s)
+
+        # 5. 网络/身份
+        hostname = v("hostname") or v("node_name") or v("generic_node_name")
+        if hostname:
+            parts.append(f"Host: {hostname}")
+
+        users = v("users") or v("generic_uid")
+        if users:
+            parts.append(f"Users: {users}")
+
+        return "\n".join(parts) if parts else "(no analysis available)"
+
     def build_write_content(self) -> dict:
         """
-        P3: 从工作栏事实生成有价值的写入内容
+        P3/P9.5: 从工作栏事实生成有价值的写入内容
         返回 {"content": str, "path": str, "desc": str}
         """
         import json, random
         system_facts = self.get_facts_by_category("system")
         if len(system_facts) < 3:
-            # 事实不够: 写简单摘要
             lines = [f"# Folunar Snapshot (step {self._step_counter})", ""]
             for k, v in list(self.facts.items())[:5]:
                 lines.append(f"{k}={v['value'][:40]}")
-            return {
-                "content": "\n".join(lines),
-                "path": "/tmp/folunar_summary.txt",
-                "desc": "简单摘要"
-            }
+            return {"content": "\n".join(lines), "path": "/tmp/folunar_summary.txt", "desc": "简单摘要"}
 
-        # 风格轮换: 交替生成不同类型
         styles = ["json", "report", "script"]
         style = styles[getattr(self, "_write_style_idx", 0) % len(styles)]
-        # 轮转风格
         if not hasattr(self, "_write_style_idx"):
             self._write_style_idx = 0
         self._write_style_idx += 1
 
-        selected = random.sample(system_facts, min(4, len(system_facts)))
+        selected = random.sample(system_facts, min(6, len(system_facts)))
         records = {k: self.facts[k]["value"][:60] for k in selected}
+        analysis = self._build_fact_analysis(selected)
 
         if style == "json":
-            content = json.dumps(records, ensure_ascii=False, indent=2)
+            structured = {
+                "_meta": {"step": self._step_counter, "fact_count": len(self.facts)},
+                "_summary": analysis,
+                "facts": records,
+            }
+            content = json.dumps(structured, ensure_ascii=False, indent=2)
             path = f"/tmp/facts_{self._step_counter}.json"
-            desc = "JSON事实"
+            desc = "JSON事实+分析"
         elif style == "report":
-            lines = ["# Folunar System Report",
-                     f"# Generated at step {self._step_counter}", ""]
+            lines = [
+                "# Folunar System Report",
+                f"# Generated at step {self._step_counter}",
+                f"# Total facts: {len(self.facts)}",
+                "",
+                "## System Analysis",
+                analysis,
+                "",
+                "## Raw Facts",
+            ]
             for k, v in records.items():
-                lines.append(f"## {k}")
-                lines.append(f"{v}")
-                lines.append("")
+                lines.append(f"- **{k}**: {v}")
+            lines.append("")
+            lines.append("---")
+            lines.append(f"_Report auto-generated by Folunar agent at step {self._step_counter}_")
             content = "\n".join(lines)
             path = "/tmp/report.md"
-            desc = "Markdown报告"
+            desc = "Markdown分析报告"
         else:
-            # script: 生成一个可执行的检测脚本
-            lines = ["#!/bin/bash", "# Auto-generated check script", ""]
+            # script: 真实验证脚本 (P9.5: 含对比+差异报告+退出码)
+            script_lines = [
+                "#!/bin/bash",
+                "# Folunar Verification Script",
+                f"# Generated at step {self._step_counter}",
+                f"# Facts: {len(self.facts)}",
+                "",
+                "FAILED=0",
+                "REPORT=",
+            ]
             for k, v in records.items():
+                expected = v[:30].replace("'", "'\\''")
                 if k.startswith("disk_"):
-                    lines.append(f"df -h | grep -q '{v[:10]}' && echo '{k}: OK' || echo '{k}: MISMATCH'")
+                    script_lines.append(f'  if ! df -h 2>/dev/null | grep -q "{v[:10]}"; then')
+                    script_lines.append(f'    echo "[WARN] {k}: expected size {expected} not found"')
+                    script_lines.append('    FAILED=$((FAILED+1))')
+                    script_lines.append('  else')
+                    script_lines.append(f'    echo "[OK] {k}: disk {expected} mounted"')
+                    script_lines.append('  fi')
                 elif k.startswith("os_"):
-                    lines.append(f"grep -q '{v[:20]}' /etc/os-release && echo '{k}: OK' || echo '{k}: NOT FOUND'")
+                    kn = k.replace("os_", "")
+                    script_lines.append(f'  actual=$(grep -i {kn}= /etc/os-release 2>/dev/null | cut -d= -f2 | xargs)')
+                    script_lines.append(f'  if [[ "$actual" = "{expected}" ]]; then')
+                    script_lines.append(f'    echo "[OK] {k}: {expected}"')
+                    script_lines.append('  else')
+                    script_lines.append(f'    echo "[WARN] {k}: expected={expected} actual=$actual"')
+                    script_lines.append('    FAILED=$((FAILED+1))')
+                    script_lines.append('  fi')
                 elif k == "kernel":
-                    lines.append(f"uname -r | grep -q '{v[:10]}' && echo '{k}: OK' || echo '{k}: DIFFERS'")
+                    script_lines.append(f'  actual=$(uname -r 2>/dev/null)')
+                    script_lines.append(f'  if echo "$actual" | grep -q "{v[:10]}"; then')
+                    script_lines.append(f'    echo "[OK] {k}: $actual"')
+                    script_lines.append('  else')
+                    script_lines.append(f'    echo "[WARN] {k}: expected={expected} actual=$actual"')
+                    script_lines.append('    FAILED=$((FAILED+1))')
+                    script_lines.append('  fi')
                 else:
-                    lines.append(f"echo '{k}={v[:30]}'")
-            content = "\n".join(lines)
+                    script_lines.append(f'  echo "[INFO] {k}={expected}"')
+                script_lines.append("")
+            script_lines.append("# Summary")
+            script_lines.append('if [[ $FAILED -eq 0 ]]; then')
+            script_lines.append('  echo "[PASS] All checks passed"')
+            script_lines.append('else')
+            script_lines.append('  echo "[FAIL] $FAILED check(s) failed"')
+            script_lines.append('fi')
+            script_lines.append("exit $FAILED")
+            content = "\n".join(script_lines)
             path = f"/tmp/check_{self._step_counter}.sh"
-            desc = "检测脚本"
+            desc = "检测脚本(含对比)"
 
         return {"content": content, "path": path, "desc": desc}
 
