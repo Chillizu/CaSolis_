@@ -397,6 +397,67 @@ class Workbench:
         """按类别查询所有事实 key"""
         return [k for k, v in self.facts.items() if v.get("category") == category]
 
+    def build_write_content(self) -> dict:
+        """
+        P3: 从工作栏事实生成有价值的写入内容
+        返回 {"content": str, "path": str, "desc": str}
+        """
+        import json, random
+        system_facts = self.get_facts_by_category("system")
+        if len(system_facts) < 3:
+            # 事实不够: 写简单摘要
+            lines = [f"# Folunar Snapshot (step {self._step_counter})", ""]
+            for k, v in list(self.facts.items())[:5]:
+                lines.append(f"{k}={v['value'][:40]}")
+            return {
+                "content": "\n".join(lines),
+                "path": "/tmp/folunar_summary.txt",
+                "desc": "简单摘要"
+            }
+
+        # 风格轮换: 交替生成不同类型
+        styles = ["json", "report", "script"]
+        style = styles[getattr(self, "_write_style_idx", 0) % len(styles)]
+        # 轮转风格
+        if not hasattr(self, "_write_style_idx"):
+            self._write_style_idx = 0
+        self._write_style_idx += 1
+
+        selected = random.sample(system_facts, min(4, len(system_facts)))
+        records = {k: self.facts[k]["value"][:60] for k in selected}
+
+        if style == "json":
+            content = json.dumps(records, ensure_ascii=False, indent=2)
+            path = f"/tmp/facts_{self._step_counter}.json"
+            desc = "JSON事实"
+        elif style == "report":
+            lines = ["# Folunar System Report",
+                     f"# Generated at step {self._step_counter}", ""]
+            for k, v in records.items():
+                lines.append(f"## {k}")
+                lines.append(f"{v}")
+                lines.append("")
+            content = "\n".join(lines)
+            path = "/tmp/report.md"
+            desc = "Markdown报告"
+        else:
+            # script: 生成一个可执行的检测脚本
+            lines = ["#!/bin/bash", "# Auto-generated check script", ""]
+            for k, v in records.items():
+                if k.startswith("disk_"):
+                    lines.append(f"df -h | grep -q '{v[:10]}' && echo '{k}: OK' || echo '{k}: MISMATCH'")
+                elif k.startswith("os_"):
+                    lines.append(f"grep -q '{v[:20]}' /etc/os-release && echo '{k}: OK' || echo '{k}: NOT FOUND'")
+                elif k == "kernel":
+                    lines.append(f"uname -r | grep -q '{v[:10]}' && echo '{k}: OK' || echo '{k}: DIFFERS'")
+                else:
+                    lines.append(f"echo '{k}={v[:30]}'")
+            content = "\n".join(lines)
+            path = f"/workspace/scripts/check_{self._step_counter}.sh"
+            desc = "检测脚本"
+
+        return {"content": content, "path": path, "desc": desc}
+
     def generate_self_goal(self) -> Optional[tuple[str, dict]]:
         """
         P9.1: 基于事实缺口自生成目标

@@ -12,7 +12,7 @@ from typing import Optional
 COMMAND_FALLBACKS: dict[str, list[str]] = {
     # 硬件/设备
     "depmod": ["cat", "/proc/modules"],
-    "lsusb": ["ls", "/dev/bus/usb"],
+    "lsusb": ["sh", "-c", "find /sys/devices -name 'usb*' -maxdepth 2 2>/dev/null | head -5 || echo 'no usb devices'"],
     "lspci": ["cat", "/proc/bus/pci/devices"],
     "usb-devices": ["ls", "/dev/bus/usb"],
     "lsblk": ["df", "-h"],

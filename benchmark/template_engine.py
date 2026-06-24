@@ -418,15 +418,23 @@ class TemplateEngine:
         args = list(args_template)
 
         # 模板参数替换 (支持 {path}/ 这种带后缀的写法)
-        args_str = " ".join(args)
-        for key in list(params.keys()):
-            placeholder = "{" + key + "}"
-            if placeholder in args_str:
-                args_str = args_str.replace(placeholder, str(params[key]))
-        args = shlex.split(args_str)
-        # 检查是否所有占位符都已替换
-        if "{" in args_str and "}" in args_str:
-            return None, None
+        if args[:2] == ["sh", "-c"]:
+            # P9.2: sh -c 模板跳过 split/join (避免破坏引号)
+            for key in list(params.keys()):
+                placeholder = "{" + key + "}"
+                if placeholder in args[2]:
+                    args[2] = args[2].replace(placeholder, str(params[key]))
+            if "{" in args[2] and "}" in args[2]:
+                return None, None
+        else:
+            args_str = " ".join(args)
+            for key in list(params.keys()):
+                placeholder = "{" + key + "}"
+                if placeholder in args_str:
+                    args_str = args_str.replace(placeholder, str(params[key]))
+            args = shlex.split(args_str)
+            if "{" in args_str and "}" in args_str:
+                return None, None
 
         if pipe_template:
             # pipe_template 是 args 列表, 如 ["head", "-5"]

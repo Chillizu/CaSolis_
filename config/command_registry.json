@@ -13,7 +13,7 @@
     "HELP":       { "base": ["echo"], "args": ["(HELP disabled) {cmd}"] },
     "CUSTOM":     { "special": "custom" },
     "READ_ETC":   { "base": ["cat"], "args": ["{path}"] },
-    "USB_DEVICES":{ "base": ["lsusb"], "args": null },
+    "USB_DEVICES":{ "base": ["sh", "-c"], "args": ["find /sys/devices -name 'usb*' -maxdepth 3 2>/dev/null | head -5 || echo 'no usb'"] },
     "DISK_USAGE": { "base": ["du", "-sh", "{path}"], "args": null },
     "LS_TMP":     { "base": ["ls", "-la"], "args": ["/tmp"] },
     "ARCH_INFO":  { "base": ["arch"], "args": null },
@@ -86,8 +86,8 @@
       { "base": ["df", "-i"], "pipe": null }
     ],
     "USB_DEVICES": [
-      { "base": ["lsusb"], "pipe": null },
-      { "base": ["lsusb", "-v"], "pipe": ["head", "-30"] }
+      { "base": ["sh", "-c", "find /sys/devices -name 'usb*' -maxdepth 3 2>/dev/null | head -5 || echo 'no usb devices in sandbox'"], "pipe": null },
+      { "base": ["sh", "-c", "cat /sys/kernel/debug/usb/devices 2>/dev/null || ls /dev/bus/usb 2>/dev/null || echo 'usb subsystem not available'"] }
     ],
     "LS_TMP": [
       { "base": ["ls", "-la", "/tmp"], "pipe": null },
