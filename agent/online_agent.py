@@ -903,7 +903,15 @@ class OnlineAgent:
             uncovered = [i for i in INTENTS if i not in covered and i != "HELP"]
             if uncovered:
                 forced = random.choice(uncovered)
-                if forced != "CUSTOM":
+                if forced == "CUSTOM":
+                    # CUSTOM 意图: 用命令选择器产生探索命令
+                    cluster, cmd_args = self.cmd_selector.select()
+                    params = {"custom_args": cmd_args, "cluster": cluster}
+                    intent = forced
+                    used_goal = True
+                    self._last_action_source = "diversity"
+                    self.ab_stats["goal_driven"] = self.ab_stats.get("goal_driven", 0) + 1
+                else:
                     params = self.param_extractor.extract(
                         forced, self.state_encoder.current_goal or "",
                         workbench=self.workbench,
@@ -1252,6 +1260,14 @@ class OnlineAgent:
         rnd_novelty = self.rnd.compute_novelty(state_emb)
         if intent != "CUSTOM":
             self.rnd.update(state_emb)
+        
+        # P8.5: 周期性 RND 软重置 (防止好奇心饱和)
+        if self.step_count > 0 and self.step_count % 50 == 0:
+            rnd_stats = self.rnd.get_novelty_stats()
+            if rnd_stats['running_errors_avg'] < 0.006:
+                self.rnd.soft_reset(factor=0.4)
+                if self.step_count % 100 == 0:
+                    print(f"  [RND] 软重置 (avg={rnd_stats['running_errors_avg']:.4f})")
 
         # 7. 计算多样性
         recent_intents = self.intent_history[-5:] if self.intent_history else []
