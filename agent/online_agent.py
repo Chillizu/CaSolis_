@@ -1062,10 +1062,8 @@ class OnlineAgent:
         except Exception as e:
             return None
 
-    def _select_intent(self, state_text: str) -> str:
-        """选择意图: 多样性优先 + 分类器"""
-        # P8.4d: 想象力移到 step() 中用概率门控统一控制
-        # P8.2: 最近20步单一意图超过35%: 强制转向
+    def _select_intent(self, state_text: str, mode: str | None = None) -> str:
+        """选择意图: MODE偏置 + 多样性 + 分类器 (P10)"""
         recent = self.intent_history[-20:] if len(self.intent_history) >= 20 else None
         if recent:
             usage = {i: recent.count(i) for i in set(recent)}
@@ -1074,17 +1072,15 @@ class OnlineAgent:
             if most_used_pct > 0.35:
                 alternatives = [i for i in INTENTS if i != most_used and i != "HELP"]
                 return random.choice(alternatives)
-        
-        # ε-贪心探索 (跳过 HELP)
+
         if random.random() < self.explore_prob:
             return random.choice([i for i in INTENTS if i != "HELP"])
-        
-        # P7.0: 元学习效用偏置 — logits (14维, 含CUSTOM)
+
         emb = self.classifier.get_embedding(state_text)
         with torch.no_grad():
-            logits = self.classifier.head(emb)  # (14,) — 对应 INTENTS[0:14]
-        
-        # 收集元学习效用分作为 logit bias
+            logits = self.classifier.head(emb)
+
+        # 元学习效用偏置
         utility_bias = torch.zeros(N_INTENTS, device=logits.device)
         if self.meta and len(self.meta.data) > 0:
             for bid, b in self.meta.data.items():
@@ -1099,11 +1095,18 @@ class OnlineAgent:
                     idx = INTENTS.index(iname)
                     if idx < N_INTENTS:
                         utility_bias[idx] += u * 0.3
-        
-        biased_logits = logits + utility_bias
+
+        # P10: MODE 偏置
+        mode_bias = torch.zeros(N_INTENTS, device=logits.device)
+        if mode:
+            bias_dict = self.meta_selector.get_intent_bias(mode)
+            for iname, w in bias_dict.items():
+                if iname in INTENTS:
+                    mode_bias[INTENTS.index(iname)] = w
+
+        biased_logits = logits + utility_bias + mode_bias * 0.5  # MODE偏置缩放到不影响分类器
         intent = INTENTS[biased_logits.argmax().item()]
-        
-        # HELP 禁用: 重定向到次优
+
         if intent == "HELP":
             alternatives = [i for i in INTENTS if i != "HELP"]
             sorted_idx = biased_logits.argsort(descending=True).flatten()
@@ -1112,27 +1115,48 @@ class OnlineAgent:
                 if alt in alternatives:
                     return alt
             return "INFO"
-        
+
         return intent
 
+    # ── P10: MODE 统计 ──
+    def _compute_mode_stats(self) -> dict:
+        """计算 MODE 选择器需要的统计量"""
+        graph_st = self.workbench.graph.stats() if hasattr(self.workbench, "graph") else {}
+        rnd_st = self.rnd.get_novelty_stats()
+        if hasattr(self, "_facts_history") and len(self._facts_history) >= 2:
+            growth = (self._facts_history[-1] - self._facts_history[0]) / max(len(self._facts_history), 1)
+        else:
+            growth = 0.0
+        wm_loss = (sum(self._wm_loss_history[-5:]) / max(len(self._wm_loss_history), 1)
+                   if hasattr(self, "_wm_loss_history") and self._wm_loss_history else 0.0)
+        return {
+            "step": self.step_count,
+            "n_facts": graph_st.get("n_nodes", len(self.workbench.facts)),
+            "n_gaps": graph_st.get("n_gaps", 0),
+            "schema_coverage": graph_st.get("schema_coverage", 0.0),
+            "rnd_avg": rnd_st.get("running_errors_avg", 0.0),
+            "wm_loss": wm_loss,
+            "recent_intents": list(self.intent_history[-20:]),
+            "in_chain": self.workbench.has_active_goal() if self.workbench else False,
+            "has_active_goal": self.workbench.has_active_goal() if self.workbench else False,
+            "fact_growth_rate": growth,
+        }
+
     def step(self) -> tuple[bool, float]:
-        """执行一步: A/B 切换 + 指挥家/分类器 → 执行"""
+        """执行一步: P10 MODE/GOAL/ACTION路由"""
         self.step_count += 1
-        self._last_was_imagined = False  # P5.2: 每步重置
+        self._last_was_imagined = False
 
         # 1. 编码当前状态
-        # P4.1: 先无思考标签生成 state_text (给指挥家用)
         state_text = self.state_encoder.get_state_text(thought_label="")
         state_emb = self.classifier.get_embedding(state_text).detach().clone()
 
-        # V3 + P4: 思考向量 — 跨步持续 + 当前指挥家新鲜混合
         thought_vector = self.persistent_thought.clone()
         thought_label = ""
         if self.conductor_path_active:
             try:
                 fresh_thought, cond_logits = self.nanny.think(state_text)
                 thought_vector = 0.7 * thought_vector + 0.3 * fresh_thought
-                # 从 logits 生成可读思考标签
                 cond_top = INTENTS[cond_logits.argmax().item()]
                 discovery = self.workbench.get_current_discovery()
                 if discovery:
@@ -1142,31 +1166,77 @@ class OnlineAgent:
                     thought_label = cond_top
             except Exception:
                 pass
-        # 带思考标签重新生成 state_text
+        # MODE 选择 (在 state_text 里注入当前模式)
+        if not hasattr(self, "_wm_loss_history"):
+            self._wm_loss_history = []
+        if not hasattr(self, "_facts_history"):
+            self._facts_history = []
+        mode_stats = self._compute_mode_stats()
+        self.current_mode = self.meta_selector.select(mode_stats)
+        thought_label = f"{self.current_mode}:{thought_label}" if thought_label else self.current_mode
         state_text = self.state_encoder.get_state_text(thought_label=thought_label)
         state_emb = self.classifier.get_embedding(state_text).detach().clone()
 
-        # 2. P4.2: 工作栏驱动目标 (优先于 A/B 切换)
+        # 2. P10: GoalGenerator (MODE驱动目标)
         used_goal = False
         intent = None
         params = {}
         used_conductor = False
-        
-        # P8.2: 全局多样性 — 任何路径之前检查15步未覆盖意图
-        if len(self.intent_history) >= 15:
+
+        # 跟踪事实数 (增长率用)
+        n_facts_now = self.workbench.graph.node_count() if hasattr(self.workbench, "graph") else len(self.workbench.facts)
+        self._facts_history.append(n_facts_now)
+
+        # GoalGenerator 产生目标
+        goal = self.goal_generator.generate(
+            mode=self.current_mode,
+            workbench=self.workbench,
+            rnd_avg=mode_stats["rnd_avg"],
+            step=self.step_count,
+            recent_intents=list(self.intent_history[-20:]),
+        )
+        if goal:
+            intent = goal.intent
+            params = dict(goal.params)
+            used_goal = True
+            self._last_action_source = "goal_driven"
+            self.ab_stats["goal_driven"] = self.ab_stats.get("goal_driven", 0) + 1
+            if self.step_count % 6 == 0:
+                print(f"  [GOAL] ({goal.source}) {intent}")
+            # P10: 即使有目标, 也检查多样性 (防止 GoalGenerator 返回同类型目标)
+            if len(self.intent_history) >= 10:
+                recent15 = self.intent_history[-10:]
+                covered = set(recent15)
+                if len(covered) <= 3 and random.random() < 0.3:
+                    uncovered = [i for i in INTENTS if i not in covered and i != "HELP"]
+                    if uncovered:
+                        forced = random.choice(uncovered)
+                        if forced == "CUSTOM":
+                            cluster, cmd_args = self.cmd_selector.select()
+                            params = {"custom_args": cmd_args, "cluster": cluster}
+                        else:
+                            params = self.param_extractor.extract(
+                                forced, self.state_encoder.current_goal or "",
+                                workbench=self.workbench,
+                                known_files=self.state_encoder.explored_paths if hasattr(
+                                    self.state_encoder, 'explored_paths') else None,
+                            )
+                        intent = forced
+                        used_goal = True
+                        self._last_action_source = "diversity"
+                        if self.step_count % 10 == 0:
+                            print(f"  [DIVERSITY] 强制 {forced} (GoalGenerator 多样性调整)")
+
+        # 3. Fallback: 全局多样性 (15步未覆盖意图)
+        if not used_goal and len(self.intent_history) >= 15:
             recent_all = self.intent_history[-15:]
             covered = set(recent_all)
             uncovered = [i for i in INTENTS if i not in covered and i != "HELP"]
             if uncovered:
                 forced = random.choice(uncovered)
                 if forced == "CUSTOM":
-                    # CUSTOM 意图: 用命令选择器产生探索命令
                     cluster, cmd_args = self.cmd_selector.select()
                     params = {"custom_args": cmd_args, "cluster": cluster}
-                    intent = forced
-                    used_goal = True
-                    self._last_action_source = "diversity"
-                    self.ab_stats["goal_driven"] = self.ab_stats.get("goal_driven", 0) + 1
                 else:
                     params = self.param_extractor.extract(
                         forced, self.state_encoder.current_goal or "",
@@ -1174,14 +1244,15 @@ class OnlineAgent:
                         known_files=self.state_encoder.explored_paths if hasattr(
                             self.state_encoder, 'explored_paths') else None,
                     )
-                    intent = forced
-                    used_goal = True
-                    self._last_action_source = "diversity"
-                    self.ab_stats["goal_driven"] = self.ab_stats.get("goal_driven", 0) + 1
-                    if self.step_count % 10 == 0:
-                        n_total = len(INTENTS) - 1  # 去掉HELP
-                        print(f"  [DIVERSITY] 强制 {forced} ({n_total-len(covered)}种未覆盖)")
+                intent = forced
+                used_goal = True
+                self._last_action_source = "diversity"
+                self.ab_stats["goal_driven"] = self.ab_stats.get("goal_driven", 0) + 1
+                if self.step_count % 10 == 0:
+                    n_total = len(INTENTS) - 1
+                    print(f"  [DIVERSITY] 强制 {forced} ({n_total-len(covered)}种未覆盖)")
 
+        # 4. Fallback: 工作栏链式目标
         if not used_goal and self.workbench and self.workbench.has_active_goal():
             fu = self.workbench.get_current_goal()
             if fu:
@@ -1191,9 +1262,9 @@ class OnlineAgent:
                 self._last_action_source = "goal_driven"
                 self.ab_stats["goal_driven"] += 1
                 cs = self.workbench.chain_step
-                label = f"链{cs+1}/3" if cs > 0 else "新发现"
-                print(f"  [GOAL] {intent} ({label})")
-        # P8.5d: 自生成目标 — 当链式目标耗尽时
+                print(f"  [CHAIN] {intent} (链{cs+1}/3)")
+
+        # 5. Fallback: 自生成目标
         if not used_goal and self.workbench and self.step_count > 10 and self.step_count % 6 == 0:
             self_goal = self.workbench.generate_self_goal()
             if self_goal:
@@ -1203,9 +1274,10 @@ class OnlineAgent:
                 self._last_action_source = "goal_driven"
                 self.ab_stats["goal_driven"] += 1
                 if self.step_count % 12 == 0:
-                    print(f"  [SELF-GOAL] {intent} (事实缺口驱动)")
+                    print(f"  [SELF-GOAL] {intent} (事实缺口)")
+
+        # 6. Fallback: 探针 (概率门控)
         if not used_goal and self.workbench and self.step_count % 3 == 0 and random.random() < self.probe_rate:
-            # P7.2: 探针概率门控 (原100%→50%), 不再无条件吃流量
             if not hasattr(self, "_probe_find_count"):
                 self._probe_find_count = 0
             probe = self.workbench.get_curiosity_probe(self.state_encoder.explored_paths)
@@ -1225,9 +1297,8 @@ class OnlineAgent:
                     if self.step_count % 6 == 0:
                         print(f"  [PROBE] {params.get('custom_args', ['?'])}")
 
-        # P9.7: 想象力概率门控 — 每步80%概率触发
+        # 7. Fallback: P9.7 想象力 (概率门控)
         if not used_goal and self.step_count > 3 and random.random() < self.imagination_rate:
-            # P9.7: 好奇心注入 — 新颖度低时强制探索
             rnd_stats = self.rnd.get_novelty_stats()
             rnd_avg = rnd_stats.get('running_errors_avg', 0)
             curiosity_mode = rnd_avg < 0.01 and random.random() < 0.4

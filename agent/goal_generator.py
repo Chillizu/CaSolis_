@@ -84,13 +84,24 @@ class GoalGenerator:
 
         # ── 通用候选: 所有 MODE 都有的保底目标 ──
 
-        # Workbench follow-up 链 (任何 MODE 都可用)
+        # Workbench follow-up 链 (任何 MODE 都可用, 但 CUSTOM 占比过高时避免)
+        if recent:
+            custom_count = sum(1 for i in recent[-10:] if i == "CUSTOM")
+            custom_ratio = custom_count / min(len(recent), 10)
+        else:
+            custom_ratio = 0.0
+
         follow_up = workbench.get_follow_up() if hasattr(workbench, 'get_follow_up') else None
         if follow_up:
             intent, params = follow_up
+            # 如果 CUSTOM 占比 > 50%, 降低 follow_up 链的优先级 (避免 CUSTOM 循环)
+            fu_priority = 0.7
+            if intent == "CUSTOM" and custom_ratio > 0.5:
+                fu_priority = 0.3  # 大幅降权
+                # 只在完全没其他候选时用
             candidates.append(Goal(
                 "chain", intent, params,
-                priority=0.7, source="follow_up",
+                priority=fu_priority, source="follow_up",
                 description=f"链式: {intent}"
             ))
 
@@ -104,12 +115,17 @@ class GoalGenerator:
 
         # 防止连续同类型目标
         if self.last_goal_type and len(candidates) > 1:
-            # 如果最佳目标类型和上次一样, 用第二选择
             if candidates[0].type == self.last_goal_type:
                 for c in candidates[1:]:
                     if c.type != self.last_goal_type:
                         candidates.insert(0, c)
                         break
+
+        # 如果 CUSTOM 占比过高, 排除 CUSTOM 类目标 (除非 CUSTOM 是唯一选项)
+        if custom_ratio > 0.5 and len(candidates) > 1:
+            non_custom = [c for c in candidates if not (c.intent == "CUSTOM")]
+            if non_custom:
+                candidates = non_custom
 
         selected = candidates[0]
         self.last_goal_type = selected.type
