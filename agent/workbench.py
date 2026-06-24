@@ -397,6 +397,41 @@ class Workbench:
         """按类别查询所有事实 key"""
         return [k for k, v in self.facts.items() if v.get("category") == category]
 
+    def generate_self_goal(self) -> Optional[tuple[str, dict]]:
+        """
+        P8.5d: 基于事实缺口自生成目标
+
+        当 _compute_follow_up 返回 None 时,
+        从已有事实自动推导出新目标.
+        这样系统 = 不再只能靠硬编码链驱动
+        """
+        # 1. 如果有 follow-up, 优先用它
+        fu = self._compute_follow_up()
+        if fu:
+            return fu
+
+        # 2. 类别补全: 有 system 事实但缺 network/explore?
+        categories = set(v.get("category", "") for v in self.facts.values())
+        cat_goals = {
+            "network": ("INFO", {"target": "ip_addr"}),
+            "explore": ("EXPLORE", {"path": "/tmp"}),
+            "general": ("EXPLORE", {"path": "/etc"}),
+        }
+        for cat, goal in cat_goals.items():
+            if cat not in categories:
+                return goal
+
+        # 3. 事实深度: 有 os_name 但没 os_version?
+        paired = [("os_name", "os_version_id"), ("kernel", "kernel_modules"),
+                  ("hostname", "etchosts_hosts"), ("cpu_cores", "cpu_model"),
+                  ("mem_total", "swap_total"), ("current_user", "uid_info")]
+        for have, want in paired:
+            if have in self.facts and want not in self.facts:
+                return ("CUSTOM", {"custom_args": ["cat", "/proc/meminfo"],
+                                   "cluster": "SYSTEM"})
+
+        return None
+
     def get_follow_up(self) -> Optional[tuple[str, dict]]:
         """推荐下一步, 并存储到 last_follow_up"""
         result = self._compute_follow_up()

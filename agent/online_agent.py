@@ -330,6 +330,8 @@ class OnlineAgent:
         self.success_count = 0
         self._last_action_source = "classifier"  # P5.4: 'probe'|'goal'|'imagination'|'conductor'|'classifier'
         self._last_was_imagined = False  # P5.2: 当前步是否来自想象力
+        self._discovered_commands: set[str] = set()  # P8.5d: 从沙箱扫到的新命令
+        self._discovered_cmd_last_scan: int = 0
 
         # 失败抑制: 同一 intent+params 失败后 N 步内不再尝试
         self._failure_log: dict[str, int] = {}  # key→step_number_last_tried
@@ -714,21 +716,57 @@ class OnlineAgent:
                 )
                 print(f"  \U0001f9f0 新规则: {key}={val} (来自 {script_name})")
 
+    def _scan_new_commands(self) -> list[str]:
+        """
+        P8.5d: 从沙箱 /usr/bin 发掘新命令
+        每50步扫描一次, 扩充 CUSTOM 探索空间
+        """
+        if not self.sandbox:
+            return []
+        if self.step_count - self._discovered_cmd_last_scan < 50:
+            return []
+        self._discovered_cmd_last_scan = self.step_count
+        try:
+            # 用 compgen -c (bash 内置) 列出所有可用命令, 随机取 10 个
+            r = self.sandbox.execute(
+                "compgen -c 2>/dev/null | shuf -n 10 || "
+                "ls /usr/bin /bin /usr/local/bin 2>/dev/null | sort -u | shuf -n 10",
+                timeout=5
+            )
+            new_cmds = []
+            if r and r.stdout:
+                for line in r.stdout.strip().split("\n"):
+                    cmd = line.strip()
+                    if (cmd and len(cmd) > 1 and len(cmd) < 30
+                        and cmd not in self._tried_custom_cmds
+                        and cmd not in self._discovered_commands):
+                        self._discovered_commands.add(cmd)
+                        new_cmds.append(cmd)
+            if new_cmds and self.step_count % 100 == 0:
+                print(f"  [SCAN] 发现 {len(new_cmds)} 个新命令: {', '.join(new_cmds[:5])}...")
+            return new_cmds
+        except Exception:
+            return []
+
     def _get_untried_custom_cmds(self) -> list[str]:
-        """P5.6: 获取未尝试过的自定义命令"""
+        """P8.5d: 获取未尝试过的自定义命令 (含动态发掘)"""
         untried = []
-        # 从 selector 历史中找未试过的
+        # 1. 从 selector 历史中找未试过的
         if hasattr(self.cmd_selector, "history"):
             for cmd, meta in self.cmd_selector.history.items():
                 if meta.get("tries", 0) == 0 and cmd not in self._tried_custom_cmds:
                     untried.append(cmd)
-        # 从 clusterer 的 mined 命令中找
+        # 2. 从 clusterer 的 mined 命令中找
         if hasattr(self.clusterer, "clusters"):
             for cluster_name, cmds in self.clusterer.clusters.items():
                 for cmd in cmds:
                     if cmd not in self._tried_custom_cmds and cmd not in untried:
                         untried.append(cmd)
-        return untried[:20]  # 限制数量
+        # 3. P8.5d: 从动态发现的命令中找
+        new_from_scan = [c for c in self._discovered_commands
+                         if c not in self._tried_custom_cmds and c not in untried]
+        untried.extend(new_from_scan)
+        return untried[:30]  # 限制30个 (原20)
 
     def _rescue_params(self, intent: str, params: dict) -> dict:
         """
@@ -977,7 +1015,18 @@ class OnlineAgent:
                 cs = self.workbench.chain_step
                 label = f"链{cs+1}/3" if cs > 0 else "新发现"
                 print(f"  [GOAL] {intent} ({label})")
-        elif self.workbench and self.step_count % 3 == 0 and random.random() < self.probe_rate:
+        # P8.5d: 自生成目标 — 当链式目标耗尽时
+        if not used_goal and self.workbench and self.step_count > 10 and self.step_count % 6 == 0:
+            self_goal = self.workbench.generate_self_goal()
+            if self_goal:
+                intent, params = self_goal
+                params = dict(params)
+                used_goal = True
+                self._last_action_source = "goal_driven"
+                self.ab_stats["goal_driven"] += 1
+                if self.step_count % 12 == 0:
+                    print(f"  [SELF-GOAL] {intent} (事实缺口驱动)")
+        if not used_goal and self.workbench and self.step_count % 3 == 0 and random.random() < self.probe_rate:
             # P7.2: 探针概率门控 (原100%→50%), 不再无条件吃流量
             if not hasattr(self, "_probe_find_count"):
                 self._probe_find_count = 0
@@ -1079,6 +1128,8 @@ class OnlineAgent:
                 intent = self._select_intent(state_text)
                 goal = self.state_encoder.current_goal
                 if intent == "CUSTOM":
+                    # P8.5d: 每50步扫描新命令
+                    self._scan_new_commands()
                     # P5.6: 偶尔试未用过的命令
                     untried = self._get_untried_custom_cmds()
                     if untried and random.random() < 0.3:
