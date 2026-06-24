@@ -1002,6 +1002,17 @@ class OnlineAgent:
             thought = thought.squeeze(0)
 
             # 2. 批量模拟所有意图, 收集世界模型预测
+            # P10: V4 ready 后用 V4
+            if self._v4_ready():
+                candidates_v4 = [n for n in INTENTS if n != "HELP"]
+                best_name, best_val = self.world_model_v4.get_best_intent(
+                    emb, cond_emb.squeeze(0), candidates_v4
+                )
+                intent_name = best_name
+                if intent_name and self.step_count % 10 == 0:
+                    print(f"  [IMAGINE-V4] best={intent_name} value={best_val:.3f}")
+                return intent_name
+
             n = self.world_model.n_intents
             oh = torch.zeros(n, n, device=self.world_model.device)
             oh[torch.arange(n), torch.arange(n)] = 1.0
@@ -1119,6 +1130,16 @@ class OnlineAgent:
         return intent
 
     # ── P10: MODE 统计 ──
+
+    def _v4_ready(self, intent_name: str | None = None) -> bool:
+        """V4 readiness gate: per-leaf 或全局"""
+        leaf_stats = self.world_model_v4.get_leaf_stats()
+        if intent_name:
+            st = leaf_stats.get(intent_name, {})
+            return st.get("n_samples", 0) >= 20
+        ready_count = sum(1 for st in leaf_stats.values() if st.get("n_samples", 0) >= 20)
+        return ready_count >= max(1, len(self.world_model_v4.leaves) // 3)
+
     def _compute_mode_stats(self) -> dict:
         """计算 MODE 选择器需要的统计量"""
         graph_st = self.workbench.graph.stats() if hasattr(self.workbench, "graph") else {}
