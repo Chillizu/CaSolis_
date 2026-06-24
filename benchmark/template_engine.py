@@ -271,6 +271,22 @@ class TemplateEngine:
         if intent == "CUSTOM":
             return params.get("custom_args")
 
+        # P0: 安全写入 — base64 + python3, 避免 shell 注入
+        if intent in ("WRITE", "APPEND"):
+            import base64 as _b64
+            content = params.get("content", "")
+            path = params.get("path", "/tmp/output.txt")
+            op = ">" if intent == "WRITE" else ">>"
+            encoded = _b64.b64encode(content.encode()).decode()
+            shell_cmd = (
+                f"python3 -c \"import base64; "
+                f"data=base64.b64decode('{encoded}'); "
+                f"f=open('{path}','a' if '{op}' == '>>' else 'wb'); "
+                f"f.write(data); f.close(); "
+                f"print(len(data))\""
+            )
+            return ["sh", "-c", shell_cmd]
+
         template = self.command_templates.get(intent)
         if template is None:
             return None

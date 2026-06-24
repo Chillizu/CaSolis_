@@ -97,7 +97,7 @@ class SandboxExecutor:
                 "docker", "run", "-d",
                 "--name", self.name,
                 "--tmpfs", "/tmp",
-                "--tmpfs", "/workspace",
+                "--tmpfs", "/workspace:exec",  # P9: 允许执行脚本
                 "-v", f"{os.getcwd()}/data/persistent:/persistent:rw",
                 "--cap-drop", "ALL",
                 "--security-opt", "no-new-privileges",

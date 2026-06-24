@@ -399,16 +399,19 @@ class Workbench:
 
     def generate_self_goal(self) -> Optional[tuple[str, dict]]:
         """
-        P8.5d: 基于事实缺口自生成目标
-
-        当 _compute_follow_up 返回 None 时,
-        从已有事实自动推导出新目标.
-        这样系统 = 不再只能靠硬编码链驱动
+        P9.1: 基于事实缺口自生成目标
+        优先尝试创作类目标, 然后才是补全类目标
         """
-        # 1. 如果有 follow-up, 优先用它
-        fu = self._compute_follow_up()
-        if fu:
-            return fu
+        # 1. 事实足够多时, 写摘要到 /tmp (创作优先!)
+        if len(self.facts) >= 5:
+            return ("CUSTOM", {
+                "custom_args": ["python3", "-c",
+                    "import platform, json; "
+                    "d={'host':platform.node(), 'os':platform.platform()}; "
+                    "open('/tmp/auto_summary.json','w').write(json.dumps(d)); "
+                    "print('written to /tmp/auto_summary.json')"],
+                "cluster": "CREATIVE"
+            })
 
         # 2. 类别补全: 有 system 事实但缺 network/explore?
         categories = set(v.get("category", "") for v in self.facts.values())
@@ -429,6 +432,11 @@ class Workbench:
             if have in self.facts and want not in self.facts:
                 return ("CUSTOM", {"custom_args": ["cat", "/proc/meminfo"],
                                    "cluster": "SYSTEM"})
+
+        # 4. 如果有 follow-up, 用它
+        fu = self._compute_follow_up()
+        if fu:
+            return fu
 
         return None
 

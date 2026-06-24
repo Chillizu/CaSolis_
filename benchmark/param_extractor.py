@@ -95,15 +95,34 @@ class ParameterExtractor:
                     candidate = f"/{k[4:]}/{item}" if k != 'dir_root' else f"/{item}"
                     if known_files and candidate not in known_files:
                         return candidate
-            # 次优: 用已知文件
-            for f_k in ('etchosts_hosts', 'hostname', 'kernel', 'os_pretty_name'):
+            # 次优: 用已知文件 (P9.1: 修复fact key被当路径)
+            _KNOWN_FACT_PATHS = {
+                "etchosts_hosts": "/etc/hosts",
+                "hostname": "/etc/hostname",
+                "kernel": "/proc/version",
+                "os_pretty_name": "/etc/os-release",
+                "os_name": "/etc/os-release",
+                "os_version": "/etc/os-release",
+                "os_version_id": "/etc/os-release",
+                "os_id": "/etc/os-release",
+                "users": "/etc/passwd",
+                "groups": "/etc/group",
+                "cpu_model": "/proc/cpuinfo",
+                "mem_total": "/proc/meminfo",
+                "uptime": "/proc/uptime",
+                "loadavg": "/proc/loadavg",
+                "partitions": "/proc/partitions",
+            }
+            for f_k, real_path in _KNOWN_FACT_PATHS.items():
                 if f_k in facts:
-                    return f"/etc/{f_k}"
-            # 兜底: 用已有事实的路径
+                    return real_path
+            # 兜底: 用已有事实的目录路径
             for fk in facts:
                 if fk.startswith('dir_'):
                     path = fk.replace('dir_', '/').replace('_', '/')
-                    return path
+                    # 只返回已知合法的路径
+                    if path.startswith(("/etc", "/proc", "/sys", "/tmp", "/var")):
+                        return path
             return None
 
         if param_name == "pattern":
