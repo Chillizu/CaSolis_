@@ -1,0 +1,142 @@
+{
+  "version": 1,
+  "description": "命令模板注册表 — 意图到 shell 命令的映射 (P8.4c 移出代码)",
+
+  "command_templates": {
+    "READ":       { "base": ["cat"], "args": ["{path}"] },
+    "LIST":       { "base": ["ls", "-la"], "args": ["{path}"] },
+    "SEARCH":     { "base": ["grep"], "args": ["{pattern}", "{path}"] },
+    "INFO":       { "special": "info_cmds" },
+    "COUNT":      { "base": ["wc", "-l"], "args": ["{path}"] },
+    "INSPECT":    { "base": ["sh", "-c"], "args": ["command -v {cmd} 2>/dev/null || { echo 'not found'; true; }"] },
+    "EXPLORE":    { "base": ["ls", "-la"], "args": ["{path}"] },
+    "HELP":       { "base": ["echo"], "args": ["(HELP disabled) {cmd}"] },
+    "CUSTOM":     { "special": "custom" },
+    "READ_ETC":   { "base": ["cat"], "args": ["{path}"] },
+    "USB_DEVICES":{ "base": ["lsusb"], "args": null },
+    "DISK_USAGE": { "base": ["du", "-sh", "{path}"], "args": null },
+    "LS_TMP":     { "base": ["ls", "-la"], "args": ["/tmp"] },
+    "ARCH_INFO":  { "base": ["arch"], "args": null },
+    "WRITE":      { "base": ["sh", "-c"], "args": ["printf '%s\\n' {content} > {path}"] },
+    "APPEND":     { "base": ["sh", "-c"], "args": ["printf '%s\\n' {content} >> {path}"] },
+    "CAT":        { "base": ["cat"], "args": ["{path}"] }
+  },
+
+  "info_cmds": {
+    "cpu":        { "base": ["cat", "/proc/cpuinfo"], "pipe": ["head", "-10"] },
+    "mem":        { "base": ["cat", "/proc/meminfo"], "pipe": ["head", "-10"] },
+    "disk":       { "base": ["df", "-h"], "pipe": null },
+    "uptime":     { "base": ["uptime"], "pipe": null },
+    "whoami":     { "base": ["whoami"], "pipe": ["id"] },
+    "uname":      { "base": ["uname", "-a"], "pipe": null },
+    "date":       { "base": ["date"], "pipe": null },
+    "hostname":   { "base": ["hostname"], "pipe": null },
+    "arch":       { "base": ["arch"], "pipe": null },
+    "lscpu":      { "base": ["lscpu"], "pipe": null },
+    "lsblk":      { "base": ["lsblk"], "pipe": null },
+    "free":       { "base": ["free", "-h"], "pipe": null },
+    "ps":         { "base": ["ps", "aux", "--sort=-%mem"], "pipe": ["head", "-15"] },
+    "uptime_long":{ "base": ["uptime", "-p"], "pipe": null },
+    "dmesg":      { "base": ["dmesg"], "pipe": ["tail", "-20"] },
+    "ip_addr":    { "base": ["ip", "addr"], "pipe": null },
+    "ss_conn":    { "base": ["ss", "-tlnp"], "pipe": null },
+    "du_root":    { "base": ["du", "-sh", "/*"], "pipe": ["sort", "-rh", "head", "-10"] },
+    "route":      { "base": ["ip", "route"], "pipe": null }
+  },
+
+  "multi_commands": {
+    "INFO": [
+      { "base": ["cat", "/proc/cpuinfo"], "pipe": ["head", "-5"] },
+      { "base": ["free", "-h"], "pipe": null },
+      { "base": ["uname", "-a"], "pipe": null },
+      { "base": ["uptime"], "pipe": null },
+      { "base": ["df", "-h"], "pipe": null }
+    ],
+    "READ": [
+      { "base": ["cat", "{path}"], "pipe": null },
+      { "base": ["wc", "-l", "{path}"], "pipe": null },
+      { "base": ["stat", "{path}"], "pipe": null }
+    ],
+    "SEARCH": [
+      { "base": ["grep", "-i", "{pattern}", "{path}"], "pipe": null },
+      { "base": ["grep", "-c", "{pattern}", "{path}"], "pipe": null },
+      { "base": ["grep", "-n", "{pattern}", "{path}"], "pipe": ["head", "-10"] }
+    ],
+    "LIST": [
+      { "base": ["ls", "-la", "{path}"], "pipe": null },
+      { "base": ["ls", "-la", "{path}/"], "pipe": ["head", "-10"] }
+    ],
+    "COUNT": [
+      { "base": ["wc", "-l", "{path}"], "pipe": null },
+      { "base": ["wc", "-c", "{path}"], "pipe": null }
+    ],
+    "INSPECT": [
+      { "base": ["command", "-v", "{cmd}"], "pipe": null },
+      { "base": ["type", "{cmd}"], "pipe": null },
+      { "base": ["which", "{cmd}"], "pipe": null }
+    ],
+    "READ_ETC": [
+      { "base": ["cat", "{path}"], "pipe": null },
+      { "base": ["wc", "-l", "{path}"], "pipe": null },
+      { "base": ["head", "-20", "{path}"], "pipe": null }
+    ],
+    "DISK_USAGE": [
+      { "base": ["du", "-sh", "{path}"], "pipe": null },
+      { "base": ["df", "-h"], "pipe": null },
+      { "base": ["df", "-i"], "pipe": null }
+    ],
+    "USB_DEVICES": [
+      { "base": ["lsusb"], "pipe": null },
+      { "base": ["lsusb", "-v"], "pipe": ["head", "-30"] }
+    ],
+    "LS_TMP": [
+      { "base": ["ls", "-la", "/tmp"], "pipe": null },
+      { "base": ["ls", "-la", "/tmp/"], "pipe": ["head", "-10"] }
+    ],
+    "ARCH_INFO": [
+      { "base": ["arch"], "pipe": null },
+      { "base": ["uname", "-m"], "pipe": null }
+    ],
+    "WRITE": [
+      { "base": ["sh", "-c"], "pipe": ["printf '%s\\n' {content} > {path}"] },
+      { "base": ["cat", "{path}"], "pipe": null },
+      { "base": ["wc", "-l", "{path}"], "pipe": null }
+    ],
+    "APPEND": [
+      { "base": ["sh", "-c"], "pipe": ["printf '%s\\n' {content} >> {path}"] },
+      { "base": ["cat", "{path}"], "pipe": null }
+    ]
+  },
+
+  "custom_commands": {
+    "file":          { "args": ["file", "{path}"], "desc": "查看文件类型" },
+    "stat":          { "args": ["stat", "{path}"], "desc": "查看文件详细信息" },
+    "du":            { "args": ["du", "-sh", "{path}"], "desc": "查看文件/目录大小" },
+    "which":         { "args": ["which", "{cmd}"], "desc": "查找命令路径" },
+    "type":          { "args": ["type", "{cmd}"], "desc": "查看命令类型" },
+    "pstree":        { "args": ["pstree"], "desc": "进程树" },
+    "top_brief":     { "args": ["ps", "-eo", "pid,ppid,cmd,%mem,%cpu", "--sort=-%mem"], "desc": "进程列表" },
+    "lsmod":         { "args": ["lsmod"], "desc": "内核模块" },
+    "lspci":         { "args": ["lspci"], "desc": "PCI 设备" },
+    "lsusb":         { "args": ["lsusb"], "desc": "USB 设备" },
+    "env_vars":      { "args": ["env"], "desc": "环境变量" },
+    "locale":        { "args": ["locale"], "desc": "区域设置" },
+    "timedate":      { "args": ["timedatectl"], "desc": "时间设置" },
+    "mounts":        { "args": ["mount"], "desc": "挂载信息" },
+    "inodes":        { "args": ["df", "-i"], "desc": "inode 使用情况" },
+    "dns":           { "args": ["cat", "/etc/resolv.conf"], "desc": "DNS 配置" },
+    "hosts":         { "args": ["cat", "/etc/hosts"], "desc": "主机映射" },
+    "services":      { "args": ["cat", "/etc/services"], "desc": "服务端口映射" },
+    "completions":   { "args": ["compgen", "-c"], "desc": "所有可用命令" },
+    "hostname":      { "args": ["cat", "/etc/hostname"], "desc": "主机名" },
+    "wc_hosts":      { "args": ["wc", "-l", "/etc/hosts"], "desc": "hosts行数" },
+    "sha1sum_hosts": { "args": ["sha1sum", "/etc/hosts"], "desc": "hosts哈希" },
+    "lsof_hosts":    { "args": ["lsof", "/etc/hosts"], "desc": "hosts进程" },
+    "realpath_hosts":{ "args": ["realpath", "/etc/hosts"], "desc": "hosts真实路径" },
+    "id_version":    { "args": ["id"], "desc": "用户身份" },
+    "mount_info":    { "args": ["mount"], "desc": "挂载点" },
+    "groups":        { "args": ["groups"], "desc": "用户组" },
+    "kernel_modules":{ "args": ["lsmod"], "desc": "内核模块" },
+    "disk_usage":    { "args": ["du", "-sh", "/"], "desc": "根目录大小" }
+  }
+}

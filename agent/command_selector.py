@@ -9,7 +9,25 @@ import re
 import math
 from collections import defaultdict
 
-from benchmark.template_engine import CUSTOM_COMMANDS
+import json, os
+
+# P8.4c: 从 config/command_registry.json 加载 CUSTOM_COMMANDS
+# 保留旧名引兼容性
+_CUSTOM_COMMANDS_PATH = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+    "config", "command_registry.json"
+)
+def _load_custom_commands():
+    try:
+        with open(_CUSTOM_COMMANDS_PATH) as f:
+            registry = json.load(f)
+        return registry.get("custom_commands", {})
+    except Exception:
+        # 回退到内联
+        from benchmark.template_engine import _EMBEDDED_CUSTOM_COMMANDS
+        return dict(_EMBEDDED_CUSTOM_COMMANDS)
+
+CUSTOM_COMMANDS = _load_custom_commands()
 
 
 class CommandSelector:

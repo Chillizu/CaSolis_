@@ -14,33 +14,32 @@ from dataclasses import dataclass
 from typing import Any
 
 
-# ── 命令模板 ──────────────────────────────────────────────────
+# ── 命令模板 (从 JSON 配置加载) ──────────────────────────────
 
-# 意图 → (二进制, [固定参数, 模板参数, ...])
-COMMAND_TEMPLATES = {
+# P8.4c: 模板移入 config/command_registry.json
+# 仅在 JSON 加载失败时使用这些硬编码后备
+
+_EMBEDDED_COMMAND_TEMPLATES = {
     "READ":   (["cat"],               ["{path}"]),
     "LIST":   (["ls", "-la"],         ["{path}"]),
     "SEARCH": (["grep"],              ["{pattern}", "{path}"]),
-    "INFO":   (None, None),           # 特殊处理
+    "INFO":   (None, None),
     "COUNT":  (["wc", "-l"],          ["{path}"]),
     "INSPECT":(["sh", "-c"],          ["command -v {cmd} 2>/dev/null || { echo 'not found'; true; }"]),
     "EXPLORE":(["ls", "-la"],         ["{path}"]),
-    "HELP":   (["echo"],              ["(HELP disabled) {cmd}"]),  # 禁用, 不会被执行
-    "CUSTOM": (None, None),           # 自由命令, CommandSelector 处理
-    # 自动发现的意图
+    "HELP":   (["echo"],              ["(HELP disabled) {cmd}"]),
+    "CUSTOM": (None, None),
     "READ_ETC":  (["cat"],             ["{path}"]),
     "USB_DEVICES":(["lsusb"],           None),
     "DISK_USAGE":(["du", "-sh", "{path}"], None),
-    # 新意图 (开放)
     "LS_TMP":    (["ls", "-la"], ["/tmp"]),
     "ARCH_INFO": (["arch"], None),
-    # 文件创建意图 (从命令到文件)
     "WRITE":   (["sh", "-c"], ["printf '%s\n' {content} > {path}"]),
     "APPEND":  (["sh", "-c"], ["printf '%s\n' {content} >> {path}"]),
     "CAT":     (["cat"],      ["{path}"]),
 }
 
-INFO_CMDS = {
+_EMBEDDED_INFO_CMDS = {
     "cpu":     (["cat", "/proc/cpuinfo"], ["head", "-10"]),
     "mem":     (["cat", "/proc/meminfo"], ["head", "-10"]),
     "disk":    (["df", "-h"], None),
@@ -49,7 +48,6 @@ INFO_CMDS = {
     "uname":   (["uname", "-a"], None),
     "date":    (["date"], None),
     "hostname":(["hostname"], None),
-    # 新增
     "arch":    (["arch"], None),
     "lscpu":   (["lscpu"], None),
     "lsblk":   (["lsblk"], None),
@@ -60,39 +58,29 @@ INFO_CMDS = {
     "ip_addr": (["ip", "addr"], None),
     "ss_conn": (["ss", "-tlnp"], None),
     "du_root": (["du", "-sh", "/*"], ["sort", "-rh", "head", "-10"]),
-    # 网络
     "route":   (["ip", "route"], None),
 }
 
-
-# 自由命令 — 没有固定模板, CUSTOM 意图使用
-CUSTOM_COMMANDS = {
-    # 基础文件操作
+_EMBEDDED_CUSTOM_COMMANDS = {
     "file":     {"args": ["file", "{path}"], "desc": "查看文件类型"},
     "stat":     {"args": ["stat", "{path}"], "desc": "查看文件详细信息"},
     "du":       {"args": ["du", "-sh", "{path}"], "desc": "查看文件/目录大小"},
     "which":    {"args": ["which", "{cmd}"], "desc": "查找命令路径"},
     "type":     {"args": ["type", "{cmd}"], "desc": "查看命令类型"},
-    # 进程
     "pstree":   {"args": ["pstree"], "desc": "进程树"},
-    "top_brief":{"args": ["ps", "-eo", "pid,ppid,cmd,%mem,%cpu", "--sort=-%mem"], "desc": "进程列表(按内存)"},
-    # 系统
+    "top_brief":{"args": ["ps", "-eo", "pid,ppid,cmd,%mem,%cpu", "--sort=-%mem"], "desc": "进程列表"},
     "lsmod":    {"args": ["lsmod"], "desc": "内核模块"},
     "lspci":    {"args": ["lspci"], "desc": "PCI 设备"},
     "lsusb":    {"args": ["lsusb"], "desc": "USB 设备"},
     "env_vars": {"args": ["env"], "desc": "环境变量"},
     "locale":   {"args": ["locale"], "desc": "区域设置"},
     "timedate": {"args": ["timedatectl"], "desc": "时间设置"},
-    # 文件系统
     "mounts":   {"args": ["mount"], "desc": "挂载信息"},
     "inodes":   {"args": ["df", "-i"], "desc": "inode 使用情况"},
-    # 网络
     "dns":      {"args": ["cat", "/etc/resolv.conf"], "desc": "DNS 配置"},
     "hosts":    {"args": ["cat", "/etc/hosts"], "desc": "主机映射"},
     "services": {"args": ["cat", "/etc/services"], "desc": "服务端口映射"},
-    # Shell
     "completions":{"args": ["compgen", "-c"], "desc": "所有可用命令"},
-    # 自动发现的命令 (1000步长程)
     "hostname": {"args": ["cat", "/etc/hostname"], "desc": "主机名"},
     "wc_hosts": {"args": ["wc", "-l", "/etc/hosts"], "desc": "hosts行数"},
     "sha1sum_hosts":{"args": ["sha1sum", "/etc/hosts"], "desc": "hosts哈希"},
@@ -105,13 +93,7 @@ CUSTOM_COMMANDS = {
     "disk_usage":  {"args": ["du", "-sh", "/"], "desc": "根目录大小"},
 }
 
-
-# ── 多命令组合 (P1) ────────────────────────────────────────────
-
-# 意图 → 命令序列 (深度探索)
-# 每条: (args_template, pipe_args) or (command, None)
-# 执行时只跑前 depth 条 (depth 由保姆从想法向量计算)
-INTENT_MULTI_COMMANDS = {
+_EMBEDDED_MULTI_COMMANDS = {
     "INFO": [
         (["cat", "/proc/cpuinfo"], ["head", "-5"]),
         (["free", "-h"], None),
@@ -210,17 +192,75 @@ class ExecResult:
 class TemplateEngine:
     """安全的命令生成和执行器"""
 
-    def __init__(self, dry_run: bool = False, timeout: int = 30, sandbox=None):
+    def __init__(self, dry_run: bool = False, timeout: int = 30, sandbox=None,
+                 registry_path: str = ""):
         self.dry_run = dry_run
         self.timeout = timeout
-        self.sandbox = sandbox  # SandboxExecutor (可选, 用于隔离执行)
+        self.sandbox = sandbox
         self._stats = {"calls": 0, "errors": 0, "blocked": 0}
+
+        # P8.4c: 从 JSON 加载命令模板, 失败时用内联后备
+        self.command_templates = dict(_EMBEDDED_COMMAND_TEMPLATES)
+        self.info_cmds = dict(_EMBEDDED_INFO_CMDS)
+        self.custom_commands = dict(_EMBEDDED_CUSTOM_COMMANDS)
+        self.multi_commands = dict(_EMBEDDED_MULTI_COMMANDS)
+        self._load_registry(registry_path)
+
+    def _load_registry(self, path: str):
+        """从 JSON 配置加载命令注册表"""
+        if not path:
+            import os
+            base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            path = os.path.join(base, "config", "command_registry.json")
+        try:
+            import json
+            with open(path) as f:
+                registry = json.load(f)
+
+            ct = registry.get("command_templates", {})
+            for intent, cfg in ct.items():
+                if cfg.get("special"):
+                    self.command_templates[intent] = (None, None)
+                else:
+                    self.command_templates[intent] = (cfg["base"], cfg.get("args"))
+
+            ic = registry.get("info_cmds", {})
+            for target, cfg in ic.items():
+                self.info_cmds[target] = (cfg["base"], cfg.get("pipe"))
+
+            cc = registry.get("custom_commands", {})
+            for key, cfg in cc.items():
+                self.custom_commands[key] = {"args": cfg["args"], "desc": cfg.get("desc", "")}
+
+            mc = registry.get("multi_commands", {})
+            for intent, cmds in mc.items():
+                seq = []
+                for c in cmds:
+                    if c.get("pipe"):
+                        seq.append((c["base"], c["pipe"]))
+                    else:
+                        seq.append((c["base"], None))
+                self.multi_commands[intent] = seq
+
+        except Exception as e:
+            print(f"  [TemplateEngine] 加载 {path} 失败: {e}, 使用内联后备")
+
+    def register_template(self, intent: str, base: list[str],
+                          args: list[str] | None = None,
+                          multi: list[tuple[list[str], list[str] | None]] | None = None):
+        """
+        P8.4c: 运行时注册新意图的命令模板
+        用于新意图自动接入 (P6.4) 后立即注册模板
+        """
+        self.command_templates[intent] = (base, args)
+        if multi:
+            self.multi_commands[intent] = multi
 
     def build_args(self, intent: str, params: dict[str, Any]) -> list[str] | None:
         """从意图+参数构建安全的 args list"""
         if intent == "INFO":
             target = params.get("target", "uname")
-            template = INFO_CMDS.get(target)
+            template = self.info_cmds.get(target)
             if template is None:
                 return None
             args1, args2 = template
@@ -229,10 +269,9 @@ class TemplateEngine:
             return args1
 
         if intent == "CUSTOM":
-            # CUSTOM 意图: params['custom_args'] 里已经有完整的 args list
             return params.get("custom_args")
 
-        template = COMMAND_TEMPLATES.get(intent)
+        template = self.command_templates.get(intent)
         if template is None:
             return None
 
@@ -241,11 +280,22 @@ class TemplateEngine:
 
         if arg_templates is not None:
             for t in arg_templates:
-                key = t.strip("{}")
-                value = params.get(key)
-                if value is None:
-                    return None
-                args.append(str(value))
+                if "{" in t and "}" in t:
+                    # 模板参数替换: 支持 {key} 嵌入在字符串中的情况
+                    filled = t
+                    for key, value in params.items():
+                        placeholder = "{" + key + "}"
+                        if placeholder in filled:
+                            filled = filled.replace(placeholder, str(value))
+                    # 检查是否还有未替换的 {key} 占位符 (排除 shell 语法的大括号)
+                    import re
+                    unreplaced = re.findall(r'\{[a-zA-Z_]\w*\}', filled)
+                    if unreplaced:
+                        return None
+                    args.append(filled)
+                else:
+                    # 字面参数: 直接追加
+                    args.append(t)
 
         return args
 
@@ -344,7 +394,7 @@ class TemplateEngine:
         构建多命令序列中第 index 条命令.
         Returns: (args_list, shell_cmd) — 二选一, 有 pipe 时用 shell_cmd
         """
-        cmds = INTENT_MULTI_COMMANDS.get(intent)
+        cmds = self.multi_commands.get(intent)
         if not cmds or index >= len(cmds):
             return None, None
 

@@ -855,31 +855,58 @@ class Workbench:
         return self._last_script_combo
 
     def _find_command_for_key(self, key: str) -> str:
-        """根据事实 key 推荐一个可执行的 shell 命令"""
-        cmd_map = {
-            "kernel": "uname -a",
-            "node_name": "uname -a",
-            "architecture": "uname -a",
-            "hostname": "cat /etc/hostname",
-            "hostname_cmd": "hostname",
-            "current_user": "whoami",
-            "uid_info": "id",
-            "cpu_cores": "cat /proc/cpuinfo | grep processor | wc -l",
-            "cpu_model": "cat /proc/cpuinfo | grep 'model name' | head -1",
-            "mem_total": "free -h | grep Mem",
-            "swap_total": "free -h | grep Swap",
-            "disk_root": "df -h /",
-            "ip_addr": "ip addr show | grep 'inet '",
-            "users": "cat /etc/passwd | cut -d: -f1",
-            "etchosts_hosts": "cat /etc/hosts",
-            "os_pretty_name": "cat /etc/os-release",
-            "os_name": "cat /etc/os-release | grep '^NAME='",
-            "os_version": "cat /etc/os-release | grep '^VERSION_ID='",
-            "os_version_id": "cat /etc/os-release | grep '^VERSION_ID='",
-            "os_id": "cat /etc/os-release | grep '^ID='",
-            "os_version_codename": "cat /etc/os-release | grep '^VERSION_CODENAME='",
-        }
-        return cmd_map.get(key, "")
+        """
+        P8.4c: 从事实推断可执行的 shell 命令
+        优先用 source_cmd, 后备用 key 模式匹配
+        """
+        # 1. 如果有这个事实, 从 source_cmd 重建
+        fact = self.facts.get(key)
+        if fact:
+            src = fact.get("source_cmd", "") or ""
+            if src and src.startswith("["):
+                import ast
+                try:
+                    cmd_list = ast.literal_eval(src)
+                    if isinstance(cmd_list, list) and cmd_list:
+                        return " ".join(str(c) for c in cmd_list)
+                except:
+                    pass
+            elif src and src != key:
+                return src
+
+        # 2. 按 key 的模式匹配
+        patterns: list[tuple[str, str]] = [
+            ("kernel", "uname -a"),
+            ("node_name", "uname -a"),
+            ("architecture", "uname -a"),
+            ("hostname_cmd", "hostname"),
+            ("hostname", "cat /etc/hostname"),
+            ("current_user", "whoami"),
+            ("uid_info", "id"),
+            ("cpu_", "cat /proc/cpuinfo"),
+            ("mem_", "free -h"),
+            ("swap_", "free -h"),
+            ("disk_", "df -h"),
+            ("ip_", "ip addr"),
+            ("users", "cat /etc/passwd | cut -d: -f1"),
+            ("etchosts", "cat /etc/hosts"),
+            ("os_", "cat /etc/os-release"),
+            ("loadavg", "cat /proc/loadavg"),
+            ("uptime", "uptime"),
+            ("partitions", "cat /proc/partitions"),
+            ("timezone", "cat /etc/timezone"),
+            ("groups", "cat /etc/group | head -20"),
+            ("fstab", "cat /etc/fstab"),
+            ("dns_", "cat /etc/resolv.conf"),
+            ("init_", "cat /proc/1/status"),
+            ("kernel_modules", "lsmod"),
+        ]
+        for prefix, cmd in patterns:
+            if key.startswith(prefix) or key.endswith(prefix):
+                return cmd
+
+        # 3. 用 key 本身的来源作为猜测
+        return ""
 
     # ── 状态摘要 ──
 
