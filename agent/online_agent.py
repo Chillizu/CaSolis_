@@ -1932,6 +1932,34 @@ class OnlineAgent:
             })
         wm_loss = self.world_model.train_on_buffer(wm_samples)
 
+        # P10: V4 双轨训练
+        v4_samples = []
+        for e in batch:
+            s_emb = self.classifier.get_embedding(e.state_text)
+            s_emb = (s_emb.detach().clone() if s_emb.is_inference() else s_emb.clone())
+            out = e.output[:500] if e.output else ""
+            ec = getattr(e, "exit_code", 0)
+            thought_list = getattr(e, "thought", [])
+            thought_t = torch.tensor(thought_list[:16] if thought_list else [0]*16)
+            iname = e.intent if e.intent in self.world_model_v4.leaves else "CUSTOM"
+            lower = out.lower()
+            v4_samples.append({
+                "state_emb": s_emb,
+                "thought": thought_t,
+                "intent_name": iname,
+                "exit_cls": 0 if ec == 0 else 1,
+                "length_cls": 0 if len(out) < 100 else (1 if len(out) < 1000 else 2),
+                "error_cls": 1 if any(kw in lower for kw in ("not found","error","denied","no such file")) else 0,
+                "value": getattr(e, "reward", 0.0),
+            })
+        v4_loss = self.world_model_v4.train_on_buffer(v4_samples)
+        self._wm_loss_history.append(v4_loss if v4_loss > 0 else 0.0)
+        # 保存 V4 checkpoint
+        if self.step_count % 50 == 0:
+            import os as _os
+            _os.makedirs("checkpoints/world_model", exist_ok=True)
+            self.world_model_v4.save("checkpoints/world_model/v4_latest.pt")
+
         # P9: 训练日志
         try:
             intent_counts = {intent: len(by_intent.get(intent, []))

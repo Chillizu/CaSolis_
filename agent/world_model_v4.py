@@ -174,7 +174,7 @@ class GrowingWorldModel(nn.Module):
                intent_name: str, exit_code: int, output: str,
                reward: float) -> float:
         """
-        训练一步
+        训练一步 (单样本)
 
         Returns: loss value
         """
@@ -192,6 +192,53 @@ class GrowingWorldModel(nn.Module):
 
         self.eval()
         return loss.item()
+
+    def train_on_buffer(self, samples: list[dict]) -> float:
+        """
+        批量训练 (用经验缓冲区)
+
+        samples: [{state_emb, thought, intent_name, exit_cls, length_cls, error_cls, value}]
+        Returns: average loss
+        """
+        if len(samples) < 4:
+            return 0.0
+
+        self.train()
+        by_intent: dict[str, list[dict]] = {}
+        for s in samples:
+            by_intent.setdefault(s["intent_name"], []).append(s)
+
+        self.optimizer.zero_grad()
+        n_batches = 0
+        total_loss = 0.0
+
+        for intent_name, group in by_intent.items():
+            if intent_name not in self.leaves:
+                continue
+            s_embs = torch.stack([s["state_emb"] for s in group])
+            thoughts = torch.stack([s["thought"] for s in group])
+            exits = torch.tensor([s["exit_cls"] for s in group], dtype=torch.long)
+            lengths = torch.tensor([s["length_cls"] for s in group], dtype=torch.long)
+            errors = torch.tensor([s["error_cls"] for s in group], dtype=torch.long)
+            values = torch.tensor([s["value"] for s in group], dtype=torch.float)
+
+            pred = self.forward(s_embs, thoughts, intent_name)
+            loss = (
+                F.cross_entropy(pred["exit"], exits)
+                + F.cross_entropy(pred["length"], lengths)
+                + F.cross_entropy(pred["error"], errors)
+                + F.mse_loss(pred["value"], values)
+            ) / 4.0
+            loss.backward()
+            total_loss += loss.item()
+            n_batches += 1
+            self.leaf_losses.setdefault(intent_name, []).append(loss.item())
+
+        torch.nn.utils.clip_grad_norm_(self.parameters(), 1.0)
+        self.optimizer.step()
+        self.total_steps += 1
+        self.eval()
+        return total_loss / max(n_batches, 1)
 
     @torch.no_grad()
     def simulate(self, state_emb: torch.Tensor, thought: torch.Tensor,
