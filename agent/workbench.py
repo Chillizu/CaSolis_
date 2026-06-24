@@ -181,6 +181,9 @@ class Workbench:
         # P5.3: 用户自定义规则 (系统自改进)
         self._match_user_rules(output, intent, cmd_name, step)
 
+        # P9.4: 通用回退提取 — 任何输出都可能包含有用信息 (始终尝试)
+        self._extract_generic(text, intent, cmd_name, step, params)
+
     # ── 各提取规则 ──
 
     def _extract_hostname_file(self, text: str, intent: str, cmd: str, step: int):
@@ -323,6 +326,71 @@ class Workbench:
         if hostnames:
             self._add_fact("etchosts_hosts", ",".join(sorted(hostnames)[:5]), intent, cmd, step, category="network")
 
+    # ── P9.4: 通用回退提取 ──
+
+    def _extract_generic(self, text: str, intent: str, cmd: str, step: int,
+                         params: dict | None = None):
+        """
+        P9.4: 通用提取 — 从任意命令输出中提取 key: value 对
+        """
+        lines = text.strip().splitlines()
+        if not lines:
+            return
+
+        added = 0
+        for line in lines:
+            line = line.strip()
+            if not line or len(line) < 3:
+                continue
+            if line.startswith(("---", "==>", "<==", "(", "[", "*")):
+                continue
+            if added >= 3:
+                break
+
+            # 模式1: key: value  (冒号分隔)
+            if ":" in line and not line.startswith("#"):
+                parts = line.split(":", 1)
+                key = parts[0].strip().lower().replace(" ", "_").replace("\t", "_").rstrip("_,.:;!?")
+                val = parts[1].strip()
+                if val and len(key) > 1 and len(key) < 30 and key.isascii() and not key.startswith("/"):
+                    if self._is_valid_value(val):
+                        fact_key = f"generic_{key}"
+                        if fact_key not in self.facts:
+                            self._add_fact(fact_key, val[:80], intent, cmd, step,
+                                           confidence=0.5, category="general")
+                            added += 1
+                            continue
+
+            # 模式2: =分隔的 key=value  (env, /etc/os-release 风格但未匹配的)
+            if "=" in line and not line.startswith("#"):
+                parts = line.split("=", 1)
+                key = parts[0].strip().lower().replace(" ", "_").rstrip("_,.:;!?")
+                val = parts[1].strip().strip('"\'')
+                if val and len(key) > 1 and len(key) < 30 and key.isascii():
+                    if self._is_valid_value(val):
+                        fact_key = f"generic_{key}"
+                        if fact_key not in self.facts:
+                            self._add_fact(fact_key, val[:80], intent, cmd, step,
+                                           confidence=0.5, category="general")
+                            added += 1
+                            continue
+
+            # 模式3: 单行短输出 (可能是命令的直接返回值)
+            if len(lines) == 1 and len(line) < 60 and len(line) >= 2:
+                words = line.split()
+                if len(words) <= 2:
+                    cmd_based_key = cmd.replace(" ", "_").split("/")[-1].replace(" ", "_")
+                    if cmd_based_key and "|" not in cmd_based_key and "\n" not in cmd_based_key:
+                        fact_key = f"raw_{cmd_based_key[:20]}"
+                        if fact_key not in self.facts and self._is_valid_value(line):
+                            self._add_fact(fact_key, line[:60], intent, cmd, step,
+                                           confidence=0.4, category="general")
+                            added += 1
+                            continue
+
+        if added > 0:
+            self._current_discovery = "generic"
+
     # ── 内部: 事实管理 ──
 
     @staticmethod
@@ -453,7 +521,7 @@ class Workbench:
                 else:
                     lines.append(f"echo '{k}={v[:30]}'")
             content = "\n".join(lines)
-            path = f"/workspace/scripts/check_{self._step_counter}.sh"
+            path = f"/tmp/check_{self._step_counter}.sh"
             desc = "检测脚本"
 
         return {"content": content, "path": path, "desc": desc}
@@ -463,14 +531,23 @@ class Workbench:
         P9.1: 基于事实缺口自生成目标
         优先尝试创作类目标, 然后才是补全类目标
         """
-        # 1. 事实足够多时, 写摘要到 /tmp (创作优先!)
-        if len(self.facts) >= 5:
+        # 1. P9.4: 优先用内容生成器产出丰富内容 (不再固定 auto_summary.json)
+        if len(self.facts) >= 3:
+            ci = self.build_write_content()
+            content = ci["content"]
+            path = ci["path"]
+            # 用 python3 base64 安全写入
+            import base64 as _b64
+            encoded = _b64.b64encode(content.encode()).decode()
+            shell_cmd = (
+                f"python3 -c \"import base64; "
+                f"data=base64.b64decode('{encoded}'); "
+                f"f=open('{path}','wb'); "
+                f"f.write(data); f.close(); "
+                f"print(f'written {{len(data)}} bytes to {path}')\""
+            )
             return ("CUSTOM", {
-                "custom_args": ["python3", "-c",
-                    "import platform, json; "
-                    "d={'host':platform.node(), 'os':platform.platform()}; "
-                    "open('/tmp/auto_summary.json','w').write(json.dumps(d)); "
-                    "print('written to /tmp/auto_summary.json')"],
+                "custom_args": ["sh", "-c", shell_cmd],
                 "cluster": "CREATIVE"
             })
 

@@ -260,6 +260,8 @@ class TemplateEngine:
         """从意图+参数构建安全的 args list"""
         if intent == "INFO":
             target = params.get("target", "uname")
+            if target == "None" or target is None or target not in self.info_cmds:
+                target = "uname"
             template = self.info_cmds.get(target)
             if template is None:
                 return None
@@ -293,6 +295,13 @@ class TemplateEngine:
 
         base, arg_templates = template
         args = list(base)
+
+        # P9.4: 始终替换 base 参数中的 {key} 占位符
+        for i, arg in enumerate(args):
+            for key, value in params.items():
+                placeholder = "{" + key + "}"
+                if placeholder in arg:
+                    args[i] = arg.replace(placeholder, str(value))
 
         if arg_templates is not None:
             for t in arg_templates:
