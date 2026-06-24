@@ -732,22 +732,23 @@ class OnlineAgent:
 
     def _imagine_intent(self, state_text: str, temperature: float = 1.5) -> str | None:
         """
-        P5.2: 反向想象 — 世界模型创造意图
+        P8.4d: 基于世界模型的意图想象 — 替代 P5.2 的伪逆解码
 
-        流程:
-          1. 编码 state → state_emb + thought_vector
-          2. 对每个意图模拟: 世界模型预测 next_thought (价值加权混合)
-          3. 解码 next_thought → 指挥家隐藏层 → class_proj → 意图 logits
-          4. 加噪声 (温度控制创造力)
-          5. 低置信度 → CUSTOM (纯粹探索)
+        核心思想:
+          世界模型已经能预测每个意图的 next_thought。
+          与其通过伪逆转码恢复意图 logits (数学幻象),
+          不如直接用世界模型的预测信号来识别最有前景的意图。
 
-        Returns:
-          intent_name or None (imagination 不可用时)
+        评分公式:
+          score[i] = -
+            P(agreement)[i] * 0.3      # 低 agreement = 反直觉组合 → 探索奖励
+            + value[i] * 0.4            # 高价值 = 有回报的路径
+            + thought_dist[i] * 0.3     # 思考距离 = 新颖的认知状态
         """
         if not self.conductor_path_active:
             return None
         try:
-            # 1. 编码
+            # 1. 编码当前状态
             emb = self.classifier.get_embedding(state_text).to(self.world_model.device)
             cond_emb = self.nanny.conductor.encoder.encode(
                 state_text, convert_to_tensor=True
@@ -755,7 +756,7 @@ class OnlineAgent:
             thought, _ = self.nanny.conductor.head(cond_emb.unsqueeze(0))
             thought = thought.squeeze(0)
 
-            # 2. 批量模拟所有意图
+            # 2. 批量模拟所有意图, 收集世界模型预测
             n = self.world_model.n_intents
             oh = torch.zeros(n, n, device=self.world_model.device)
             oh[torch.arange(n), torch.arange(n)] = 1.0
@@ -765,42 +766,49 @@ class OnlineAgent:
             self.world_model.predictor.eval()
             with torch.no_grad():
                 pred = self.world_model.predictor(s_batch, t_batch, oh)
-                # 价值加权混合 next_thought
-                value_w = torch.exp(pred["value"].squeeze() * temperature)
-                imagined = (value_w.unsqueeze(-1) * pred["next_thought"]).sum(dim=0) / value_w.sum()
 
-            # 3. 解码 imagined_thought → 隐藏 → 意图 logits
-            W = self.nanny.conductor.head.thought_head.weight.to(self.world_model.device)  # (16, 64)
-            b = self.nanny.conductor.head.thought_head.bias.to(self.world_model.device)    # (16,)
-            W_pinv = torch.linalg.pinv(W)  # (64, 16)
-            hidden = W_pinv @ (imagined - b)  # (64,)
+            # 3. 计算每个意图的评分
+            # agreement_prob: softmax 取 prob(class=1) = 合理
+            agreement_probs = torch.softmax(pred["agreement"], dim=-1)[:, 1]  # (n,)
+            # value: 预期奖励
+            values = pred["value"].squeeze()  # (n,)
+            # next_thought 与当前 thought 的距离 (余弦距离)
+            nt = pred["next_thought"]  # (n, thought_dim)
+            thought_dist = 1.0 - torch.cosine_similarity(nt, thought.unsqueeze(0), dim=-1)  # (n,)
 
-            logits = self.nanny.conductor.head.class_proj(hidden.unsqueeze(0))  # (1, 13)
+            # 归一化到 0~1
+            agreement_norm = agreement_probs.squeeze()
+            value_norm = torch.sigmoid(values)
+            dist_norm = torch.clamp(thought_dist / max(thought_dist.max().item(), 0.01), 0, 1)
 
-            # 4. 创造力噪声
-            noise = torch.randn_like(logits) * temperature * 0.5
-            logits = logits + noise
-            probs = torch.softmax(logits / max(temperature, 0.1), dim=-1)
-            max_prob, idx = probs.max(dim=-1)
-            idx = idx.item()
+            # 评分: 低agreement(惊奇) + 高价值(回报) + 大距离(多样性)
+            scores = (1.0 - agreement_norm) * 0.3 + value_norm * 0.4 + dist_norm * 0.3
 
-            # 5. 低置信度 → CUSTOM (纯粹探索)
-            non_custom = [i for i in INTENTS if i != "CUSTOM"]
-            if max_prob.item() < 0.3:
-                return "CUSTOM"
-            return non_custom[idx] if idx < len(non_custom) else "CUSTOM"
+            # 4. 温度噪声: 鼓励多样性
+            noise = torch.randn(n, device=self.world_model.device) * temperature * 0.15
+            scores = scores + noise
+
+            # 5. 选取最高分意图
+            best_idx = scores.argmax().item()
+            best_score = scores[best_idx].item()
+
+            # 如果所有意图得分都太低, 放弃想象
+            if best_score < 0.25:
+                return None
+
+            intent_name = INTENTS[best_idx] if best_idx < len(INTENTS) else None
+            if intent_name and self.step_count % 10 == 0:
+                top5 = scores.topk(min(5, n)).indices.tolist()
+                top5_str = ", ".join(f"{INTENTS[i]}={scores[i]:.2f}" for i in top5)
+                print(f"  [IMAGINE] scores: {top5_str}")
+
+            return intent_name
         except Exception as e:
             return None
 
     def _select_intent(self, state_text: str) -> str:
-        """选择意图: 多样性优先 + 想象力 + 分类器"""
-        # P5.2: 世界模型想象力 — 每5步尝试
-        if self.step_count > 10 and self.step_count % 5 == 0:
-            temp = max(0.5, 2.0 - self.step_count * 0.005)  # 温度衰减: 2.0→0.5
-            imagined = self._imagine_intent(state_text, temperature=temp)
-            if imagined:
-                return imagined
-
+        """选择意图: 多样性优先 + 分类器"""
+        # P8.4d: 想象力移到 step() 中用概率门控统一控制
         # P8.2: 最近20步单一意图超过35%: 强制转向
         recent = self.intent_history[-20:] if len(self.intent_history) >= 20 else None
         if recent:
@@ -905,6 +913,7 @@ class OnlineAgent:
                     intent = forced
                     used_goal = True
                     self._last_action_source = "diversity"
+                    self.ab_stats["goal_driven"] = self.ab_stats.get("goal_driven", 0) + 1
                     if self.step_count % 10 == 0:
                         print(f"  [DIVERSITY] 强制 {forced} ({13-len(covered)}种未覆盖)")
 
@@ -914,6 +923,7 @@ class OnlineAgent:
                 intent, params = fu
                 params = dict(params)
                 used_goal = True
+                self._last_action_source = "goal_driven"
                 self.ab_stats["goal_driven"] += 1
                 cs = self.workbench.chain_step
                 label = f"链{cs+1}/3" if cs > 0 else "新发现"
@@ -957,6 +967,9 @@ class OnlineAgent:
                 self._last_was_imagined = True
                 self._last_action_source = "imagination"
                 self.ab_stats["imagined"] = self.ab_stats.get("imagined", 0) + 1
+                self.ab_stats["goal_driven"] += 1
+                if self.step_count % 4 == 0:
+                    print(f"  [IMAGINE] {intent}")
 
         if not used_goal:
             # Fallback: A/B 切换 + 指挥家/分类器
