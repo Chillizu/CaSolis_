@@ -270,7 +270,7 @@ class OnlineAgent:
         self._tried_custom_cmds: set[str] = set()  # P5.6: 追踪已试过的 CUSTOM 命令
         # P7.2: 概率门控 — 让 A/B 决策拿回核心循环的主导权
         self.probe_rate = 0.5       # 探针占用概率 (原100%)
-        self.imagination_rate = 0.5 # 想象力占用概率 (原100%)
+        self.imagination_rate = 0.6 # P8.5c: 想象力占用概率 (原50%→60%)
 
         # 指挥家 + 保姆 (A/B 路径)
         self.conductor_path_active = False
@@ -730,6 +730,47 @@ class OnlineAgent:
                         untried.append(cmd)
         return untried[:20]  # 限制数量
 
+    def _rescue_params(self, intent: str, params: dict) -> dict:
+        """
+        P8.5b: 参数预校验 — 执行前替换无效参数
+
+        模式化的参数错误:
+          - path="" (空字符串) → 默认路径
+          - path 是意图名而不是文件路径 → 默认路径
+          - pattern="" → 默认 "root"
+          - cmd="" → 默认 "ls"
+        """
+        import re
+        fixed = dict(params)
+
+        # 已知的路径类意图
+        path_intents = {"READ", "LIST", "COUNT", "SEARCH", "READ_ETC",
+                       "DISK_USAGE", "EXPLORE"}
+        if intent in path_intents:
+            p = fixed.get("path", "")
+            if not p or not isinstance(p, str) or len(p.strip()) < 2:
+                fixed["path"] = "/etc/hostname"
+            elif p.upper() in {"READ", "LIST", "SEARCH", "COUNT", "INFO",
+                               "CUSTOM", "HELP", "EXPLORE", "INSPECT",
+                               "READ_ETC", "LS_TMP", "ARCH_INFO",
+                               "USB_DEVICES", "DISK_USAGE"}:
+                # path 值恰好是意图名 → 显然是参数错误
+                fixed["path"] = "/etc/hostname"
+            elif not p.startswith("/"):
+                fixed["path"] = "/etc/hostname"
+
+        # 搜索类意图: pattern 不能空
+        if intent == "SEARCH":
+            if not fixed.get("pattern", ""):
+                fixed["pattern"] = "root"
+
+        # INSPECT: cmd 不能空
+        if intent == "INSPECT":
+            if not fixed.get("cmd", ""):
+                fixed["cmd"] = "ls"
+
+        return fixed
+
     def _imagine_intent(self, state_text: str, temperature: float = 1.5) -> str | None:
         """
         P8.4d: 基于世界模型的意图想象 — 替代 P5.2 的伪逆解码
@@ -1113,6 +1154,9 @@ class OnlineAgent:
                 params["depth"] = 2
             else:
                 params["depth"] = 1
+
+        # P8.5b: 参数预校验 — 执行前替换无效参数
+        params = self._rescue_params(intent, params)
 
         # P5.6: 追踪已试过的 CUSTOM 命令
         if intent == "CUSTOM":
