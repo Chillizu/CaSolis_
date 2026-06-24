@@ -834,7 +834,7 @@ class OnlineAgent:
             best_score = scores[best_idx].item()
 
             # 如果所有意图得分都太低, 放弃想象
-            if best_score < 0.25:
+            if best_score < 0.15:
                 return None
 
             intent_name = INTENTS[best_idx] if best_idx < len(INTENTS) else None
@@ -999,7 +999,7 @@ class OnlineAgent:
                         print(f"  [PROBE] {params.get('custom_args', ['?'])}")
 
         # P7.2: 想象力概率门控, 不再每4步无条件触发
-        if not used_goal and self.step_count > 5 and self.step_count % 4 == 0 and random.random() < self.imagination_rate:
+        if not used_goal and self.step_count > 3 and self.step_count % 3 == 0 and random.random() < self.imagination_rate:
             temp = max(0.5, 2.0 - self.step_count * 0.003)
             imagined = self._imagine_intent(state_text, temperature=temp)
             if imagined and imagined not in ("HELP",):
@@ -1099,11 +1099,16 @@ class OnlineAgent:
                         params["cmd"] = "python3" if intent == "INSPECT" else "ls"
                 self.ab_stats["classifier"] += 1
 
-        # V3: 世界模型心理模拟 (目标驱动时跳过, 避免丢失方向)
-        if intent is not None and self.step_count > 5 and not used_goal:
+        # V3: P8.5c: 世界模型心理模拟 — 对Conductor/分类器选择做二次验证
+        # 跳过目标驱动路径 (避免打断链式目标)
+        if intent is not None and not used_goal and self.step_count > 3:
             try:
+                # P8.5c: 扩展候选集, 让WM有更多选项
                 candidates = [INTENTS.index(intent)]
-                for alt in ["CUSTOM", "EXPLORE", "INSPECT", "SEARCH", "LS_TMP", "LIST"]:
+                all_alts = ["CUSTOM", "EXPLORE", "INSPECT", "SEARCH", "LS_TMP",
+                            "LIST", "READ", "INFO", "COUNT", "ARCH_INFO",
+                            "DISK_USAGE", "USB_DEVICES", "READ_ETC"]
+                for alt in all_alts:
                     if alt in INTENTS and INTENTS.index(alt) not in candidates:
                         candidates.append(INTENTS.index(alt))
                 
@@ -1132,7 +1137,8 @@ class OnlineAgent:
                 orig_single = self.world_model.rollout(
                     state_emb, thought_vector, [INTENTS.index(intent)], 0.9
                 )
-                if best["total_value"] > orig_single["total_value"] * 1.05:
+                # P8.5c: 更激进的覆盖 (2%优势就切换, 原5%)
+                if best["total_value"] > orig_single["total_value"] * 1.02:
                     intent = best_name
                     if intent == "CUSTOM":
                         cluster, cmd_args = self.cmd_selector.select()
