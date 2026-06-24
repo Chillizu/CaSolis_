@@ -450,6 +450,8 @@ class Workbench:
             self.meta.register(f"extract_{key}", "extraction",
                               {"key": key, "source": str(source_cmd)[:40]}, step)
             self.meta.record(f"extract_{key}", 1.0, step)
+        # P9.6: 自动追踪历史值变化
+        self._track_fact_history()
 
     # ── 查询接口 ──
 
@@ -465,7 +467,115 @@ class Workbench:
         """按类别查询所有事实 key"""
         return [k for k, v in self.facts.items() if v.get("category") == category]
 
-    # ── P9.5: 事实关联分析 ──
+    # ── P9.6: 跨事实推理引擎 ──
+
+    def _track_fact_history(self):
+        """
+        P9.6: 追踪事实历史值, 用于变化检测
+        每提取一次就在 _fact_history[key] 追加 (step, value)
+        """
+        if not hasattr(self, "_fact_history"):
+            self._fact_history: dict[str, list[tuple[int, str]]] = {}
+        for k, v in self.facts.items():
+            val = v["value"]
+            history = self._fact_history.setdefault(k, [])
+            if not history or history[-1][1] != val:
+                history.append((v["step"], val))
+                if len(history) > 10:
+                    history.pop(0)
+
+    def _build_change_report(self) -> str:
+        """
+        P9.6: 检测事实变化, 生成变化报告
+        """
+        if not hasattr(self, "_fact_history"):
+            return ""
+        changes = []
+        for k, hist in self._fact_history.items():
+            if len(hist) >= 2:
+                old_step, old_val = hist[-2]
+                new_step, new_val = hist[-1]
+                if old_val != new_val:
+                    changes.append(f"- {k}: {old_val} (step {old_step}) \u2192 {new_val} (step {new_step})")
+        if changes:
+            return "\n".join(["## Changes Detected"] + changes[-5:])
+        return ""
+
+    def _build_cross_analysis(self) -> str:
+        """
+        P9.6: 跨事实推理 — 从多事实联合推断深层信息
+        """
+        def v(k):
+            return self.facts[k]["value"] if k in self.facts else None
+
+        inferences = []
+
+        # 1. 环境推断: 内核 + 发行版 + 架构
+        kernel = v("kernel") or v("generic_kernel")
+        os_name = v("os_name") or v("generic_os_name")
+        os_ver = v("os_version_id")
+        arch = v("architecture") or v("generic_architecture")
+        if kernel and os_name:
+            if "arch" in kernel.lower() or "arch" in (os_name or "").lower():
+                inferences.append("* Environment: Arch Linux host running Debian container (kernel mismatch typical of containers)")
+            elif "debian" in (os_name or "").lower():
+                inferences.append(f"* Environment: Debian {os_ver or ''} container on Linux {kernel[:15]} — typical sandbox setup")
+
+        # 2. 资源画像: CPU + 内存 + 磁盘
+        cpu_cores = v("cpu_cores")
+        cpu_model = v("cpu_model") or v("generic_cpu_model") or v("generic_model_name")
+        mem = v("mem_total") or v("generic_mem")
+        disk_keys = [k for k in self.facts if k.startswith("disk_")]
+        if cpu_cores:
+            cores = int(cpu_cores) if cpu_cores.isdigit() else 0
+            if cores >= 16:
+                inferences.append(f"* Workload: {cpu_cores}-core CPU suggests a build server or CI runner container")
+            elif cores >= 4:
+                inferences.append(f"* Workload: {cpu_cores}-core CPU — general purpose container")
+            else:
+                inferences.append(f"* Workload: {cpu_cores}-core CPU — lightweight/embedded container")
+
+        # 3. 存储分析
+        disk_root = v("disk_root") or v("disk_etc_hosts")
+        disk_persistent = v("disk_persistent")
+        if disk_persistent and disk_root:
+            try:
+                root_gb = int(disk_root.rstrip("G").rstrip("g"))
+                persist_gb = int(disk_persistent.rstrip("G").rstrip("g"))
+                if persist_gb > root_gb:
+                    inferences.append(f"* Storage: persistent volume ({disk_persistent}) larger than root ({disk_root}) \u2192 external volume mount detected")
+                elif root_gb == persist_gb:
+                    inferences.append(f"* Storage: root and persistent same size ({disk_root}) \u2192 single filesystem")
+            except ValueError:
+                pass
+
+        # 4. 网络状态 (间接推断)
+        hostname_val = v("hostname") or v("node_name") or v("generic_node_name")
+        if hostname_val and len(hostname_val) == 12 and all(c in "0123456789abcdef" for c in hostname_val.lower()):
+            inferences.append(f"* Network: hostname '{hostname_val}' is a Docker container ID \u2192 no DNS, likely --network none")
+        elif hostname_val:
+            inferences.append(f"* Network: hostname '{hostname_val}' — custom naming, possible network access")
+
+        # 5. 用户与安全
+        users = v("users") or v("generic_uid")
+        if users and users == "root":
+            inferences.append("* Security: single root user — standard container lockdown")
+
+        # 6. USB 设备
+        usb_keys = [k for k in self.facts if "usb" in k.lower()]
+        if usb_keys:
+            inferences.append(f"* Hardware: USB subsystem accessible — possible device passthrough")
+
+        # 7. 事实数量/覆盖度
+        cat_count = len(set(v.get("category") for v in self.facts.values()))
+        if len(self.facts) < 10:
+            inferences.append("* Discovery: early stage, only {len(self.facts)} facts collected")
+        elif cat_count >= 3:
+            inferences.append(f"* Discovery: {len(self.facts)} facts across {cat_count} categories — good coverage")
+
+        if not inferences:
+            return ""
+        return "## Inference\n" + "\n".join(inferences)
 
     def _build_fact_analysis(self, keys: list[str]) -> str:
         """
@@ -565,11 +675,17 @@ class Workbench:
         selected = random.sample(system_facts, min(6, len(system_facts)))
         records = {k: self.facts[k]["value"][:60] for k in selected}
         analysis = self._build_fact_analysis(selected)
+        # P9.6: 跨事实推理 + 变化检测
+        self._track_fact_history()
+        cross_analysis = self._build_cross_analysis()
+        change_report = self._build_change_report()
 
         if style == "json":
             structured = {
                 "_meta": {"step": self._step_counter, "fact_count": len(self.facts)},
                 "_summary": analysis,
+                "_inference": cross_analysis,
+                "_changes": change_report,
                 "facts": records,
             }
             content = json.dumps(structured, ensure_ascii=False, indent=2)
@@ -584,8 +700,14 @@ class Workbench:
                 "## System Analysis",
                 analysis,
                 "",
-                "## Raw Facts",
             ]
+            if cross_analysis:
+                lines.append(cross_analysis)
+                lines.append("")
+            if change_report:
+                lines.append(change_report)
+                lines.append("")
+            lines.append("## Raw Facts")
             for k, v in records.items():
                 lines.append(f"- **{k}**: {v}")
             lines.append("")
