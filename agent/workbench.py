@@ -23,12 +23,15 @@ P4.0 Workbench — 动作记忆 + 事实提取
 import re
 from typing import Optional
 
+from agent.fact_graph import FactGraph, EDGE_REQUIRES, EDGE_VERIFIES, EDGE_EXTENDS
+
 
 class Workbench:
     """工作栏: 事实存储 + 自动提取 + 状态摘要"""
 
     def __init__(self, max_facts: int = 40, meta_learner=None):
-        self.facts: dict[str, dict] = {}  # key → {value, source, step, confidence, count}
+        self.facts: dict[str, dict] = {}  # key → {value, source, step, confidence, count} (legacy, dual-write)
+        self.graph = FactGraph(max_nodes=max_facts * 5)  # P10: 图结构知识库
         self.max_facts = max_facts
         self._current_discovery: Optional[str] = None  # 最新关键事实 key
         self._step_counter = 0
@@ -417,13 +420,20 @@ class Workbench:
     def _add_fact(self, key: str, value: str, source_intent: str,
                   source_cmd: str, step: int, confidence: float = 1.0,
                   category: str = "general"):
-        """添加或更新事实 (置信度递增, P5.4: 追踪提取效用)"""
+        """添加或更新事实 (置信度递增, P5.4: 追踪提取效用)
+
+        双写: self.facts (legacy) + self.graph (P10 FactGraph)
+        """
         if not value or len(value) > 100:
             value = value[:100]
         # P6.1: 拒绝垃圾值
         if not self._is_valid_value(value):
             return
 
+        # P10: 写入图
+        was_new = self.graph.add_node(key, value, category, confidence, step, source_cmd)
+
+        # 兼容: 写入 facts dict
         is_new = key not in self.facts
         if key in self.facts:
             old = self.facts[key]
@@ -446,10 +456,11 @@ class Workbench:
                 "category": category,
             }
         # P5.4: 记录提取效用
-        if self.meta and is_new:
-            self.meta.register(f"extract_{key}", "extraction",
-                              {"key": key, "source": str(source_cmd)[:40]}, step)
-            self.meta.record(f"extract_{key}", 1.0, step)
+        if self.meta and (is_new or was_new):
+            if is_new:
+                self.meta.register(f"extract_{key}", "extraction",
+                                  {"key": key, "source": str(source_cmd)[:40]}, step)
+                self.meta.record(f"extract_{key}", 1.0, step)
         # P9.6: 自动追踪历史值变化
         self._track_fact_history()
 
@@ -464,7 +475,10 @@ class Workbench:
         return self.facts[key]["value"] if key in self.facts else None
 
     def get_facts_by_category(self, category: str) -> list[str]:
-        """按类别查询所有事实 key"""
+        """按类别查询所有事实 key (图优先 + facts 兼容)"""
+        graph_keys = self.graph.get_nodes_by_category(category)
+        if graph_keys:
+            return graph_keys
         return [k for k, v in self.facts.items() if v.get("category") == category]
 
     # ── P9.6: 跨事实推理引擎 ──
@@ -472,110 +486,23 @@ class Workbench:
     def _track_fact_history(self):
         """
         P9.6: 追踪事实历史值, 用于变化检测
-        每提取一次就在 _fact_history[key] 追加 (step, value)
+        P10: 委托给 FactGraph
         """
-        if not hasattr(self, "_fact_history"):
-            self._fact_history: dict[str, list[tuple[int, str]]] = {}
-        for k, v in self.facts.items():
-            val = v["value"]
-            history = self._fact_history.setdefault(k, [])
-            if not history or history[-1][1] != val:
-                history.append((v["step"], val))
-                if len(history) > 10:
-                    history.pop(0)
+        self.graph.track_fact_history()
 
     def _build_change_report(self) -> str:
         """
         P9.6: 检测事实变化, 生成变化报告
+        P10: 委托给 FactGraph
         """
-        if not hasattr(self, "_fact_history"):
-            return ""
-        changes = []
-        for k, hist in self._fact_history.items():
-            if len(hist) >= 2:
-                old_step, old_val = hist[-2]
-                new_step, new_val = hist[-1]
-                if old_val != new_val:
-                    changes.append(f"- {k}: {old_val} (step {old_step}) \u2192 {new_val} (step {new_step})")
-        if changes:
-            return "\n".join(["## Changes Detected"] + changes[-5:])
-        return ""
+        return self.graph.build_change_report()
 
     def _build_cross_analysis(self) -> str:
         """
         P9.6: 跨事实推理 — 从多事实联合推断深层信息
+        P10: 委托给 FactGraph
         """
-        def v(k):
-            return self.facts[k]["value"] if k in self.facts else None
-
-        inferences = []
-
-        # 1. 环境推断: 内核 + 发行版 + 架构
-        kernel = v("kernel") or v("generic_kernel")
-        os_name = v("os_name") or v("generic_os_name")
-        os_ver = v("os_version_id")
-        arch = v("architecture") or v("generic_architecture")
-        if kernel and os_name:
-            if "arch" in kernel.lower() or "arch" in (os_name or "").lower():
-                inferences.append("* Environment: Arch Linux host running Debian container (kernel mismatch typical of containers)")
-            elif "debian" in (os_name or "").lower():
-                inferences.append(f"* Environment: Debian {os_ver or ''} container on Linux {kernel[:15]} — typical sandbox setup")
-
-        # 2. 资源画像: CPU + 内存 + 磁盘
-        cpu_cores = v("cpu_cores")
-        cpu_model = v("cpu_model") or v("generic_cpu_model") or v("generic_model_name")
-        mem = v("mem_total") or v("generic_mem")
-        disk_keys = [k for k in self.facts if k.startswith("disk_")]
-        if cpu_cores:
-            cores = int(cpu_cores) if cpu_cores.isdigit() else 0
-            if cores >= 16:
-                inferences.append(f"* Workload: {cpu_cores}-core CPU suggests a build server or CI runner container")
-            elif cores >= 4:
-                inferences.append(f"* Workload: {cpu_cores}-core CPU — general purpose container")
-            else:
-                inferences.append(f"* Workload: {cpu_cores}-core CPU — lightweight/embedded container")
-
-        # 3. 存储分析
-        disk_root = v("disk_root") or v("disk_etc_hosts")
-        disk_persistent = v("disk_persistent")
-        if disk_persistent and disk_root:
-            try:
-                root_gb = int(disk_root.rstrip("G").rstrip("g"))
-                persist_gb = int(disk_persistent.rstrip("G").rstrip("g"))
-                if persist_gb > root_gb:
-                    inferences.append(f"* Storage: persistent volume ({disk_persistent}) larger than root ({disk_root}) \u2192 external volume mount detected")
-                elif root_gb == persist_gb:
-                    inferences.append(f"* Storage: root and persistent same size ({disk_root}) \u2192 single filesystem")
-            except ValueError:
-                pass
-
-        # 4. 网络状态 (间接推断)
-        hostname_val = v("hostname") or v("node_name") or v("generic_node_name")
-        if hostname_val and len(hostname_val) == 12 and all(c in "0123456789abcdef" for c in hostname_val.lower()):
-            inferences.append(f"* Network: hostname '{hostname_val}' is a Docker container ID \u2192 no DNS, likely --network none")
-        elif hostname_val:
-            inferences.append(f"* Network: hostname '{hostname_val}' — custom naming, possible network access")
-
-        # 5. 用户与安全
-        users = v("users") or v("generic_uid")
-        if users and users == "root":
-            inferences.append("* Security: single root user — standard container lockdown")
-
-        # 6. USB 设备
-        usb_keys = [k for k in self.facts if "usb" in k.lower()]
-        if usb_keys:
-            inferences.append(f"* Hardware: USB subsystem accessible — possible device passthrough")
-
-        # 7. 事实数量/覆盖度
-        cat_count = len(set(v.get("category") for v in self.facts.values()))
-        if len(self.facts) < 10:
-            inferences.append("* Discovery: early stage, only {len(self.facts)} facts collected")
-        elif cat_count >= 3:
-            inferences.append(f"* Discovery: {len(self.facts)} facts across {cat_count} categories — good coverage")
-
-        if not inferences:
-            return ""
-        return "## Inference\n" + "\n".join(inferences)
+        return self.graph.build_cross_analysis()
 
     def _build_fact_analysis(self, keys: list[str]) -> str:
         """
@@ -882,10 +809,26 @@ class Workbench:
     def generate_self_goal(self) -> Optional[tuple[str, dict]]:
         """
         P9.1: 基于事实缺口自生成目标
-        优先尝试创作类目标, 然后才是补全类目标
+        P10: 优先用图缺口驱动, 再创作, 再补全
         """
-        # 1. P9.4: 优先用内容生成器产出丰富内容 (不再固定 auto_summary.json)
-        if len(self.facts) >= 3:
+        # P10: 如果有图缺口, 用它
+        gaps = self.graph.find_gaps()
+        if gaps:
+            src, missing, rel = gaps[0]
+            gap_map = {
+                "os_version_id": ("READ", {"path": "/etc/os-release"}),
+                "cpu_model": ("READ", {"path": "/proc/cpuinfo"}),
+                "mem_total": ("CUSTOM", {"custom_args": ["free", "-h"], "cluster": "SYSTEM"}),
+                "swap_total": ("CUSTOM", {"custom_args": ["free", "-h"], "cluster": "SYSTEM"}),
+                "etchosts_hosts": ("READ", {"path": "/etc/hosts"}),
+                "hostname_cmd": ("CUSTOM", {"custom_args": ["hostname"], "cluster": "SYSTEM"}),
+                "current_user": ("CUSTOM", {"custom_args": ["whoami"], "cluster": "USER"}),
+                "ip_addr": ("CUSTOM", {"custom_args": ["ip", "addr"], "cluster": "NETWORK"}),
+            }
+            if missing in gap_map:
+                return gap_map[missing]
+
+        # 1. P9.4: 优先用内容生成器产出丰富内容
             ci = self.build_write_content()
             content = ci["content"]
             path = ci["path"]
@@ -938,9 +881,32 @@ class Workbench:
         return result
 
     def _compute_follow_up(self) -> Optional[tuple[str, dict]]:
-        """实际的推荐逻辑 (先尝试配置链, 回退到硬编码)"""
+        """实际的推荐逻辑 (P10: 先查图缺口, 回退配置链, 再硬编码)"""
 
-        # P5.3: 先尝试配置驱动的链
+        # P10: FactGraph 缺口驱动
+        gaps = self.graph.find_gaps()
+        if gaps:
+            src, missing, rel = gaps[0]
+            # 将缺口映射到意图+参数
+            gap_map = {
+                "os_version_id": ("READ", {"path": "/etc/os-release"}),
+                "os_version_codename": ("READ", {"path": "/etc/os-release"}),
+                "kernel_release": ("CUSTOM", {"custom_args": ["uname", "-a"], "cluster": "SYSTEM"}),
+                "cpu_model": ("READ", {"path": "/proc/cpuinfo"}),
+                "mem_total": ("CUSTOM", {"custom_args": ["free", "-h"], "cluster": "SYSTEM"}),
+                "swap_total": ("CUSTOM", {"custom_args": ["free", "-h"], "cluster": "SYSTEM"}),
+                "etchosts_hosts": ("READ", {"path": "/etc/hosts"}),
+                "hostname_cmd": ("CUSTOM", {"custom_args": ["hostname"], "cluster": "SYSTEM"}),
+                "uid_info": ("CUSTOM", {"custom_args": ["id"], "cluster": "USER"}),
+                "current_user": ("CUSTOM", {"custom_args": ["whoami"], "cluster": "USER"}),
+                "ip_addr": ("CUSTOM", {"custom_args": ["ip", "addr"], "cluster": "NETWORK"}),
+                "mac_addr": ("CUSTOM", {"custom_args": ["ip", "addr"], "cluster": "NETWORK"}),
+                "disk_persistent": ("CUSTOM", {"custom_args": ["df", "-h"], "cluster": "SYSTEM"}),
+            }
+            if missing in gap_map:
+                return gap_map[missing]
+
+        # P5.3: 配置驱动的链
         for chain in self.rules.get("follow_up_chains", []):
             trigger = chain.get("trigger_key", "")
             needs = chain.get("needs_key", "")
@@ -1445,11 +1411,12 @@ class Workbench:
     # ── 状态摘要 ──
 
     def get_state_summary(self, max_keys: int = 4) -> str:
-        """生成简短文本摘要 → 注入 StateEncoder.fact_summary"""
+        """生成简短文本摘要 → 注入 StateEncoder.fact_summary (P10: 图优先)"""
+        graph_summary = self.graph.get_state_summary(max_keys)
+        if graph_summary != "无":
+            return graph_summary
         if not self.facts:
             return "无"
-
-        # 按 (置信度, 最近使用) 排序
         ranked = sorted(
             self.facts.items(),
             key=lambda x: (
@@ -1465,9 +1432,8 @@ class Workbench:
         return " | ".join(parts)
 
     def save(self, path: str = ""):
-        """持久化工作栏状态到文件 (含事实 + 链状态)"""
+        """持久化工作栏状态到文件 (含事实 + 图 + 链状态)"""
         if not path:
-            # 默认: 项目 data/persistent/ 目录 (host 可写)
             import os
             base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
             path = os.path.join(base, "data", "persistent", "workbench_snapshot.json")
@@ -1476,6 +1442,7 @@ class Workbench:
             data = {
                 "facts": {k: {sk: sv for sk, sv in v.items()}
                          for k, v in self.facts.items()},
+                "graph": self.graph.to_dict(),
                 "chain_step": self.chain_step,
                 "chain_completed_at": self.chain_completed_at,
                 "_current_discovery": self._current_discovery,
@@ -1484,10 +1451,10 @@ class Workbench:
             with open(path, "w") as f:
                 json.dump(data, f, ensure_ascii=False)
         except Exception as e:
-            print(f"  ⚠️ 工作栏保存失败: {e}")
+            print(f"  \u26a0\ufe0f 工作栏保存失败: {e}")
 
     def load(self, path: str = ""):
-        """从文件恢复工作栏状态"""
+        """从文件恢复工作栏状态 (含图 + facts)"""
         if not path:
             import os
             base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -1499,6 +1466,10 @@ class Workbench:
             self.facts.clear()
             for k, v in data.get("facts", {}).items():
                 self.facts[k] = v
+            # P10: 恢复图
+            graph_data = data.get("graph")
+            if graph_data:
+                self.graph = FactGraph.from_dict(graph_data)
             self.chain_step = data.get("chain_step", 0)
             self.chain_completed_at = data.get("chain_completed_at", 0)
             self._current_discovery = data.get("_current_discovery")
@@ -1512,8 +1483,13 @@ class Workbench:
         self._current_discovery = None
 
     def stats(self) -> dict:
+        graph_st = self.graph.stats()
         return {
             "n_facts": len(self.facts),
+            "n_facts_graph": graph_st["n_nodes"],
+            "n_edges": graph_st["n_edges"],
+            "n_gaps": graph_st["n_gaps"],
+            "schema_coverage": graph_st["schema_coverage"],
             "categories": {c: len(self.get_facts_by_category(c))
                           for c in ("system", "explore", "network", "general")},
             "latest_discovery": self._current_discovery,

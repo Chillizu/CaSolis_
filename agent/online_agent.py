@@ -1742,20 +1742,22 @@ class OnlineAgent:
         train_intents = [i for i in INTENTS if i != "HELP"]
         
         # P8.3: UCB采样 — 少样本意图获得更多权重
+        # P10: 约束 UCB ≤ 3.0, 防噪声样本权重过大导致 Loss 发散
         total = len(buffer_list)
         n_intents = len(train_intents)
         base_per_class = max(1, self.batch_size // n_intents)
         
         # 计算每个意图的 UCB 分数: 样本数越少, UCB 越高
         intent_scores = {}
+        UCB_MAX = 3.0  # P10: 硬上限, 防止罕见意图噪声放大
         for intent in train_intents:
             n_samples = len(by_intent.get(intent, []))
             if n_samples == 0:
-                intent_scores[intent] = 10.0  # 无样本 → 最高优先级
+                intent_scores[intent] = UCB_MAX  # 无样本 → 最高优先级
             else:
                 ratio = n_samples / max(total, 1)
-                # UCB: 越少的类权重越大
-                intent_scores[intent] = 1.0 / max(ratio, 0.01)
+                # UCB: 越少的类权重越大, 但上限 UCB_MAX
+                intent_scores[intent] = min(1.0 / max(ratio, 0.01), UCB_MAX)
         
         # 归一化权重 → 样本分配数
         total_score = sum(intent_scores.values())
