@@ -271,7 +271,7 @@ class OnlineAgent:
         self._tried_custom_cmds: set[str] = set()  # P5.6: 追踪已试过的 CUSTOM 命令
         # P7.2: 概率门控 — 让 A/B 决策拿回核心循环的主导权
         self.probe_rate = 0.5       # 探针占用概率 (原100%)
-        self.imagination_rate = 0.6 # P8.5c: 想象力占用概率 (原50%→60%)
+        self.imagination_rate = 0.8 # P9.7: 想象力占用概率 (原60%→80%)
 
         # 指挥家 + 保姆 (A/B 路径)
         self.conductor_path_active = False
@@ -1008,6 +1008,17 @@ class OnlineAgent:
             # 评分: 低agreement(惊奇) + 高价值(回报) + 大距离(多样性)
             scores = (1.0 - agreement_norm) * 0.3 + value_norm * 0.4 + dist_norm * 0.3
 
+            # P9.7: 新颖度奖励 — 给可能发现新事实的意图加分
+            if hasattr(self, "workbench") and self.workbench:
+                fact_count = len(self.workbench.facts)
+                # 创作类意图 (WRITE/APPEND/GENERATE) 在事实多时更有价值
+                for idx, name in enumerate(INTENTS):
+                    if name in ("WRITE", "APPEND", "GENERATE") and fact_count >= 5:
+                        scores[idx] += 0.05 * min(1.0, fact_count / 20.0)
+                    # 探索类意图从边界探索获益
+                    if name in ("EXPLORE", "CUSTOM", "READ"):
+                        scores[idx] += 0.03  # 探索奖励
+
             # 4. 温度噪声: 鼓励多样性
             noise = torch.randn(n, device=self.world_model.device) * temperature * 0.15
             scores = scores + noise
@@ -1193,25 +1204,47 @@ class OnlineAgent:
                     if self.step_count % 6 == 0:
                         print(f"  [PROBE] {params.get('custom_args', ['?'])}")
 
-        # P7.2: 想象力概率门控, 不再每4步无条件触发
-        if not used_goal and self.step_count > 3 and self.step_count % 3 == 0 and random.random() < self.imagination_rate:
-            temp = max(0.5, 2.0 - self.step_count * 0.003)
-            imagined = self._imagine_intent(state_text, temperature=temp)
-            if imagined and imagined not in ("HELP",):
-                intent = imagined
-                params = self.param_extractor.extract(
-                    intent, self.state_encoder.current_goal or "",
-                    workbench=self.workbench,
-                    known_files=self.state_encoder.explored_paths if hasattr(self.state_encoder, 'explored_paths') else None,
-                )
-                if intent == "CUSTOM":
+        # P9.7: 想象力概率门控 — 每步80%概率触发
+        if not used_goal and self.step_count > 3 and random.random() < self.imagination_rate:
+            # P9.7: 好奇心注入 — 新颖度低时强制探索
+            rnd_stats = self.rnd.get_novelty_stats()
+            rnd_avg = rnd_stats.get('running_errors_avg', 0)
+            curiosity_mode = rnd_avg < 0.01 and random.random() < 0.4
+            if curiosity_mode:
+                # 好奇心不足: 强制 CUSTOM 探索
+                intent = "CUSTOM"
+                self._scan_new_commands()
+                untried = self._get_untried_custom_cmds()
+                if untried:
+                    cmd = random.choice(untried)
+                    params = {"custom_args": [cmd], "cluster": "CURIOSITY"}
+                else:
                     cluster, cmd_args = self.cmd_selector.select()
                     params = {"custom_args": cmd_args, "cluster": cluster}
+                if self.step_count % 20 == 0:
+                    print(f"  [CURIOSITY] RND新颖度低({rnd_avg:.4f}), 强制CUSTOM探索")
                 used_goal = True
-                self._last_was_imagined = True
                 self._last_action_source = "imagination"
                 self.ab_stats["imagined"] = self.ab_stats.get("imagined", 0) + 1
                 self.ab_stats["goal_driven"] += 1
+            else:
+                temp = max(0.5, 2.0 - self.step_count * 0.003)
+                imagined = self._imagine_intent(state_text, temperature=temp)
+                if imagined and imagined not in ("HELP",):
+                    intent = imagined
+                    params = self.param_extractor.extract(
+                        intent, self.state_encoder.current_goal or "",
+                        workbench=self.workbench,
+                        known_files=self.state_encoder.explored_paths if hasattr(self.state_encoder, 'explored_paths') else None,
+                    )
+                    if intent == "CUSTOM":
+                        cluster, cmd_args = self.cmd_selector.select()
+                        params = {"custom_args": cmd_args, "cluster": cluster}
+                    used_goal = True
+                    self._last_was_imagined = True
+                    self._last_action_source = "imagination"
+                    self.ab_stats["imagined"] = self.ab_stats.get("imagined", 0) + 1
+                    self.ab_stats["goal_driven"] += 1
                 if self.step_count % 4 == 0:
                     print(f"  [IMAGINE] {intent}")
 
@@ -1514,6 +1547,11 @@ class OnlineAgent:
             self.rnd.update(state_emb)
         
         # P8.5: 周期性 RND 软重置 (防止好奇心饱和)
+        # P9.7: 兴趣重置 — 每20步部分重置RND预测器, 防止新颖度归零
+        if self.step_count > 0 and self.step_count % 20 == 0:
+            self.rnd.interest_reset(fraction=0.3)
+            if self.step_count % 100 == 0:
+                print(f"  [RND] 兴趣重置 (每20步)")
         if self.step_count > 0 and self.step_count % 50 == 0:
             rnd_stats = self.rnd.get_novelty_stats()
             if rnd_stats['running_errors_avg'] < 0.006:

@@ -111,6 +111,25 @@ class RND:
         if self.max_error < 0.1:
             self.max_error = 1.0
 
+    def interest_reset(self, fraction: float = 0.5):
+        """
+        P9.7: 兴趣重置 — 随机替换预测器部分权重
+        防止 RND 过度拟合导致新颖度永久归零
+        """
+        import random
+        with torch.no_grad():
+            for param in self.predictor.parameters():
+                if param.dim() >= 2:  # 只重置权重矩阵, 不重置 bias
+                    n = param.numel()
+                    mask = torch.rand(n, device=self.device) < fraction
+                    # 用 Xavier 均匀分布重新初始化被选中的元素
+                    fan = nn.init._calculate_correct_fan(param, 'fan_in')
+                    gain = nn.init.calculate_gain('relu')
+                    std = gain / (fan ** 0.5)
+                    new_vals = torch.randn(n, device=self.device) * std * 0.5  # 减半幅度避免剧烈变化
+                    param.data.view(-1)[mask] = new_vals[mask]
+        self.max_error = max(self.max_error, 0.5)  # 保证好奇心基线
+
     def get_novelty_stats(self) -> dict:
         """返回新颖度统计"""
         return {
