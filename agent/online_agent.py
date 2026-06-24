@@ -51,6 +51,9 @@ from agent.meta_learner import MetaLearner
 from agent.intent_discoverer import IntentDiscoverer
 from agent.error_recovery import ErrorRecovery
 from agent.workbench import Workbench
+from agent.meta_selector import MetaCognitiveSelector
+from agent.goal_generator import GoalGenerator
+from agent.world_model_v4 import GrowingWorldModel
 from benchmark.param_extractor import ParameterExtractor
 from benchmark.template_engine import TemplateEngine, ExecResult
 from collections import deque
@@ -240,6 +243,24 @@ class OnlineAgent:
             sandbox=self.sandbox,
             workbench=self.workbench,
         )
+
+        # P10: 层级架构 — 元认知 + 目标生成 + 增长型 WM V4
+        self.meta_selector = MetaCognitiveSelector()
+        self.goal_generator = GoalGenerator()
+        # V4 在所有意图上初始化叶
+        self.world_model_v4 = GrowingWorldModel(embed_dim=384, thought_dim=16)
+        for name in INTENTS:
+            if name != "HELP":
+                self.world_model_v4.add_intent(name)
+        print(f"  \u2705 增长型WM V4: {len(self.world_model_v4.leaves)} 个意图叶")
+        # 尝试加载 V4 checkpoint
+        wm_v4_ckpt = "checkpoints/world_model/v4_latest.pt"
+        if os.path.exists(wm_v4_ckpt):
+            try:
+                self.world_model_v4.load(wm_v4_ckpt)
+                print(f"  \u2705 WM V4 已加载: {wm_v4_ckpt}")
+            except Exception as e:
+                print(f"  \u26a0\ufe0f WM V4 加载失败: {e}")
 
         # 训练配置
         self.train_interval = train_interval
