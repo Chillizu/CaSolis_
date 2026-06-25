@@ -408,6 +408,14 @@ class OnlineAgent:
         self._failure_log: dict[str, int] = {}  # key→step_number_last_tried
         self._failure_cooldown = 50  # 步数冷卻
 
+        # P12: KnowledgeMapper 知识拓展
+        from agent.knowledge_mapper import KnowledgeMapper
+        self.knowledge_mapper = KnowledgeMapper(sandbox=self.sandbox, workbench=self.workbench)
+        # 立即跑 Phase A (静态清单, 全快命令)
+        n_a = self.knowledge_mapper.run_phase("A", 0)
+        if n_a > 0:
+            print(f"  ✅ 知识拓展 Phase A: {n_a} 个新事实")
+
         # P4: 工作栏驱动的目标池
         self.explore_targets = [
             "查看 /etc/hostname 的内容",
@@ -1246,7 +1254,20 @@ class OnlineAgent:
         state_text = self.state_encoder.get_state_text(thought_label=thought_label)
         state_emb = self.classifier.get_embedding(state_text).detach().clone()
 
-        # 2. P10: GoalGenerator (MODE驱动目标)
+        # 2. P12: 知识拓展 (分散在各步)
+        # 每10-15步执行一次未完成的探索阶段
+        if hasattr(self, 'knowledge_mapper') and self.step_count > 10:
+            # 分散探索: Phase B=15步间隔, C=20, D=25, E=30
+            phase_intervals = {"B": 15, "C": 20, "D": 25, "E": 30}
+            for phase in ["B", "C", "D", "E"]:
+                if not self.knowledge_mapper.is_phase_done(phase):
+                    if self.step_count % phase_intervals.get(phase, 15) == 0:
+                        n_new = self.knowledge_mapper.run_phase(phase, self.step_count)
+                        if n_new > 0:
+                            print(f"  [KNOWLEDGE] Phase {phase}: {n_new} 个新事实")
+                        break  # 每次只做一个 phase
+
+        # 3. P10: GoalGenerator (MODE驱动目标)
         used_goal = False
         intent = None
         params = {}
