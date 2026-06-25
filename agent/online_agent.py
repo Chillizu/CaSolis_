@@ -342,7 +342,15 @@ class OnlineAgent:
             print(f"  ✅ 保姆就绪 (阈值={conductor_gate})")
         except Exception as e:
             print(f"  ⚠️ 保姆不可用: {e}")
-        
+
+        # P11: PersistentStore
+        from agent.persistent_store import PersistentStore
+        self.pstore = PersistentStore()
+        if self.pstore._read_version() is not None:
+            self.pstore.load_all(self)
+        else:
+            print(f"  ℹ️ PersistentStore: 无历史数据, 从零开始")
+
         self.ab_stats = {"conductor": 0, "classifier": 0, "conductor_success": 0, "classifier_success": 0, "goal_driven": 0, "goal_driven_success": 0, "imagined": 0, "imagined_success": 0}
         self.multi_cmds_count = 0  # P1: 多命令步数
         self._last_cond_logits = None  # P2: 最近一次 Conductor logits
@@ -379,6 +387,11 @@ class OnlineAgent:
 
         # P4: 持久思考向量 (跨步传递)
         self.persistent_thought = torch.zeros(16)
+
+        # P11: 持久化运行信息
+        import time
+        self._run_id = f"run_{int(time.time())}"
+        self._started_at = time.strftime("%Y-%m-%d %H:%M:%S")
 
         # 统计
         self.step_count = 0
@@ -1834,9 +1847,25 @@ class OnlineAgent:
         except Exception:
             pass
 
-        # P5: 持久化工作栏状态 (每10步写一次, 降低IO)
+        # P11: PersistentStore 统一保存 (每10步)
         if self.step_count % 10 == 0:
-            self.workbench.save()
+            stats = {
+                "run_id": self._run_id if hasattr(self, '_run_id') and self._run_id else f"run_{self.step_count}",
+                "started_at": getattr(self, '_started_at', ''),
+                "n_steps": self.step_count,
+                "success_rate": self.success_count / max(self.step_count, 1),
+                "n_intents_covered": len(set(self.intent_history)),
+                "total_reward": self.total_reward,
+                "fact_graph_nodes": len(self.workbench.graph.nodes) if hasattr(self.workbench, 'graph') else 0,
+                "fact_graph_edges": sum(len(e) for e in self.workbench.graph.edges.values()) if hasattr(self.workbench, 'graph') else 0,
+                "schema_coverage": self.workbench.graph.stats()['schema_coverage'] if hasattr(self.workbench, 'graph') else 0,
+                "llm_calls": getattr(self.creative_writer, 'stats', {}).get('total_calls', 0) if self.creative_writer else 0,
+                "llm_success": getattr(self.creative_writer, 'stats', {}).get('llm_success', 0) if self.creative_writer else 0,
+                "llm_fallback": getattr(self.creative_writer, 'stats', {}).get('fallback', 0) if self.creative_writer else 0,
+            }
+            if not hasattr(self, '_run_id'):
+                self._run_id = f"run_{self.step_count}"
+            self.pstore.save_all(self, run_stats=stats)
 
         # P5.1: 自引用 — 每30步读自己的发现日志
         if self.sandbox and self.step_count > 0 and self.step_count % 30 == 0:
