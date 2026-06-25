@@ -273,6 +273,11 @@ class OnlineAgent:
             print(f"  \u26a0\ufe0f CreativeWriter 初始化失败: {e}")
 
         self.goal_generator = GoalGenerator(creative_writer=self.creative_writer)
+        if self.creative_writer:
+            self.creative_writer.enable_async()
+            self._last_llm_step = -100  # P2: LLM 调用步数追踪
+        else:
+            self._last_llm_step = -100
         # V4 在所有意图上初始化叶
         self.world_model_v4 = GrowingWorldModel(embed_dim=384, thought_dim=16)
         for name in INTENTS:
@@ -1240,7 +1245,13 @@ class OnlineAgent:
 
         # GoalGenerator 产生目标
         # P1: 每40步强制创作 (让 LLM CreativeWriter 有机会运行)
-        force_create = self.step_count > 30 and self.step_count % 40 == 0
+        # P2: 自适应 LLM 频率 (异步模式下每 20 步触发一次预生成)
+        force_create = False
+        if self.step_count > 30 and self.creative_writer:
+            interval = 40 if self.creative_writer.is_thermal_ok() else 80
+            if self.step_count - self._last_llm_step >= interval:
+                force_create = True
+                self._last_llm_step = self.step_count
 
         goal = self.goal_generator.generate(
             mode=self.current_mode,

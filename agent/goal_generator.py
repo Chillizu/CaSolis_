@@ -203,11 +203,36 @@ class GoalGenerator:
         return candidates
 
     def _create_candidates(self, wb, step: int) -> list[Goal]:
-        """CREATE 模式: LLM 创作 + 模板回退"""
+        """CREATE 模式: LLM 创作 + 模板回退 (P2: 异步优先)"""
         candidates = []
         n_facts = len(wb.facts) if hasattr(wb, 'facts') else 0
 
-        # P1: CreativeWriter LLM 生成 (优先)
+        # P2: 先检查异步结果缓存
+        async_result = None
+        if self.creative_writer:
+            async_result = self.creative_writer.check_async_result()
+
+        # P2: 异步结果可用 → 直接用
+        if async_result and async_result.get("source", "").startswith("llm"):
+            style = "report"
+            if "story" in async_result.get("path", ""):
+                style = "story"
+            elif "analysis" in async_result.get("path", ""):
+                style = "analysis"
+            elif "script" in async_result.get("path", ""):
+                style = "code"
+            intent = "GENERATE" if style != "code" else "WRITE"
+            candidates.append(Goal(
+                "content_create", intent,
+                {"path": async_result["path"], "content": async_result["content"]},
+                priority=0.85, source=f"llm_async:{style}",
+                description=f"LLM异步: {async_result['desc']} ({async_result['size']}B)"
+            ))
+            # 异步结果用完后, 立即启动下一次预生成
+            self.creative_writer.generate_async(wb, style)
+            return candidates
+
+        # P1: CreativeWriter LLM 生成 (同步, 主循环不阻塞)
         if self.creative_writer and n_facts >= self.min_facts_for_create:
             for style in ["report", "analysis", "story", "code"]:
                 ci = self.creative_writer.generate_content(wb, style=style)

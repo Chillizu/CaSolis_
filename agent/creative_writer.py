@@ -395,19 +395,138 @@ class CreativeWriter:
         return {"content": "(fallback)", "path": "/tmp/fallback.txt",
                 "desc": "回退", "size": 0, "source": f"fallback:{reason}"}
 
-    # ── P2: 异步 ──
+    # ── P2: 异步生成 + 质量评估 + 自适应调度 ──
 
     def enable_async(self):
-        """启用异步模式"""
+        """启用异步模式: generate_content 返回 fallback, 后台 LLM 生成"""
         self._async_enabled = True
 
+    def check_async_result(self) -> Optional[dict]:
+        """检查异步生成是否完成, 完成则返回结果"""
+        if not self._async_enabled or not self._async_result:
+            return None
+        result = self._async_result
+        self._async_result = None
+        return result
+
     def generate_async(self, workbench, style: str = "report"):
-        """后台预生成 (P2)"""
+        """后台预生成 (线程池, 不阻塞主循环)"""
         import threading
+        import traceback
+        if self._async_result is not None:
+            return  # 已有未消费的结果, 不重复启动
+        if not self.is_thermal_ok():
+            self.stats["thermal_skip"] += 1
+            return
+
+        effective_style = style or "report"
+        prompt = self.build_prompt(workbench, effective_style)
+
         def _run():
-            self._async_result = self.generate_content(workbench, style)
+            try:
+                text = self.generate(prompt, timeout=None)  # no extra timeout, thread has 60s from self.timeout
+                if text:
+                    quality = _check_hallucination(text, self._last_facts_text)
+                    if quality >= 0.3:
+                        step = getattr(workbench, '_step_counter', 0) or 0
+                        desc_map = {"report": "LLM报告", "analysis": "LLM分析", "story": "LLM叙事", "code": "LLM脚本"}
+                        path_map = {
+                            "report": f"/tmp/llm_report_{step}.md",
+                            "analysis": f"/tmp/llm_analysis_{step}.md",
+                            "story": f"/tmp/llm_story_{step}.md",
+                            "code": f"/tmp/llm_script_{step}.py",
+                        }
+                        self._async_result = {
+                            "content": text,
+                            "path": path_map.get(effective_style, f"/tmp/llm_output_{step}.md"),
+                            "desc": desc_map.get(effective_style, "LLM内容"),
+                            "size": len(text),
+                            "source": "llm",
+                            "quality": quality,
+                        }
+            except Exception:
+                pass  # 线程异常不抛到主循环
+
         t = threading.Thread(target=_run, daemon=True)
         t.start()
+
+    def generate_content(self, workbench, style: Optional[str] = None,
+                         timeout: Optional[float] = None) -> dict:
+        """
+        主入口 (P2 异步):
+          - 先检查缓存队列中的异步结果
+          - 有→使用并启动下一次预生成
+          - 无→启动异步, 立即返回 fallback
+        """
+        self.stats["total_calls"] += 1
+
+        # 1. 异步结果缓存
+        if self._async_enabled and self._async_result:
+            result = self._async_result
+            self._async_result = None
+            if result and result.get("source", "") == "llm":
+                self.stats["llm_success"] += 1
+                # 立即启动下一次预生成
+                self.generate_async(workbench, style or "report")
+                return result
+
+        # 2. 安全检查
+        if not self.enabled:
+            return self._fallback(workbench, style, "disabled")
+
+        if not self.health_check():
+            return self._fallback(workbench, style, "ollama_unavailable")
+
+        if not self._async_enabled:
+            # 非异步模式: 阻塞等待
+            return self._generate_content_sync(workbench, style, timeout)
+
+        # 3. 异步模式: 启动后台生成, 立即返回 fallback
+        self.generate_async(workbench, style or "report")
+        return self._fallback(workbench, style, "async_pending")
+
+    def _generate_content_sync(self, workbench, style: Optional[str] = None,
+                               timeout: Optional[float] = None) -> dict:
+        """同步生成 (内部调用, 可能阻塞)"""
+        if not self.is_thermal_ok():
+            self.stats["thermal_skip"] += 1
+            return self._fallback(workbench, style, "thermal_throttle")
+
+        effective_style = style or "report"
+        prompt = self.build_prompt(workbench, effective_style)
+        text = self.generate(prompt, timeout)
+
+        if text is None:
+            self.stats["timeout"] += 1
+            return self._fallback(workbench, style, "timeout")
+
+        # 质量检查
+        quality = _check_hallucination(text, self._last_facts_text)
+        if quality < 0.3:
+            return self._fallback(workbench, style, f"hallucination({quality:.2f})")
+
+        step = getattr(workbench, '_step_counter', 0) or 0
+        desc_map = {
+            "report": "LLM生成:系统报告",
+            "analysis": "LLM生成:分析",
+            "story": "LLM生成:叙事",
+            "code": "LLM生成:Python脚本",
+        }
+        path_map = {
+            "report": f"/tmp/llm_report_{step}.md",
+            "analysis": f"/tmp/llm_analysis_{step}.md",
+            "story": f"/tmp/llm_story_{step}.md",
+            "code": f"/tmp/llm_script_{step}.py",
+        }
+        self.stats["llm_success"] += 1
+        return {
+            "content": text,
+            "path": path_map.get(effective_style, f"/tmp/llm_output_{step}.md"),
+            "desc": desc_map.get(effective_style, "LLM生成内容"),
+            "size": len(text),
+            "source": "llm",
+            "quality": quality,
+        }
 
     # ── 统计 ──
 
