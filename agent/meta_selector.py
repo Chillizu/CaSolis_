@@ -92,7 +92,7 @@ class MetaCognitiveSelector:
       })
     """
 
-    def __init__(self, min_hold_steps: int = 30, cold_start_steps: int = 100):
+    def __init__(self, min_hold_steps: int = 20, cold_start_steps: int = 30):  # P10: 缩短冷启动 100→30
         self.current_mode: str = "EXPLORE"
         self.mode_start_step: int = 0
         self.mode_history: list[tuple[int, str, str]] = []  # (step, old_mode, new_mode, reason)

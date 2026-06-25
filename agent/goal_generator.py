@@ -82,37 +82,46 @@ class GoalGenerator:
         elif mode == "LEARN":
             candidates = self._learn_candidates(workbench, step)
 
-        # ── 通用候选: 所有 MODE 都有的保底目标 ──
-
-        # Workbench follow-up 链 (任何 MODE 都可用, 但 CUSTOM 占比过高时避免)
+        # ── MODE-specific repetition guard ──
         if recent:
             custom_count = sum(1 for i in recent[-10:] if i == "CUSTOM")
             custom_ratio = custom_count / min(len(recent), 10)
         else:
             custom_ratio = 0.0
 
-        follow_up = workbench.get_follow_up() if hasattr(workbench, 'get_follow_up') else None
-        if follow_up:
-            intent, params = follow_up
-            # P10: CUSTOM 占比 > 30% 即降权, 避免循环
-            fu_priority = 0.7
-            if intent == "CUSTOM" and custom_ratio > 0.3:
-                fu_priority = 0.15  # 大幅降权, 只有其他候选都空时才用它
-            candidates.append(Goal(
-                "chain", intent, params,
-                priority=fu_priority, source="follow_up",
-                description=f"链式: {intent}"
-            ))
+        # EXPLORE 下 CUSTOM 占比 ≥ 60% 硬性过滤所有 CUSTOM
+        if mode == "EXPLORE" and custom_ratio >= 0.6:
+            candidates = [c for c in candidates if c.intent != "CUSTOM"]
+
+        # ── 条件化 follow_up: 只在链进行中或图有缺口时加入 ──
+        in_chain = workbench.has_active_goal() if hasattr(workbench, 'has_active_goal') else False
+        has_gaps = len(workbench.graph.find_gaps()) > 0 if hasattr(workbench, 'graph') and hasattr(workbench.graph, 'find_gaps') else False
+        if in_chain or has_gaps:
+            if custom_ratio < 0.6:
+                follow_up = workbench.get_follow_up() if hasattr(workbench, 'get_follow_up') else None
+                if follow_up:
+                    intent, params = follow_up
+                    fu_priority = 0.7
+                    if intent == "CUSTOM" and custom_ratio > 0.3:
+                        fu_priority = 0.2
+                    candidates.append(Goal(
+                        "chain", intent, params,
+                        priority=fu_priority, source="follow_up",
+                        description=f"链式: {intent}"
+                    ))
+
+        # ── CUSTOM 硬性过滤: 占比 > 30% 排除 CUSTOM 候选 ──
+        if custom_ratio > 0.3 and len(candidates) > 1:
+            non_custom = [c for c in candidates if c.intent != "CUSTOM"]
+            if non_custom:
+                candidates = non_custom
 
         # ── 优先排序 ──
-
         if not candidates:
             return None
-
-        # 按 priority 降序
         candidates.sort(key=lambda g: -g.priority)
 
-        # 防止连续同类型目标
+        # ── 防止连续同类型 ──
         if self.last_goal_type and len(candidates) > 1:
             if candidates[0].type == self.last_goal_type:
                 for c in candidates[1:]:
@@ -120,22 +129,11 @@ class GoalGenerator:
                         candidates.insert(0, c)
                         break
 
-        # P10: CUSTOM 占比 > 30% 即排除 CUSTOM 类目标
-        if custom_ratio > 0.3 and len(candidates) > 1:
-            non_custom = [c for c in candidates if not (c.intent == "CUSTOM")]
-            if non_custom:
-                candidates = non_custom
+        # P10: utility gate — 没好目标就让 A/B 路径接管
+        if candidates[0].priority < 0.6:
+            return None
 
         selected = candidates[0]
-        self.last_goal_type = selected.type
-        self.goal_history.append({
-            "step": step,
-            "mode": mode,
-            "type": selected.type,
-            "intent": selected.intent,
-            "source": selected.source,
-        })
-        return selected
 
     # ── MODE 专用候选生成 ──
 
