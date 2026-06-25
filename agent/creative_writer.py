@@ -98,29 +98,28 @@ def _thermal_ok(threshold_c: float = 95.0) -> bool:
 
 # ── Prompt 构建 ──
 
-def _build_facts_section(workbench) -> str:
-    """从 FactGraph 构建 facts 文本"""
+def _build_facts_section(workbench, max_facts: int = 8) -> str:
+    """从 FactGraph 构建 facts 文本 (最多 max_facts 条, 加速推理)"""
     lines = []
     graph = getattr(workbench, 'graph', None)
     if graph and graph.nodes:
-        nodes = sorted(graph.nodes.items(), key=lambda x: -x[1].step)
-        for key, node in nodes[:30]:  # 最多 30 个
-            val = node.value[:80]
+        # 先取 system 类, 再取其他
+        system_nodes = [(k, n) for k, n in graph.nodes.items() if n.category == "system"]
+        other_nodes = [(k, n) for k, n in graph.nodes.items() if n.category != "system"]
+        nodes = sorted(system_nodes, key=lambda x: -x[1].step) + sorted(other_nodes, key=lambda x: -x[1].step)
+        for key, node in nodes[:max_facts]:
+            val = node.value[:60]
             cat = node.category
-            conf = node.confidence
-            src = node.source_cmd[:30]
-            lines.append(f"[{cat}] {key} = {val} (confidence={conf}, source={src})")
+            lines.append(f"[{cat}] {key} = {val}")
     elif hasattr(workbench, 'facts') and workbench.facts:
         for key, fact in sorted(workbench.facts.items(),
-                                key=lambda x: -x[1].get("step", 0))[:30]:
-            val = fact.get("value", "")[:80]
+                                key=lambda x: -x[1].get("step", 0))[:max_facts]:
+            val = fact.get("value", "")[:60]
             cat = fact.get("category", "general")
-            conf = fact.get("confidence", 0.5)
-            src = fact.get("source_cmd", "")[:30]
-            lines.append(f"[{cat}] {key} = {val} (confidence={conf}, source={src})")
+            lines.append(f"[{cat}] {key} = {val}")
 
     if not lines:
-        return "(no facts available)"
+        return "(no facts)"
     return "\n".join(lines)
 
 
