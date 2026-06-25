@@ -66,7 +66,9 @@ N_INTENTS = 17  # P9.6: Conductor/分类器输出维度 (含 GENERATE)
 
 
 class IntentClassifier:
-    """MiniLM + MLP 意图分类器 (N_INTENTS 类)"""
+    """MiniLM + MLP 意图分类器 (动态意图数)"""
+
+    N_OUT = 17  # 默认, 会被 expand_intents 更新
 
     def __init__(self, checkpoint: str = "checkpoints/intent_classifier/best_head.pt"):
         import torch.nn as nn
@@ -76,8 +78,9 @@ class IntentClassifier:
         self.encoder.to(self.device)
         self.encoder.eval()
 
-        # P7.0: 使用 N_INTENTS (含 CUSTOM) 作为分类器输出维度
+        # P10: 使用动态意图数
         n_out = N_INTENTS
+        IntentClassifier.N_OUT = n_out
 
         class MLPHead(nn.Module):
             def __init__(self, n_classes):
@@ -122,7 +125,7 @@ class IntentClassifier:
         torch.save(self.head.state_dict(), path or self.checkpoint_path)
 
     def expand_intents(self, new_n: int):
-        """P6.4: 扩展分类头输出层以容纳新意图"""
+        """P6.4/P10: 扩展分类头输出层以容纳新意图"""
         import torch.nn as nn
         old_head = self.head.net[-1]
         old_n = old_head.out_features
@@ -137,6 +140,7 @@ class IntentClassifier:
         nn.init.normal_(new_head.weight.data[old_n:], std=0.01)
         nn.init.zeros_(new_head.bias.data[old_n:])
         self.head.net[-1] = new_head
+        IntentClassifier.N_OUT = new_n
         print(f"  [Classifier] 分类头扩展: {old_n} → {new_n} 个输出")
 
     def predict(self, state_text: str) -> str:
@@ -638,7 +642,7 @@ class OnlineAgent:
             if n_traj >= 4:
                 sample = random.sample(self.conductor_trajectories, min(16, n_traj))
                 # P7.0: CUSTOM 是正常意图, 保留
-                sample = [s for s in sample if s[1] in INTENTS[:N_INTENTS]]
+                sample = [s for s in sample if s[1] in INTENTS[:IntentClassifier.N_OUT]]
                 if len(sample) < 2:
                     continue
                 traj_texts = [s[0] for s in sample]
@@ -1097,7 +1101,7 @@ class OnlineAgent:
             logits = self.classifier.head(emb)
 
         # 元学习效用偏置
-        utility_bias = torch.zeros(N_INTENTS, device=logits.device)
+        utility_bias = torch.zeros(IntentClassifier.N_OUT, device=logits.device)
         if self.meta and len(self.meta.data) > 0:
             for bid, b in self.meta.data.items():
                 if b.get("type") == "intent_choice":
@@ -1109,11 +1113,11 @@ class OnlineAgent:
                     if n < 3:
                         u *= n / 3.0
                     idx = INTENTS.index(iname)
-                    if idx < N_INTENTS:
+                    if idx < IntentClassifier.N_OUT:
                         utility_bias[idx] += u * 0.3
 
         # P10: MODE 偏置
-        mode_bias = torch.zeros(N_INTENTS, device=logits.device)
+        mode_bias = torch.zeros(IntentClassifier.N_OUT, device=logits.device)
         if mode:
             bias_dict = self.meta_selector.get_intent_bias(mode)
             for iname, w in bias_dict.items():
@@ -2118,9 +2122,22 @@ class OnlineAgent:
         if not new_names:
             return
 
-        # 2. 扩展 Conductor 分类头 (通过 nanny 访问)
-        effective = len([i for i in INTENTS if i != "CUSTOM"])
-        self.nanny.conductor.expand_intents(effective)
+        # P10: 更新 N_INTENTS 全局常量
+        import agent.conductor as conductor_mod
+        import agent.nanny as nanny_mod
+        new_n = len(INTENTS)
+        # 更新模块级常量
+        global N_INTENTS
+        N_INTENTS = new_n
+        conductor_mod.N_INTENTS = new_n
+        nanny_mod.N_INTENTS = new_n
+        # 更新 IntentClassifier.N_INTENTS (类属性)
+        IntentClassifier.N_OUT = new_n
+
+        # 2. 扩展 Conductor 分类头 (通过 nanny 访问, 仅在可用时)
+        effective = len(INTENTS)  # P10: 使用完整意图数 (含 CUSTOM)
+        if hasattr(self, 'nanny') and self.nanny is not None:
+            self.nanny.conductor.expand_intents(effective)
 
         # 3. 扩展世界模型 (含 CUSTOM)
         total_intents = len(INTENTS)
@@ -2139,7 +2156,8 @@ class OnlineAgent:
             self._quick_train_new_intents(training_data)
 
         # 7. 保存所有扩展后的 checkpoint
-        self.nanny.conductor.save(
+        if hasattr(self, 'nanny') and self.nanny is not None:
+            self.nanny.conductor.save(
             os.path.join("checkpoints", "conductor", "online_aligned.pt"))
         self.world_model.save(
             os.path.join("checkpoints", "world_model", "latest.pt"))
