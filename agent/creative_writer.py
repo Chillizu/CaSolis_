@@ -26,18 +26,24 @@ from typing import Optional
 
 def _ollama_generate(prompt: str, model: str = "gemma4:e4b",
                      base_url: str = "http://localhost:11434",
-                     timeout: float = 15.0,
+                     timeout: float = 30.0,
                      max_tokens: int = 1024,
                      temperature: float = 0.5) -> Optional[str]:
-    """调用 Ollama /api/generate, 超时返回 None"""
+    """调用 Ollama /api/chat, 超时返回 None
+
+    gemma4:e4b 在 /api/generate 下长 prompt 返回空,
+    /api/chat 正常工作。
+    """
     try:
         import urllib.request
         import urllib.error
 
+        # gemma4:e4b 是推理模型, 需要 raw:true 绕过 thinking token
         data = json.dumps({
             "model": model,
             "prompt": prompt,
             "stream": False,
+            "raw": True,
             "options": {
                 "num_predict": max_tokens,
                 "temperature": temperature,
@@ -193,7 +199,7 @@ class CreativeWriter:
     def __init__(self,
                  model: str = "gemma4:e4b",
                  base_url: str = "http://localhost:11434",
-                 timeout: float = 15.0,
+                 timeout: float = 60.0,
                  max_tokens: int = 1024,
                  temperature: float = 0.5,
                  thermal_threshold: float = 95.0,
@@ -223,17 +229,38 @@ class CreativeWriter:
         self._async_result: Optional[dict] = None
 
     def _load_prompts(self) -> dict:
-        """加载 config/creative_prompts.yaml"""
-        try:
-            import yaml
-            base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            path = os.path.join(base, "config", "creative_prompts.yaml")
-            if os.path.exists(path):
-                with open(path) as f:
-                    return yaml.safe_load(f) or {}
-        except Exception:
-            pass
-        return {}
+        """加载 prompt 模板 (内嵌, 避免 yaml 依赖)"""
+        return {
+            "report": (
+                "You are a system analysis assistant. Based ONLY on the facts below, write a Markdown system report.\\n"
+                "## Rules\\n- Use ONLY facts listed below. If a value is unknown, say 'unknown'.\\n"
+                "- Do NOT invent values, file paths, or system state.\\n"
+                "- Output the report directly; no meta-commentary.\\n"
+                "- Organize by category (System, Network, Storage, Security).\\n\\n"
+                "## Facts\\n{facts_section}\\n\\n"
+                "## Relationships\\n{relationships_section}\\n\\n"
+                "## Knowledge Gaps\\n{gaps_section}\\n"
+            ),
+            "analysis": (
+                "You are a system diagnostic assistant. Based ONLY on the facts below, write a short analysis.\\n"
+                "## Rules\\n- Use ONLY facts listed below.\\n- Do not invent values.\\n"
+                "- Output plain text, one paragraph per implication.\\n\\n"
+                "## Facts\\n{facts_section}\\n\\n"
+                "## Relationships\\n{relationships_section}\\n\\n"
+                "## Knowledge Gaps\\n{gaps_section}\\n"
+            ),
+            "story": (
+                "You are a storyteller. Write a short first-person narrative (max 150 words) from the perspective of the system described below.\\n"
+                "## Rules\\n- Base it ONLY on the facts.\\n- Do not invent specific values.\\n- Keep it playful.\\n\\n"
+                "## Facts\\n{facts_section}\\n\\n"
+                "## Relationships\\n{relationships_section}\\n\\n"
+            ),
+            "code": (
+                "You are a Python scripting assistant. Write a Python script that verifies each listed fact.\\n"
+                "## Rules\\n- Use subprocess.run() with shell=True.\\n- Print [OK] or [FAIL] for each.\\n- Exit 0 if all pass, 1 if any fail.\\n\\n"
+                "## Facts\\n{facts_section}\\n\\n"
+            ),
+        }
 
     def health_check(self) -> bool:
         """Ollama 模型可用?"""

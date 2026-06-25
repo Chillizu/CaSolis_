@@ -47,13 +47,15 @@ class GoalGenerator:
       # → Goal(type="gap_fill", intent="READ", params={"path": "/proc/cpuinfo"})
     """
 
-    def __init__(self, min_facts_for_create: int = 5):
+    def __init__(self, min_facts_for_create: int = 5, creative_writer=None):
+        self.creative_writer = creative_writer  # P1: LLM 创作插件
         self.min_facts_for_create = min_facts_for_create
         self.last_goal_type: Optional[str] = None
         self.goal_history: list[dict] = []
 
     def generate(self, mode: str, workbench=None, rnd_avg: float = 0.0,
-                 step: int = 0, recent_intents: Optional[list[str]] = None) -> Optional[Goal]:
+                 step: int = 0, recent_intents: Optional[list[str]] = None,
+                 force_create: bool = False) -> Optional[Goal]:
         """
         根据 MODE + 当前状态生成最佳目标
 
@@ -75,11 +77,18 @@ class GoalGenerator:
 
         # ── MODE 驱动的候选目标收集 ──
 
-        if mode == "EXPLORE":
+        # P1: force_create — 每40步强制尝试创作 (即不在CREATE mode也试)
+        effective_mode = mode
+        if force_create and hasattr(workbench, 'graph'):
+            n_facts = len(workbench.facts) if hasattr(workbench, 'facts') else 0
+            if n_facts >= 5:
+                effective_mode = "CREATE"
+
+        if effective_mode == "EXPLORE":
             candidates = self._explore_candidates(workbench, step, rnd_avg)
-        elif mode == "CREATE":
+        elif effective_mode == "CREATE":
             candidates = self._create_candidates(workbench, step)
-        elif mode == "LEARN":
+        elif effective_mode == "LEARN":
             candidates = self._learn_candidates(workbench, step)
 
         # ── MODE-specific repetition guard ──
@@ -194,26 +203,40 @@ class GoalGenerator:
         return candidates
 
     def _create_candidates(self, wb, step: int) -> list[Goal]:
-        """CREATE 模式: 内容生成 + 报告"""
+        """CREATE 模式: LLM 创作 + 模板回退"""
         candidates = []
-
-        if not hasattr(wb, 'build_write_content'):
-            return candidates
-
-        # 1. GENERATE (优先: 最丰富的内容)
         n_facts = len(wb.facts) if hasattr(wb, 'facts') else 0
-        if n_facts >= self.min_facts_for_create:
-            ci = wb.build_generate_content()
-            candidates.append(Goal(
-                "content_create", "GENERATE",
-                {"path": ci["path"], "content": ci["content"]},
-                priority=0.9, source="build_generate",
-                description=f"生成: {ci['desc']} ({ci['size']}B)"
-            ))
 
-        # 2. WRITE (结构化报告)
-        if n_facts >= 3:
-            ci = wb.build_write_content()
+        # P1: CreativeWriter LLM 生成 (优先)
+        if self.creative_writer and n_facts >= self.min_facts_for_create:
+            for style in ["report", "analysis", "story", "code"]:
+                ci = self.creative_writer.generate_content(wb, style=style)
+                if ci and ci.get("source", "").startswith("llm"):
+                    candidates.append(Goal(
+                        "content_create", "GENERATE" if style != "code" else "WRITE",
+                        {"path": ci["path"], "content": ci["content"]},
+                        priority=0.95, source=f"llm:{style}",
+                        description=f"LLM{style}: {ci['desc']} ({ci['size']}B)"
+                    ))
+                    break  # 一次生成一个风格就够
+                # LLM 失败: 继续尝试下一个风格
+            # 所有 LLM 风格都失败: 走回退到模板
+            if not candidates and hasattr(wb, 'build_generate_content'):
+                ci = wb.build_generate_content()
+                if ci:
+                    candidates.append(Goal(
+                        "content_create", "GENERATE",
+                        {"path": ci["path"], "content": ci["content"]},
+                        priority=0.7, source="build_generate",
+                        description=f"模板: {ci['desc']} ({ci.get('size', 0)}B)"
+                    ))
+
+        # 2. 模板 WRITE (LLM 不可用或事实不足时)
+        if not candidates and n_facts >= 3 and hasattr(wb, 'build_write_content'):
+            if self.creative_writer:
+                ci = self.creative_writer._fallback(wb, "report", "low_facts")
+            else:
+                ci = wb.build_write_content()
             candidates.append(Goal(
                 "content_create", "WRITE",
                 {"path": ci["path"], "content": ci["content"]},

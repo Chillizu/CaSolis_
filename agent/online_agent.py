@@ -55,6 +55,7 @@ from agent.meta_selector import MetaCognitiveSelector
 from agent.goal_generator import GoalGenerator
 from agent.world_model_v4 import GrowingWorldModel
 from agent.episodic_memory import EpisodicMemory
+from agent.creative_writer import CreativeWriter
 from benchmark.param_extractor import ParameterExtractor
 from benchmark.template_engine import TemplateEngine, ExecResult
 from collections import deque
@@ -255,7 +256,23 @@ class OnlineAgent:
 
         # P10: 层级架构 — 元认知 + 目标生成 + 增长型 WM V4
         self.meta_selector = MetaCognitiveSelector()
-        self.goal_generator = GoalGenerator()
+        # P1: CreativeWriter (LLM 创作插件)
+        self.creative_writer = None
+        try:
+            self.creative_writer = CreativeWriter(
+                model="gemma4:e4b",
+                timeout=30.0,
+                max_tokens=1024,
+            )
+            if self.creative_writer.health_check():
+                print(f"  \u2705 CreativeWriter 就绪 (gemma4:e4b)")
+            else:
+                self.creative_writer = None
+                print(f"  \u26a0\ufe0f CreativeWriter 不可用 (Ollama?)")
+        except Exception as e:
+            print(f"  \u26a0\ufe0f CreativeWriter 初始化失败: {e}")
+
+        self.goal_generator = GoalGenerator(creative_writer=self.creative_writer)
         # V4 在所有意图上初始化叶
         self.world_model_v4 = GrowingWorldModel(embed_dim=384, thought_dim=16)
         for name in INTENTS:
@@ -1222,12 +1239,16 @@ class OnlineAgent:
         self._facts_history.append(n_facts_now)
 
         # GoalGenerator 产生目标
+        # P1: 每40步强制创作 (让 LLM CreativeWriter 有机会运行)
+        force_create = self.step_count > 30 and self.step_count % 40 == 0
+
         goal = self.goal_generator.generate(
             mode=self.current_mode,
             workbench=self.workbench,
             rnd_avg=mode_stats["rnd_avg"],
             step=self.step_count,
             recent_intents=list(self.intent_history[-20:]),
+            force_create=force_create,
         )
         if goal:
             intent = goal.intent
