@@ -706,7 +706,7 @@ class Workbench:
             lines = [f"# Folunar Snapshot (step {self._step_counter})", ""]
             for k, v in list(self.facts.items())[:5]:
                 lines.append(f"{k}={v['value'][:40]}")
-            return {"content": "\n".join(lines), "path": "/tmp/folunar_summary.txt", "desc": "简单摘要"}
+            return {"content": "\n".join(lines), "path": "/tmp/folunar_summary.txt", "desc": "简单摘要", "size": len("\n".join(lines))}
 
         styles = ["json", "report", "script"]
         style = styles[getattr(self, "_write_style_idx", 0) % len(styles)]

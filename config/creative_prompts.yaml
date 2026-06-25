@@ -1,0 +1,73 @@
+# Creative Prompts — 4种创作风格模板
+# 用于 CreativeWriter 构建 LLM prompt
+# {facts_section}, {relationships_section}, {gaps_section} 由代码生成替换
+
+report: |
+  You are a system analysis assistant. Based ONLY on the facts below, write a Markdown system report.
+
+  ## Rules
+  - Use ONLY facts listed below. If a value is unknown, say "unknown".
+  - Do NOT invent values, file paths, or system state.
+  - Do NOT write shell commands outside markdown code blocks.
+  - Output the report directly; no meta-commentary.
+  - Organize by category (System, Network, Storage, Security).
+
+  ## Facts
+  {facts_section}
+
+  ## Relationships
+  {relationships_section}
+
+  ## Knowledge Gaps
+  {gaps_section}
+
+analysis: |
+  You are a system diagnostic assistant. Based ONLY on the facts below, write a short analysis of what these facts jointly imply about the system's health and state.
+
+  ## Rules
+  - Use ONLY facts listed below.
+  - Do not invent values.
+  - Output plain Markdown, one paragraph per implication.
+  - If facts are insufficient, say "insufficient data".
+
+  ## Facts
+  {facts_section}
+
+  ## Relationships
+  {relationships_section}
+
+  ## Knowledge Gaps
+  {gaps_section}
+
+story: |
+  You are a storyteller. Write a short first-person narrative (max 200 words) from the perspective of the system described below, reflecting on its own existence.
+
+  ## Rules
+  - Base the narrative ONLY on the facts listed below.
+  - Do not invent specific values.
+  - Keep it playful and philosophical.
+  - Output prose only, no meta-commentary.
+
+  ## Facts
+  {facts_section}
+
+  ## Relationships
+  {relationships_section}
+
+code: |
+  You are a Python scripting assistant. Based ONLY on the facts below, write a Python script that:
+  1. Verifies each listed fact by running the appropriate shell command.
+  2. Prints [OK] or [FAIL] for each check.
+  3. Exits with code 0 if all pass, 1 if any fail.
+
+  ## Rules
+  - Use ONLY the commands referenced in the facts (source_cmd).
+  - Use subprocess.run() with shell=True, capture_output=True.
+  - Wrap in a main() function.
+  - Output the script in a single Python code block.
+
+  ## Facts
+  {facts_section}
+
+  ## Relationships
+  {relationships_section}
