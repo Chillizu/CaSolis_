@@ -101,17 +101,21 @@ class IntentClassifier:
         self.head = MLPHead(n_out)
         try:
             sd = torch.load(checkpoint, map_location=self.device, weights_only=True)
-            # P7.0: 自动扩展最后Linear层 (旧13→新n_out)
+            # P10: 自动适配维度 (扩展或收缩)
             last_key = 'net.7.weight'
-            if last_key in sd and sd[last_key].size(0) < self.head.net[-1].weight.size(0):
-                old_n = sd[last_key].size(0)
-                new_n = self.head.net[-1].weight.size(0)
-                old_w = sd.pop('net.7.weight')
-                old_b = sd.pop('net.7.bias')
-                self.head.load_state_dict(sd, strict=False)
-                self.head.net[-1].weight.data[:old_n] = old_w
-                self.head.net[-1].bias.data[:old_n] = old_b
-                print(f"  ✅ 分类头: {old_n}→{new_n} (自动扩展)")
+            if last_key in sd:
+                ckpt_n = sd[last_key].size(0)
+                model_n = self.head.net[-1].weight.size(0)
+                if ckpt_n != model_n:
+                    old_w = sd.pop('net.7.weight')
+                    old_b = sd.pop('net.7.bias')
+                    self.head.load_state_dict(sd, strict=False)
+                    copy_n = min(ckpt_n, model_n)
+                    self.head.net[-1].weight.data[:copy_n] = old_w[:copy_n]
+                    self.head.net[-1].bias.data[:copy_n] = old_b[:copy_n]
+                    print(f"  \U0001f7e6 分类头: {ckpt_n}\u2192{model_n} (自动适配)")
+                else:
+                    self.head.load_state_dict(sd, strict=False)
             else:
                 self.head.load_state_dict(sd, strict=False)
         except Exception as e:
@@ -1234,10 +1238,10 @@ class OnlineAgent:
             if self.step_count % 6 == 0:
                 print(f"  [GOAL] ({goal.source}) {intent}")
             # P10: 即使有目标, 也检查多样性 (防止 GoalGenerator 返回同类型目标)
-            if len(self.intent_history) >= 10:
-                recent15 = self.intent_history[-10:]
-                covered = set(recent15)
-                if len(covered) <= 3 and random.random() < 0.3:
+            if len(self.intent_history) >= 8:
+                recent10 = self.intent_history[-8:]
+                covered = set(recent10)
+                if len(covered) <= 4 and random.random() < 0.4:
                     uncovered = [i for i in INTENTS if i not in covered and i != "HELP"]
                     if uncovered:
                         forced = random.choice(uncovered)

@@ -94,11 +94,10 @@ class GoalGenerator:
         follow_up = workbench.get_follow_up() if hasattr(workbench, 'get_follow_up') else None
         if follow_up:
             intent, params = follow_up
-            # 如果 CUSTOM 占比 > 50%, 降低 follow_up 链的优先级 (避免 CUSTOM 循环)
+            # P10: CUSTOM 占比 > 30% 即降权, 避免循环
             fu_priority = 0.7
-            if intent == "CUSTOM" and custom_ratio > 0.5:
-                fu_priority = 0.3  # 大幅降权
-                # 只在完全没其他候选时用
+            if intent == "CUSTOM" and custom_ratio > 0.3:
+                fu_priority = 0.15  # 大幅降权, 只有其他候选都空时才用它
             candidates.append(Goal(
                 "chain", intent, params,
                 priority=fu_priority, source="follow_up",
@@ -121,8 +120,8 @@ class GoalGenerator:
                         candidates.insert(0, c)
                         break
 
-        # 如果 CUSTOM 占比过高, 排除 CUSTOM 类目标 (除非 CUSTOM 是唯一选项)
-        if custom_ratio > 0.5 and len(candidates) > 1:
+        # P10: CUSTOM 占比 > 30% 即排除 CUSTOM 类目标
+        if custom_ratio > 0.3 and len(candidates) > 1:
             non_custom = [c for c in candidates if not (c.intent == "CUSTOM")]
             if non_custom:
                 candidates = non_custom

@@ -75,14 +75,18 @@ class Conductor:
             # P7.0: 自动扩展 class_proj 维度 (旧13维 → 新14维)
             old_n = sd['class_proj.weight'].size(0) if 'class_proj.weight' in sd else 13
             new_n = self.head.class_proj.weight.size(0)
-            if old_n < new_n:
-                # 保存旧权重, 加载剩余的, 再恢复class_proj
+            # P10: 自动适配维度 (扩展或收缩)
+            if old_n != new_n:
                 old_w = sd.pop('class_proj.weight', None)
                 old_b = sd.pop('class_proj.bias', None)
                 self.head.load_state_dict(sd, strict=False)
-                self.head.class_proj.weight.data[:old_n] = old_w
-                self.head.class_proj.bias.data[:old_n] = old_b
-                print(f"  ✅ Conductor 分类头: {old_n}→{new_n} (自动扩展)")
+                copy_n = min(old_n, new_n)
+                self.head.class_proj.weight.data[:copy_n] = old_w[:copy_n]
+                self.head.class_proj.bias.data[:copy_n] = old_b[:copy_n]
+                if new_n > old_n:
+                    print(f"  ✅ Conductor 分类头: {old_n}→{new_n} (自动扩展)")
+                else:
+                    print(f"  ✅ Conductor 分类头: {old_n}→{new_n} (自动收缩)")
             else:
                 self.head.load_state_dict(sd)
             print(f"  ✅ Conductor 已加载: {checkpoint}")

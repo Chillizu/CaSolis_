@@ -507,9 +507,13 @@ class Workbench:
     def _build_fact_analysis(self, keys: list[str]) -> str:
         """
         P9.5: 从一组事实 key 生成自然语言分析段落
+        P10: 兼容 graph (可能比 facts dict 多)
         """
         def v(k):
-            return self.facts[k]["value"] if k in self.facts else None
+            if k in self.facts:
+                return self.facts[k]["value"]
+            n = self.graph.nodes.get(k)
+            return n.value if n else None
 
         parts = []
 
@@ -589,7 +593,8 @@ class Workbench:
         """
         import json, random
         self._track_fact_history()
-        system_keys = self.get_facts_by_category("system")
+        # P10: 优先从 graph 获取
+        system_keys = self.graph.get_nodes_by_category("system") or self.get_facts_by_category("system")
         analysis = self._build_fact_analysis(system_keys)
         cross = self._build_cross_analysis()
         changes = self._build_change_report()
@@ -710,7 +715,13 @@ class Workbench:
         self._write_style_idx += 1
 
         selected = random.sample(system_facts, min(6, len(system_facts)))
-        records = {k: self.facts[k]["value"][:60] for k in selected}
+        # P10: 兼容 graph 和 facts dict (graph 可能有 facts 没有的 key)
+        records = {}
+        for k in selected:
+            if k in self.facts:
+                records[k] = self.facts[k]["value"][:60]
+            elif k in self.graph.nodes:
+                records[k] = self.graph.nodes[k].value[:60]
         analysis = self._build_fact_analysis(selected)
         # P9.6: 跨事实推理 + 变化检测
         self._track_fact_history()
