@@ -304,6 +304,116 @@ class GrowingWorldModel(nn.Module):
             self.parameters(), lr=3e-4, weight_decay=1e-4
         )
 
+    # ── P15: 图注意力 ──
+
+    def attend_facts(self, state_emb: torch.Tensor, thought: torch.Tensor,
+                     intent_name: str, fact_graph=None, top_k: int = 5) -> torch.Tensor:
+        """
+        从 FactGraph 选择 top_k 最相关事实, 聚合到状态表示
+
+        Args:
+            state_emb: (1, 384) 状态嵌入
+            thought: (1, 16) 思考向量
+            intent_name: 当前意图
+            fact_graph: FactGraph 实例 (或 None)
+            top_k: 选择的事实数
+
+        Returns:
+            (1, 128) 增强后的隐藏表示
+        """
+        h = self.core(state_emb, thought)  # (1, 128)
+
+        if fact_graph is None or not hasattr(fact_graph, 'nodes') or not fact_graph.nodes:
+            return h
+
+        # 从 FactGraph 收集所有节点值, 编码为向量
+        fact_texts = []
+        fact_keys = []
+        for key, node in list(fact_graph.nodes.items()):
+            # 用类别 + 键 + 值的前60字符作为文本表示
+            text = f"[{node.category}] {key} = {str(node.value)[:60]}"
+            fact_texts.append(text)
+            fact_keys.append(key)
+            if len(fact_texts) >= 20:  # 最多取 20 个事实
+                break
+
+        if not fact_texts:
+            return h
+
+        try:
+            # 用编码器将事实文本转为向量
+            from sentence_transformers import SentenceTransformer
+            encoder = SentenceTransformer('all-MiniLM-L6-v2', device=state_emb.device)
+            fact_embs = encoder.encode(fact_texts, convert_to_tensor=True,
+                                       device=state_emb.device)  # (n_facts, 384)
+
+            # 查询向量
+            query = (state_emb + F.normalize(thought, dim=-1).mean(dim=-1, keepdim=True)) / 2
+
+            # 注意力分数
+            scores = torch.matmul(fact_embs, query.T).squeeze(-1)  # (n_facts,)
+            top_indices = scores.topk(min(top_k, len(scores))).indices
+
+            # 聚合 top-k 事实
+            selected = fact_embs[top_indices]  # (k, 384)
+            weights = F.softmax(scores[top_indices], dim=0)  # (k,)
+            context = (selected * weights.unsqueeze(-1)).sum(dim=0)  # (384,)
+
+            # 注入隐藏表示
+            proj = nn.Linear(384, self.hidden_dim).to(context.device)
+            fact_bias = proj(context.unsqueeze(0))  # (1, 128)
+            h = h + 0.1 * fact_bias  # 小权重注入
+        except Exception:
+            pass
+
+        return h
+
+    # ── P15: 自我反思 (预测 vs 实际) ──
+
+    def self_reflect(self, intent_name: str, pred: dict, actual: dict) -> dict:
+        """
+        比较预测与实际, 更新置信度
+
+        Args:
+            intent_name: 意图名
+            pred: simulate() 的输出 {value, exit_prob, agreement, ...}
+            actual: 实际结果 {exit_code, reward, success}
+
+        Returns:
+            {error: float, confidence_delta: float}
+        """
+        # 计算预测误差
+        exit_error = abs(pred.get("exit_prob", 0.5) - (1.0 if actual.get("exit_code", 0) == 0 else 0.0))
+        value_error = abs(pred.get("value", 0.0) - actual.get("reward", 0.0))
+        total_error = exit_error + min(value_error, 1.0) / 2
+
+        # 更新置信度 (running average)
+        if not hasattr(self, '_confidence'):
+            self._confidence: dict[str, list[float]] = {}
+        if intent_name not in self._confidence:
+            self._confidence[intent_name] = []
+
+        confidence = 1.0 - min(total_error, 1.0)
+        self._confidence[intent_name].append(confidence)
+        if len(self._confidence[intent_name]) > 50:
+            self._confidence[intent_name] = self._confidence[intent_name][-50:]
+
+        return {
+            "error": total_error,
+            "confidence": confidence,
+        }
+
+    def get_confidence(self, intent_name: Optional[str] = None) -> float:
+        """获取意图/整体置信度"""
+        if not hasattr(self, '_confidence') or not self._confidence:
+            return 0.5
+        if intent_name:
+            vals = self._confidence.get(intent_name, [])
+            return sum(vals) / len(vals) if vals else 0.5
+        # 所有意图平均
+        all_vals = [c for cv in self._confidence.values() for c in cv]
+        return sum(all_vals) / len(all_vals) if all_vals else 0.5
+
     def get_leaf_stats(self) -> dict:
         """每个意图叶的训练统计"""
         stats = {}

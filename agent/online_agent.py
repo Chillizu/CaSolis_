@@ -1235,6 +1235,8 @@ class OnlineAgent:
             "in_chain": self.workbench.has_active_goal() if self.workbench else False,
             "has_active_goal": self.workbench.has_active_goal() if self.workbench else False,
             "fact_growth_rate": growth,
+            # P15: 模型置信度
+            "wm_confidence": self.world_model_v4.get_confidence(),
         }
 
     def step(self) -> tuple[bool, float]:
@@ -1903,6 +1905,18 @@ class OnlineAgent:
         step_success = (result.exit_code == 0) and bool(output)
         if step_success:
             self.success_count += 1
+
+        # P15: WM 自我反思 (预测 vs 实际)
+        if hasattr(self, 'world_model_v4') and thought_vector is not None and intent:
+            try:
+                sim = self.world_model_v4.simulate(state_emb, thought_vector.unsqueeze(0), intent)
+                self.world_model_v4.self_reflect(intent, sim, {
+                    "exit_code": result.exit_code,
+                    "reward": reward,
+                    "success": step_success,
+                })
+            except Exception:
+                pass
             # P7.1: 修复归因优先级 — imagination 独立于 used_goal
             if self._last_was_imagined:
                 self.ab_stats["imagined_success"] += 1

@@ -187,6 +187,14 @@ class MetaCognitiveSelector:
             self.mode_history.append((step, old_mode, "CREATE", f"growth={growth:.2f} stalled"))
             return self.current_mode
 
+        # R8: 模型置信度低 → LEARN
+        wm_conf = stats.get("wm_confidence", 0.5)
+        if wm_conf < 0.3 and n_facts >= 5:
+            self.current_mode = "LEARN"
+            self.mode_start_step = step
+            self.mode_history.append((step, old_mode, "LEARN", f"wm_conf={wm_conf:.2f} < 0.3"))
+            return self.current_mode
+
         # ── MLP 偏置 (规则不明确时的 fallback) ──
         if self.mlp_active and self.mlp is not None:
             features = torch.tensor([
