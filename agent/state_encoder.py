@@ -1,90 +1,44 @@
 """
-状态编码器 V2 — P3: 知识状态跟踪
+状态编码器 V3 — P15+: FactGraph 驱动的动态状态文本
 
-格式: "当前目录: {dir} 已知文件: {file} 上步: {goal}
-       输出: {output_summary} 工作区: {workspace} 历史: {history}"
-
-新增:
-  - 输出摘要: 上一条命令的输出要点 (取代单纯intent label)
-  - 工作区: /workspace 中的文件列表
-  - 已知文件自动发现: 从 ls/cat/du 输出中提取文件路径
+核心变化:
+  - 不再手写 ~200 行的 if/else 决定什么信息重要
+  - 直接从 FactGraph 选 top 事实, 按 MODE 决定优先级
+  - 所有硬编码路径列表和正则提取逻辑移除
 """
 
-import os
-import random
 import re
 from typing import Optional
 
 
 class StateEncoder:
-    """将环境状态编码为文本 (匹配分类器训练格式)"""
+    """将环境状态编码为文本 — 动态版"""
 
     def __init__(self, workbench=None):
-        self.conversation_history: list[dict] = []  # [{intent, command, output}]
         self.current_dir = "/"
-        self.known_files: set[str] = set()
         self.current_goal = "探索系统"
-        # P3: 缓存上次输出摘要
         self._last_output_summary: str = ""
-        # P4: 工作栏引用 (不拥有, 外部共享)
         self.workbench = workbench
-        # P4.3: 已探索路径追踪
-        self.explored_paths: set[str] = set()
+        self._step: int = 0
+        self._mode: str = "EXPLORE"
+        self._last_reward: float = 0.0
+        self._recent_rewards: list[float] = []
 
     def update(self, intent: str, command: str, output: str):
         """更新状态: 记录刚刚执行的命令和输出"""
-        # P3: 生成输出摘要 (首行 + 关键内容)
         self._last_output_summary = self._summarize_output(intent, output)
 
-        self.conversation_history.append({
-            "intent": intent,
-            "command": command,
-            "output": output[:500],
-        })
-        if len(self.conversation_history) > 10:
-            self.conversation_history.pop(0)
+    def set_step(self, step: int):
+        self._step = step
 
-        # P3: 从输出中自动发现已知文件
-        self._discover_files_from_output(intent, output)
-        
-        # P4.3: 记录已探索路径
-        self._track_explored_path(intent, command)
+    def set_mode(self, mode: str):
+        self._mode = mode
 
-    def _summarize_output(self, intent: str, output: str) -> str:
-        """将命令输出压缩成 1-2 行摘要"""
-        if not output or len(output.strip()) == 0:
-            return "(空)"
-
-        lines = output.strip().splitlines()
-        
-        # 提取第一个有意义的结果行
-        for line in lines[:10]:
-            line = line.strip()
-            if line and not line.startswith(("---", "total", "drwx", "-rw", "-", "lrwx")):
-                return line[:80]
-        
-        # 没有有意义行, 用第一行
-        first = lines[0].strip() if lines else "(空)"
-        return first[:80]
-
-    def _discover_files_from_output(self, intent: str, output: str):
-        """从命令输出中提取文件路径"""
-        # ls 输出: 提取文件名
-        for line in output.splitlines():
-            # 模式1: -rwxr-xr-x 1 root root 1234 Jun 21 10:00 filename
-            m = re.match(r"^[dl-][rwxst-]{9}\s+\d+\s+\S+\s+\S+\s+\d+\s+\S+\s+\S+\s+(\S+)$", line)
-            if m:
-                name = m.group(1)
-                if name not in (".", ".."):
-                    self.known_files.add(name)
-                    continue
-            
-            # 模式2: 所有绝对路径 (只存basename)
-            for path in re.findall(r"/(?:[a-zA-Z0-9_./-]+)", line):
-                if any(path.startswith(p) for p in ("/etc/", "/tmp/", "/proc/", "/var/", "/workspace/", "/usr/", "/bin/", "/sbin/")):
-                    base = os.path.basename(path)
-                    if base not in (".", "..", ""):
-                        self.known_files.add(base)
+    def set_reward(self, reward: float):
+        self._last_reward = reward
+        self._recent_rewards.append(reward)
+        if len(self._recent_rewards) > 20:
+            self._recent_rewards = self._recent_rewards[-20:]
 
     def set_dir(self, path: str):
         self.current_dir = path
@@ -92,138 +46,136 @@ class StateEncoder:
     def set_goal(self, goal: str):
         self.current_goal = goal
 
+    def _summarize_output(self, intent: str, output: str) -> str:
+        """将命令输出压缩成 1-2 行摘要"""
+        if not output or len(output.strip()) == 0:
+            return "(空)"
+        lines = output.strip().splitlines()
+        for line in lines[:10]:
+            line = line.strip()
+            if line and not line.startswith(("---", "total", "drwx", "-rw", "-", "lrwx")):
+                return line[:80]
+        first = lines[0].strip() if lines else "(空)"
+        return first[:80]
+
     def get_state_text(self, thought_label: str = "") -> str:
-        """P3+P4: 生成包含输出摘要、工作栏事实和思考向量的状态文本"""
-        hist = self._format_history()
-        # 已知文件: 最多3个
-        file_priority = sorted(self.known_files, key=lambda f: (not f.startswith(("etc", "proc", "tmp", "bin", "usr", "var"))))
-        known = "/".join(file_priority[:3]) if self.known_files else "未知"
-        ws = self._get_workspace_files() if self.current_dir != "/workspace" else "."
-        
-        # P4: 工作栏事实摘要
-        fact_summary = self.workbench.get_state_summary() if self.workbench else ""
-        fact_part = f"事实: {fact_summary} " if fact_summary and fact_summary != "无" else ""
-        
-        # P4: 后续方向 (如果有推荐)
-        follow_up = self.workbench.get_follow_up() if self.workbench else None
-        goal_part = f"方向: {follow_up[0]} " if follow_up else ""
-        
-        # P4.1: 思考标签
-        thought_part = f"思考: {thought_label} " if thought_label else ""
-        
-        # P4.3: 探索覆盖率
-        explore_summary = self.get_exploration_summary()
-        explore_part = f"探索: {explore_summary} " if explore_summary and explore_summary != "未探索" else ""
-        
-        return (
-            f"当前目录: {self.current_dir} "
-            f"已知文件: {known} "
-            f"上步: {self.current_goal} "
-            f"{thought_part}"
-            f"{fact_part}"
-            f"{goal_part}"
-            f"{explore_part}"
-            f"输出: {self._last_output_summary[:60]} "
-            f"工作区: {ws} "
-            f"历史: {hist}"
-        )
+        """
+        生成状态文本 — 动态从 FactGraph 选取事实
 
-    def _track_explored_path(self, intent: str, command: str):
-        """从命令中提取已探索的文件路径"""
-        # 小心正则反斜杠
-        import re
-        for match in re.finditer(r"/(?:[a-zA-Z0-9_./-]+)", command):
-            p = match.group(0)
-            if any(p.startswith(d) for d in ("/etc/", "/proc/", "/sys/", "/tmp/", "/dev/", "/var/", "/usr/")):
-                self.explored_paths.add(p)
-        # INFO 模板的已知路径
-        if intent == "INFO":
-            self.explored_paths.update(["/proc/cpuinfo", "/proc/meminfo"])
-
-    def get_unexplored_suggestions(self, n: int = 3) -> list[str]:
-        """推荐未探索的路径 (从常见系统路径中筛选)"""
-        # 常见可探索路径池
-        common_paths = [
-            "/etc/hostname", "/etc/hosts", "/etc/os-release", "/etc/fstab",
-            "/etc/resolv.conf", "/etc/passwd", "/etc/group", "/etc/shadow",
-            "/proc/version", "/proc/uptime", "/proc/loadavg", "/proc/stat",
-            "/proc/meminfo", "/proc/cpuinfo", "/proc/self/status",
-            "/proc/sys/kernel/hostname", "/sys/class/dmi/id/product_name",
-        ]
-        unexplored = [p for p in common_paths if p not in self.explored_paths]
-        # 如果常见路径都探索过了, 从 /proc 动态发现
-        if not unexplored:
-            return ["ls /proc/", "ls /sys/", "ls /etc/"]
-        return unexplored[:n]
-
-    def get_exploration_summary(self) -> str:
-        """探索覆盖率摘要"""
-        if not self.explored_paths:
-            return "未探索"
-        # 按目录分组
-        dirs = {}
-        for p in self.explored_paths:
-            d = p.rsplit("/", 2)[0] if "/" in p else "/"
-            dirs[d] = dirs.get(d, 0) + 1
-        parts = [f"{d}({c})" for d, c in sorted(dirs.items())]
-        return ", ".join(parts[:5])
-
-    def _get_workspace_files(self) -> str:
-        """查询 /workspace 文件列表"""
-        try:
-            # 尝试从文件系统读取 (在某些运行时可用)
-            if os.path.isdir("/workspace"):
-                files = os.listdir("/workspace")
-                if files:
-                    return ",".join(files[:5])
-        except Exception:
-            pass
-        return "无"
-
-    def _format_history(self) -> str:
-        """P3: 历史格式改为 意图+输出摘要"""
-        if not self.conversation_history:
-            return "无"
-        recent = self.conversation_history[-3:]
+        不再有硬编码的"CPU: xxx 内存: xxx"段落。
+        改为: FactGraph 根据 MODE 选出最重要的节点。
+        """
         parts = []
-        for entry in recent:
-            intent = entry["intent"]
-            summary = self._summarize_output(intent, entry["output"])
-            parts.append(f"{intent}({summary})")
-        return " → ".join(parts)
+
+        # 1. 环境上下文 (始终保留)
+        parts.append(f"步 {self._step}")
+        parts.append(f"模式 {self._mode}")
+        parts.append(f"dir {self.current_dir}")
+        if thought_label:
+            parts.append(thought_label)
+        avg_r = sum(self._recent_rewards[-5:]) / max(len(self._recent_rewards[-5:]), 1)
+        parts.append(f"rew {avg_r:.2f}")
+
+        # 2. 从 FactGraph 选事实 (去掉硬编码的 if/else)
+        facts_text = self._get_dynamic_facts()
+        if facts_text:
+            parts.append(facts_text)
+
+        # 3. 最后输出摘要
+        if self._last_output_summary:
+            parts.append(f"out {self._last_output_summary[:50]}")
+
+        return " ".join(parts)
+
+    def _get_dynamic_facts(self, max_facts: int = 6) -> str:
+        """
+        从 FactGraph 动态选取最重要的节点
+
+        选择策略 (由 MODE 决定):
+          - EXPLORE: 系统事实 + 缺口 + 命令发现
+          - CREATE: 工具结果 + 能力 + 创作相关
+          - LEARN: 预测误差 + 新事实 + 意外
+
+        没有任何硬编码的类别/路径/正则。
+        """
+        if not self.workbench:
+            return ""
+        graph = getattr(self.workbench, 'graph', None)
+        if not graph or not graph.nodes:
+            return ""
+
+        # MODE → 偏好类别
+        mode_cats = {
+            "EXPLORE": {"system", "file", "package", "command", "network", "capability"},
+            "CREATE": {"tool_result", "capability", "script", "package"},
+            "LEARN": {"system", "tool_result", "command"},
+        }
+        prefer = mode_cats.get(self._mode, mode_cats["EXPLORE"])
+
+        # 评分: 偏好类别 * 置信度 * 近期性
+        scored = []
+        for key, node in graph.nodes.items():
+            score = 0.0
+            # 类别匹配
+            if node.category in prefer:
+                score += 2.0
+            # 高频类别削弱
+            if node.category in ("general", "script", "explore"):
+                score -= 1.0
+            # 置信度
+            score += node.confidence * 0.5
+            # 近期性 (step 越大越新)
+            score += min(node.step / 100, 1.0) * 0.3
+            scored.append((score, key, node))
+
+        scored.sort(key=lambda x: -x[0])
+
+        # 取 top facts
+        selected = scored[:max_facts]
+        if not selected:
+            return ""
+
+        fact_parts = []
+        for _, key, node in selected:
+            val = str(node.value)[:30]
+            fact_parts.append(f"{key}={val}")
+
+        return " ".join(fact_parts)
+
+    @property
+    def explored_paths(self):
+        """兼容旧接口: 不再追踪, 返回空集"""
+        return set()
 
     def get_embedding_text(self) -> str:
-        """RND 用: 更短的嵌入文本, 不含长历史"""
-        known = "/".join(sorted(self.known_files)[:3]) if self.known_files else "未知"
-        ws = self._get_workspace_files() if self.current_dir != "/workspace" else "."
-        # P4: 工作栏事实
-        fact_summary = self.workbench.get_state_summary(max_keys=2) if self.workbench else ""
-        fact_part = f"事实: {fact_summary} " if fact_summary and fact_summary != "无" else ""
-        return (
-            f"当前目录: {self.current_dir} "
-            f"已知文件: {known} "
-            f"上步: {self.current_goal} "
-            f"{fact_part}"
-            f"输出: {self._last_output_summary[:40]} "
-            f"工作区: {ws} "
-        )
+        """更短的嵌入文本 (用于 RND)"""
+        parts = [
+            f"dir {self.current_dir}",
+            f"mode {self._mode}",
+        ]
+        # 从 FactGraph 取 3 个最高置信度节点
+        graph = getattr(self.workbench, 'graph', None) if self.workbench else None
+        if graph and graph.nodes:
+            top = sorted(graph.nodes.items(),
+                         key=lambda x: (x[1].confidence, x[1].step),
+                         reverse=True)[:3]
+            for key, node in top:
+                val = str(node.value)[:20]
+                parts.append(f"{key}={val}")
+        return " ".join(parts)
 
 
 class RandomStateGenerator:
     """生成随机环境状态 (用于训练数据扩充)"""
 
-    DIRS = ["/", "/etc", "/var/log", "/proc", "/tmp", "/home", "/opt", "/dev", "/usr/bin"]
-    FILES = ["passwd", "hostname", "hosts", "syslog", "cpuinfo", "meminfo", 
-             "shadow", "group", "fstab", "services"]
-
     @classmethod
     def random_state_text(cls) -> str:
-        d = random.choice(cls.DIRS)
-        f = random.choice(cls.FILES)
-        hist_opts = ["无", "cd → ls", "cat passwd", "grep root", "df -h"]
+        import random
+        dirs = ["/", "/etc", "/proc", "/tmp", "/usr/bin"]
+        modes = ["EXPLORE", "CREATE", "LEARN"]
         return (
-            f"当前目录: {d} "
-            f"已知文件: {f} "
-            f"上步: 探索{os.path.basename(d) or '系统'} "
-            f"历史: {random.choice(hist_opts)}"
+            f"步 {random.randint(1,300)} "
+            f"模式 {random.choice(modes)} "
+            f"dir {random.choice(dirs)} "
+            f"out sample output"
         )

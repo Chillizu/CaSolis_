@@ -1241,6 +1241,9 @@ class OnlineAgent:
         self.step_count += 1
         self._last_was_imagined = False
 
+        # 1. 更新状态编码器上下文 (动态 FactGraph 驱动)
+        self.state_encoder.set_step(self.step_count)
+
         # 1. 编码当前状态
         state_text = self.state_encoder.get_state_text(thought_label="")
         state_emb = self.classifier.get_embedding(state_text).detach().clone()
@@ -1267,6 +1270,7 @@ class OnlineAgent:
             self._facts_history = []
         mode_stats = self._compute_mode_stats()
         self.current_mode = self.meta_selector.select(mode_stats)
+        self.state_encoder.set_mode(self.current_mode)
         thought_label = f"{self.current_mode}:{thought_label}" if thought_label else self.current_mode
         state_text = self.state_encoder.get_state_text(thought_label=thought_label)
         state_emb = self.classifier.get_embedding(state_text).detach().clone()
@@ -1868,6 +1872,7 @@ class OnlineAgent:
         reward = self._compute_reward(result, intent, combined_curiosity, intent_diversity,
                                       chain_bonus=chain_bonus, params=params,
                                       facts_before=facts_before)
+        self.state_encoder.set_reward(reward)
         if is_repeat and recent_repeats > 2:
             reward *= 0.3  # 重复严重惩罚
 
