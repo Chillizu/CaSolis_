@@ -416,6 +416,24 @@ class OnlineAgent:
         if n_a > 0:
             print(f"  ✅ 知识拓展 Phase A: {n_a} 个新事实")
 
+        # P13: ToolFactory + ToolRegistry
+        from agent.tool_factory import ToolFactory
+        from agent.tool_registry import ToolRegistry
+        self.tool_factory = ToolFactory()
+        self.tool_registry = ToolRegistry()
+        # 生成并注册所有内置工具
+        generated = self.tool_factory.generate_all()
+        for fname in generated:
+            info = self.tool_factory.get_tool_info(fname.replace("tool_", "").replace(".py", ""))
+            if info:
+                self.tool_registry.register(
+                    fname,
+                    description=info["description"],
+                    tool_type=info["type"],
+                )
+        if generated:
+            print(f"  ✅ 工具工厂: {len(generated)} 个工具就绪")
+
         # P4: 工作栏驱动的目标池
         self.explore_targets = [
             "查看 /etc/hostname 的内容",
@@ -1255,9 +1273,7 @@ class OnlineAgent:
         state_emb = self.classifier.get_embedding(state_text).detach().clone()
 
         # 2. P12: 知识拓展 (分散在各步)
-        # 每10-15步执行一次未完成的探索阶段
         if hasattr(self, 'knowledge_mapper') and self.step_count > 10:
-            # 分散探索: Phase B=15步间隔, C=20, D=25, E=30
             phase_intervals = {"B": 15, "C": 20, "D": 25, "E": 30}
             for phase in ["B", "C", "D", "E"]:
                 if not self.knowledge_mapper.is_phase_done(phase):
@@ -1265,7 +1281,41 @@ class OnlineAgent:
                         n_new = self.knowledge_mapper.run_phase(phase, self.step_count)
                         if n_new > 0:
                             print(f"  [KNOWLEDGE] Phase {phase}: {n_new} 个新事实")
-                        break  # 每次只做一个 phase
+                        break
+
+        # P13: 每50步尝试运行一个工具
+        if hasattr(self, 'tool_registry') and self.step_count > 20 and self.step_count % 50 == 0:
+            tool = self.tool_registry.get_best_tool()
+            if tool:
+                env = {
+                    "workbench": self.workbench,
+                    "sandbox": self.sandbox,
+                    "state_text": state_text,
+                }
+                result = self.tool_registry.run_tool(tool["name"], env)
+                if result.get("success"):
+                    self.tool_registry.log_use(tool["name"], self.step_count, True,
+                                                bytes_created=len(str(result.get("data", {}))))
+                    # 如果工具有用数据, 注入 FactGraph
+                    data = result.get("data", {}) or result.get("packages", []) or result.get("processes", []) or result.get("profile", "")
+                    summary = result.get("summary", "")
+                    if data or summary:
+                        tool_key = f"tool_result_{tool['name']}"
+                        tg_value = summary[:100]
+                        wb = self.workbench
+                        if hasattr(wb, 'graph'):
+                            wb.graph.add_node(tool_key, tg_value, category="tool_result",
+                                              confidence=0.7, step=self.step_count,
+                                              source_cmd=f"tool:{tool['name']}")
+                        elif hasattr(wb, 'facts'):
+                            wb.facts[tool_key] = {
+                                "value": tg_value, "category": "tool_result",
+                                "confidence": 0.7, "step": self.step_count,
+                                "source_cmd": f"tool:{tool['name']}",
+                            }
+                        print(f"  [TOOL] {tool['name']}: {summary}")
+                else:
+                    self.tool_registry.log_use(tool["name"], self.step_count, False)
 
         # 3. P10: GoalGenerator (MODE驱动目标)
         used_goal = False
