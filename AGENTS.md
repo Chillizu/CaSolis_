@@ -1,8 +1,8 @@
 # Folunar_ — 项目规则与架构
 
-> 最后更新: 2026-06-25
-> 当前阶段: P10 完成 (层级架构: MODE→GOAL→ACTION)
-> 下一阶段: P11 统一持久化
+> 最后更新: 2026-06-26
+> 当前阶段: P11-P15 全部完成
+> 状态: 持久化/知识拓展/自造工具/LLM/脑启发层 均已集成
 
 ---
 
@@ -19,7 +19,7 @@
 
 ---
 
-## 当前架构 (P10 层级架构)
+## 当前架构 (P11-P15 自主架构)
 
 ### 核心循环
 
@@ -60,11 +60,15 @@ ExecResult
 | `agent/online_agent.py` | 主循环, 2600+ 行 | 生产 |
 | `agent/workbench.py` | 事实提取 + 内容生成 (含 FactGraph 集成) | 生产 |
 | `agent/fact_graph.py` | 图结构知识库: 节点+边+schema+缺口检测 | 生产 |
-| `agent/meta_selector.py` | 3 MODE 选择器 (EXPLORE/CREATE/LEARN) | 生产 |
+| `agent/meta_selector.py` | 3 MODE 选择器 (EXPLORE/CREATE/LEARN) + R8 置信度门控 | 生产 |
 | `agent/goal_generator.py` | 模式驱动目标生成 + utility gate | 生产 |
-| `agent/world_model_v4.py` | 增长型世界模型: 核+叶架构 | 生产 |
+| `agent/world_model_v4.py` | 增长型世界模型: 核+叶+图注意力+自我反思 | 生产 |
 | `agent/episodic_memory.py` | 情景记忆: 惊喜环形缓冲 | 生产 |
 | `agent/creative_writer.py` | Ollama LLM 插件: 异步生成 | 生产 |
+| `agent/persistent_store.py` | 统一持久化: SQLite+PyTorch+version控制 | 生产 |
+| `agent/knowledge_mapper.py` | 知识拓展+自发现引擎: 418命令 BFS + RND驱动 | 生产 |
+| `agent/tool_factory.py` | 工具工厂: 安全命令池+新类别自动生成 | 生产 |
+| `agent/tool_registry.py` | 工具注册表: 扫描+注册+统计 | 生产 |
 | `agent/conductor.py` | thought 向量: 384→128→64→[16+11] | 生产 |
 | `agent/nanny.py` | thought→intent 翻译 | 生产 |
 | `agent/world_model.py` | 全局世界模型 (V3, 训练中) | 生产 |
