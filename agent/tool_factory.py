@@ -208,9 +208,50 @@ class ToolFactory:
             "description": info["description"],
         }
 
+    # ── 去人为: 从 KnowledgeMapper 构建动态命令池 ──
+
+    def discover_commands_for_category(self, category: str,
+                                        knowledge_mapper=None) -> list[str]:
+        """
+        从 KnowledgeMapper 的已发现命令中, 选出属于某类别的命令作为工具命令
+
+        Args:
+            category: 类别名 (如 "file", "network")
+            knowledge_mapper: KnowledgeMapper 实例 (或 None)
+
+        Returns:
+            命令列表 (如 ["cmd --help", "cmd --version"])
+        """
+        if knowledge_mapper is None:
+            # 回退到 SAFE_COMMANDS
+            return SAFE_COMMANDS.get(category, SAFE_COMMANDS.get("system", []))
+
+        # 从 KnowledgeMapper 获取该类别的已发现命令
+        explored = getattr(knowledge_mapper, '_explored_commands', set())
+        if not explored:
+            return SAFE_COMMANDS.get(category, SAFE_COMMANDS.get("system", []))
+
+        # 类别到命令名的映射 (由 KnowledgeMapper._infer_category 决定)
+        cat_cmds = []
+        for cmd_name in explored:
+            cmd_cat = knowledge_mapper._infer_category(cmd_name)
+            if cmd_cat == category:
+                cat_cmds.append(cmd_name)
+
+        if not cat_cmds:
+            return SAFE_COMMANDS.get(category, SAFE_COMMANDS.get("system", []))
+
+        # 为每个命令生成简单的探测命令
+        commands = []
+        for cmd in cat_cmds[:5]:  # 最多 5 条
+            commands.append(f"{cmd} --help 2>/dev/null | head -5")
+            if len(commands) >= 3:
+                break
+        return commands
+
     # ── 观察驱动的工具自生成 ──
 
-    def auto_generate_from_facts(self, fact_graph) -> list[str]:
+    def auto_generate_from_facts(self, fact_graph, knowledge_mapper=None) -> list[str]:
         """
         根据 FactGraph 中积累的事实类别, 自动生成缺失的工具
         新类别从 SAFE_COMMANDS 池取命令, 无需 LLM
@@ -250,8 +291,8 @@ class ToolFactory:
             and cat_count[c] >= 2
         ]
         for cat in new_cats:
-            # 有这个类别的安全命令吗? 没有就用通用命令
-            commands = SAFE_COMMANDS.get(cat, SAFE_COMMANDS.get("system"))
+            # 去人为: 优先使用 KnowledgeMapper 发现的命令, 回退 SAFE_COMMANDS
+            commands = self.discover_commands_for_category(cat, knowledge_mapper)
             fname = f"tool_gather_{cat}.py"
             if (self.tools_dir / fname).exists():
                 continue

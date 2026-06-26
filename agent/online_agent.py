@@ -305,24 +305,13 @@ class OnlineAgent:
         self.explore_prob = explore_prob
         self.conductor_gate = conductor_gate  # A/B 切换阈值
 
-        # 创意模式: 降低确定性意图的奖励, 鼓励探索
-        # P5.6: CUSTOM/LS_TMP 不再高基础分, 新颖性由 _tried_custom_cmds 加成
-        self.INTENT_REWARD_CREATIVE = {
-            "READ":     0.2,
-            "LIST":     0.3,
-            "INFO":     0.5,
-            "SEARCH":   0.6,
-            "COUNT":    0.4,
-            "INSPECT":  0.3,
-            "EXPLORE":  1.0,
-            "CUSTOM":   0.1,   # 基础分极低, 新颖命令靠新命令奖励
-            "USB_DEVICES":0.8,
-            "READ_ETC": 0.3,
-            "DISK_USAGE":0.5,
-            "LS_TMP":   0.05,  # 同 stable
-            "ARCH_INFO":0.8,
-            "HELP":    -0.8,
-        }
+        # 自适应奖励: 从经验中学习每个意图的价值, 不再手写
+        # 初始化时用均匀保守值, 运行时逐步替换为经验均值
+        self._reward_tracker: dict[str, list[float]] = {}
+        for name in INTENTS:
+            if name != "HELP":
+                self._reward_tracker[name] = []
+        self._adapted_rewards: dict[str, float] = {}  # intent → running mean reward
         self.device = self.classifier.device
         self._tried_custom_cmds: set[str] = set()  # P5.6: 追踪已试过的 CUSTOM 命令
         # P7.2: 概率门控 — 让 A/B 决策拿回核心循环的主导权
@@ -482,27 +471,38 @@ class OnlineAgent:
         "GENERATE": 0.6,
     }
 
-    INTENT_REWARD_BASE = {
-        # 有用: 获取系统信息
-        "INFO":    1.2,
-        "SEARCH":  1.2,
-        "COUNT":   1.0,
-        "READ":    0.8,
-        "LIST":    0.8,
-        # 中性
-        "EXPLORE": 0.6,
-        "ARCH_INFO": 0.8,
-        "DISK_USAGE": 0.8,
-        "USB_DEVICES": 0.8,
-        "READ_ETC": 0.8,
-        # P5.5: LS_TMP/CUSTOM 信息量低, 基础分极低
-        "LS_TMP":  0.05,
-        "CUSTOM":  0.1,
-        # 低价值
-        "INSPECT": 0.1,
-        "HELP":   -0.8,
-        "GENERATE": 0.7,  # P9.6: 创作类
-    }
+    def _get_adaptive_base_reward(self, intent: str) -> float:
+        """
+        从经验中学习每个意图的基础奖励
+        返回 running mean, 初始为 0.5, 随实际执行逐步调整
+        """
+        if intent == "HELP":
+            return -0.8
+        # 如果有经验数据, 用 running mean
+        if hasattr(self, '_reward_tracker') and intent in self._reward_tracker:
+            vals = self._reward_tracker[intent]
+            if len(vals) >= 3:
+                return sum(vals[-20:]) / min(len(vals), 20)
+        # 有已学习的自适应值?
+        if hasattr(self, '_adapted_rewards') and intent in self._adapted_rewards:
+            return self._adapted_rewards[intent]
+        # 默认 0.5
+        return 0.5
+
+    def _update_reward_knowledge(self, intent: str, actual_reward: float):
+        """每步更新对某个意图的价值认知"""
+        if not hasattr(self, '_reward_tracker'):
+            return
+        if intent not in self._reward_tracker:
+            self._reward_tracker[intent] = []
+        self._reward_tracker[intent].append(actual_reward)
+        # 保留最近 50 步
+        if len(self._reward_tracker[intent]) > 50:
+            self._reward_tracker[intent] = self._reward_tracker[intent][-50:]
+        # 更新自适应值
+        vals = self._reward_tracker[intent]
+        if len(vals) >= 3:
+            self._adapted_rewards[intent] = sum(vals) / len(vals)
 
     def _compute_reward(self, result: ExecResult, intent: str, novelty: float,
                         intent_diversity: float = 0.0, chain_bonus: float = 0.0,
@@ -522,11 +522,8 @@ class OnlineAgent:
         reward = 0.0
         success = result.exit_code == 0
 
-        # 意图基础价值 (双模式)
-        if use_creative:
-            base = self.INTENT_REWARD_CREATIVE.get(intent, 0.6)
-        else:
-            base = self.INTENT_REWARD_BASE.get(intent, 0.5)
+        # 自适应基础奖励 (从经验学习, 不再手写)
+        base = self._get_adaptive_base_reward(intent)
 
         # 成功信号
         if success and result.stdout and len(result.stdout.strip()) > 3:
@@ -1310,7 +1307,9 @@ class OnlineAgent:
 
                 # P13++: 根据 FactGraph 类别自动生成工具
                 if hasattr(self, 'tool_factory') and hasattr(self.workbench, 'graph'):
-                    new_tools = self.tool_factory.auto_generate_from_facts(self.workbench.graph)
+                    km = self.knowledge_mapper if hasattr(self, 'knowledge_mapper') else None
+                    new_tools = self.tool_factory.auto_generate_from_facts(
+                        self.workbench.graph, knowledge_mapper=km)
                     if new_tools:
                         for fname in new_tools:
                             info = self.tool_factory.get_tool_info(
@@ -1917,6 +1916,11 @@ class OnlineAgent:
                 })
             except Exception:
                 pass
+            # 去人为: 更新自适应奖励知识
+            try:
+                self._update_reward_knowledge(intent, reward)
+            except Exception:
+                pass
             # P7.1: 修复归因优先级 — imagination 独立于 used_goal
             if self._last_was_imagined:
                 self.ab_stats["imagined_success"] += 1
@@ -2332,9 +2336,12 @@ class OnlineAgent:
         # 4. 扩展 IntentClassifier 分类头
         self.classifier.expand_intents(effective)
 
-        # 5. 为新意图注册奖励基础分
+        # 5. 为新意图注册自适应奖励 (初始值 0.5)
         for name in new_names:
-            self.INTENT_REWARD_BASE[name] = 0.5
+            if hasattr(self, '_reward_tracker'):
+                self._reward_tracker[name] = []
+            if hasattr(self, '_adapted_rewards'):
+                self._adapted_rewards[name] = 0.5
 
         # 6. 用 discoverer 的真实轨迹生成训练数据, 增量训练
         training_data = self._generate_training_for_new_intents(new_names)
