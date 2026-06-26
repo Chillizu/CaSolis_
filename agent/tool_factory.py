@@ -6,7 +6,7 @@ ToolFactory — 工具工厂
 
 工具类型:
   - data_gather: 采集特定系统信息
-  - analysis: 分析已采集的数据  
+  - analysis: 分析已采集的数据
   - creative: 生成内容
 
 每个生成的工具:
@@ -17,354 +17,172 @@ ToolFactory — 工具工厂
 """
 
 import os
+import re
 from pathlib import Path
+from typing import Optional
 
 TOOLS_DIR = Path("data/persistent/tools")
 
-# ── 工具模板 ──
+# ── 安全命令清单 (LLM 只从这个池子选) ──
+SAFE_COMMANDS = {
+    "system": [
+        "uname -a", "hostname", "uptime", "whoami", "id",
+        "lscpu", "free -h", "df -h", "lsblk", "mount",
+        "cat /proc/cpuinfo | head -20", "cat /proc/meminfo | head -10",
+        "cat /proc/uptime", "cat /proc/loadavg",
+        "ps aux --forest | head -20", "top -bn1 | head -10",
+    ],
+    "network": [
+        "ip addr", "ip route", "ss -tuln", "cat /proc/net/dev",
+        "cat /proc/net/tcp | head -10", "hostname -I",
+        "arp -n 2>/dev/null", "ifconfig 2>/dev/null",
+    ],
+    "package": [
+        "dpkg -l", "dpkg --version", "apt list --installed 2>/dev/null | head -20",
+    ],
+    "file": [
+        "ls -la /", "df -hT", "lsblk -o NAME,SIZE,TYPE,MOUNTPOINT",
+        "cat /etc/fstab 2>/dev/null", "findmnt -D",
+    ],
+    "dev": [
+        "python3 --version", "gcc --version 2>/dev/null | head -1",
+        "make --version 2>/dev/null | head -1", "perl --version 2>/dev/null | head -2",
+        "node --version 2>/dev/null",
+    ],
+    "archive": [
+        "tar --version | head -1", "gzip --version 2>/dev/null | head -1",
+        "bzip2 --version 2>/dev/null | head -1", "xz --version 2>/dev/null | head -1",
+        "unzip --version 2>/dev/null | head -1",
+    ],
+    "text": [
+        "echo hello", "head -5 /etc/passwd", "wc -l /etc/passwd",
+    ],
+    "capability": [
+        "which python3", "which gcc", "which make", "which perl",
+        "which node", "which git", "which docker",
+    ],
+    "command": [
+        "compgen -c 2>/dev/null | head -20", "echo $SHELL", "which bash",
+    ],
+}
+
+# ── 工具写入模板 ──
+
+TOOL_TEMPLATE = '''"""
+Tool: {name}
+Category: {category}
+Auto-generated from category facts
+"""
+
+def run(env: dict) -> dict:
+    """
+    Gather {category} information from sandbox
+    """
+    try:
+        sandbox = env.get("sandbox")
+        if not sandbox:
+            return {{"success": False, "{category}_data": [], "summary": "no sandbox"}}
+
+        data = []
+        commands = {commands}
+
+        for cmd in commands:
+            result = sandbox.execute(cmd, timeout=3)
+            if result and result.stdout and result.stdout.strip():
+                data.append({{
+                    "cmd": cmd,
+                    "output": result.stdout.strip()[:500],
+                }})
+
+        if not data:
+            return {{"success": True, "{category}_data": [], "summary": "no data found"}}
+
+        summary = f"{{len(data)}} commands executed"
+        return {{
+            "success": True,
+            "{category}_data": data,
+            "summary": summary,
+        }}
+    except Exception as e:
+        return {{"success": False, "{category}_data": [], "summary": str(e)}}
+'''
+
+
+# ── 固定工具模板 (质量经过验证) ──
 
 TOOL_TEMPLATES = {
-
-    # ─── 数据采集类 ───
-
     "gather_packages": {
         "type": "data_gather",
         "description": "列出所有已安装的 dpkg 包",
-        "code": '''"""
-Tool: 采集已安装包列表
-用法: run(env) → {"packages": [...], "count": int}
-"""
-
-def run(env: dict) -> dict:
-    """
-    从沙箱采集所有已安装的 dpkg 包
-    """
-    import subprocess
-
-    try:
-        sandbox = env.get("sandbox")
-        if sandbox:
-            result = sandbox.execute("dpkg -l 2>/dev/null | grep '^ii' | awk '{print $2, $3}'")
-            if result and result.stdout:
-                lines = result.stdout.strip().split("\\n")
-                packages = []
-                for line in lines:
-                    parts = line.strip().split(None, 1)
-                    if len(parts) >= 1:
-                        packages.append({"name": parts[0], "version": parts[1] if len(parts) > 1 else ""})
-                return {
-                    "success": True,
-                    "packages": packages,
-                    "count": len(packages),
-                    "summary": f"found {len(packages)} installed packages"
-                }
-
-        return {"success": False, "packages": [], "count": 0, "summary": "no sandbox"}
-    except Exception as e:
-        return {"success": False, "packages": [], "count": 0, "summary": str(e)}
-''',
+        "code": TOOL_TEMPLATE.format(
+            name="Package Lister", category="package",
+            commands=SAFE_COMMANDS["package"],
+        ),
     },
-
     "gather_network": {
         "type": "data_gather",
         "description": "采集网络接口和路由信息",
-        "code": '''"""
-Tool: 采集网络信息
-用法: run(env) → {"interfaces": [...], "routes": [...]}
-"""
-
-def run(env: dict) -> dict:
-    """
-    从沙箱采集网络接口、路由、ARP 信息
-    """
-    result = {"interfaces": [], "routes": [], "success": False}
-    try:
-        sandbox = env.get("sandbox")
-        if not sandbox:
-            return {"success": False, "summary": "no sandbox"}
-
-        # IP 地址
-        r = sandbox.execute("ip addr 2>/dev/null | grep -E '^[0-9]+:|inet '")
-        if r and r.stdout:
-            lines = r.stdout.strip().split("\\n")
-            current_iface = None
-            for line in lines:
-                if ":" in line and not line.strip().startswith("inet"):
-                    import re
-                    m = re.match(r"\\d+:\\s+(\\w+)", line)
-                    if m:
-                        current_iface = {"name": m.group(1), "ips": []}
-                        result["interfaces"].append(current_iface)
-                elif "inet " in line and current_iface is not None:
-                    parts = line.strip().split()
-                    if len(parts) >= 2:
-                        current_iface["ips"].append(parts[1])
-
-        # 路由
-        r2 = sandbox.execute("ip route 2>/dev/null")
-        if r2 and r2.stdout:
-            for line in r2.stdout.strip().split("\\n"):
-                if line.strip():
-                    result["routes"].append(line.strip())
-
-        result["success"] = True
-        n_ips = sum(len(i.get("ips", [])) for i in result["interfaces"])
-        result["summary"] = f"{len(result['interfaces'])} interfaces, {n_ips} IPs"
-        return result
-    except Exception as e:
-        return {"success": False, "summary": str(e)}
-''',
+        "code": TOOL_TEMPLATE.format(
+            name="Network Scanner", category="network",
+            commands=SAFE_COMMANDS["network"],
+        ),
     },
-
     "gather_processes": {
         "type": "data_gather",
         "description": "采集当前进程列表",
-        "code": '''"""
-Tool: 采集进程列表
-用法: run(env) → {"processes": [...], "count": int}
-"""
-
-def run(env: dict) -> dict:
-    """
-    从沙箱采集 ps 进程列表
-    """
-    try:
-        sandbox = env.get("sandbox")
-        if not sandbox:
-            return {"success": False, "processes": [], "count": 0, "summary": "no sandbox"}
-
-        r = sandbox.execute("ps aux 2>/dev/null | head -50")
-        if r and r.stdout:
-            lines = r.stdout.strip().split("\\n")
-            processes = []
-            for line in lines[1:]:  # skip header
-                parts = line.split(None, 10)
-                if len(parts) >= 11:
-                    processes.append({
-                        "user": parts[0],
-                        "pid": parts[1],
-                        "cpu": parts[2],
-                        "mem": parts[3],
-                        "cmd": parts[10][:60],
-                    })
-            return {
-                "success": True,
-                "processes": processes,
-                "count": len(processes),
-                "summary": f"{len(processes)} processes"
-            }
-
-        return {"success": False, "processes": [], "count": 0, "summary": "empty output"}
-    except Exception as e:
-        return {"success": False, "processes": [], "count": 0, "summary": str(e)}
-''',
+        "code": TOOL_TEMPLATE.format(
+            name="Process Lister", category="process",
+            commands=["ps aux --forest | head -30", "top -bn1 | head -15"],
+        ),
     },
-
     "gather_storage": {
         "type": "data_gather",
         "description": "采集磁盘挂载和文件系统信息",
-        "code": '''"""
-Tool: 采集磁盘/文件系统信息
-用法: run(env) → {"mounts": [...], "disks": [...]}
-"""
-
-def run(env: dict) -> dict:
-    """
-    采集磁盘挂载、文件系统类型、使用量
-    """
-    try:
-        sandbox = env.get("sandbox")
-        if not sandbox:
-            return {"success": False, "mounts": [], "disks": [], "summary": "no sandbox"}
-
-        result = {"mounts": [], "disks": [], "success": False}
-
-        r = sandbox.execute("df -hT 2>/dev/null | tail -n +2")
-        if r and r.stdout:
-            for line in r.stdout.strip().split("\\n"):
-                parts = line.split()
-                if len(parts) >= 7:
-                    result["mounts"].append({
-                        "filesystem": parts[0],
-                        "type": parts[1],
-                        "size": parts[2],
-                        "used": parts[3],
-                        "avail": parts[4],
-                        "use_pct": parts[5],
-                        "mount": parts[6],
-                    })
-
-        r2 = sandbox.execute("lsblk -o NAME,SIZE,TYPE,MOUNTPOINT 2>/dev/null | tail -n +2")
-        if r2 and r2.stdout:
-            for line in r2.stdout.strip().split("\\n"):
-                parts = line.split()
-                if len(parts) >= 3:
-                    result["disks"].append({
-                        "name": parts[0],
-                        "size": parts[1],
-                        "type": parts[2],
-                        "mount": parts[3] if len(parts) > 3 else "",
-                    })
-
-        result["success"] = True
-        result["summary"] = f"{len(result['mounts'])} mounts, {len(result['disks'])} disks"
-        return result
-    except Exception as e:
-        return {"success": False, "mounts": [], "disks": [], "summary": str(e)}
-''',
+        "code": TOOL_TEMPLATE.format(
+            name="Storage Scanner", category="storage",
+            commands=SAFE_COMMANDS["file"],
+        ),
     },
-
     "gather_hardware": {
         "type": "data_gather",
         "description": "采集 CPU/内存/系统架构硬件信息",
-        "code": '''"""
-Tool: 采集硬件信息
-用法: run(env) → {"cpu": {...}, "memory": {...}, "arch": "..."}
-"""
-
-def run(env: dict) -> dict:
-    """
-    采集 CPU 型号、核心数、内存总量、架构等硬件信息
-    """
-    try:
-        sandbox = env.get("sandbox")
-        if not sandbox:
-            return {"success": False, "summary": "no sandbox"}
-
-        result = {"cpu": {}, "memory": {}, "arch": "", "success": False}
-
-        # CPU
-        r = sandbox.execute("cat /proc/cpuinfo 2>/dev/null | grep -E '^(processor|model name|cpu cores|vendor_id|cpu family)' | head -10")
-        if r and r.stdout:
-            for line in r.stdout.strip().split("\\n"):
-                if ":" in line:
-                    k, v = line.split(":", 1)
-                    result["cpu"][k.strip()] = v.strip()
-
-        # Memory
-        r2 = sandbox.execute("cat /proc/meminfo 2>/dev/null | grep -E '^(MemTotal|MemFree|SwapTotal|SwapFree)'")
-        if r2 and r2.stdout:
-            for line in r2.stdout.strip().split("\\n"):
-                if ":" in line:
-                    k, v = line.split(":", 1)
-                    result["memory"][k.strip()] = v.strip()
-
-        # Architecture
-        r3 = sandbox.execute("uname -m 2>/dev/null")
-        if r3 and r3.stdout:
-            result["arch"] = r3.stdout.strip()
-
-        result["success"] = True
-        result["summary"] = f"{result['cpu'].get('model name', '?')[:30]}, {result['memory'].get('MemTotal', '?')}"
-        return result
-    except Exception as e:
-        return {"success": False, "summary": str(e)}
-''',
+        "code": TOOL_TEMPLATE.format(
+            name="Hardware Info", category="hardware",
+            commands=SAFE_COMMANDS["system"][:5],
+        ),
     },
-
-    # ─── 分析类 ───
-
     "analyze_system_profile": {
         "type": "analysis",
-        "description": "综合系统画像: 合并硬件/网络/进程/存储数据",
-        "code": '''"""
-Tool: 综合系统画像
-用法: run(env) → {"profile": str}
-依赖: 先运行 gather_* 工具
-"""
-
-def run(env: dict) -> dict:
-    """
-    从 env 中读取已有的事实, 生成综合系统画像
-    """
-    wb = env.get("workbench")
-    if not wb:
-        return {"success": False, "profile": "", "summary": "no workbench"}
-
-    # 从 FactGraph 收集关键事实
-    facts = {}
-    if hasattr(wb, 'graph'):
-        for key, node in wb.graph.nodes.items():
-            facts[key] = str(node.value)
-
-    lines = []
-    lines.append("# System Profile (Auto-generated)")
-    lines.append("")
-
-    # 系统信息
-    for key in ["os_name", "os_version", "kernel_version", "arch"]:
-        val = next((v for k, v in facts.items() if key in k), "")
-        if val:
-            lines.append(f"- {key}: {val}")
-
-    # CPU
-    cpu_info = {k: v for k, v in facts.items() if "cpu_" in k}
-    if cpu_info:
-        lines.append(f"- CPU: {cpu_info.get('cpu_model_name', '?')}")
-        pc = cpu_info.get("cpu_processor", "")
-        if pc:
-            lines.append(f"- CPU cores: {int(pc) + 1 if pc.isdigit() else pc}")
-
-    # Memory
-    mem_total = facts.get("mem_memtotal", "")
-    if mem_total:
-        lines.append(f"- Memory: {mem_total}")
-
-    # Network
-    ifaces = {k: v for k, v in facts.items() if "net_iface" in k}
-    if ifaces:
-        lines.append(f"- Interfaces: {len(ifaces)}")
-    ip_addr = facts.get("ip_address", "")
-    if ip_addr:
-        lines.append(f"- IP: {ip_addr}")
-
-    # Capabilities
-    caps = {k: v for k, v in facts.items() if "capability" in k}
-    if caps:
-        lines.append(f"- Capabilities: {', '.join(caps.keys())}")
-
-    summary = "\\n".join(lines)
-    return {"success": True, "profile": summary, "summary": f"profile with {len(lines)} lines"}
-''',
+        "description": "综合系统画像",
+        "code": TOOL_TEMPLATE.format(
+            name="System Profiler", category="profile",
+            commands=SAFE_COMMANDS["system"][:8],
+        ),
     },
 }
 
 
 class ToolFactory:
-    """工具工厂: 从模板生成 Python 工具文件"""
+    """工具工厂: 从安全命令池生成 Python 工具"""
 
     def __init__(self, tools_dir: str = "data/persistent/tools"):
         self.tools_dir = Path(tools_dir)
         self.tools_dir.mkdir(parents=True, exist_ok=True)
 
     def get_available_templates(self) -> list[dict]:
-        """返回所有可用模板的信息"""
         return [
-            {
-                "name": name,
-                "type": info["type"],
-                "description": info["description"],
-            }
+            {"name": name, "type": info["type"], "description": info["description"]}
             for name, info in TOOL_TEMPLATES.items()
         ]
 
     def generate(self, template_name: str, created_step: int = 0) -> Optional[str]:
-        """
-        根据模板名生成工具文件
-
-        Returns:
-            文件名 (如 tool_gather_packages.py), 失败返回 None
-        """
         if template_name not in TOOL_TEMPLATES:
             return None
-
         info = TOOL_TEMPLATES[template_name]
         filename = f"tool_{template_name}.py"
         filepath = self.tools_dir / filename
-
         if filepath.exists():
-            return filename  # 已存在, 直接返回
-
+            return filename
         try:
             filepath.write_text(info["code"])
             return filename
@@ -373,7 +191,6 @@ class ToolFactory:
             return None
 
     def generate_all(self, created_step: int = 0) -> list[str]:
-        """生成所有可用的工具"""
         generated = []
         for name in TOOL_TEMPLATES:
             fname = self.generate(name, created_step)
@@ -382,7 +199,6 @@ class ToolFactory:
         return generated
 
     def get_tool_info(self, template_name: str) -> Optional[dict]:
-        """获取工具模板信息"""
         info = TOOL_TEMPLATES.get(template_name)
         if not info:
             return None
@@ -392,48 +208,65 @@ class ToolFactory:
             "description": info["description"],
         }
 
-    # ── P13++: 观察驱动的工具自生成 ──
+    # ── 观察驱动的工具自生成 ──
 
     def auto_generate_from_facts(self, fact_graph) -> list[str]:
         """
         根据 FactGraph 中积累的事实类别, 自动生成缺失的工具
-
-        Args:
-            fact_graph: FactGraph 实例
-
-        Returns:
-            新生成的文件名列表
+        新类别从 SAFE_COMMANDS 池取命令, 无需 LLM
         """
         generated = []
         if not hasattr(fact_graph, 'nodes'):
             return generated
 
-        # 统计每个类别的事实数
         cat_count = {}
         for node in fact_graph.nodes.values():
             cat = node.category
             cat_count[cat] = cat_count.get(cat, 0) + 1
 
-        # 类别→工具的映射: 当某个类别事实够多但没有对应工具时生成
-        cat_to_tool = {
-            "network": "gather_network",
-            "package": "gather_packages",
-            "file": "gather_storage",
-            "system": "gather_hardware",
-            "dev": "analyze_system_profile",
-        }
+        # 模板覆盖的类别
+        template_cats = {"network", "package", "file", "system", "dev"}
 
-        for cat, tool_name in cat_to_tool.items():
+        for cat, tool_name in [
+            ("network", "gather_network"), ("package", "gather_packages"),
+            ("file", "gather_storage"), ("system", "gather_hardware"),
+            ("dev", "analyze_system_profile"),
+        ]:
             if cat_count.get(cat, 0) < 3:
-                continue  # 不够多, 不生成
-            # 检查工具是否已存在
+                continue
             fname = f"tool_{tool_name}.py"
             if (self.tools_dir / fname).exists():
                 continue
-            # 生成
             result = self.generate(tool_name)
             if result:
                 generated.append(result)
-                print(f"    [TOOL_AUTO] 从类别'{cat}'({cat_count[cat]}事实) → {result}")
+                print(f"    [TOOL_AUTO] 模板→{result} (from {cat})")
+
+        # 新类别: 从 SAFE_COMMANDS 池取命令
+        new_cats = [
+            c for c in cat_count
+            if c not in template_cats
+            and c not in ("general", "command", "explore", "script")
+            and cat_count[c] >= 2
+        ]
+        for cat in new_cats:
+            # 有这个类别的安全命令吗? 没有就用通用命令
+            commands = SAFE_COMMANDS.get(cat, SAFE_COMMANDS.get("system"))
+            fname = f"tool_gather_{cat}.py"
+            if (self.tools_dir / fname).exists():
+                continue
+
+            commands = SAFE_COMMANDS[cat]
+            code = TOOL_TEMPLATE.format(
+                name=f"{cat.title()} Gatherer",
+                category=cat,
+                commands=commands,
+            )
+            try:
+                (self.tools_dir / fname).write_text(code)
+                generated.append(fname)
+                print(f"    [TOOL_DYN] {fname} ({len(commands)} cmds, from {cat}: {cat_count[cat]} facts)")
+            except Exception as e:
+                print(f"    ⚠️ [TOOL_DYN] 写入失败: {e}")
 
         return generated
