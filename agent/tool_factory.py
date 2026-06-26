@@ -391,3 +391,49 @@ class ToolFactory:
             "type": info["type"],
             "description": info["description"],
         }
+
+    # ── P13++: 观察驱动的工具自生成 ──
+
+    def auto_generate_from_facts(self, fact_graph) -> list[str]:
+        """
+        根据 FactGraph 中积累的事实类别, 自动生成缺失的工具
+
+        Args:
+            fact_graph: FactGraph 实例
+
+        Returns:
+            新生成的文件名列表
+        """
+        generated = []
+        if not hasattr(fact_graph, 'nodes'):
+            return generated
+
+        # 统计每个类别的事实数
+        cat_count = {}
+        for node in fact_graph.nodes.values():
+            cat = node.category
+            cat_count[cat] = cat_count.get(cat, 0) + 1
+
+        # 类别→工具的映射: 当某个类别事实够多但没有对应工具时生成
+        cat_to_tool = {
+            "network": "gather_network",
+            "package": "gather_packages",
+            "file": "gather_storage",
+            "system": "gather_hardware",
+            "dev": "analyze_system_profile",
+        }
+
+        for cat, tool_name in cat_to_tool.items():
+            if cat_count.get(cat, 0) < 3:
+                continue  # 不够多, 不生成
+            # 检查工具是否已存在
+            fname = f"tool_{tool_name}.py"
+            if (self.tools_dir / fname).exists():
+                continue
+            # 生成
+            result = self.generate(tool_name)
+            if result:
+                generated.append(result)
+                print(f"    [TOOL_AUTO] 从类别'{cat}'({cat_count[cat]}事实) → {result}")
+
+        return generated

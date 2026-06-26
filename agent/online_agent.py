@@ -1306,6 +1306,19 @@ class OnlineAgent:
                         ks = self.knowledge_mapper.get_exploration_stats()
                         print(f"  [DISCOVER] 探索: {ks['explored']}/{ks['total_available']} 命令")
 
+                # P13++: 根据 FactGraph 类别自动生成工具
+                if hasattr(self, 'tool_factory') and hasattr(self.workbench, 'graph'):
+                    new_tools = self.tool_factory.auto_generate_from_facts(self.workbench.graph)
+                    if new_tools:
+                        for fname in new_tools:
+                            info = self.tool_factory.get_tool_info(
+                                fname.replace("tool_", "").replace(".py", ""))
+                            if info:
+                                self.tool_registry.register(
+                                    fname, description=info["description"],
+                                    tool_type=info["type"])
+                        print(f"  [TOOL_AUTO] 新生成 {len(new_tools)} 个工具")
+
         # P13: 每50步尝试运行一个工具
         if hasattr(self, 'tool_registry') and self.step_count > 20 and self.step_count % 50 == 0:
             tool = self.tool_registry.get_best_tool()

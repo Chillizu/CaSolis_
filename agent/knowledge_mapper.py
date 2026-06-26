@@ -532,7 +532,7 @@ class KnowledgeMapper:
 
         Args:
             step: 当前步数
-            rnd: RND 好奇心模块 (未使用, 保留接口)
+            rnd: RND 好奇心模块 (用于新颖度排序)
 
         Returns:
             新发现的事实数
@@ -543,12 +543,29 @@ class KnowledgeMapper:
             if not self._all_available_commands:
                 return 0
 
-        # 2. 找一个没探索过的命令 (后续可接 RND 排序)
+        # 2. 找一个没探索过的命令 (RND 排序)
         unexplored = [c for c in self._all_available_commands if c not in self._explored_commands]
         if not unexplored:
             return 0
 
-        target_cmd = unexplored[0]
+        if rnd is not None:
+            try:
+                # 用 RND 新颖度为每个未探索命令打分, 挑最陌生的
+                scored = []
+                for cmd in unexplored[:40]:  # 每次最多评40个
+                    hint = f"command '{cmd}' unknown"
+                    novelty = rnd.compute_novelty(hint)
+                    scored.append((novelty, cmd))
+                scored.sort(key=lambda x: -x[0])
+                target_cmd = scored[0][1]
+                top_novelty = scored[0][0]
+                # 如果最高的新颖度仍然很低 (< 0.01), 说明 RND 预测见过, 仍选第一个
+                if top_novelty < 0.01:
+                    target_cmd = unexplored[0]
+            except Exception:
+                target_cmd = unexplored[0]
+        else:
+            target_cmd = unexplored[0]
 
         # 4. 理解这个命令
         n_new = self._understand_command(target_cmd, step)
