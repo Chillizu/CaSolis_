@@ -324,6 +324,13 @@ class KnowledgeMapper:
         self._phase_results: dict[str, list[dict]] = {}  # phase → [discovered facts]
         self._phase_steps: dict[str, int] = {}  # phase → step completed
 
+        # P13++: 自发现状态
+        self._all_available_commands: list[str] = []
+        self._explored_commands: set[str] = set()  # 已经探索过的命令
+        self._discovered_fact_sources: dict[str, str] = {}  # cmd_name → source_path
+        self._scanned_bin_dirs: set[str] = set()
+        self._last_discovery_step = 0
+
     def is_phase_done(self, phase: str) -> bool:
         return phase in self.completed_phases
 
@@ -494,14 +501,223 @@ class KnowledgeMapper:
                     }
                     print(f"    [SCHEMA] 自动扩展: 新增 category '{cat}'")
 
+    # ── P13++: 自发现引擎 ──
+
+    def scan_available_commands(self) -> list[str]:
+        """扫描所有 bin 目录, 发现可用命令"""
+        bin_dirs = ["/usr/bin", "/bin", "/sbin", "/usr/local/bin"]
+        all_cmds = []
+        for d in bin_dirs:
+            if d in self._scanned_bin_dirs:
+                continue
+            self._scanned_bin_dirs.add(d)
+            r = self.sandbox.execute(f"ls {d} 2>/dev/null | head -300")
+            if r and r.stdout:
+                cmds = [c.strip() for c in r.stdout.strip().split('\n') if c.strip()
+                        and not c.startswith('ls')
+                        and 'total' not in c
+                        and not c.startswith('/')]
+                for cmd in cmds:
+                    if cmd not in self._all_available_commands:
+                        self._all_available_commands.append(cmd)
+                # 记录事实: 有多少命令可用
+                fact_key = f"bin_{d.replace('/', '_').strip('_')}_count"
+                if not self._fact_exists(fact_key):
+                    self._add_fact(fact_key, str(len(cmds)), "system", 0.9, 0, f"scan:{d}")
+        return self._all_available_commands
+
+    def discover_next(self, step: int, rnd=None) -> int:
+        """
+        自发现: 从 /usr/bin 中挑一个没试过的命令 > 理解它 > 记录
+
+        Args:
+            step: 当前步数
+            rnd: RND 好奇心模块 (未使用, 保留接口)
+
+        Returns:
+            新发现的事实数
+        """
+        # 1. 确保命令列表已扫描
+        if not self._all_available_commands:
+            self.scan_available_commands()
+            if not self._all_available_commands:
+                return 0
+
+        # 2. 找一个没探索过的命令 (后续可接 RND 排序)
+        unexplored = [c for c in self._all_available_commands if c not in self._explored_commands]
+        if not unexplored:
+            return 0
+
+        target_cmd = unexplored[0]
+
+        # 4. 理解这个命令
+        n_new = self._understand_command(target_cmd, step)
+
+        # 5. 标记已探索
+        self._explored_commands.add(target_cmd)
+        self._last_discovery_step = step
+
+        return n_new
+
+    def _understand_command(self, cmd_name: str, step: int) -> int:
+        """
+        尝试理解一个命令: --help, whatis, which, --version
+        返回新发现的事实数
+        """
+        n_new = 0
+        known_keys = set()
+        if hasattr(self.workbench, 'graph'):
+            known_keys = set(self.workbench.graph.nodes.keys())
+
+        # 试探: whatis (最快, 最安全)
+        probes = [
+            f"whatis {cmd_name} 2>/dev/null",
+            f"{cmd_name} --help 2>/dev/null | head -8",
+            f"{cmd_name} --version 2>/dev/null | head -3",
+            f"which {cmd_name} 2>/dev/null",
+        ]
+
+        category = self._infer_category(cmd_name)
+        key_prefix = f"cmd_{cmd_name}"
+
+        for probe_cmd in probes:
+            # 安全检查
+            blocked = any(cmd_name.startswith(p.rstrip(' '))
+                          for p in ["rm", "dd", "mkfs", "fdisk", "reboot", "shutdown",
+                                    "passwd", "chmod", "chown", "kill", "mount",
+                                    "wget", "curl", "nc"])
+            if blocked:
+                continue
+
+            r = self.sandbox.execute(probe_cmd, timeout=3)
+            if not r or r.exit_code != 0:
+                continue
+
+            output = r.stdout.strip()[:1024]
+            if not output:
+                continue
+
+            # whatis 输出: "cmd - description"
+            if "whatis" in probe_cmd:
+                desc = output.split('-', 1)[-1].strip() if '-' in output else output[:80]
+                self._add_fact(f"{key_prefix}_desc", desc, category, 0.8, step, probe_cmd)
+                n_new += 1
+            # --help 输出: 判断是否有帮助文本
+            elif "--help" in probe_cmd:
+                has_help = len(output) > 20
+                self._add_fact(f"{key_prefix}_has_help", str(has_help), category, 0.9, step, probe_cmd)
+                n_new += 1
+                # 尝试提炼第一行: "Usage: cmd [options]"
+                first_line = output.split('\n')[0].strip()[:80]
+                if first_line and first_line not in ("", "None", "False"):
+                    self._add_fact(f"{key_prefix}_usage", first_line, category, 0.7, step, probe_cmd)
+                    n_new += 1
+            # --version 输出
+            elif "--version" in probe_cmd:
+                ver = output.strip()[:80]
+                self._add_fact(f"{key_prefix}_version", ver, category, 0.8, step, probe_cmd)
+                n_new += 1
+            # which 输出
+            elif "which" in probe_cmd:
+                path = output.strip()
+                self._add_fact(f"{key_prefix}_path", path, category, 1.0, step, probe_cmd)
+                self._discovered_fact_sources[cmd_name] = path
+                n_new += 1
+
+        return n_new
+
+    def _infer_category(self, cmd_name: str) -> str:
+        """从命令名推断它的类别"""
+        # 已知类别映射
+        categories = {
+            # 文件操作
+            "cat": "file", "head": "file", "tail": "file", "less": "file",
+            "more": "file", "wc": "file", "sort": "file", "uniq": "file",
+            "cut": "file", "tr": "file", "diff": "file", "patch": "file",
+            "find": "file", "locate": "file", "grep": "file", "sed": "file",
+            "awk": "file", "basename": "file", "dirname": "file",
+            # 系统
+            "ps": "system", "top": "system", "free": "system", "uname": "system",
+            "dmesg": "system", "lscpu": "system", "lsblk": "system",
+            "uptime": "system", "who": "system", "w": "system", "id": "system",
+            "hostname": "system", "arch": "system", "nproc": "system",
+            # 网络
+            "ip": "network", "ss": "network", "ping": "network",
+            "ifconfig": "network", "route": "network", "arp": "network",
+            "netstat": "network", "tcpdump": "network",
+            # 开发
+            "python3": "dev", "python": "dev", "gcc": "dev", "g++": "dev",
+            "make": "dev", "cmake": "dev", "git": "dev", "perl": "dev",
+            "ruby": "dev", "node": "dev", "npm": "dev", "rustc": "dev",
+            "cargo": "dev", "go": "dev",
+            # 包管理
+            "dpkg": "package", "apt": "package", "apt-get": "package",
+            "dpkg-deb": "package", "snap": "package",
+            # 压缩
+            "tar": "archive", "gzip": "archive", "gunzip": "archive",
+            "bzip2": "archive", "xz": "archive", "unzip": "archive",
+            "zip": "archive", "zcat": "archive",
+            # 文本
+            "echo": "text", "printf": "text", "seq": "text",
+            "tee": "text", "column": "text", "fmt": "text",
+            "pr": "text", "fold": "text",
+        }
+        if cmd_name in categories:
+            return categories[cmd_name]
+        # 启发式:
+        if cmd_name.startswith("ls") or cmd_name.startswith("df"):
+            return "file"
+        if cmd_name.startswith("sys") or cmd_name.startswith("proc"):
+            return "system"
+        return "command"
+
+    def _fact_exists(self, key: str) -> bool:
+        """检查 fact 是否已存在"""
+        if hasattr(self.workbench, 'graph') and key in self.workbench.graph.nodes:
+            return True
+        if hasattr(self.workbench, 'facts') and key in self.workbench.facts:
+            return True
+        return False
+
+    def _add_fact(self, key: str, value: str, category: str, confidence: float,
+                  step: int, source_cmd: str):
+        """添加一个事实到 Workbench + FactGraph"""
+        if self._fact_exists(key):
+            return
+        wb = self.workbench
+        str_value = str(value)
+        if hasattr(wb, 'add_fact'):
+            wb.add_fact(key, str_value, category=category, confidence=confidence,
+                        step=step, source_cmd=source_cmd)
+        elif hasattr(wb, 'facts'):
+            wb.facts[key] = {
+                "value": str_value, "category": category,
+                "confidence": confidence, "step": step, "source_cmd": source_cmd,
+            }
+        if hasattr(wb, 'graph'):
+            wb.graph.add_node(key, str_value, category=category,
+                              confidence=confidence, step=step, source_cmd=source_cmd)
+
+    def get_exploration_stats(self) -> dict:
+        """获取自发现统计"""
+        return {
+            "total_available": len(self._all_available_commands),
+            "explored": len(self._explored_commands),
+            "unexplored": len(self._all_available_commands) - len(self._explored_commands),
+            "total_fact_sources": len(self._discovered_fact_sources),
+            "last_discovery_step": self._last_discovery_step,
+        }
+
     def get_phase_stats(self) -> dict:
         """获取探索统计"""
         total_raw = sum(len(v) for v in self._phase_results.values())
+        es = self.get_exploration_stats()
         return {
             "completed_phases": sorted(self.completed_phases),
             "phases_remaining": [p for p in "ABCDE" if p not in self.completed_phases],
             "n_phase_steps": dict(self._phase_steps),
             "n_raw_outputs": total_raw,
+            **es,
         }
 
     def infer_capabilities(self) -> list[tuple]:

@@ -1272,16 +1272,39 @@ class OnlineAgent:
         state_text = self.state_encoder.get_state_text(thought_label=thought_label)
         state_emb = self.classifier.get_embedding(state_text).detach().clone()
 
-        # 2. P12: 知识拓展 (分散在各步)
+        # 2. P12/P13++: 知识拓展 (先跑固定phase, 完成后自动切换为自发现)
         if hasattr(self, 'knowledge_mapper') and self.step_count > 10:
-            phase_intervals = {"B": 15, "C": 20, "D": 25, "E": 30}
-            for phase in ["B", "C", "D", "E"]:
-                if not self.knowledge_mapper.is_phase_done(phase):
-                    if self.step_count % phase_intervals.get(phase, 15) == 0:
-                        n_new = self.knowledge_mapper.run_phase(phase, self.step_count)
-                        if n_new > 0:
-                            print(f"  [KNOWLEDGE] Phase {phase}: {n_new} 个新事实")
-                        break
+            any_remaining = any(
+                not self.knowledge_mapper.is_phase_done(p)
+                for p in ["B", "C", "D", "E"]
+            )
+            if any_remaining:
+                # 固定 phase 模式 (BFS探索)
+                phase_intervals = {"B": 15, "C": 20, "D": 25, "E": 30}
+                for phase in ["B", "C", "D", "E"]:
+                    if not self.knowledge_mapper.is_phase_done(phase):
+                        if self.step_count % phase_intervals.get(phase, 15) == 0:
+                            n_new = self.knowledge_mapper.run_phase(phase, self.step_count)
+                            if n_new > 0:
+                                print(f"  [KNOWLEDGE] Phase {phase}: {n_new} 个新事实")
+                            break
+            else:
+                # 自发现模式: 用 RND 驱动
+                # 确保命令列表已扫描
+                if not self.knowledge_mapper._all_available_commands:
+                    self.knowledge_mapper.scan_available_commands()
+                    n_cmds = len(self.knowledge_mapper._all_available_commands)
+                    if n_cmds > 0:
+                        print(f"  [DISCOVER] 扫描到 {n_cmds} 个可用命令")
+
+                # 每10步发现一个新命令
+                if self.step_count > 30 and self.step_count % 10 == 0:
+                    n_new = self.knowledge_mapper.discover_next(
+                        self.step_count, rnd=self.rnd
+                    )
+                    if n_new > 0:
+                        ks = self.knowledge_mapper.get_exploration_stats()
+                        print(f"  [DISCOVER] 探索: {ks['explored']}/{ks['total_available']} 命令")
 
         # P13: 每50步尝试运行一个工具
         if hasattr(self, 'tool_registry') and self.step_count > 20 and self.step_count % 50 == 0:
