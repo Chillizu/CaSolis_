@@ -147,8 +147,8 @@ ExecResult
 | 安全写入 base64+python3 (非 shell 模板) | 防 shell 注入 |
 | RND interest_reset() 每 20 步 | 防新颖度永久归零 |
 | 想象力 80% 概率每步触发 | 最大化想象力使用率 |
-| P10 不改变已训练模型角色 | 分类器/Conductor/WM 继续决策, LLM 只碰文本 |
-| LLM 输出只进 opinion 节点 | 防幻觉污染 command-derived 事实 |
+| 奖励自适应学习 | 替代手写 INTENT_REWARD |
+| SAFE_COMMANDS 可被自发现覆盖 | 逐步去人为化 |
 
 ---
 

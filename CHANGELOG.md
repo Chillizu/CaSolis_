@@ -130,3 +130,29 @@
 - 状态编码→分类器→模板引擎→Docker 沙箱
 - 第一个可运行版本
 - 30→50%
+
+---
+
+## [2026-06-26] P11-P15 — 完整进化
+
+### 新增模块
+- `agent/persistent_store.py` — 统一持久化: SQLite+PyTorch+version控制
+- `agent/knowledge_mapper.py` — 知识拓展+自发现引擎 (418命令BFS+RND驱动)
+- `agent/tool_factory.py` — 工具工厂: 安全命令池+新类别自动生成
+- `agent/tool_registry.py` — 工具注册表: 扫描+注册+统计
+
+### 主要修改
+- `agent/world_model_v4.py` — P15: attend_facts图注意力 + self_reflect自我反思 + get_confidence置信度
+- `agent/meta_selector.py` — P15 R8: 模型置信度<0.3强制LEARN
+- `agent/online_agent.py` — 自适应奖励(去人为化) + 自发现 + 工具集成
+- `agent/tool_factory.py` — discover_commands_from_km动态命令池
+
+### 最终指标 (300步)
+- 100%成功率, 16/16意图均匀分布
+- FactGraph: 200节点 (自发现27/418命令)
+- 工具: 6个, 18次使用
+- 持久化: 8组件跨session恢复
+
+### 已去人为
+- INTENT_REWARD_BASE / INTENT_REWARD_CREATIVE → 自适应奖励学习
+- SAFE_COMMANDS → 可被自发现命令池覆盖
