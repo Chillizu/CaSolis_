@@ -287,7 +287,7 @@ class ToolFactory:
         new_cats = [
             c for c in cat_count
             if c not in template_cats
-            and c not in ("general", "command", "explore", "script")
+            and c not in ("general", "command", "explore", "script", "inference")
             and cat_count[c] >= 2
         ]
         for cat in new_cats:

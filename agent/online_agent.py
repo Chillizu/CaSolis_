@@ -1273,7 +1273,16 @@ class OnlineAgent:
         state_text = self.state_encoder.get_state_text(thought_label=thought_label)
         state_emb = self.classifier.get_embedding(state_text).detach().clone()
 
-        # 2. P12/P13++: 知识拓展 (先跑固定phase, 完成后自动切换为自发现)
+        # 2. 推理引擎: 每 20 步自动发现事实关系
+        if self.step_count > 10 and self.step_count % 20 == 0:
+            if hasattr(self, 'workbench') and hasattr(self.workbench, 'graph'):
+                from agent.inference_engine import InferenceEngine
+                ie = InferenceEngine(self.workbench.graph)
+                n_inf = ie.infer_all(self.step_count)
+                if n_inf > 0:
+                    print(f"  [INFER] {n_inf} 个推断")
+
+        # P12/P13++: 知识拓展 (先跑固定phase, 完成后自动切换为自发现)
         if hasattr(self, 'knowledge_mapper') and self.step_count > 10:
             any_remaining = any(
                 not self.knowledge_mapper.is_phase_done(p)
