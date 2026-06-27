@@ -70,6 +70,9 @@ class GoalGenerator:
         if workbench is None:
             return None
 
+        # 收集推理节点 (影响目标选择)
+        self._inferences = self._collect_inferences(workbench)
+
         recent = recent_intents or []
         candidates = []
 
@@ -324,8 +327,15 @@ class GoalGenerator:
             for p in probes[:3]:
                 pk = p.get('path_key', '')
                 if pk == self._last_probe_key and len(probes) > 1:
-                    continue  # 跳过上一个探针
-                cmd = p.get("cmd", ["ls"])
+                    continue
+                # 推理过滤: 如果推断出隔离, 跳过网络探针
+                cmd = p.get("cmd", [])
+                cmd_str = ' '.join(str(c) for c in cmd)
+                if self._has_inference('isolated') and any(n in cmd_str for n in ['ip ', 'net', 'route']):
+                    continue
+                # 推理过滤: 如果推断出容器, 优先 /proc 探针
+                if self._has_inference('container') and 'hostname' in cmd_str:
+                    continue  # 容器ID已知, 不循环读hostname
                 candidates.append(Goal(
                     "gap_fill", "TRY",
                     {"custom_args": cmd, "cluster": p.get("cluster", "SYSTEM")},
@@ -375,7 +385,17 @@ class GoalGenerator:
         if not sorted_facts:
             return candidates
 
+        # 如果有推理, 用推理引导创作内容
+        inferences = list(self._inferences.values()) if hasattr(self, '_inferences') else []
+
         lines = [f"# Folunar Report (step {step})", ""]
+        if inferences:
+            lines.append("## Inferences")
+            for inf in inferences[:5]:
+                lines.append(f"- {inf}")
+            lines.append("")
+
+        lines.append("## Facts")
         for key, node in sorted_facts:
             val = str(node.value if not isinstance(node, tuple) else node[1])[:60]
             cat = getattr(node, 'category', 'general') if not isinstance(node, tuple) else 'general'
@@ -413,6 +433,26 @@ class GoalGenerator:
                     description=f"验证: {combo}"
                 ))
         return candidates
+
+    # ── 推理感知 ──
+
+    def _collect_inferences(self, wb) -> dict:
+        """从 FactGraph 收集推理节点"""
+        infs = {}
+        graph = getattr(wb, 'graph', None)
+        if not graph:
+            return infs
+        for key, node in graph.nodes.items():
+            if node.category == 'inference':
+                infs[key] = str(node.value)[:80]
+        return infs
+
+    def _has_inference(self, keyword: str) -> bool:
+        """检查是否有包含关键词的推理"""
+        for val in self._inferences.values():
+            if keyword in val.lower():
+                return True
+        return False
 
     def stats(self) -> dict:
         return {
