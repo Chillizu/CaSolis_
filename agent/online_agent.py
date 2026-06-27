@@ -1676,6 +1676,24 @@ class OnlineAgent:
             else:
                 params["depth"] = 1
 
+        # 命令推荐: 对非CUSTOM意图, 检查是否有已发现的命令更适合
+        if intent != "CUSTOM" and hasattr(self, 'knowledge_mapper'):
+            km = self.knowledge_mapper
+            cmd_map = km.get_intent_command_map() if hasattr(km, 'get_intent_command_map') else {}
+            if intent in cmd_map:
+                cmds = cmd_map[intent]
+                # 挑一个没试过的
+                tried_key = f"rec_{intent}"
+                if not hasattr(self, '_recommended_cmds'):
+                    self._recommended_cmds: set[str] = set()
+                for cmd in cmds:
+                    if cmd not in self._recommended_cmds:
+                        self._recommended_cmds.add(cmd)
+                        intent = "CUSTOM"
+                        params = {"custom_args": [cmd], "cluster": "SYSTEM"}
+                        print(f"  [RECOMMEND] {cmd} → {tried_key}")
+                        break
+
         # P8.5b: 参数预校验 — 执行前替换无效参数
         params = self._rescue_params(intent, params)
 
