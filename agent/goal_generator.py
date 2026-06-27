@@ -47,7 +47,8 @@ class GoalGenerator:
         self.creative_writer = creative_writer
         self.last_goal_type: Optional[str] = None
         self.goal_history: list[dict] = []
-        self._tried_commands: set[str] = set()  # 追踪哪些发现命令已经试过
+        self._tried_commands: set[str] = set()
+        self._intent_command_map: dict[str, list[str]] = {}  # 从 KnowledgeMapper 获取
 
         # 动态统计 (替代硬编码阈值)
         self._intent_usage: dict[str, int] = {}
@@ -72,6 +73,10 @@ class GoalGenerator:
         recent = recent_intents or []
         candidates = []
 
+        # 更新 intent→命令映射 (从 KnowledgeMapper)
+        if knowledge_mapper and hasattr(knowledge_mapper, 'get_intent_command_map'):
+            self._intent_command_map = knowledge_mapper.get_intent_command_map()
+
         # ── 1. 试用发现的新命令 ──
         n_try = self._try_command_candidates(knowledge_mapper, step)
         candidates.extend(n_try)
@@ -86,6 +91,10 @@ class GoalGenerator:
                 if goal:
                     self._filled_gaps.add(missing)
                     candidates.append(goal)
+                # 试着找已知命令来填这个缺口
+                cmd_goal = self._command_for_gap(missing, step)
+                if cmd_goal:
+                    candidates.append(cmd_goal)
 
         # ── 3. 工具执行 ──
         n_tool = self._tool_candidates(tool_registry, step)
@@ -167,6 +176,48 @@ class GoalGenerator:
         return candidates
 
     # ── 新: 动态缺口→目标 (替换 gap_to_goal 字典) ──
+
+    def _command_for_gap(self, missing_key: str, step: int) -> Optional[Goal]:
+        """
+        从已发现命令中找能填这个缺口的
+        比如缺口 cpu_model → 已发现 arch → CUSTOM arch
+        """
+        if not self._intent_command_map:
+            return None
+
+        # 从缺口名推断需要的意图
+        intent_hints = {
+            "cpu": "ARCH_INFO", "arch": "ARCH_INFO", "model": "ARCH_INFO",
+            "processor": "ARCH_INFO", "hardware": "ARCH_INFO",
+            "mem": "INFO", "disk": "DISK_USAGE", "storage": "DISK_USAGE",
+            "usb": "USB_DEVICES", "device": "USB_DEVICES", "pci": "USB_DEVICES",
+            "file": "READ", "list": "LIST", "search": "SEARCH", "find": "SEARCH",
+            "count": "COUNT", "num": "COUNT",
+            "net": "INFO", "network": "INFO", "ip": "INFO",
+            "host": "INFO", "user": "INFO", "name": "INFO",
+        }
+        needed_intent = None
+        for keyword, intent in intent_hints.items():
+            if keyword in missing_key.lower():
+                needed_intent = intent
+                break
+
+        if not needed_intent or needed_intent not in self._intent_command_map:
+            return None
+
+        # 取一个已发现且未试过的相关命令
+        cmds = self._intent_command_map[needed_intent]
+        for cmd in cmds:
+            if cmd not in self._tried_commands:
+                self._tried_commands.add(cmd)
+                return Goal(
+                    "gap_fill", "CUSTOM",
+                    {"custom_args": [cmd, "--help"], "cluster": "SYSTEM"},
+                    priority=0.7,
+                    source=f"cmd_gap:{cmd}→{needed_intent}",
+                    description=f"用{cmd}填{missing_key}"
+                )
+        return None
 
     def _gap_to_goal_dynamic(self, missing_key: str, wb, step: int) -> Optional[Goal]:
         """从缺口名自动推导执行什么命令, 不需要手写字典"""

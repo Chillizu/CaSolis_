@@ -597,8 +597,9 @@ class KnowledgeMapper:
         category = self._infer_category(cmd_name)
         key_prefix = f"cmd_{cmd_name}"
 
+        help_text = ""  # 记录完整 help 输出用于意图推断
+
         for probe_cmd in probes:
-            # 安全检查
             blocked = any(cmd_name.startswith(p.rstrip(' '))
                           for p in ["rm", "dd", "mkfs", "fdisk", "reboot", "shutdown",
                                     "passwd", "chmod", "chown", "kill", "mount",
@@ -614,34 +615,103 @@ class KnowledgeMapper:
             if not output:
                 continue
 
-            # whatis 输出: "cmd - description"
             if "whatis" in probe_cmd:
                 desc = output.split('-', 1)[-1].strip() if '-' in output else output[:80]
                 self._add_fact(f"{key_prefix}_desc", desc, category, 0.8, step, probe_cmd)
                 n_new += 1
-            # --help 输出: 判断是否有帮助文本
+                help_text = f"{help_text} {desc}"
             elif "--help" in probe_cmd:
                 has_help = len(output) > 20
                 self._add_fact(f"{key_prefix}_has_help", str(has_help), category, 0.9, step, probe_cmd)
                 n_new += 1
-                # 尝试提炼第一行: "Usage: cmd [options]"
                 first_line = output.split('\n')[0].strip()[:80]
                 if first_line and first_line not in ("", "None", "False"):
                     self._add_fact(f"{key_prefix}_usage", first_line, category, 0.7, step, probe_cmd)
                     n_new += 1
-            # --version 输出
+                help_text = f"{help_text} {output[:300]}"
             elif "--version" in probe_cmd:
                 ver = output.strip()[:80]
                 self._add_fact(f"{key_prefix}_version", ver, category, 0.8, step, probe_cmd)
                 n_new += 1
-            # which 输出
             elif "which" in probe_cmd:
                 path = output.strip()
                 self._add_fact(f"{key_prefix}_path", path, category, 1.0, step, probe_cmd)
                 self._discovered_fact_sources[cmd_name] = path
                 n_new += 1
 
+        # 从 help 文本推断此命令适合什么意图
+        if help_text:
+            inferred_intent = self._infer_intent_from_help(cmd_name, help_text)
+            if inferred_intent:
+                self._add_fact(f"{key_prefix}_intent", inferred_intent, category, 0.6, step,
+                               f"infer:{cmd_name}")
+                n_new += 1
+                # 记录到 intent_command 映射 (GoalGenerator 可用)
+                if not hasattr(self, '_intent_command_map'):
+                    self._intent_command_map: dict[str, list[str]] = {}
+                if inferred_intent not in self._intent_command_map:
+                    self._intent_command_map[inferred_intent] = []
+                if cmd_name not in self._intent_command_map[inferred_intent]:
+                    self._intent_command_map[inferred_intent].append(cmd_name)
+
         return n_new
+
+    def _infer_intent_from_help(self, cmd_name: str, help_text: str) -> Optional[str]:
+        """从 --help/whatis 文本推断命令最适合什么意图"""
+        text = help_text.lower()
+
+        # 关键词→意图映射 (唯一的手写映射, 替代手工写每个命令)
+        intent_keywords = {
+            "READ": ["read", "cat", "show", "display", "print", "dump", "list", "view",
+                     "head", "tail", "less", "more", "file"],
+            "SEARCH": ["search", "find", "grep", "locate", "lookup", "query", "match",
+                       "pattern"],
+            "INFO": ["information", "info", "status", "state", "report", "detail", "about"],
+            "ARCH_INFO": ["architecture", "arch", "processor", "cpu", "hardware", "machine"],
+            "DISK_USAGE": ["disk", "storage", "filesystem", "mount", "partition", "block",
+                          "volume", "usage", "free"],
+            "USB_DEVICES": ["usb", "device", "pci", "driver", "module", "hardware"],
+            "COUNT": ["count", "wc", "number", "total", "sum", "statistic"],
+            "EXPLORE": ["explore", "browse", "navigate", "dir", "directory", "tree"],
+            "LIST": ["list", "ls", "dir", "enum", "show"],
+            "INSPECT": ["inspect", "check", "examine", "analyze", "audit", "diagnose",
+                        "test"],
+        }
+
+        # 计算每个意图的匹配分 (单词边界避免子串)
+        import re
+        scores = {}
+        for intent, keywords in intent_keywords.items():
+            score = 0
+            for kw in keywords:
+                if re.search(rf'\b{re.escape(kw)}\b', text):
+                    score += 1
+            if score > 0:
+                scores[intent] = score
+
+        if scores:
+            best = max(scores, key=scores.get)
+            return best
+
+        # 从命令名推断
+        cmd_lower = cmd_name.lower()
+        name_intents = {
+            "ls": "LIST", "cat": "READ", "head": "READ", "tail": "READ",
+            "find": "SEARCH", "grep": "SEARCH", "wc": "COUNT",
+            "df": "DISK_USAGE", "du": "DISK_USAGE", "mount": "DISK_USAGE",
+            "lsblk": "DISK_USAGE", "fdisk": "DISK_USAGE",
+            "arch": "ARCH_INFO", "lscpu": "ARCH_INFO", "uname": "ARCH_INFO",
+            "lsusb": "USB_DEVICES", "lspci": "USB_DEVICES", "lsmod": "USB_DEVICES",
+            "lshw": "ARCH_INFO",
+            "stat": "INSPECT", "check": "INSPECT", "test": "INSPECT",
+        }
+        return name_intents.get(cmd_lower)
+
+    def get_intent_command_map(self) -> dict[str, list[str]]:
+        """返回 意图→已发现命令 的映射 (供 GoalGenerator 用)"""
+        if not hasattr(self, '_intent_command_map'):
+            return {}
+        return dict(self._intent_command_map)
 
     def _infer_category(self, cmd_name: str) -> str:
         """从命令名推断它的类别"""
