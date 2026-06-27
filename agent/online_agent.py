@@ -62,8 +62,8 @@ from collections import deque
 
 
 # 意图列表
-INTENTS = ["READ", "LIST", "SEARCH", "INFO", "INSPECT", "COUNT", "EXPLORE", "HELP", "READ_ETC", "USB_DEVICES", "DISK_USAGE", "LS_TMP", "ARCH_INFO", "CUSTOM", "WRITE", "APPEND", "GENERATE"]
-N_INTENTS = 17  # P9.6: Conductor/分类器输出维度 (含 GENERATE)
+INTENTS = ["OBSERVE", "CREATE", "TRY"]
+N_INTENTS = 3  # 3种执行模式, 具体做什么由 GoalGenerator + 命令推荐动态决定
 
 
 class IntentClassifier:
@@ -541,13 +541,11 @@ class OnlineAgent:
         if novelty > novelty_threshold:
             reward += novelty * novelty_mult
 
-        # P9.2: 创作奖励 — WRITE/APPEND 成功写文件
-        if intent in ("WRITE", "APPEND", "GENERATE") and success:
+        # P9.2: 创作奖励 — CREATE 成功写文件
+        if intent == "CREATE" and success:
             written_bytes = self._get_written_file_size(result, params)
-            reward += 0.3  # 基础创作奖励
-            reward += min(0.5, written_bytes / 100.0 * 0.1)  # 字节奖励
-            if intent == "GENERATE":
-                reward += 0.3
+            reward += 0.3
+            reward += min(0.5, written_bytes / 100.0 * 0.1)
             # 重复写同一文件惩罚
             write_key = f"write:{params.get('path','')}"
             if getattr(self, "_recent_writes", {}).get(write_key, 0) > self.step_count - 30:
@@ -1608,10 +1606,15 @@ class OnlineAgent:
                         workbench=self.workbench,
                         known_files=self.state_encoder.explored_paths if hasattr(self.state_encoder, 'explored_paths') else None,
                     )
-                    if "path" not in params and intent in ("READ", "COUNT", "SEARCH"):
-                        params["path"] = "/etc/hostname"
-                    if "cmd" not in params and intent in ("INSPECT", "HELP"):
-                        params["cmd"] = "python3" if intent == "INSPECT" else "ls"
+                    # 3-intent 默认回退
+                    if not params.get("path") and not params.get("custom_args") and not params.get("content"):
+                        if intent == "OBSERVE":
+                            params = {"path": "/etc/hostname"}
+                        elif intent == "TRY":
+                            cluster, cmd_args = self.cmd_selector.select()
+                            params = {"custom_args": cmd_args, "cluster": cluster}
+                        elif intent == "CREATE":
+                            params = {"path": "/tmp/out.txt", "content": "generated"}
                 self.ab_stats["classifier"] += 1
 
         # V3: P8.5c: 世界模型心理模拟 — 对Conductor/分类器选择做二次验证
@@ -1620,9 +1623,7 @@ class OnlineAgent:
             try:
                 # P8.5c: 扩展候选集, 让WM有更多选项
                 candidates = [INTENTS.index(intent)]
-                all_alts = ["CUSTOM", "EXPLORE", "INSPECT", "SEARCH", "LS_TMP",
-                            "LIST", "READ", "INFO", "COUNT", "ARCH_INFO",
-                            "DISK_USAGE", "USB_DEVICES", "READ_ETC"]
+                all_alts = ["OBSERVE", "CREATE", "TRY"]
                 for alt in all_alts:
                     if alt in INTENTS and INTENTS.index(alt) not in candidates:
                         candidates.append(INTENTS.index(alt))
@@ -1676,34 +1677,31 @@ class OnlineAgent:
             else:
                 params["depth"] = 1
 
-        # 命令推荐: 对非CUSTOM意图, 检查是否有已发现的命令更适合
-        if intent != "CUSTOM" and hasattr(self, 'knowledge_mapper'):
+        # 命令推荐: 对 OBSERVE/TRY 检查已发现命令
+        if intent in ("OBSERVE", "TRY") and hasattr(self, 'knowledge_mapper'):
             km = self.knowledge_mapper
             cmd_map = km.get_intent_command_map() if hasattr(km, 'get_intent_command_map') else {}
-            if intent in cmd_map:
-                cmds = cmd_map[intent]
-                # 挑一个没试过的
-                tried_key = f"rec_{intent}"
+            if intent in cmd_map and cmd_map[intent]:
                 if not hasattr(self, '_recommended_cmds'):
                     self._recommended_cmds: set[str] = set()
-                for cmd in cmds:
-                    if cmd not in self._recommended_cmds:
-                        self._recommended_cmds.add(cmd)
-                        intent = "CUSTOM"
-                        params = {"custom_args": [cmd], "cluster": "SYSTEM"}
-                        print(f"  [RECOMMEND] {cmd} → {tried_key}")
-                        break
+                # 随机选一个命令
+                cmd = random.choice(cmd_map[intent])
+                if cmd not in self._recommended_cmds:
+                    self._recommended_cmds.add(cmd)
+                    intent = "TRY"
+                    params = {"custom_args": [cmd], "cluster": "SYSTEM"}
+                    print(f"  [RECOMMEND] {cmd} → TRY")
 
         # P8.5b: 参数预校验 — 执行前替换无效参数
         params = self._rescue_params(intent, params)
 
-        # P5.6: 追踪已试过的 CUSTOM 命令
-        if intent == "CUSTOM":
-            custom_cmd = str(params.get("custom_args", ""))[:40]
-            self._tried_custom_cmds.add(custom_cmd)
+        # 追踪已试过的 TRY 命令
+        if intent == "TRY":
+            try_cmd = str(params.get("custom_args", ""))[:40]
+            self._tried_custom_cmds.add(try_cmd)
         
-        # P9.4: CUSTOM 预验证 — 检查命令存在、参数合法性
-        if intent == "CUSTOM":
+        # TRY 预验证 — 检查命令存在、参数合法性
+        if intent == "TRY":
             params["custom_args"] = self._validate_custom(params.get("custom_args", []))
 
         # 4. 执行 (多命令组合 P1)
@@ -1712,7 +1710,7 @@ class OnlineAgent:
         all_exit_ok = False
 
         # P9.2: WRITE/APPEND 跳过 multi-command (使用安全写入模板)
-        if depth > 1 and intent not in ("CUSTOM", "HELP", "EXPLORE", "WRITE", "APPEND", "GENERATE"):
+        if depth > 1 and intent not in ("TRY", "EXPLORE", "CREATE"):
             try:
                 multi_results = self.engine.execute_multi(intent, params, depth)
             except Exception:

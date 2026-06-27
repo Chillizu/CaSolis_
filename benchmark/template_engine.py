@@ -29,6 +29,9 @@ _EMBEDDED_COMMAND_TEMPLATES = {
     "EXPLORE":(["ls", "-la"],         ["{path}"]),
     "HELP":   (["echo"],              ["(HELP disabled) {cmd}"]),
     "CUSTOM": (None, None),
+    "TRY": (None, None),
+    "OBSERVE": (["cat"], ["{path}"]),
+    "CREATE": (["sh", "-c"], ["printf '%s\n' {content} > {path}"]),
     "READ_ETC":  (["cat"],             ["{path}"]),
     "USB_DEVICES":(["lsusb"],           None),
     "DISK_USAGE":(["du", "-sh", "{path}"], None),
@@ -270,11 +273,11 @@ class TemplateEngine:
                 return args1 + args2
             return args1
 
-        if intent == "CUSTOM":
+        if intent in ("CUSTOM", "TRY"):
             return params.get("custom_args")
 
         # P0/P9.6: 安全写入 — base64 + python3, 避免 shell 注入
-        if intent in ("WRITE", "APPEND", "GENERATE"):
+        if intent in ("WRITE", "APPEND", "GENERATE", "CREATE"):
             import base64 as _b64
             content = params.get("content", "")
             path = params.get("path", "/tmp/output.txt")

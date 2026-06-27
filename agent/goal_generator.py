@@ -9,11 +9,11 @@
   - 连接 KnowledgeMapper 发现命令 + ToolRegistry 工具
 
 目标类型:
-  - try_command: 试用新发现的命令
-  - gap_fill: 填 FactGraph 缺口 (自动推导命令)
-  - run_tool: 运行已有工具
-  - content_create: 生成内容
-  - verify: 验证事实
+  - try_command: 试用新发现的命令 → TRY
+  - gap_fill: 填 FactGraph 缺口 → OBSERVE
+  - run_tool: 运行已有工具 → TRY
+  - content_create: 生成内容 → CREATE
+  - verify: 验证事实 → OBSERVE
 """
 
 import os
@@ -167,7 +167,7 @@ class GoalGenerator:
 
         # 生成"试用"目标: 用 CUSTOM 执行该命令的 --help
         candidates.append(Goal(
-            "try_command", "CUSTOM",
+            "try_command", "TRY",
             {"custom_args": [cmd, "--help"], "cluster": "SYSTEM"},
             priority=0.75,
             source=f"try_cmd:{cmd}",
@@ -211,7 +211,7 @@ class GoalGenerator:
             if cmd not in self._tried_commands:
                 self._tried_commands.add(cmd)
                 return Goal(
-                    "gap_fill", "CUSTOM",
+                    "gap_fill", "TRY",
                     {"custom_args": [cmd, "--help"], "cluster": "SYSTEM"},
                     priority=0.7,
                     source=f"cmd_gap:{cmd}→{needed_intent}",
@@ -242,7 +242,7 @@ class GoalGenerator:
         for keyword, path in known_paths.items():
             if keyword in missing_key.lower():
                 return Goal(
-                    "gap_fill", "READ", {"path": path},
+                    "gap_fill", "OBSERVE", {"path": path},
                     priority=0.7, source=f"gap:{missing_key}",
                     description=f"填缺口: {missing_key}"
                 )
@@ -260,7 +260,7 @@ class GoalGenerator:
         for keyword, cmd in cmd_map.items():
             if keyword in missing_key.lower():
                 return Goal(
-                    "gap_fill", "CUSTOM", {"custom_args": cmd, "cluster": "SYSTEM"},
+                    "gap_fill", "TRY", {"custom_args": cmd, "cluster": "SYSTEM"},
                     priority=0.6, source=f"gap:{missing_key}",
                     description=f"填缺口: {missing_key}"
                 )
@@ -285,7 +285,7 @@ class GoalGenerator:
         if step - last_used >= 50:
             desc = best.get('description', '')
             candidates.append(Goal(
-                "run_tool", "CUSTOM",
+                "run_tool", "TRY",
                 {"custom_args": ["python3", f"data/persistent/tools/{best['name']}"],
                  "cluster": "CREATIVE"},
                 priority=0.65,
@@ -319,7 +319,7 @@ class GoalGenerator:
             for p in probes[:2]:
                 cmd = p.get("cmd", ["ls"])
                 candidates.append(Goal(
-                    "gap_fill", "CUSTOM",
+                    "gap_fill", "TRY",
                     {"custom_args": cmd, "cluster": p.get("cluster", "SYSTEM")},
                     priority=0.6,
                     source=f"probe:{p.get('path_key', '')}",
@@ -351,7 +351,7 @@ class GoalGenerator:
                 ci = wb.build_generate_content()
                 if ci:
                     candidates.append(Goal(
-                        "content_create", "GENERATE",
+                        "content_create", "CREATE",
                         {"path": ci["path"], "content": ci["content"]},
                         priority=0.6, source="template",
                         description=f"模板: {ci.get('desc', 'content')}"
@@ -370,7 +370,7 @@ class GoalGenerator:
                 import base64
                 encoded = base64.b64encode(script.encode()).decode()
                 candidates.append(Goal(
-                    "verify", "CUSTOM",
+                    "verify", "OBSERVE",
                     {"custom_args": ["sh", "-c",
                         f"echo '{encoded}' | base64 -d > /tmp/v_{step}.sh && "
                         f"chmod +x /tmp/v_{step}.sh && bash /tmp/v_{step}.sh"],
