@@ -1385,6 +1385,8 @@ class OnlineAgent:
             step=self.step_count,
             recent_intents=list(self.intent_history[-20:]),
             force_create=force_create,
+            knowledge_mapper=self.knowledge_mapper if hasattr(self, 'knowledge_mapper') else None,
+            tool_registry=self.tool_registry if hasattr(self, 'tool_registry') else None,
         )
         if goal:
             intent = goal.intent

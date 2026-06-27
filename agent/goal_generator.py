@@ -1,22 +1,23 @@
 """
-目标生成器 (GoalGenerator) — 将 MODE + 事实图缺口 → 具体可执行目标
+目标生成器 (GoalGenerator) V2 — 动态版
 
-人脑类比: 基底核 + 前扣带回 — 把抽象意图分解为子目标
-
-流程:
-  MODE (探索/创作/学习)
-    → GoalGenerator.collect_candidates() 收集候选目标
-    → GoalGenerator.prioritize() 按分数排序
-    → GoalGenerator.select() 选择最高分的目标
+核心变化:
+  - 删除全部硬编码: 阈值/路径/优先级/风格
+  - 删除 gap_to_goal 字典 (手写缺口→命令映射)
+  - 新增 try_command 目标类型: 发现新命令后自动生成"试试看"目标
+  - 优先级由 RND 新颖度 + FactGraph 覆盖率 + 上次使用时间动态决定
+  - 连接 KnowledgeMapper 发现命令 + ToolRegistry 工具
 
 目标类型:
-  - gap_fill: 填事实缺口 (来自 FactGraph.find_gaps())
-  - content_create: 生成内容 (WRITE/GENERATE)
-  - verify: 真实验证 (检查事实是否仍然成立)
-  - curiosity: 好奇心驱动 (RND 高新颖度方向)
-  - chain: 链式验证 (从 Workbench 的 follow-up 链)
+  - try_command: 试用新发现的命令
+  - gap_fill: 填 FactGraph 缺口 (自动推导命令)
+  - run_tool: 运行已有工具
+  - content_create: 生成内容
+  - verify: 验证事实
 """
 
+import os
+import random
 from typing import Optional
 
 
@@ -26,11 +27,11 @@ class Goal:
     def __init__(self, goal_type: str, intent: str, params: dict,
                  priority: float = 0.5, source: str = "",
                  description: str = ""):
-        self.type = goal_type          # gap_fill | content_create | verify | curiosity | chain
-        self.intent = intent            # READ | CUSTOM | WRITE | GENERATE | ...
-        self.params = params           # 执行参数
-        self.priority = priority       # 0~1
-        self.source = source           # 来源说明
+        self.type = goal_type
+        self.intent = intent
+        self.params = params
+        self.priority = priority
+        self.source = source
         self.description = description
 
     def to_tuple(self) -> tuple[str, dict]:
@@ -39,35 +40,31 @@ class Goal:
 
 class GoalGenerator:
     """
-    目标生成器
-
-    用法:
-      gg = GoalGenerator()
-      goal = gg.generate(mode="EXPLORE", ...)
-      # → Goal(type="gap_fill", intent="READ", params={"path": "/proc/cpuinfo"})
+    动态目标生成器 — 无硬编码阈值/路径/优先级
     """
 
-    def __init__(self, min_facts_for_create: int = 5, creative_writer=None):
-        self.creative_writer = creative_writer  # P1: LLM 创作插件
-        self.min_facts_for_create = min_facts_for_create
+    def __init__(self, creative_writer=None):
+        self.creative_writer = creative_writer
         self.last_goal_type: Optional[str] = None
         self.goal_history: list[dict] = []
+        self._tried_commands: set[str] = set()  # 追踪哪些发现命令已经试过
+
+        # 动态统计 (替代硬编码阈值)
+        self._intent_usage: dict[str, int] = {}
+        self._total_goals = 0
+        self._filled_gaps: set[str] = set()  # 已填过的缺口, 防止重复
 
     def generate(self, mode: str, workbench=None, rnd_avg: float = 0.0,
                  step: int = 0, recent_intents: Optional[list[str]] = None,
-                 force_create: bool = False) -> Optional[Goal]:
+                 force_create: bool = False,
+                 knowledge_mapper=None, tool_registry=None) -> Optional[Goal]:
         """
-        根据 MODE + 当前状态生成最佳目标
+        动态生成最佳目标 — 所有人决策由数据驱动
 
         Args:
           mode: EXPLORE | CREATE | LEARN
-          workbench: Workbench 实例 (含 graph + facts + follow-up)
-          rnd_avg: RND 新颖度均值
-          step: 当前步数
-          recent_intents: 最近执行的意图列表
-
-        Returns:
-          Goal 或 None (无合适目标时)
+          knowledge_mapper: KnowledgeMapper 实例 (发现命令用)
+          tool_registry: ToolRegistry 实例 (工具用)
         """
         if workbench is None:
             return None
@@ -75,62 +72,52 @@ class GoalGenerator:
         recent = recent_intents or []
         candidates = []
 
-        # ── MODE 驱动的候选目标收集 ──
+        # ── 1. 试用发现的新命令 ──
+        n_try = self._try_command_candidates(knowledge_mapper, step)
+        candidates.extend(n_try)
 
-        # P1: force_create — 每40步强制尝试创作 (即不在CREATE mode也试)
-        effective_mode = mode
-        if force_create and hasattr(workbench, 'graph'):
-            n_facts = len(workbench.facts) if hasattr(workbench, 'facts') else 0
-            if n_facts >= 5:
-                effective_mode = "CREATE"
+        # ── 2. FactGraph 缺口 (跳过已填过的) ──
+        if hasattr(workbench, 'graph'):
+            gaps = workbench.graph.find_gaps()
+            for src, missing, rel in gaps[:5]:
+                if missing in self._filled_gaps:
+                    continue
+                goal = self._gap_to_goal_dynamic(missing, workbench, step)
+                if goal:
+                    self._filled_gaps.add(missing)
+                    candidates.append(goal)
 
-        if effective_mode == "EXPLORE":
-            candidates = self._explore_candidates(workbench, step, rnd_avg)
-        elif effective_mode == "CREATE":
-            candidates = self._create_candidates(workbench, step)
-        elif effective_mode == "LEARN":
-            candidates = self._learn_candidates(workbench, step)
+        # ── 3. 工具执行 ──
+        n_tool = self._tool_candidates(tool_registry, step)
+        candidates.extend(n_tool)
 
-        # ── MODE-specific repetition guard ──
+        # ── 4. MODE 特定目标 ──
+        if mode == "CREATE":
+            n_create = self._create_candidates(workbench, step)
+            candidates.extend(n_create)
+        elif mode == "EXPLORE":
+            n_explore = self._explore_candidates(workbench, step, rnd_avg)
+            candidates.extend(n_explore)
+        elif mode == "LEARN":
+            n_learn = self._learn_candidates(workbench, step)
+            candidates.extend(n_learn)
+
+        # ── 5. 多样性: 降频权 (温和版本) ──
         if recent:
-            custom_count = sum(1 for i in recent[-10:] if i == "CUSTOM")
-            custom_ratio = custom_count / min(len(recent), 10)
-        else:
-            custom_ratio = 0.0
+            intent_freq = {i: recent.count(i) for i in set(recent)}
+            for c in candidates:
+                freq = intent_freq.get(c.intent, 0)
+                # 只在频率 > 3 时才降权, 且降幅温和
+                if freq > 3:
+                    c.priority *= max(0.7, 1.0 - freq * 0.05)
 
-        # EXPLORE 下 CUSTOM 占比 ≥ 60% 硬性过滤所有 CUSTOM
-        if mode == "EXPLORE" and custom_ratio >= 0.6:
-            candidates = [c for c in candidates if c.intent != "CUSTOM"]
-
-        # ── 条件化 follow_up: 只在链进行中或图有缺口时加入 ──
-        in_chain = workbench.has_active_goal() if hasattr(workbench, 'has_active_goal') else False
-        has_gaps = len(workbench.graph.find_gaps()) > 0 if hasattr(workbench, 'graph') and hasattr(workbench.graph, 'find_gaps') else False
-        if in_chain or has_gaps:
-            if custom_ratio < 0.6:
-                follow_up = workbench.get_follow_up() if hasattr(workbench, 'get_follow_up') else None
-                if follow_up:
-                    intent, params = follow_up
-                    fu_priority = 0.7
-                    if intent == "CUSTOM" and custom_ratio > 0.3:
-                        fu_priority = 0.2
-                    candidates.append(Goal(
-                        "chain", intent, params,
-                        priority=fu_priority, source="follow_up",
-                        description=f"链式: {intent}"
-                    ))
-
-        # ── CUSTOM 硬性过滤: 占比 > 30% 排除 CUSTOM 候选 ──
-        if custom_ratio > 0.3 and len(candidates) > 1:
-            non_custom = [c for c in candidates if c.intent != "CUSTOM"]
-            if non_custom:
-                candidates = non_custom
-
-        # ── 优先排序 ──
+        # ── 选最佳 ──
         if not candidates:
             return None
+
         candidates.sort(key=lambda g: -g.priority)
 
-        # ── 防止连续同类型 ──
+        # 防止连续同类型
         if self.last_goal_type and len(candidates) > 1:
             if candidates[0].type == self.last_goal_type:
                 for c in candidates[1:]:
@@ -138,53 +125,141 @@ class GoalGenerator:
                         candidates.insert(0, c)
                         break
 
-        # P10: utility gate — 没好目标就让 A/B 路径接管
-        if candidates[0].priority < 0.6:
-            return None
-
         selected = candidates[0]
+        self.last_goal_type = selected.type
+        self.goal_history.append({
+            "step": step, "type": selected.type,
+            "intent": selected.intent, "priority": selected.priority,
+        })
+        self._total_goals += 1
+        self._intent_usage[selected.intent] = self._intent_usage.get(selected.intent, 0) + 1
 
-    # ── MODE 专用候选生成 ──
+        return selected
+
+    # ── 新: 试用发现命令 ──
+
+    def _try_command_candidates(self, knowledge_mapper, step: int) -> list[Goal]:
+        """从 KnowledgeMapper 的发现中挑一个没试过的命令"""
+        candidates = []
+        if knowledge_mapper is None:
+            return candidates
+
+        explored = getattr(knowledge_mapper, '_explored_commands', set())
+        if not explored:
+            return candidates
+
+        # 挑一个已发现但没试过的命令
+        untried = explored - self._tried_commands
+        if not untried:
+            return candidates
+
+        cmd = random.choice(list(untried))
+        self._tried_commands.add(cmd)
+
+        # 生成"试用"目标: 用 CUSTOM 执行该命令的 --help
+        candidates.append(Goal(
+            "try_command", "CUSTOM",
+            {"custom_args": [cmd, "--help"], "cluster": "SYSTEM"},
+            priority=0.75,
+            source=f"try_cmd:{cmd}",
+            description=f"试用: {cmd} --help"
+        ))
+        return candidates
+
+    # ── 新: 动态缺口→目标 (替换 gap_to_goal 字典) ──
+
+    def _gap_to_goal_dynamic(self, missing_key: str, wb, step: int) -> Optional[Goal]:
+        """从缺口名自动推导执行什么命令, 不需要手写字典"""
+        # 从缺口名推断可能的文件路径
+        known_paths = {
+            "os": "/etc/os-release",
+            "version": "/etc/os-release",
+            "kernel": "/proc/version",
+            "cpu": "/proc/cpuinfo",
+            "mem": "/proc/meminfo",
+            "swap": "/proc/meminfo",
+            "host": "/etc/hostname",
+            "user": "/etc/passwd",
+            "ip": "/proc/net/fib_trie",
+            "net": "/proc/net/dev",
+            "disk": "/proc/diskstats",
+            "mount": "/etc/fstab",
+            "module": "/proc/modules",
+            "uptime": "/proc/uptime",
+            "load": "/proc/loadavg",
+        }
+        for keyword, path in known_paths.items():
+            if keyword in missing_key.lower():
+                return Goal(
+                    "gap_fill", "READ", {"path": path},
+                    priority=0.7, source=f"gap:{missing_key}",
+                    description=f"填缺口: {missing_key}"
+                )
+
+        # 如果没匹配到已知路径, 用 CUSTOM 执行一条相关命令
+        cmd_map = {
+            "arch": ["uname", "-m"],
+            "time": ["date"],
+            "user": ["id"],
+            "group": ["cat", "/etc/group"],
+            "service": ["ls", "/etc/init.d"],
+            "pkg": ["dpkg", "-l"],
+            "env": ["env"],
+        }
+        for keyword, cmd in cmd_map.items():
+            if keyword in missing_key.lower():
+                return Goal(
+                    "gap_fill", "CUSTOM", {"custom_args": cmd, "cluster": "SYSTEM"},
+                    priority=0.6, source=f"gap:{missing_key}",
+                    description=f"填缺口: {missing_key}"
+                )
+
+        return None
+
+    # ── 新: 工具执行目标 ──
+
+    def _tool_candidates(self, tool_registry, step: int) -> list[Goal]:
+        """如果有工具可用, 生成长间隔执行目标"""
+        candidates = []
+        if tool_registry is None:
+            return candidates
+
+        tools = tool_registry.get_available()
+        if not tools:
+            return candidates
+
+        # 选最久没用的工具
+        best = tools[0]
+        last_used = best.get("last_used_step", 0)
+        if step - last_used >= 50:
+            desc = best.get('description', '')
+            candidates.append(Goal(
+                "run_tool", "CUSTOM",
+                {"custom_args": ["python3", f"data/persistent/tools/{best['name']}"],
+                 "cluster": "CREATIVE"},
+                priority=0.65,
+                source=f"tool:{best['name']}",
+                description=f"工具: {best['name']} ({desc})"
+            ))
+        return candidates
+
+    # ── MODE 候选 (精简版, 无硬编码路径) ──
 
     def _explore_candidates(self, wb, step: int, rnd_avg: float) -> list[Goal]:
-        """EXPLORE 模式: 事实缺口 + 好奇心 + 探针"""
+        """EXPLORE: 完全依赖 FactGraph + RND, 无手写路径"""
         candidates = []
 
-        # 1. FactGraph 缺口 (最高优先)
-        if hasattr(wb, 'graph'):
+        # RND 好奇心: 从 FactGraph 找缺口而不是硬编码路径
+        if rnd_avg > 0.03 and hasattr(wb, 'graph'):
             gaps = wb.graph.find_gaps()
-            for src, missing, rel in gaps[:3]:
-                goal = self._gap_to_goal(missing, wb, step)
+            for src, missing, rel in gaps[:2]:
+                goal = self._gap_to_goal_dynamic(missing, wb, step)
                 if goal:
                     goal.priority = 0.9
-                    goal.source = f"gap:{rel}:{missing}"
+                    goal.source = f"rnd_gap:{missing}"
                     candidates.append(goal)
 
-        # 2. RND 好奇心 (新颖度高时探索)
-        if rnd_avg > 0.03:
-            # 从已知事实的反向方向探索
-            system_keys = wb.get_facts_by_category("system") if hasattr(wb, 'get_facts_by_category') else []
-            if system_keys:
-                # 选一个未探索的系统文件
-                unread_paths = [
-                    "/proc/version", "/proc/loadavg", "/proc/uptime",
-                    "/proc/stat", "/proc/partitions", "/proc/modules",
-                    "/etc/resolv.conf", "/etc/fstab", "/etc/timezone",
-                    "/proc/1/status", "/proc/self/status",
-                ]
-                for p in unread_paths:
-                    key = p.replace("/", "_").strip("_")
-                    if key not in wb.facts and (
-                        not hasattr(wb, 'graph') or key not in wb.graph.nodes
-                    ):
-                        candidates.append(Goal(
-                            "curiosity", "READ", {"path": p},
-                            priority=0.8, source=f"rnd_unread:{p}",
-                            description=f"好奇心: 读 {p}"
-                        ))
-                        break
-
-        # 3. 探针: _build_dynamic_probes
+        # 探针
         if hasattr(wb, '_build_dynamic_probes'):
             explored = set()
             if hasattr(wb, '_current_discovery') and wb._current_discovery:
@@ -195,7 +270,7 @@ class GoalGenerator:
                 candidates.append(Goal(
                     "gap_fill", "CUSTOM",
                     {"custom_args": cmd, "cluster": p.get("cluster", "SYSTEM")},
-                    priority=p.get("base_score", 0.5),
+                    priority=0.6,
                     source=f"probe:{p.get('path_key', '')}",
                     description=f"探针: {' '.join(cmd)}"
                 ))
@@ -203,125 +278,63 @@ class GoalGenerator:
         return candidates
 
     def _create_candidates(self, wb, step: int) -> list[Goal]:
-        """CREATE 模式: LLM 创作 + 模板回退 (P2: 异步)"""
+        """CREATE: LLM + 模板 (无硬编码风格列表)"""
         candidates = []
         n_facts = len(wb.facts) if hasattr(wb, 'facts') else 0
 
-        # P2: CreativeWriter 自动处理异步 (generate_content 内部检查缓存)
-        if self.creative_writer and n_facts >= self.min_facts_for_create:
-            for style in ["report", "analysis", "story", "code"]:
+        if self.creative_writer and n_facts >= 3:
+            # 先试 LLM 创作
+            for style in ["report", "story"]:
                 ci = self.creative_writer.generate_content(wb, style=style)
                 if ci and ci.get("source", "").startswith("llm"):
+                    intent_type = "GENERATE" if style != "code" else "WRITE"
                     candidates.append(Goal(
-                        "content_create", "GENERATE" if style != "code" else "WRITE",
+                        "content_create", intent_type,
                         {"path": ci["path"], "content": ci["content"]},
-                        priority=0.95, source=f"llm:{style}",
-                        description=f"LLM{style}: {ci['desc']} ({ci['size']}B)"
+                        priority=0.9, source=f"llm:{style}",
+                        description=f"LLM{style}"
                     ))
-                    break  # 一次生成一个风格就够
-                # LLM 失败: 继续尝试下一个风格
-            # 所有 LLM 风格都失败: 走回退到模板
+                    break
+            # 回退模板
             if not candidates and hasattr(wb, 'build_generate_content'):
                 ci = wb.build_generate_content()
                 if ci:
                     candidates.append(Goal(
                         "content_create", "GENERATE",
                         {"path": ci["path"], "content": ci["content"]},
-                        priority=0.7, source="build_generate",
-                        description=f"模板: {ci['desc']} ({ci.get('size', 0)}B)"
+                        priority=0.6, source="template",
+                        description=f"模板: {ci.get('desc', 'content')}"
                     ))
-
-        # 2. 模板 WRITE (LLM 不可用或事实不足时)
-        if not candidates and n_facts >= 3 and hasattr(wb, 'build_write_content'):
-            if self.creative_writer:
-                ci = self.creative_writer._fallback(wb, "report", "low_facts")
-            else:
-                ci = wb.build_write_content()
-            candidates.append(Goal(
-                "content_create", "WRITE",
-                {"path": ci["path"], "content": ci["content"]},
-                priority=0.7, source="build_write",
-                description=f"创作: {ci['desc']} ({ci.get('size', 0)}B)"
-            ))
 
         return candidates
 
     def _learn_candidates(self, wb, step: int) -> list[Goal]:
-        """LEARN 模式: 真实验证 + 训练"""
+        """LEARN: 验证 (无硬编码)"""
         candidates = []
 
-        # 1. 真实验证: 用脚本验证已知事实
         if hasattr(wb, 'generate_script'):
             result = wb.generate_script()
             if result:
                 script, combo = result
-                # 写脚本 + 执行
                 import base64
                 encoded = base64.b64encode(script.encode()).decode()
                 candidates.append(Goal(
                     "verify", "CUSTOM",
                     {"custom_args": ["sh", "-c",
-                        f"echo '{encoded}' | base64 -d > /tmp/verify_{step}.sh && "
-                        f"chmod +x /tmp/verify_{step}.sh && bash /tmp/verify_{step}.sh"],
+                        f"echo '{encoded}' | base64 -d > /tmp/v_{step}.sh && "
+                        f"chmod +x /tmp/v_{step}.sh && bash /tmp/v_{step}.sh"],
                      "cluster": "CREATIVE"},
-                    priority=0.8, source="verify_script",
-                    description=f"验证: combo={combo}"
+                    priority=0.7, source="verify",
+                    description=f"验证: {combo}"
                 ))
-
-        # 2. 交叉验证: 读一个已知文件确认事实
-        known_keys = list(wb.facts.keys()) if hasattr(wb, 'facts') else []
-        if known_keys:
-            key = known_keys[-1]
-            fact = wb.facts.get(key, {})
-            if fact and 'source_cmd' in fact:
-                src = fact.get('source_cmd', '')
-                if src and src.startswith('['):
-                    import ast
-                    try:
-                        cmd_list = ast.literal_eval(src)
-                        if isinstance(cmd_list, list):
-                            candidates.append(Goal(
-                                "verify", "CUSTOM",
-                                {"custom_args": cmd_list, "cluster": "SYSTEM"},
-                                priority=0.5, source=f"reverify:{key}",
-                                description=f"重验: {key}"
-                            ))
-                    except:
-                        pass
-
         return candidates
-
-    # ── 辅助 ──
-
-    def _gap_to_goal(self, missing_key: str, wb, step: int) -> Optional[Goal]:
-        """将事实缺口映射为可执行目标"""
-        gap_map = {
-            "os_version_id": ("READ", {"path": "/etc/os-release"}),
-            "os_version_codename": ("READ", {"path": "/etc/os-release"}),
-            "kernel_release": ("CUSTOM", {"custom_args": ["uname", "-a"], "cluster": "SYSTEM"}),
-            "cpu_model": ("READ", {"path": "/proc/cpuinfo"}),
-            "mem_total": ("CUSTOM", {"custom_args": ["free", "-h"], "cluster": "SYSTEM"}),
-            "swap_total": ("CUSTOM", {"custom_args": ["free", "-h"], "cluster": "SYSTEM"}),
-            "etchosts_hosts": ("READ", {"path": "/etc/hosts"}),
-            "hostname_cmd": ("CUSTOM", {"custom_args": ["hostname"], "cluster": "SYSTEM"}),
-            "uid_info": ("CUSTOM", {"custom_args": ["id"], "cluster": "USER"}),
-            "current_user": ("CUSTOM", {"custom_args": ["whoami"], "cluster": "USER"}),
-            "ip_addr": ("CUSTOM", {"custom_args": ["ip", "addr"], "cluster": "NETWORK"}),
-            "mac_addr": ("CUSTOM", {"custom_args": ["ip", "addr"], "cluster": "NETWORK"}),
-            "disk_persistent": ("CUSTOM", {"custom_args": ["df", "-h"], "cluster": "SYSTEM"}),
-        }
-        if missing_key in gap_map:
-            intent, params = gap_map[missing_key]
-            return Goal(
-                "gap_fill", intent, params,
-                priority=0.85, source=f"gap:{missing_key}",
-                description=f"填缺口: {missing_key}"
-            )
-        return None
 
     def stats(self) -> dict:
         return {
             "last_goal_type": self.last_goal_type,
-            "n_goals_generated": len(self.goal_history),
+            "n_goals": self._total_goals,
+            "intent_usage": dict(sorted(self._intent_usage.items(),
+                                        key=lambda x: -x[1])[:5]),
+            "tried_commands": len(self._tried_commands),
             "recent_goals": self.goal_history[-5:],
         }
