@@ -346,11 +346,20 @@ class GoalGenerator:
                 self._last_probe_key = pk
                 break
 
-        # 无缺口无探针时: 生成创作或验证目标
+        # 随机触发自生成实验 (约 5% 概率, 无关缺口)
+        if random.random() < 0.05:
+            experiment = self._self_generate_experiment(wb, step)
+            if experiment:
+                candidates.append(experiment)
+
+        # 无缺口无探针时: 自生成实验
         if not candidates:
-            # 回退到 CREATE (用已有事实生成报告)
-            create = self._create_candidates(wb, step)
-            candidates.extend(create)
+            experiment = self._self_generate_experiment(wb, step)
+            if experiment:
+                candidates.append(experiment)
+            else:
+                create = self._create_candidates(wb, step)
+                candidates.extend(create)
 
         return candidates
 
@@ -412,6 +421,73 @@ class GoalGenerator:
             ))
 
         return candidates
+
+    def _self_generate_experiment(self, wb, step: int) -> Optional[Goal]:
+        """
+        从已有事实组合出新实验 — 无缺口时自生成
+
+        策略:
+          1. 从 FactGraph 选 2 个不同类别的事实
+          2. 根据它们的组合生成一个可执行的测试命令
+        """
+        graph = getattr(wb, 'graph', None)
+        if not graph or len(graph.nodes) < 5:
+            return None
+
+        # 按类别收集事实
+        by_cat: dict[str, list[str]] = {}
+        for key, node in graph.nodes.items():
+            by_cat.setdefault(node.category, []).append(key)
+
+        # 选两个不同类别的事实
+        cats = [c for c in by_cat if c not in ('general', 'command', 'inference', 'tool_result')
+                and len(by_cat[c]) >= 2]
+        if len(cats) < 2:
+            return None
+
+        import random
+        cat_a, cat_b = random.sample(cats, 2)
+        key_a = random.choice(by_cat[cat_a])
+        key_b = random.choice(by_cat[cat_b])
+        val_a = str(graph.nodes[key_a].value)[:30]
+        val_b = str(graph.nodes[key_b].value)[:30]
+
+        # 根据类别组合生成实验命令
+        experiments = [
+            # 文件 + 系统 → 检查文件是否存在
+            (["file", "system"], ["cat", "/etc/hostname"]),
+            # 包 + 系统 → 检查已装包
+            (["package", "system"], ["dpkg", "-l"]),
+            # 网络 + 系统 → 检查连接
+            (["network", "system"], ["cat", "/proc/net/dev"]),
+            # 能力 + 系统 → 测试能力
+            (["capability", "system"], ["python3", "--version"]),
+            # 文件 + 包 → 检查相关文件
+            (["file", "package"], ["ls", "-la", "/etc/apt/"]),
+            # 系统 + 系统 → 系统调用
+            (["system", "system"], ["uname", "-a"]),
+        ]
+
+        for (c1, c2), cmd in experiments:
+            if cat_a in (c1, c2) and cat_b in (c1, c2):
+                desc = f"实验: {key_a}={val_a} + {key_b}={val_b}"
+                return Goal(
+                    "experiment", "TRY",
+                    {"custom_args": cmd, "cluster": "SYSTEM"},
+                    priority=0.5,
+                    source=f"experiment:{cat_a}+{cat_b}",
+                    description=desc
+                )
+
+        # 没有匹配的模板: 生成通用实验
+        desc = f"实验: {key_a}({cat_a}) + {key_b}({cat_b})"
+        return Goal(
+            "experiment", "TRY",
+            {"custom_args": ["cat", "/etc/hostname"], "cluster": "SYSTEM"},
+            priority=0.5,
+            source=f"experiment:{cat_a}+{cat_b}",
+            description=desc
+        )
 
     def _learn_candidates(self, wb, step: int) -> list[Goal]:
         """LEARN: 验证 (无硬编码)"""
