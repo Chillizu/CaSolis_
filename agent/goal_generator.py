@@ -297,65 +297,99 @@ class GoalGenerator:
     # ── MODE 候选 (精简版, 无硬编码路径) ──
 
     def _explore_candidates(self, wb, step: int, rnd_avg: float) -> list[Goal]:
-        """EXPLORE: 完全依赖 FactGraph + RND, 无手写路径"""
+        """EXPLORE: 缺口 + 探针 + 创造力循环"""
         candidates = []
 
-        # RND 好奇心: 从 FactGraph 找缺口而不是硬编码路径
-        if rnd_avg > 0.03 and hasattr(wb, 'graph'):
+        # 缺口驱动 (跳过已填过的)
+        if hasattr(wb, 'graph'):
             gaps = wb.graph.find_gaps()
-            for src, missing, rel in gaps[:2]:
+            for src, missing, rel in gaps[:3]:
+                if missing in self._filled_gaps:
+                    continue
                 goal = self._gap_to_goal_dynamic(missing, wb, step)
                 if goal:
+                    self._filled_gaps.add(missing)
                     goal.priority = 0.9
                     goal.source = f"rnd_gap:{missing}"
                     candidates.append(goal)
 
-        # 探针
+        # 探针 (但避免重复)
         if hasattr(wb, '_build_dynamic_probes'):
+            if not hasattr(self, '_last_probe_key'):
+                self._last_probe_key = ""
             explored = set()
             if hasattr(wb, '_current_discovery') and wb._current_discovery:
                 explored.add(wb._current_discovery)
             probes = wb._build_dynamic_probes(explored)
-            for p in probes[:2]:
+            for p in probes[:3]:
+                pk = p.get('path_key', '')
+                if pk == self._last_probe_key and len(probes) > 1:
+                    continue  # 跳过上一个探针
                 cmd = p.get("cmd", ["ls"])
                 candidates.append(Goal(
                     "gap_fill", "TRY",
                     {"custom_args": cmd, "cluster": p.get("cluster", "SYSTEM")},
                     priority=0.6,
-                    source=f"probe:{p.get('path_key', '')}",
+                    source=f"probe:{pk}",
                     description=f"探针: {' '.join(cmd)}"
                 ))
+                self._last_probe_key = pk
+                break
+
+        # 无缺口无探针时: 生成创作或验证目标
+        if not candidates:
+            # 回退到 CREATE (用已有事实生成报告)
+            create = self._create_candidates(wb, step)
+            candidates.extend(create)
 
         return candidates
 
     def _create_candidates(self, wb, step: int) -> list[Goal]:
-        """CREATE: LLM + 模板 (无硬编码风格列表)"""
+        """CREATE: 用已有事实生成内容, 不需要新事实"""
         candidates = []
-        n_facts = len(wb.facts) if hasattr(wb, 'facts') else 0
 
-        if self.creative_writer and n_facts >= 3:
-            # 先试 LLM 创作
-            for style in ["report", "story"]:
-                ci = self.creative_writer.generate_content(wb, style=style)
-                if ci and ci.get("source", "").startswith("llm"):
-                    intent_type = "GENERATE" if style != "code" else "WRITE"
-                    candidates.append(Goal(
-                        "content_create", intent_type,
-                        {"path": ci["path"], "content": ci["content"]},
-                        priority=0.9, source=f"llm:{style}",
-                        description=f"LLM{style}"
-                    ))
-                    break
-            # 回退模板
-            if not candidates and hasattr(wb, 'build_generate_content'):
-                ci = wb.build_generate_content()
-                if ci:
-                    candidates.append(Goal(
-                        "content_create", "CREATE",
-                        {"path": ci["path"], "content": ci["content"]},
-                        priority=0.6, source="template",
-                        description=f"模板: {ci.get('desc', 'content')}"
-                    ))
+        # 从 FactGraph 收集已有事实用于创作
+        facts_dict = {}
+        graph = getattr(wb, 'graph', None)
+        if graph and graph.nodes:
+            for key, node in graph.nodes.items():
+                facts_dict[key] = node.value
+        elif hasattr(wb, 'facts'):
+            facts_dict = {k: v.get('value', '') for k, v in wb.facts.items()}
+
+        if len(facts_dict) < 3:
+            return candidates
+
+        # 生成内容: 只选有意义的系统/网络/包/能力事实
+        sorted_facts = []
+        if graph and graph.nodes:
+            meaningful = []
+            for key, node in graph.nodes.items():
+                if node.category in ("system", "package", "network", "capability", "file"):
+                    meaningful.append((key, node))
+            meaningful.sort(key=lambda x: (x[1].confidence, x[1].step), reverse=True)
+            sorted_facts = meaningful[:10]
+        else:
+            sorted_facts = list(facts_dict.items())[:10]
+
+        if not sorted_facts:
+            return candidates
+
+        lines = [f"# Folunar Report (step {step})", ""]
+        for key, node in sorted_facts:
+            val = str(node.value if not isinstance(node, tuple) else node[1])[:60]
+            cat = getattr(node, 'category', 'general') if not isinstance(node, tuple) else 'general'
+            lines.append(f"- [{cat}] {key}: {val}")
+        content = "\n".join(lines)
+
+        if content and len(content) > 50:
+            path = f"/tmp/report_{step}.md"
+            candidates.append(Goal(
+                "content_create", "CREATE",
+                {"path": path, "content": content},
+                priority=0.6, source="auto_report",
+                description=f"报告: {len(content)}B"
+            ))
 
         return candidates
 
