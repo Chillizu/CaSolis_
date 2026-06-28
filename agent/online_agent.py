@@ -421,18 +421,14 @@ class OnlineAgent:
         from agent.tool_registry import ToolRegistry
         self.tool_factory = ToolFactory()
         self.tool_registry = ToolRegistry()
-        # 生成并注册所有内置工具
-        generated = self.tool_factory.generate_all()
-        for fname in generated:
-            info = self.tool_factory.get_tool_info(fname.replace("tool_", "").replace(".py", ""))
-            if info:
-                self.tool_registry.register(
-                    fname,
-                    description=info["description"],
-                    tool_type=info["type"],
-                )
-        if generated:
-            print(f"  ✅ 工具工厂: {len(generated)} 个工具就绪")
+        # 从418命令池自造初始工具
+        if hasattr(self, 'knowledge_mapper'):
+            first_tools = self.tool_factory.discover_new_tools(self.knowledge_mapper, n=10)
+            for fname in first_tools:
+                self.tool_registry.register(fname, description=f"tool from 418 pool",
+                                            tool_type="utility")
+            if first_tools:
+                print(f"  ✅ 工具工厂: {len(first_tools)} 个初始工具 (418池)")
 
         # P4: 工作栏驱动的目标池
         self.explore_targets = [
@@ -1327,20 +1323,16 @@ class OnlineAgent:
                         ks = self.knowledge_mapper.get_exploration_stats()
                         print(f"  [DISCOVER] 探索: {ks['explored']}/{ks['total_available']} 命令")
 
-                # P13++: 根据 FactGraph 类别自动生成工具
-                if hasattr(self, 'tool_factory') and hasattr(self.workbench, 'graph'):
-                    km = self.knowledge_mapper if hasattr(self, 'knowledge_mapper') else None
-                    new_tools = self.tool_factory.auto_generate_from_facts(
-                        self.workbench.graph, knowledge_mapper=km)
+                # P13++: 从418命令池自造新工具 (每10步1个)
+                if hasattr(self, 'tool_factory') and hasattr(self, 'knowledge_mapper') and self.step_count % 10 == 0:
+                    new_tools = self.tool_factory.discover_new_tools(
+                        self.knowledge_mapper, n=1)
                     if new_tools:
                         for fname in new_tools:
-                            info = self.tool_factory.get_tool_info(
-                                fname.replace("tool_", "").replace(".py", ""))
-                            if info:
-                                self.tool_registry.register(
-                                    fname, description=info["description"],
-                                    tool_type=info["type"])
-                        print(f"  [TOOL_AUTO] 新生成 {len(new_tools)} 个工具")
+                            self.tool_registry.register(
+                                fname, description=f"418-pool: {fname}",
+                                tool_type="utility")
+                        print(f"  [TOOL_AUTO] 新生成 {len(new_tools)} 个工具: {new_tools}")
 
         # P13: 每50步尝试运行一个工具
         if hasattr(self, 'tool_registry') and self.step_count > 20 and self.step_count % 50 == 0:
