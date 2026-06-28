@@ -785,6 +785,14 @@ class KnowledgeMapper:
             wb.graph.add_node(key, str_value, category=category,
                               confidence=confidence, step=step, source_cmd=source_cmd)
 
+    def get_unexplored(self, n: int = 3) -> list:
+        """返回 n 个未探索过的命令 (打破探针同质化)"""
+        unexplored = [c for c in self._all_available_commands
+                      if c not in self._explored_commands]
+        import random
+        random.shuffle(unexplored)
+        return unexplored[:n]
+
     def get_exploration_stats(self) -> dict:
         """获取自发现统计"""
         return {

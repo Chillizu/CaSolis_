@@ -404,10 +404,17 @@ class OnlineAgent:
         # P12: KnowledgeMapper 知识拓展
         from agent.knowledge_mapper import KnowledgeMapper
         self.knowledge_mapper = KnowledgeMapper(sandbox=self.sandbox, workbench=self.workbench)
+        self.workbench._knowledge_mapper = self.knowledge_mapper
         # 立即跑 Phase A (静态清单, 全快命令)
         n_a = self.knowledge_mapper.run_phase("A", 0)
         if n_a > 0:
             print(f"  ✅ 知识拓展 Phase A: {n_a} 个新事实")
+        # 尽早扫描可用命令, 让 try_command 和 probe 有候选
+        if hasattr(self.knowledge_mapper, 'scan_available_commands'):
+            self.knowledge_mapper.scan_available_commands()
+            n_avail = len(getattr(self.knowledge_mapper, '_all_available_commands', []))
+            if n_avail > 0:
+                print(f"  📋 扫描到 {n_avail} 个可用命令")
 
         # P13: ToolFactory + ToolRegistry
         from agent.tool_factory import ToolFactory

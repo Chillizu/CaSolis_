@@ -1066,6 +1066,24 @@ class Workbench:
                         "base_score": 0.3 + utility * 2.0,
                     })
 
+        # ── 4. 饱和/老化回退: 加入命令池探针 (打破同质化) ──
+        km = getattr(self, '_knowledge_mapper', None)
+        if km and hasattr(km, 'get_unexplored'):
+            ks = km.get_exploration_stats() if hasattr(km, 'get_exploration_stats') else {}
+            total = ks.get('total_available', 0)
+            if total > 10:
+                # 第4层: 总是加入命令探针 (不等到完全饱和)
+                explored = len([c for c in candidates if c.get("cluster") != "COMMAND"])
+                cmd_count = 3 if len(candidates) < 3 else 1
+                new_cmds = km.get_unexplored(cmd_count)
+                for cmd in new_cmds:
+                    candidates.append({
+                        "cmd": [cmd],
+                        "cluster": "COMMAND",
+                        "path_key": f"cmd:{cmd}",
+                        "base_score": 0.3,
+                    })
+
         # 去重 (按 path_key)
         seen = set()
         unique = []

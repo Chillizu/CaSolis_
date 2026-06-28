@@ -164,25 +164,25 @@ class GoalGenerator:
     # ── 新: 试用发现命令 ──
 
     def _try_command_candidates(self, knowledge_mapper, step: int) -> list[Goal]:
-        """从 KnowledgeMapper 的发现中挑一个没试过的命令"""
+        """从 KnowledgeMapper 的所有可用命令中挑没试过的 (不限于已explored)"""
         candidates = []
         if knowledge_mapper is None:
             return candidates
 
-        explored = getattr(knowledge_mapper, '_explored_commands', set())
-        if not explored:
+        all_cmds = getattr(knowledge_mapper, '_all_available_commands', [])
+        if not all_cmds:
             return candidates
 
-        # 挑一个已发现但没试过的命令
-        untried = explored - self._tried_commands
+        # 从所有可用命令中挑 (已被 scan_available_commands 发现)
+        import random
+        untried = [c for c in all_cmds if c not in self._tried_commands]
         if not untried:
             return candidates
 
-        cmd = random.choice(list(untried))
-        self._tried_commands.add(cmd)
-
-        # 生成"试用"目标: 用 CUSTOM 执行该命令的 --help
-        candidates.append(Goal(
+        # 尝 3 个
+        for cmd in random.sample(untried, min(3, len(untried))):
+            self._tried_commands.add(cmd)
+            candidates.append(Goal(
             "try_command", "TRY",
             {"custom_args": [cmd, "--help"], "cluster": "SYSTEM"},
             priority=0.75,
