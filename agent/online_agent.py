@@ -276,6 +276,9 @@ class OnlineAgent:
         if self.creative_writer:
             self.creative_writer.enable_async()
             self._last_llm_step = -100  # P2: LLM 调用步数追踪
+            # 启动预生成: 让 gemma4 在背景先跑一轮
+            if hasattr(self, 'workbench') and self.workbench:
+                self.creative_writer.generate_async(self.workbench, "report")
         else:
             self._last_llm_step = -100
         # V4 在所有意图上初始化叶
@@ -2036,6 +2039,23 @@ class OnlineAgent:
         # P5.3c: 脚本创作 — 每25步生成一个 shell 脚本
         if self.step_count > 20 and self.step_count % 25 == 0:
             self._create_and_run_script()
+
+        # LLM 异步结果检查: 每步检查 CreativeWriter 是否完成生成
+        if self.creative_writer and self.step_count % 5 == 0:
+            async_result = self.creative_writer.check_async_result()
+            if async_result and async_result.get("source", "") == "llm":
+                content = async_result.get("content", "")
+                path = async_result.get("path", f"/tmp/llm_output_{self.step_count}.md")
+                if content and self.sandbox and len(content) > 50:
+                    import base64
+                    encoded = base64.b64encode(content.encode()).decode()
+                    self.sandbox.execute(f"echo '{encoded}' | base64 -d > {path}")
+                    # 添加到 FactGraph
+                    key = f"llm_{self.step_count}"
+                    self.workbench._add_fact(key, content[:80], "LLM",
+                        f"async:{async_result.get('desc','content')}",
+                        self.step_count, category="content")
+                    self._total_create_content += len(content)
 
         # P5.4: 元学习 — 记录步效用 + 定期淘汰
         asrc = self._last_action_source

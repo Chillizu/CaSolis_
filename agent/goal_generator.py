@@ -123,6 +123,19 @@ class GoalGenerator:
                 if freq > 3:
                     c.priority *= max(0.7, 1.0 - freq * 0.05)
 
+        # ── 6. 多样性: 周期性注入 CREATE (即使被分类器/Conductor选了OBSERVE/TRY) ──
+        # 6a: 如果候选全是 TRY, 随机加 CREATE
+        all_try = all(g.intent == "TRY" for g in candidates)
+        if all_try and len(candidates) >= 2 and random.random() < 0.15:
+            creates = self._create_candidates(workbench, step)
+            if creates:
+                candidates.extend(creates)
+        # 6b: 每20步后, 无条件注入 CREATE 目标
+        if step > 20 and step % 20 == 0:
+            creates = self._create_candidates(workbench, step)
+            if creates:
+                candidates.extend(creates)
+
         # ── 选最佳 ──
         if not candidates:
             return None
@@ -367,7 +380,22 @@ class GoalGenerator:
         """CREATE: 用已有事实生成内容, 不需要新事实"""
         candidates = []
 
-        # 从 FactGraph 收集已有事实用于创作
+        # 1. 优先 CreativeWriter (LLM 异步)
+        if self.creative_writer is not None:
+            result = self.creative_writer.generate_content(wb, style="report")
+            if result and result.get("source", "") == "llm":
+                content = result["content"]
+                path = result.get("path", f"/tmp/llm_report_{step}.md")
+                candidates.append(Goal(
+                    "content_create", "CREATE",
+                    {"path": path, "content": content},
+                    priority=0.7, source="llm_create",
+                    description=f"LLM: {result.get('desc','report')} ({result['size']}B)"
+                ))
+                return candidates
+            # LLM 未就绪(fallback), 继续下面模板
+
+        # 2. 模板回退: 从 FactGraph 收集已有事实
         facts_dict = {}
         graph = getattr(wb, 'graph', None)
         if graph and graph.nodes:
