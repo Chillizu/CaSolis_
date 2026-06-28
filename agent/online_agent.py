@@ -261,7 +261,7 @@ class OnlineAgent:
         try:
             self.creative_writer = CreativeWriter(
                 model="gemma4:e4b",
-                timeout=30.0,
+                timeout=120.0,
                 max_tokens=1024,
             )
             if self.creative_writer.health_check():
@@ -320,6 +320,7 @@ class OnlineAgent:
         # P7.2: 概率门控 — 让 A/B 决策拿回核心循环的主导权
         self.probe_rate = 0.5       # 探针占用概率 (原100%)
         self.imagination_rate = 0.8 # P9.7: 想象力占用概率 (原60%→80%)
+        self._total_create_content = 0  # LLM 创作累计字节
 
         # 指挥家 + 保姆 (A/B 路径)
         self.conductor_path_active = False
@@ -1383,7 +1384,7 @@ class OnlineAgent:
         # P2: 自适应 LLM 频率 (异步模式下每 20 步触发一次预生成)
         force_create = False
         if self.step_count > 30 and self.creative_writer:
-            interval = 40 if self.creative_writer.is_thermal_ok() else 80
+            interval = 100 if self.creative_writer.is_thermal_ok() else 200
             if self.step_count - self._last_llm_step >= interval:
                 force_create = True
                 self._last_llm_step = self.step_count
@@ -2041,6 +2042,29 @@ class OnlineAgent:
             self._create_and_run_script()
 
         # LLM 异步结果检查: 每步检查 CreativeWriter 是否完成生成
+        # LLM sync generation every 100 steps
+        if self.creative_writer and self.step_count > 50 and self.step_count % 100 == 0:
+            import threading
+            def _sync_llm():
+                try:
+                    prompt = self.creative_writer.build_prompt(self.workbench, "report")
+                    text = self.creative_writer.generate(prompt, timeout=120.0)
+                    if text and len(text) > 100:
+                        path = f"/tmp/llm_sync_{self.step_count}.md"
+                        import base64
+                        encoded = base64.b64encode(text.encode()).decode()
+                        self.sandbox.execute(f"echo '{encoded}' | base64 -d > {path}")
+                        key = f"llm_sync_{self.step_count}"
+                        self.workbench._add_fact(key, text[:80], "LLM",
+                            f"sync:{self.step_count}", self.step_count, category="content")
+                        self._total_create_content += len(text)
+                        print(f"  [LLM-SYNC] {len(text)}B -> {path}")
+                except Exception as e:
+                    print(f"  [LLM-SYNC] error: {e}")
+            t = threading.Thread(target=_sync_llm, daemon=True)
+            t.start()
+
+        # LLM async result check every 5 steps
         if self.creative_writer and self.step_count % 5 == 0:
             async_result = self.creative_writer.check_async_result()
             if async_result and async_result.get("source", "") == "llm":
@@ -2050,7 +2074,6 @@ class OnlineAgent:
                     import base64
                     encoded = base64.b64encode(content.encode()).decode()
                     self.sandbox.execute(f"echo '{encoded}' | base64 -d > {path}")
-                    # 添加到 FactGraph
                     key = f"llm_{self.step_count}"
                     self.workbench._add_fact(key, content[:80], "LLM",
                         f"async:{async_result.get('desc','content')}",

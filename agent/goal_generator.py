@@ -380,20 +380,24 @@ class GoalGenerator:
         """CREATE: 用已有事实生成内容, 不需要新事实"""
         candidates = []
 
-        # 1. 优先 CreativeWriter (LLM 异步)
+        # 1. 优先 CreativeWriter (LLM 异步结果检查)
         if self.creative_writer is not None:
-            result = self.creative_writer.generate_content(wb, style="report")
-            if result and result.get("source", "") == "llm":
-                content = result["content"]
-                path = result.get("path", f"/tmp/llm_report_{step}.md")
-                candidates.append(Goal(
-                    "content_create", "CREATE",
-                    {"path": path, "content": content},
-                    priority=0.7, source="llm_create",
-                    description=f"LLM: {result.get('desc','report')} ({result['size']}B)"
-                ))
-                return candidates
-            # LLM 未就绪(fallback), 继续下面模板
+            # 先检查缓存 (不阻塞)
+            async_result = getattr(self.creative_writer, '_async_result', None)
+            if async_result and async_result.get("source", "") == "llm":
+                result = self.creative_writer.check_async_result()
+                if result:
+                    content = result.get("content", "")
+                    path = result.get("path", f"/tmp/llm_report_{step}.md")
+                    if content:
+                        candidates.append(Goal(
+                            "content_create", "CREATE",
+                            {"path": path, "content": content},
+                            priority=0.7, source="llm_create",
+                            description=f"LLM: {result.get('desc','report')} ({len(content)}B)"
+                        ))
+                        return candidates
+            # LLM 未就绪, 继续模板
 
         # 2. 模板回退: 从 FactGraph 收集已有事实
         facts_dict = {}
