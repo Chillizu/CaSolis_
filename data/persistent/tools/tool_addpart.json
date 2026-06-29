@@ -1,7 +1,6 @@
 {
   "cmd": [
-    "addpart",
-    "--version"
+    "addpart"
   ],
   "desc": "run addpart with arguments",
   "cat": "discovered",

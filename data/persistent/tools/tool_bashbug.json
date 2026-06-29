@@ -1,6 +1,7 @@
 {
   "cmd": [
-    "bashbug"
+    "bashbug",
+    "--version"
   ],
   "desc": "run bashbug with arguments",
   "cat": "discovered",

@@ -1,7 +1,6 @@
 {
   "cmd": [
-    "basename",
-    "--version"
+    "basename"
   ],
   "desc": "run basename with arguments",
   "cat": "discovered",

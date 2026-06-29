@@ -1,6 +1,7 @@
 {
   "cmd": [
-    "basenc"
+    "basenc",
+    "--version"
   ],
   "desc": "run basenc with arguments",
   "cat": "discovered",

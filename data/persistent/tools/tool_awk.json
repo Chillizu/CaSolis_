@@ -1,7 +1,6 @@
 {
   "cmd": [
-    "awk",
-    "--version"
+    "awk"
   ],
   "desc": "run awk with arguments",
   "cat": "discovered",

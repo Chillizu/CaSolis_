@@ -295,6 +295,28 @@ class OnlineAgent:
         for name in INTENTS:
             if name != "HELP":
                 self.world_model_v4.add_intent(name)
+
+        # P18: WorldModel V5 — 状态转移预测 (GRU, ~370K)
+        from agent.world_model_v5 import WorldModelV5
+        self.world_model_v5 = WorldModelV5()
+        self._wm5_buffer: list[dict] = []  # 累积 transition 供 V5 训练
+        self._wm5_train_interval = 15  # 每 15 步训练一次
+        self._wm5_batch_size = 32
+        self._wm5_checkpoint = "data/persistent/world_model_v5.pt"
+        # 尝试加载已有 checkpoint
+        if os.path.exists(self._wm5_checkpoint):
+            try:
+                self.world_model_v5.load(self._wm5_checkpoint)
+                print(f"  ✅ WorldModel V5 已加载 ({self.world_model_v5._param_count:,} params)")
+            except Exception as e:
+                print(f"  ⚠️ WorldModel V5 加载失败, 从头开始: {e}")
+        else:
+            print(f"  ℹ️ WorldModel V5 新创建 ({self.world_model_v5._param_count:,} params)")
+
+        # P18: IntuitionBuffer — 余弦相似度直觉缓冲
+        from agent.intuition_buffer import IntuitionBuffer
+        self.intuition_buffer = IntuitionBuffer(capacity=1024)
+        print(f"  ✅ IntuitionBuffer 就绪 (cap=1024, 0 参数)")
         print(f"  \u2705 增长型WM V4: {len(self.world_model_v4.leaves)} 个意图叶")
         # P10: 情景记忆 (初始禁用, V4 ready 后启用)
         self.episodic_memory = EpisodicMemory()
@@ -2506,6 +2528,48 @@ class OnlineAgent:
         self._transitions.append(_transition)
         if len(self._transitions) >= self._transition_flush_size:
             self._flush_transitions()
+
+        # P18: WorldModel V5 — 数据收集 + 定时训练
+        if hasattr(self, 'world_model_v5') and state_emb is not None:
+            try:
+                self._wm5_buffer.append({
+                    "pre_emb": state_emb.detach().clone(),
+                    "intent": INTENTS.index(intent) if intent in INTENTS else 0,
+                    "reward": reward,
+                    "continue": 1.0,
+                })
+                # P18: IntuitionBuffer 记录
+                if hasattr(self, 'intuition_buffer'):
+                    self.intuition_buffer.store(
+                        thought=self.persistent_thought,
+                        intent=INTENTS.index(intent) if intent in INTENTS else 0,
+                        params=params,
+                        reward=reward,
+                    )
+                if len(self._wm5_buffer) > 600:
+                    self._wm5_buffer = self._wm5_buffer[-600:]
+                if (len(self._wm5_buffer) >= 20
+                        and self.step_count % self._wm5_train_interval == 0):
+                    buf = self._wm5_buffer
+                    T = min(len(buf) - 1, self._wm5_batch_size)
+                    states = torch.stack([b["pre_emb"] for b in buf[:T]])
+                    actions = []
+                    for i in range(T):
+                        a_emb = self.world_model_v5.encode_action(
+                            buf[i]["intent"], states[i:i+1])
+                        actions.append(a_emb)
+                    actions_t = torch.cat(actions, dim=0)
+                    next_states = torch.stack([b["pre_emb"] for b in buf[1:T+1]])
+                    rewards = torch.tensor([[b["reward"]] for b in buf[:T]])
+                    cont = torch.tensor([[b["continue"]] for b in buf[:T]])
+                    loss = self.world_model_v5.train_step(
+                        states, actions_t, next_states, rewards, cont,
+                        chunk_size=16,
+                    )
+                    if self.step_count % 50 == 0:
+                        self.world_model_v5.save(self._wm5_checkpoint)
+            except Exception:
+                pass
 
         return step_success, reward
 

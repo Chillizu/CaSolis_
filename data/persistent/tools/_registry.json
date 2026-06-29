@@ -464,7 +464,7 @@
   "tool_apt-mark.json": {
     "name": "tool_apt-mark.json",
     "tool_type": "utility",
-    "description": "tool from 418 pool",
+    "description": "418-pool: tool_apt-mark.json",
     "use_count": 0,
     "success_count": 0,
     "last_used_step": 0,
@@ -4665,6 +4665,17 @@
   },
   "tool_filefrag.json": {
     "name": "tool_filefrag.json",
+    "tool_type": "utility",
+    "description": "tool from 418 pool",
+    "use_count": 0,
+    "success_count": 0,
+    "last_used_step": 0,
+    "created_step": 0,
+    "avg_bytes": 0,
+    "format": "json"
+  },
+  "tool_openssl.json": {
+    "name": "tool_openssl.json",
     "tool_type": "utility",
     "description": "tool from 418 pool",
     "use_count": 0,
