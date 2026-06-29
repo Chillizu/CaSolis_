@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "last"
+  ],
+  "desc": "run last with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

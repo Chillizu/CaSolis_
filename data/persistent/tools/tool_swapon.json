@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "swapon"
+  ],
+  "desc": "run swapon with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

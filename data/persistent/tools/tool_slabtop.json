@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "slabtop"
+  ],
+  "desc": "run slabtop with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

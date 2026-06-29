@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "runuser"
+  ],
+  "desc": "run runuser with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

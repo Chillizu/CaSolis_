@@ -64,6 +64,39 @@ def _ollama_generate(prompt: str, model: str = "gemma4:e4b",
         return None
 
 
+def _deepseek_generate(prompt: str,
+                       api_key: str,
+                       model: str = "deepseek-chat",
+                       timeout: float = 60.0,
+                       max_tokens: int = 2048,
+                       temperature: float = 0.3) -> Optional[str]:
+    """调用 DeepSeek API, 超时返回 None"""
+    try:
+        import urllib.request
+        import json
+        req = urllib.request.Request(
+            "https://api.deepseek.com/chat/completions",
+            data=json.dumps({
+                "model": model,
+                "messages": [
+                    {"role": "system", "content": "You are a Linux system agent. Output ONLY the requested content, no explanation or markdown wrapping."},
+                    {"role": "user", "content": prompt},
+                ],
+                "temperature": temperature,
+                "max_tokens": max_tokens,
+            }).encode(),
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {api_key}",
+            },
+        )
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            data = json.loads(resp.read().decode())
+            return data["choices"][0]["message"]["content"].strip()
+    except Exception:
+        return None
+
+
 def _ollama_health(base_url: str = "http://localhost:11434") -> bool:
     """检查 Ollama 是否运行且模型可用"""
     try:
@@ -170,15 +203,7 @@ def _check_hallucination(text: str, facts_text: str) -> float:
                              text.lower()):
         text_values.add(match.group(1))
 
-    if not text_values:
-        return 1.0  # 没有具体数值, 无法判断
 
-    # 检查有多少生成文本中的值在事实中出现过
-    matched = sum(1 for v in text_values if any(v in fv or fv in v for fv in fact_values))
-    return matched / len(text_values)
-
-
-# ── CreativeWriter 类 ──
 
 class CreativeWriter:
     """
@@ -196,13 +221,15 @@ class CreativeWriter:
     """
 
     def __init__(self,
-                 model: str = "gemma4:e4b",
+                 model: str = "qwen3.5:0.8b",
                  base_url: str = "http://localhost:11434",
                  timeout: float = 60.0,
                  max_tokens: int = 1024,
                  temperature: float = 0.5,
                  thermal_threshold: float = 95.0,
-                 enabled: bool = True):
+                 enabled: bool = True,
+                 api_backend: str = "ollama",
+                 api_key: str = ""):
         self.model = model
         self.base_url = base_url
         self.timeout = timeout
@@ -210,6 +237,9 @@ class CreativeWriter:
         self.temperature = temperature
         self.thermal_threshold = thermal_threshold
         self.enabled = enabled
+        self.api_backend = api_backend
+        self.api_key = api_key or os.environ.get("DEEPSEEK_API_KEY", "")
+        self._deepseek_ok = bool(self.api_key)
 
         # 统计
         self.stats = {
@@ -235,10 +265,22 @@ class CreativeWriter:
                 "## Rules\\n- Use ONLY facts listed below. If a value is unknown, say 'unknown'.\\n"
                 "- Do NOT invent values, file paths, or system state.\\n"
                 "- Output the report directly; no meta-commentary.\\n"
-                "- Organize by category (System, Network, Storage, Security).\\n\\n"
-                "## Facts\\n{facts_section}\\n\\n"
-                "## Relationships\\n{relationships_section}\\n\\n"
-                "## Knowledge Gaps\\n{gaps_section}\\n"
+                "- Organize by category (System, Network, Storage, Security).\n\n"
+                "## Facts\n{facts_section}\n\n"
+                "## Relationships\n{relationships_section}\n\n"
+                "## Knowledge Gaps\n{gaps_section}\n"
+            ),
+            "self_reflect": (
+                "You are an autonomous Linux agent. Based on the following facts about yourself, "
+                "what do you want to do next?\n"
+                "## Rules\n"
+                "- Think about what you're good at, what you haven't tried, what interests you.\n"
+                "- Output ONE short sentence: your intention.\n"
+                "- Be specific: name a command, file type, or area to explore.\n"
+                "- Example: 'I want to explore network commands since I haven't tried them yet.'\n"
+                "- Example: 'I want to write a Python script that summarizes all my discoveries.'\n\n"
+                "## Self Knowledge\n{self_description}\n\n"
+                "## Intention\n"
             ),
             "analysis": (
                 "You are a system diagnostic assistant. Based ONLY on the facts below, write a short analysis.\\n"
@@ -249,36 +291,56 @@ class CreativeWriter:
                 "## Knowledge Gaps\\n{gaps_section}\\n"
             ),
             "story": (
-                "You are a storyteller. Write a short first-person narrative (max 150 words) from the perspective of the system described below.\\n"
-                "## Rules\\n- Base it ONLY on the facts.\\n- Do not invent specific values.\\n- Keep it playful.\\n\\n"
-                "## Facts\\n{facts_section}\\n\\n"
-                "## Relationships\\n{relationships_section}\\n\\n"
+                "You are a storyteller. Write a short first-person narrative (max 150 words) from the perspective of the system described below.\n"
+                "## Rules\n- Base it ONLY on the facts.\n- Do not invent specific values.\n- Keep it playful.\n\n"
+                "## Facts\n{facts_section}\n\n"
+                "## Relationships\n{relationships_section}\n\n"
             ),
             "code": (
-                "You are a Python scripting assistant. Write a Python script that verifies each listed fact.\\n"
-                "## Rules\\n- Use subprocess.run() with shell=True.\\n- Print [OK] or [FAIL] for each.\\n- Exit 0 if all pass, 1 if any fail.\\n\\n"
-                "## Facts\\n{facts_section}\\n\\n"
+                "You are a Python scripting assistant. Write a Python script that verifies each listed fact.\n"
+                "## Rules\n- Use subprocess.run() with shell=True.\n- Print [OK] or [FAIL] for each.\n- Exit 0 if all pass, 1 if any fail.\n\n"
+                "## Facts\n{facts_section}\n\n"
             ),
         }
-
+    
     def health_check(self) -> bool:
-        """Ollama 模型可用?"""
+        """检查后端是否可用: Ollama 或 DeepSeek"""
+        if self.api_backend == "deepseek":
+            return self._deepseek_ok
         return _ollama_health(self.base_url)
 
     def is_thermal_ok(self) -> bool:
         """CPU 温度安全?"""
         return _thermal_ok(self.thermal_threshold)
 
-    def build_prompt(self, workbench, style: str = "report") -> str:
-        """构建 LLM prompt"""
-        template = self._prompts.get(style, self._prompts.get("report", ""))
-        facts_text = _build_facts_section(workbench)
-        rels_text = _build_relationships_section(workbench)
-        gaps_text = _build_gaps_section(workbench)
-
-        prompt = template.replace("{facts_section}", facts_text)
-        prompt = prompt.replace("{relationships_section}", rels_text)
-        prompt = prompt.replace("{gaps_section}", gaps_text)
+    def generate(self, prompt: str, timeout: Optional[float] = None) -> Optional[str]:
+        """根据 api_backend 调用对应后端"""
+        if self.api_backend == "deepseek" and self._deepseek_ok:
+            return _deepseek_generate(
+                prompt=prompt,
+                api_key=self.api_key,
+                timeout=timeout or self.timeout,
+                max_tokens=self.max_tokens,
+                temperature=self.temperature,
+            )
+        return _ollama_generate(
+            prompt=prompt,
+            model=self.model,
+            base_url=self.base_url,
+            timeout=timeout or self.timeout,
+            max_tokens=self.max_tokens,
+            temperature=self.temperature,
+        )
+        # P17: self_reflect 不传 facts, 传 self_description
+        if style == "self_reflect":
+            self_desc = getattr(workbench, 'self_model', None)
+            if self_desc and hasattr(self_desc, 'build_self_description'):
+                desc_text = self_desc.build_self_description()
+            else:
+                desc_text = "(agent just started, no self-knowledge yet)"
+            prompt = prompt.replace("{self_description}", desc_text)
+        else:
+            prompt = prompt.replace("{self_description}", "")
 
         # 缓存 facts_text 用于质量检查
         self._last_facts_text = facts_text
@@ -295,6 +357,14 @@ class CreativeWriter:
             max_tokens=self.max_tokens,
             temperature=self.temperature,
         )
+
+    def generate_self_reflect(
+            self, workbench, timeout: Optional[float] = None) -> Optional[str]:
+        """LLM 自省: '根据你对自己的了解, 想做什么?'"""
+        if not self.enabled or not self.health_check():
+            return None
+        prompt = self.build_prompt(workbench, "self_reflect")
+        return self.generate(prompt, timeout=timeout)
 
     def generate_content(self, workbench, style: Optional[str] = None,
                          timeout: Optional[float] = None) -> dict:

@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "du"
+  ],
+  "desc": "run du with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

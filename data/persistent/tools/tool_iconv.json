@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "iconv"
+  ],
+  "desc": "run iconv with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

@@ -1,0 +1,9 @@
+{
+  "cmd": [
+    "apt-get",
+    "--version"
+  ],
+  "desc": "run apt-get with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

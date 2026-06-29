@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "chcpu"
+  ],
+  "desc": "run chcpu with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

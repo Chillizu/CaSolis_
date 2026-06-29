@@ -1,0 +1,9 @@
+{
+  "cmd": [
+    "base32",
+    "--version"
+  ],
+  "desc": "run base32 with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

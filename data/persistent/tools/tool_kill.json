@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "kill"
+  ],
+  "desc": "run kill with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

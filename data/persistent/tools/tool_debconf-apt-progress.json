@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "debconf-apt-progress"
+  ],
+  "desc": "run debconf-apt-progress with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

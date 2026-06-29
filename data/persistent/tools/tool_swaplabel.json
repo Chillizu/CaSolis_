@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "swaplabel"
+  ],
+  "desc": "run swaplabel with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

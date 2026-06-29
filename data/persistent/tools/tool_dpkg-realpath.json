@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "dpkg-realpath"
+  ],
+  "desc": "run dpkg-realpath with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

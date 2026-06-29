@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "pathchk"
+  ],
+  "desc": "run pathchk with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

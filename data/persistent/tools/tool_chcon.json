@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "chcon"
+  ],
+  "desc": "run chcon with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

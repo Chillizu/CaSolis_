@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "newgrp"
+  ],
+  "desc": "run newgrp with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

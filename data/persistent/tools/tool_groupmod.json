@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "groupmod"
+  ],
+  "desc": "run groupmod with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "savelog"
+  ],
+  "desc": "run savelog with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

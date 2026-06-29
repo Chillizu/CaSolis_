@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "sed"
+  ],
+  "desc": "run sed with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "e2label"
+  ],
+  "desc": "run e2label with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

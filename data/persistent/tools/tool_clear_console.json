@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "clear_console"
+  ],
+  "desc": "run clear_console with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

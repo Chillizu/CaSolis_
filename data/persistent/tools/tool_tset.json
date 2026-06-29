@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "tset"
+  ],
+  "desc": "run tset with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

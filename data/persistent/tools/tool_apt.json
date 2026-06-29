@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "apt"
+  ],
+  "desc": "run apt with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

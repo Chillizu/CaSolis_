@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "stty"
+  ],
+  "desc": "run stty with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

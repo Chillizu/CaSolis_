@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "cpgr"
+  ],
+  "desc": "run cpgr with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

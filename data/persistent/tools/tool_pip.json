@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "pip"
+  ],
+  "desc": "run pip with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

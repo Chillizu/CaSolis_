@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "nologin"
+  ],
+  "desc": "run nologin with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

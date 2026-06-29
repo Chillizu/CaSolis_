@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "arp"
+  ],
+  "desc": "run arp with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

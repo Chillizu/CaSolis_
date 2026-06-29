@@ -308,6 +308,264 @@
       "pattern": "users",
       "key": "users",
       "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "hostname_info",
+      "key": "hostname_info",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "bin_bin_count",
+      "key": "bin_bin_count",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_arch_path",
+      "key": "cmd_arch_path",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_arch_has_help",
+      "key": "cmd_arch_has_help",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cpu_vendor_id",
+      "key": "cpu_vendor_id",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "kernel_version",
+      "key": "kernel_version",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_dmesg_path",
+      "key": "cmd_dmesg_path",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_dmesg_usage",
+      "key": "cmd_dmesg_usage",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_dmesg_has_help",
+      "key": "cmd_dmesg_has_help",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_free_usage",
+      "key": "cmd_free_usage",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_free_path",
+      "key": "cmd_free_path",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_free_has_help",
+      "key": "cmd_free_has_help",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_hostname_path",
+      "key": "cmd_hostname_path",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_hostname_has_help",
+      "key": "cmd_hostname_has_help",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_id_path",
+      "key": "cmd_id_path",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_id_has_help",
+      "key": "cmd_id_has_help",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_nproc_has_help",
+      "key": "cmd_nproc_has_help",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_ps_usage",
+      "key": "cmd_ps_usage",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_nproc_path",
+      "key": "cmd_nproc_path",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_ps_has_help",
+      "key": "cmd_ps_has_help",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_ps_path",
+      "key": "cmd_ps_path",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_top_usage",
+      "key": "cmd_top_usage",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_top_has_help",
+      "key": "cmd_top_has_help",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_top_path",
+      "key": "cmd_top_path",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_uptime_usage",
+      "key": "cmd_uptime_usage",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_uname_path",
+      "key": "cmd_uname_path",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_w_usage",
+      "key": "cmd_w_usage",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_uptime_path",
+      "key": "cmd_uptime_path",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_w_path",
+      "key": "cmd_w_path",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_w_has_help",
+      "key": "cmd_w_has_help",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_uname_has_help",
+      "key": "cmd_uname_has_help",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_sysctl_has_help",
+      "key": "cmd_sysctl_has_help",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_sysctl_usage",
+      "key": "cmd_sysctl_usage",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_sysctl_path",
+      "key": "cmd_sysctl_path",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_free_intent",
+      "key": "cmd_free_intent",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_id_intent",
+      "key": "cmd_id_intent",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_nproc_intent",
+      "key": "cmd_nproc_intent",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_ps_intent",
+      "key": "cmd_ps_intent",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_top_intent",
+      "key": "cmd_top_intent",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_uname_intent",
+      "key": "cmd_uname_intent",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_uptime_intent",
+      "key": "cmd_uptime_intent",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_w_intent",
+      "key": "cmd_w_intent",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_sysctl_intent",
+      "key": "cmd_sysctl_intent",
+      "category": "script"
     }
   ]
 }

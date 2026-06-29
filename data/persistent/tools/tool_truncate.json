@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "truncate"
+  ],
+  "desc": "run truncate with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

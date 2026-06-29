@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "ifconfig"
+  ],
+  "desc": "run ifconfig with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

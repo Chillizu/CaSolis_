@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "mesg"
+  ],
+  "desc": "run mesg with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

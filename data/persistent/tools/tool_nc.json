@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "nc"
+  ],
+  "desc": "run nc with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

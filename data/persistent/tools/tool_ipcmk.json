@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "ipcmk"
+  ],
+  "desc": "run ipcmk with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

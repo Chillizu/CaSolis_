@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "setterm"
+  ],
+  "desc": "run setterm with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

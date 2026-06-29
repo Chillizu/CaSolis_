@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "setarch"
+  ],
+  "desc": "run setarch with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

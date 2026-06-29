@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "unzip"
+  ],
+  "desc": "run unzip with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

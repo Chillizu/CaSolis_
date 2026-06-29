@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "users"
+  ],
+  "desc": "run users with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

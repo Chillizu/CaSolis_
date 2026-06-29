@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "hwclock"
+  ],
+  "desc": "run hwclock with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

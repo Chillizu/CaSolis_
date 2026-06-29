@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "swapoff"
+  ],
+  "desc": "run swapoff with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

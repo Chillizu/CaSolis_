@@ -1,0 +1,9 @@
+{
+  "cmd": [
+    "b2sum",
+    "--version"
+  ],
+  "desc": "run b2sum with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

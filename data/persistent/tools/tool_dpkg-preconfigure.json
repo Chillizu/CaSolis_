@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "dpkg-preconfigure"
+  ],
+  "desc": "run dpkg-preconfigure with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

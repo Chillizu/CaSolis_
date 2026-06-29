@@ -1,0 +1,397 @@
+初始化 OnlineAgent...
+  ✅ Docker 沙箱就绪
+  安装 coreutils...
+  安装 util-linux...
+  安装 procps...
+  安装 findutils...
+  安装 grep...
+  安装 diffutils...
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 3723.35it/s]
+  🟦 分类头: 18→3 (自动适配)
+  ✅ 元学习器已恢复: 131 个行为
+  ✅ 工作栏已恢复: 2293 个事实
+  ⚠️ 世界模型加载失败: Error(s) in loading state_dict for WorldModelNetV3:
+	size mismatch for shared.0.weight: copying a param with shape torch.Size([128, 418]) from checkpoint, the shape in current model is torch.Size([128, 403]).
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 13915.71it/s]
+  ✅ CreativeWriter 就绪 (gemma4:e4b)
+  ✅ 增长型WM V4: 3 个意图叶
+  ✅ 情景记忆就绪 (初始禁用)
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 10350.35it/s]
+  ✅ Conductor 分类头: 18→17 (自动收缩)
+  ✅ Conductor 已加载: checkpoints/conductor/online_aligned.pt
+  ✅ 保姆就绪 (阈值=0.6)
+  ✅ PersistentStore: 从 data/persistent 恢复 8 个组件
+  ✅ Conductor 在线对齐就绪 (离线样本=0)
+  [LOGGER] run_logs/run_20260628_091959.jsonl
+  [KNOWLEDGE] Phase A: 静态清单
+    → 新增 1 个事实
+  ✅ 知识拓展 Phase A: 1 个新事实
+  ✅ 工具工厂: 6 个工具就绪
+
+终极马拉松 — 60分钟
+时间: 2026-06-28 09:19:59
+  [GOAL] (experiment:system+script) TRY
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [KNOWLEDGE] Phase B: 命令分类
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [INFER] 12 个推断
+  [KNOWLEDGE] Phase C: 子系统探测
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [KNOWLEDGE] Phase D: 动态探测
+  [SCRIPT] discover_25.sh -> 39073 bytes (combo: cpu_cores,passwd_line_count)
+  🧰 新规则: passwd_line_count=18 (来自 discover_25.sh)
+  🧰 新规则: cpu_cores=22 (来自 discover_25.sh)
+  [KNOWLEDGE] Phase E: 能力推断
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [DISCOVER] 扫描到 418 个可用命令
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [INFER] 12 个推断
+  [DISCOVER] 探索: 1/418 命令
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [DISCOVER] 探索: 2/418 命令
+  [TOOL] tool_gather_packages.py: found 145 installed packages
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [SCRIPT] discover_50.sh -> 39070 bytes (combo: cpu_cores,passwd_line_count)
+  🧰 新规则: passwd_line_count=18 (来自 discover_50.sh)
+  🧰 新规则: cpu_cores=22 (来自 discover_50.sh)
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [INFER] 12 个推断
+  [DISCOVER] 探索: 3/418 命令
+  [GOAL] (try_cmd:apt) TRY
+  [DIVERSITY] 强制 CREATE (GoalGenerator 多样性调整)
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [DISCOVER] 探索: 4/418 命令
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [SCRIPT] discover_75.sh -> 39073 bytes (combo: cpu_cores,passwd_line_count)
+  🧰 新规则: passwd_line_count=18 (来自 discover_75.sh)
+  🧰 新规则: cpu_cores=22 (来自 discover_75.sh)
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [INFER] 12 个推断
+  [DISCOVER] 探索: 5/418 命令
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [DISCOVER] 探索: 6/418 命令
+  [GOAL] (try_cmd:apt-config) TRY
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [INFER] 12 个推断
+  [DISCOVER] 探索: 7/418 命令
+  [TOOL] tool_gather_packages.py: found 145 installed packages
+  [RND] 兴趣重置 (每20步)
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [SCRIPT] discover_100.sh -> 39070 bytes (combo: cpu_cores,passwd_line_count)
+  🧰 新规则: passwd_line_count=18 (来自 discover_100.sh)
+  🧰 新规则: cpu_cores=22 (来自 discover_100.sh)
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [DISCOVER] 探索: 8/418 命令
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [RECOVER] fixed_params:OBSERVE -> OK
+  [INFER] 12 个推断
+  [DISCOVER] 探索: 9/418 命令
+  [GOAL] (try_cmd:apt-mark) TRY
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [SCRIPT] discover_125.sh -> 39069 bytes (combo: cpu_cores,passwd_line_count)
+  🧰 新规则: cpu_cores=22 (来自 discover_125.sh)
+  🧰 新规则: passwd_line_count=18 (来自 discover_125.sh)
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [DISCOVER] 探索: 10/418 命令
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [INFER] 12 个推断
+  [DISCOVER] 探索: 11/418 命令
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [DISCOVER] 探索: 12/418 命令
+  [TOOL] tool_gather_packages.py: found 145 installed packages
+  [GOAL] (try_cmd:b2sum) TRY
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [SCRIPT] discover_150.sh -> 39070 bytes (combo: cpu_cores,passwd_line_count)
+  🧰 新规则: passwd_line_count=18 (来自 discover_150.sh)
+  🧰 新规则: cpu_cores=22 (来自 discover_150.sh)
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [INFER] 12 个推断
+  [DISCOVER] 探索: 13/418 命令
+  [DIVERSITY] 强制 CREATE (GoalGenerator 多样性调整)
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [RECOVER] fixed_params:OBSERVE -> OK
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [DISCOVER] 探索: 14/418 命令
+  [DIVERSITY] 强制 CREATE (GoalGenerator 多样性调整)
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [SCRIPT] discover_175.sh -> 39070 bytes (combo: cpu_cores,passwd_line_count)
+  🧰 新规则: cpu_cores=22 (来自 discover_175.sh)
+  🧰 新规则: passwd_line_count=18 (来自 discover_175.sh)
+  [INFER] 12 个推断
+  [DISCOVER] 探索: 15/418 命令
+  [GOAL] (try_cmd:basename) TRY
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [DISCOVER] 探索: 16/418 命令
+  [DIVERSITY] 强制 OBSERVE (GoalGenerator 多样性调整)
+  [RECOVER] fixed_params:OBSERVE -> OK
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [INFER] 12 个推断
+  [DISCOVER] 探索: 17/418 命令
+  [TOOL] tool_gather_packages.py: found 145 installed packages
+  [DIVERSITY] 强制 CREATE (GoalGenerator 多样性调整)
+  [RND] 兴趣重置 (每20步)
+  [RND] 软重置 (avg=0.0052)
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [SCRIPT] discover_200.sh -> 39071 bytes (combo: cpu_cores,passwd_line_count)
+  🧰 新规则: passwd_line_count=18 (来自 discover_200.sh)
+  🧰 新规则: cpu_cores=22 (来自 discover_200.sh)
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [DISCOVER] 探索: 18/418 命令
+  [GOAL] (try_cmd:bashbug) TRY
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [RECOVER] fixed_params:OBSERVE -> OK
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [INFER] 12 个推断
+  [DISCOVER] 探索: 19/418 命令
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [SCRIPT] discover_225.sh -> 39071 bytes (combo: cpu_cores,passwd_line_count)
+  🧰 新规则: passwd_line_count=18 (来自 discover_225.sh)
+  🧰 新规则: cpu_cores=22 (来自 discover_225.sh)
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [DISCOVER] 探索: 20/418 命令
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [INFER] 12 个推断
+  [DISCOVER] 探索: 21/418 命令
+  [GOAL] (try_cmd:captoinfo) TRY
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [RECOVER] fixed_params:OBSERVE -> OK
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [DISCOVER] 探索: 22/418 命令
+  [TOOL] tool_gather_packages.py: found 145 installed packages
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [SCRIPT] discover_250.sh -> 39071 bytes (combo: cpu_cores,passwd_line_count)
+  🧰 新规则: cpu_cores=22 (来自 discover_250.sh)
+  🧰 新规则: passwd_line_count=18 (来自 discover_250.sh)
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [INFER] 12 个推断
+  [DISCOVER] 探索: 23/418 命令
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [DISCOVER] 探索: 24/418 命令
+  [GOAL] (try_cmd:chattr) TRY
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [SCRIPT] discover_275.sh -> 39071 bytes (combo: cpu_cores,passwd_line_count)
+  🧰 新规则: passwd_line_count=18 (来自 discover_275.sh)
+  🧰 新规则: cpu_cores=22 (来自 discover_275.sh)
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [INFER] 12 个推断
+  [DISCOVER] 探索: 25/418 命令
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [DISCOVER] 探索: 26/418 命令
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [INFER] 12 个推断
+  [DISCOVER] 探索: 27/418 命令
+  [TOOL] tool_gather_packages.py: found 145 installed packages
+  [GOAL] (try_cmd:chgrp) TRY
+  [DIVERSITY] 强制 CREATE (GoalGenerator 多样性调整)
+  [RND] 兴趣重置 (每20步)
+  [RND] 软重置 (avg=0.0044)
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [SCRIPT] discover_300.sh -> 39072 bytes (combo: cpu_cores,passwd_line_count)
+  🧰 新规则: cpu_cores=22 (来自 discover_300.sh)
+  🧰 新规则: passwd_line_count=18 (来自 discover_300.sh)
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [INFER] 12 个推断
+  [DISCOVER] 探索: 29/418 命令
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [SCRIPT] discover_325.sh -> 39073 bytes (combo: cpu_cores,passwd_line_count)
+  🧰 新规则: cpu_cores=22 (来自 discover_325.sh)
+  🧰 新规则: passwd_line_count=18 (来自 discover_325.sh)
+  [GOAL] (try_cmd:chown) TRY
+  [DIVERSITY] 强制 OBSERVE (GoalGenerator 多样性调整)
+  [RECOVER] fixed_params:OBSERVE -> OK
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [INFER] 12 个推断
+  [DISCOVER] 探索: 31/418 命令
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [DISCOVER] 探索: 32/418 命令
+  [TOOL] tool_gather_packages.py: found 145 installed packages
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [SCRIPT] discover_350.sh -> 39071 bytes (combo: cpu_cores,passwd_line_count)
+  🧰 新规则: cpu_cores=22 (来自 discover_350.sh)
+  🧰 新规则: passwd_line_count=18 (来自 discover_350.sh)
+  [META] 淘汰 35 个低效行为. 现存: 145 个
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [INFER] 12 个推断
+  [DISCOVER] 探索: 33/418 命令
+  [GOAL] (try_cmd:cksum) TRY
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [DISCOVER] 探索: 34/418 命令
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [SCRIPT] discover_375.sh -> 39071 bytes (combo: cpu_cores,passwd_line_count)
+  🧰 新规则: cpu_cores=22 (来自 discover_375.sh)
+  🧰 新规则: passwd_line_count=18 (来自 discover_375.sh)
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [INFER] 12 个推断
+  [DISCOVER] 探索: 35/418 命令
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [DISCOVER] 探索: 36/418 命令
+  [GOAL] (try_cmd:cmp) TRY
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [INFER] 12 个推断
+  [DISCOVER] 探索: 37/418 命令
+  [TOOL] tool_gather_packages.py: found 145 installed packages
+  [RND] 兴趣重置 (每20步)
+  [RND] 软重置 (avg=0.0039)
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [SCRIPT] discover_400.sh -> 39070 bytes (combo: cpu_cores,passwd_line_count)
+  🧰 新规则: passwd_line_count=18 (来自 discover_400.sh)
+  🧰 新规则: cpu_cores=22 (来自 discover_400.sh)
+  [META] 淘汰 21 个低效行为. 现存: 126 个
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [DISCOVER] 探索: 38/418 命令
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [INFER] 12 个推断
+  [DISCOVER] 探索: 39/418 命令
+  [GOAL] (try_cmd:csplit) TRY
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [SCRIPT] discover_425.sh -> 39066 bytes (combo: cpu_cores,passwd_line_count)
+  🧰 新规则: passwd_line_count=18 (来自 discover_425.sh)
+  🧰 新规则: cpu_cores=22 (来自 discover_425.sh)
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [INFER] 12 个推断
+  [DISCOVER] 探索: 41/418 命令
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [DISCOVER] 探索: 42/418 命令
+  [TOOL] tool_gather_packages.py: found 145 installed packages
+  [GOAL] (try_cmd:dash) TRY
+  [DIVERSITY] 强制 CREATE (GoalGenerator 多样性调整)
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [SCRIPT] discover_450.sh -> 39070 bytes (combo: cpu_cores,passwd_line_count)
+  🧰 新规则: cpu_cores=22 (来自 discover_450.sh)
+  🧰 新规则: passwd_line_count=18 (来自 discover_450.sh)
+  [META] 淘汰 8 个低效行为. 现存: 123 个
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [INFER] 12 个推断
+  [DISCOVER] 探索: 43/418 命令
+  [DIVERSITY] 强制 CREATE (GoalGenerator 多样性调整)
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [SCRIPT] discover_475.sh -> 39381 bytes (combo: cpu_cores,os_id,passwd_line_count)
+  🧰 新规则: VERSION_CODENAME=bookworm (来自 discover_475.sh)
+  🧰 新规则: ID=debian (来自 discover_475.sh)
+  🧰 新规则: os_id=debian (来自 discover_475.sh)
+  🧰 新规则: passwd_line_count=18 (来自 discover_475.sh)
+  🧰 新规则: cpu_cores=22 (来自 discover_475.sh)
+  [INFER] 12 个推断
+  [DISCOVER] 探索: 45/418 命令
+  [GOAL] (try_cmd:deb-systemd-helper) TRY
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [DISCOVER] 探索: 46/418 命令
+  [DIVERSITY] 强制 OBSERVE (GoalGenerator 多样性调整)
+  [RECOVER] fixed_params:OBSERVE -> OK
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [INFER] 12 个推断
+  [DISCOVER] 探索: 47/418 命令
+  [TOOL] tool_gather_packages.py: found 145 installed packages
+  [DIVERSITY] 强制 OBSERVE (GoalGenerator 多样性调整)
+  [RECOVER] fixed_params:OBSERVE -> OK
+  [RND] 兴趣重置 (每20步)
+  [RND] 软重置 (avg=0.0034)
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [SCRIPT] discover_500.sh -> 39071 bytes (combo: cpu_cores,passwd_line_count)
+  🧰 新规则: cpu_cores=22 (来自 discover_500.sh)
+  🧰 新规则: passwd_line_count=18 (来自 discover_500.sh)
+  [META] 淘汰 3 个低效行为. 现存: 131 个
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [DISCOVER] 探索: 48/418 命令
+  [GOAL] (try_cmd:debconf-apt-progress) TRY
+  [DIVERSITY] 强制 OBSERVE (GoalGenerator 多样性调整)
+  [RECOVER] fixed_params:OBSERVE -> OK
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [INFER] 12 个推断
+  [DISCOVER] 探索: 49/418 命令
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [SCRIPT] discover_525.sh -> 39075 bytes (combo: cpu_cores,passwd_line_count)
+  🧰 新规则: passwd_line_count=18 (来自 discover_525.sh)
+  🧰 新规则: cpu_cores=22 (来自 discover_525.sh)
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [DISCOVER] 探索: 50/418 命令
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [INFER] 12 个推断
+  [DISCOVER] 探索: 51/418 命令
+  [GOAL] (try_cmd:debconf-escape) TRY
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [DISCOVER] 探索: 52/418 命令
+  [TOOL] tool_gather_packages.py: found 145 installed packages
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [SCRIPT] discover_550.sh -> 39071 bytes (combo: cpu_cores,passwd_line_count)
+  🧰 新规则: cpu_cores=22 (来自 discover_550.sh)
+  🧰 新规则: passwd_line_count=18 (来自 discover_550.sh)
+  [META] 淘汰 1 个低效行为. 现存: 132 个
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [INFER] 12 个推断
+  [DISCOVER] 探索: 53/418 命令
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [DISCOVER] 探索: 54/418 命令
+  [GOAL] (try_cmd:delpart) TRY
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [SCRIPT] discover_575.sh -> 39071 bytes (combo: cpu_cores,passwd_line_count)
+  🧰 新规则: cpu_cores=22 (来自 discover_575.sh)
+  🧰 新规则: passwd_line_count=18 (来自 discover_575.sh)
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [INFER] 12 个推断
+  [DISCOVER] 探索: 55/418 命令
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [RECOVER] fixed_params:OBSERVE -> OK
+  [GOAL] (probe:cat /proc/meminfo) TRY
+  [DISCOVER] 探索: 56/418 命令
+  [DIVERSITY] 强制 CREATE (GoalGenerator 多样性调整)
+  ✅ PersistentStore: 所有状态已保存到 data/persistent
+/usr/lib/python3.14/multiprocessing/resource_tracker.py:475: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown: {'/loky-3342-8wor5m0t'}
+  warnings.warn(

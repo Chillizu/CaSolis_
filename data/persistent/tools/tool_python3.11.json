@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "python3.11"
+  ],
+  "desc": "run python3.11 with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

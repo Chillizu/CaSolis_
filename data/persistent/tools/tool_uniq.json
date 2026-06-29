@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "uniq"
+  ],
+  "desc": "run uniq with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

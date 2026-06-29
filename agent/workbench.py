@@ -431,7 +431,9 @@ class Workbench:
             return
 
         # P10: 写入图
-        was_new = self.graph.add_node(key, value, category, confidence, step, source_cmd)
+        was_new = self.graph.add_node(key, value, category=category,
+                                       confidence=confidence, step=step,
+                                       source_cmd=source_cmd)
 
         # 兼容: 写入 facts dict
         is_new = key not in self.facts

@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "py3compile"
+  ],
+  "desc": "run py3compile with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "pidwait"
+  ],
+  "desc": "run pidwait with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

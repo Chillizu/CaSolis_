@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "snice"
+  ],
+  "desc": "run snice with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

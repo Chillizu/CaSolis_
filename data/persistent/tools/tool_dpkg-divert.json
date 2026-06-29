@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "dpkg-divert"
+  ],
+  "desc": "run dpkg-divert with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

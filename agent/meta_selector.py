@@ -156,6 +156,30 @@ class MetaCognitiveSelector:
             self.mode_history.append((step, old_mode, "EXPLORE", f"schema_cov={schema_cov:.2f} < 0.4"))
             return self.current_mode
 
+        # P16 R4: R9 — 有未验证假设 + 系统稳定 → LEARN
+        hypothesis_count = stats.get("hypothesis_count", 0)
+        belief_conf = stats.get("belief_confidence", 0.5)
+        if (hypothesis_count > 0 and schema_cov >= 0.4
+                and n_gaps <= 3 and not in_chain):
+            self.current_mode = "LEARN"
+            self.mode_start_step = step
+            self.mode_history.append(
+                (step, old_mode, "LEARN",
+                 f"R9: {hypothesis_count} hypotheses, cov={schema_cov:.2f}"))
+            return self.current_mode
+
+        # P16 R4: R10 — WM 误差持续高 → 强制 LEARN
+        wm_error = stats.get("wm_error", 0.0)
+        if wm_error > 0.3 and wm_loss > 0.5 and n_facts >= 5:
+            self.current_mode = "LEARN"
+            self.mode_start_step = step
+            self.mode_history.append(
+                (step, old_mode, "LEARN",
+                 f"R10: wm_error={wm_error:.2f} wm_loss={wm_loss:.2f}"))
+            return self.current_mode
+
+        # R4: 事实充足 + 缺口少 → CREATE
+
         # R4: 事实充足 + 缺口少 → CREATE
         if n_facts >= 8 and n_gaps <= 2:
             # 检查是否最近做过创作
@@ -277,3 +301,4 @@ class MetaCognitiveSelector:
         optimizer.step()
         self.mlp.eval()
         return loss.item()
+

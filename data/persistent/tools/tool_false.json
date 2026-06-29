@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "false"
+  ],
+  "desc": "run false with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "nameif"
+  ],
+  "desc": "run nameif with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

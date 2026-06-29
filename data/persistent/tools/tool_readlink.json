@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "readlink"
+  ],
+  "desc": "run readlink with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

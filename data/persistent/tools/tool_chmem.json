@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "chmem"
+  ],
+  "desc": "run chmem with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

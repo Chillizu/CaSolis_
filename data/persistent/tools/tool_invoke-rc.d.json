@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "invoke-rc.d"
+  ],
+  "desc": "run invoke-rc.d with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "pwck"
+  ],
+  "desc": "run pwck with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

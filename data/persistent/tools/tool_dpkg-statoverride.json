@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "dpkg-statoverride"
+  ],
+  "desc": "run dpkg-statoverride with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

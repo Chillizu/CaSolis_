@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "e4crypt"
+  ],
+  "desc": "run e4crypt with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

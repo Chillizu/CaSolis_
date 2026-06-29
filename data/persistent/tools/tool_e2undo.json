@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "e2undo"
+  ],
+  "desc": "run e2undo with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

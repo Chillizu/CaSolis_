@@ -1,0 +1,9 @@
+{
+  "cmd": [
+    "bc",
+    "--version"
+  ],
+  "desc": "run bc with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

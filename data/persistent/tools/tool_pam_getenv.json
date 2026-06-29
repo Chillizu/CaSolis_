@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "pam_getenv"
+  ],
+  "desc": "run pam_getenv with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

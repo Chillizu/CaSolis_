@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "e2mmpstatus"
+  ],
+  "desc": "run e2mmpstatus with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

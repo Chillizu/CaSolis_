@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "update-ca-certificates"
+  ],
+  "desc": "run update-ca-certificates with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

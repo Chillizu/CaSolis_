@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "rename.ul"
+  ],
+  "desc": "run rename.ul with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

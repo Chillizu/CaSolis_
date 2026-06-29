@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "netcat"
+  ],
+  "desc": "run netcat with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

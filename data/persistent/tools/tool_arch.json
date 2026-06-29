@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "arch"
+  ],
+  "desc": "run arch with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

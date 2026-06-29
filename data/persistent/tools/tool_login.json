@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "login"
+  ],
+  "desc": "run login with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

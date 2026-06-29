@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "ctrlaltdel"
+  ],
+  "desc": "run ctrlaltdel with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

@@ -58,14 +58,17 @@ class GoalGenerator:
     def generate(self, mode: str, workbench=None, rnd_avg: float = 0.0,
                  step: int = 0, recent_intents: Optional[list[str]] = None,
                  force_create: bool = False,
-                 knowledge_mapper=None, tool_registry=None) -> Optional[Goal]:
+                 knowledge_mapper=None, tool_registry=None,
+                 hypothesis_engine=None, fact_graph=None) -> Optional[Goal]:
         """
-        动态生成最佳目标 — 所有人决策由数据驱动
+        动态生成最佳目标 — 所有决策由数据驱动
 
         Args:
           mode: EXPLORE | CREATE | LEARN
-          knowledge_mapper: KnowledgeMapper 实例 (发现命令用)
-          tool_registry: ToolRegistry 实例 (工具用)
+          knowledge_mapper: KnowledgeMapper 实例
+          tool_registry: ToolRegistry 实例
+          hypothesis_engine: P16 R3 假设引擎 (LEARN 模式使用)
+          fact_graph: P16 R3 FactGraph (用于假设生成)
         """
         if workbench is None:
             return None
@@ -113,6 +116,26 @@ class GoalGenerator:
         elif mode == "LEARN":
             n_learn = self._learn_candidates(workbench, step)
             candidates.extend(n_learn)
+            # P16 R3: 假设验证目标
+            if hypothesis_engine and fact_graph:
+                try:
+                    hyps = getattr(hypothesis_engine, '_latest_hypotheses', None)
+                    if hyps is None:
+                        # 尝试从 hypothesis_engine 获取
+                        hyps = getattr(hypothesis_engine, '_generated_hypotheses', [])
+                    if not hyps and hasattr(hypothesis_engine, 'propose'):
+                        hyps = hypothesis_engine.propose(fact_graph, top_k=3)
+                    for h in (hyps or []):
+                        candidates.append(Goal(
+                            "hypothesis_test", "TRY",
+                            {"hypothesis": h,
+                             "hypothesis_key": f"{h['if_node']}:{h['rel']}:{h['then_node']}"},
+                            priority=0.8 + 0.2 * h.get("priority", 0),
+                            source="hypothesis_engine",
+                            description=h.get("prediction", ""),
+                        ))
+                except Exception:
+                    pass
 
         # ── 5. 多样性: 降频权 (温和版本) ──
         if recent:

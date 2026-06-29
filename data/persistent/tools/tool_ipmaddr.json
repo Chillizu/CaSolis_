@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "ipmaddr"
+  ],
+  "desc": "run ipmaddr with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

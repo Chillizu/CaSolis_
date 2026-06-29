@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "infocmp"
+  ],
+  "desc": "run infocmp with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

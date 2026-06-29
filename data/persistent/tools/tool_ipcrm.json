@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "ipcrm"
+  ],
+  "desc": "run ipcrm with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

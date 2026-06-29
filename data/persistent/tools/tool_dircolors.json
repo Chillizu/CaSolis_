@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "dircolors"
+  ],
+  "desc": "run dircolors with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

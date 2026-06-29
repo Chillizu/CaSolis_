@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "unexpand"
+  ],
+  "desc": "run unexpand with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

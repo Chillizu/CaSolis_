@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "deb-systemd-invoke"
+  ],
+  "desc": "run deb-systemd-invoke with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

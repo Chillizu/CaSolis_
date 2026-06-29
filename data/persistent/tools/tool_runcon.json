@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "runcon"
+  ],
+  "desc": "run runcon with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

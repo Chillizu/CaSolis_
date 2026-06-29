@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "mkfifo"
+  ],
+  "desc": "run mkfifo with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

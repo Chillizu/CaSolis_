@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "partx"
+  ],
+  "desc": "run partx with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

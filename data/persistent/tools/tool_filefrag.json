@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "filefrag"
+  ],
+  "desc": "run filefrag with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

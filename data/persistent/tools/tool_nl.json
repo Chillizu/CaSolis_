@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "nl"
+  ],
+  "desc": "run nl with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

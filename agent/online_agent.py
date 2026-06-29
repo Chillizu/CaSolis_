@@ -189,6 +189,8 @@ class OnlineAgent:
         explore_prob: float = 0.1,
         conductor_gate: float = 0.7,  # A/B 切换阈值 (经验证 0.7 最优)
         mode: str = "auto",  # stable | creative | auto
+        api_backend: str = "",
+        api_key: str = "",
     ):
         # Conductor checkpoint 自动选择: 线上对齐版 > 原始版
         if conductor_checkpoint is None:
@@ -256,29 +258,36 @@ class OnlineAgent:
 
         # P10: 层级架构 — 元认知 + 目标生成 + 增长型 WM V4
         self.meta_selector = MetaCognitiveSelector()
-        # P1: CreativeWriter (LLM 创作插件)
+        # P17: SelfModel (自我意识统计)
+        from agent.self_model import SelfModel
+        self.self_model = SelfModel()
+
         self.creative_writer = None
         try:
+            cw_backend = api_backend or os.environ.get("DEEPSEEK_BACKEND", "ollama")
+            cw_key = api_key or os.environ.get("DEEPSEEK_API_KEY", "")
             self.creative_writer = CreativeWriter(
-                model="gemma4:e4b",
                 timeout=120.0,
-                max_tokens=1024,
+                max_tokens=2048,
+                api_backend=cw_backend,
+                api_key=cw_key,
             )
-            if self.creative_writer.health_check():
-                print(f"  \u2705 CreativeWriter 就绪 (gemma4:e4b)")
+            if self.creative_writer and self.creative_writer.health_check():
+                print(f"  ✅ CreativeWriter 就绪 ({self.creative_writer.model})")
             else:
                 self.creative_writer = None
-                print(f"  \u26a0\ufe0f CreativeWriter 不可用 (Ollama?)")
+                print(f"  ⚠️ CreativeWriter 不可用 (Ollama?)")
         except Exception as e:
-            print(f"  \u26a0\ufe0f CreativeWriter 初始化失败: {e}")
+            print(f"  ⚠️ CreativeWriter 初始化失败: {e}")
 
         self.goal_generator = GoalGenerator(creative_writer=self.creative_writer)
         if self.creative_writer:
             self.creative_writer.enable_async()
-            self._last_llm_step = -100  # P2: LLM 调用步数追踪
-            # 启动预生成: 让 gemma4 在背景先跑一轮
-            if hasattr(self, 'workbench') and self.workbench:
+            self._last_llm_step = -100
+            try:
                 self.creative_writer.generate_async(self.workbench, "report")
+            except Exception:
+                pass
         else:
             self._last_llm_step = -100
         # V4 在所有意图上初始化叶
@@ -344,6 +353,27 @@ class OnlineAgent:
         else:
             print(f"  ℹ️ PersistentStore: 无历史数据, 从零开始")
 
+        # P16 R1: Transition recording (因果推理数据收集)
+        self._transitions: list[dict] = []
+        self._transition_file = "data/persistent/transitions.jsonl"
+        self._transition_flush_size = 50
+        os.makedirs("data/persistent", exist_ok=True)
+        # 尝试从文件恢复最近 transition
+        self._load_recent_transitions()
+
+        # P16 R2: 因果挖掘 + 假设生成
+        from agent.transition_miner import TransitionMiner
+        from agent.hypothesis_engine import HypothesisEngine
+        self.transition_miner = TransitionMiner()
+        self.hypothesis_engine = HypothesisEngine(top_k=5)
+        # P16 R3: 实验规划 + 验证
+        from agent.experiment_planner import ExperimentPlanner
+        from agent.verdict import Verdict
+        self.experiment_planner = ExperimentPlanner()
+        self.verdict = Verdict(lr=0.3)
+        self._last_experiment_step = -10
+        self._latest_hypotheses: list[dict] = []
+
         self.ab_stats = {"conductor": 0, "classifier": 0, "conductor_success": 0, "classifier_success": 0, "goal_driven": 0, "goal_driven_success": 0, "imagined": 0, "imagined_success": 0}
         self.multi_cmds_count = 0  # P1: 多命令步数
         self._last_cond_logits = None  # P2: 最近一次 Conductor logits
@@ -395,6 +425,10 @@ class OnlineAgent:
         self._last_was_imagined = False  # P5.2: 当前步是否来自想象力
         self._discovered_commands: set[str] = set()  # P8.5d: 从沙箱扫到的新命令
         self._discovered_cmd_last_scan: int = 0
+        # P17: 自省方向 (LLM输出→实际行为)
+        self._self_direction: str = ""      # 当前方向描述
+        self._self_remaining: int = 0       # 剩余偏置步数
+        self._self_plan_steps: int = 0      # 当前规划的第几步
         self.logger = DetailedLogger()  # P9: 超级日志
 
         # 失败抑制: 同一 intent+params 失败后 N 步内不再尝试
@@ -470,6 +504,58 @@ class OnlineAgent:
         goal = self.explore_targets[self.goal_idx % len(self.explore_targets)]
         self.goal_idx += 1
         return goal
+
+    # ── P16 R1: Transition recording ──
+
+    def _load_recent_transitions(self, max_entries: int = 500):
+        """从 JSONL 加载最近的 transition 记录"""
+        if not os.path.exists(self._transition_file):
+            return
+        try:
+            with open(self._transition_file) as f:
+                lines = f.readlines()
+            # 只保留最近 max_entries 条
+            recent = lines[-max_entries:]
+            for line in recent:
+                line = line.strip()
+                if line:
+                    try:
+                        self._transitions.append(json.loads(line))
+                    except json.JSONDecodeError:
+                        continue
+            if self._transitions:
+                print(f"  ✅ 已加载 {len(self._transitions)} 条 transition 记录")
+        except (OSError, IOError):
+            pass
+
+    def _flush_transitions(self):
+        """将 transition 缓冲区写入 JSONL 文件"""
+        if not self._transitions:
+            return
+        try:
+            with open(self._transition_file, "a") as f:
+                for t in self._transitions[-self._transition_flush_size:]:
+                    f.write(json.dumps(t, ensure_ascii=False) + "\n")
+            # 清空已刷新的条目 (保留最近未写入的)
+            self._transitions = []
+            # 限制文件大小: 只保留最近 600 条 (500 + buffer)
+            self._trim_transition_file()
+        except (OSError, IOError) as e:
+            if random.random() < 0.01:
+                print(f"  [TRANSITION] 写入失败: {e}")
+
+    def _trim_transition_file(self, keep: int = 600):
+        """限制 transition 文件行数"""
+        if not os.path.exists(self._transition_file):
+            return
+        try:
+            with open(self._transition_file) as f:
+                lines = f.readlines()
+            if len(lines) > keep:
+                with open(self._transition_file, "w") as f:
+                    f.writelines(lines[-keep:])
+        except (OSError, IOError):
+            pass
 
     # P9.2: 创作意图基础奖励 (低于 INFO 但高于 LS_TMP, 确保被选中但不泛滥)
     INTENT_REWARD_CREATE = {
@@ -1280,6 +1366,22 @@ class OnlineAgent:
         ready_count = sum(1 for st in leaf_stats.values() if st.get("n_samples", 0) >= 20)
         return ready_count >= max(1, len(self.world_model_v4.leaves) // 3)
 
+    def _compute_belief_confidence(self) -> float:
+        """计算信念置信度: miner 写入的边的平均 weight"""
+        if not hasattr(self, 'workbench') or not hasattr(self.workbench, 'graph'):
+            return 0.5
+        g = self.workbench.graph
+        if not g or not g.edges:
+            return 0.5
+        miner_weights = []
+        for edges in g.edges.values():
+            for e in edges:
+                if e.get("hypothesis_key") == "transition_miner":
+                    miner_weights.append(e.get("weight", 0))
+        if not miner_weights:
+            return 0.5
+        return round(sum(miner_weights) / len(miner_weights), 3)
+
     def _compute_mode_stats(self) -> dict:
         """计算 MODE 选择器需要的统计量"""
         graph_st = self.workbench.graph.stats() if hasattr(self.workbench, "graph") else {}
@@ -1297,13 +1399,108 @@ class OnlineAgent:
             "schema_coverage": graph_st.get("schema_coverage", 0.0),
             "rnd_avg": rnd_st.get("running_errors_avg", 0.0),
             "wm_loss": wm_loss,
-            "recent_intents": list(self.intent_history[-20:]),
-            "in_chain": self.workbench.has_active_goal() if self.workbench else False,
-            "has_active_goal": self.workbench.has_active_goal() if self.workbench else False,
-            "fact_growth_rate": growth,
             # P15: 模型置信度
             "wm_confidence": self.world_model_v4.get_confidence(),
+            # P16 R4: 推理信念
+            "belief_confidence": self._compute_belief_confidence(),
+            "hypothesis_count": len(getattr(self, '_latest_hypotheses', [])),
+            "wm_error": wm_loss,
         }
+
+
+    # ── P17: 自省方向解析与应用 ──
+
+    def _parse_and_apply_direction(self, intention: str):
+        """解析 LLM 自省意图, 设置方向偏置"""
+        text = intention.lower()
+        direction = ""
+        cluster_bias = {}
+
+        # 关键词 → 方向 + cluster 偏置
+        kw_dirs = {
+            "filesystem": ("filesystem", {"fs": 2.0, "system": 0.5}),
+            "file": ("filesystem", {"fs": 2.0}),
+            "directory": ("filesystem", {"fs": 2.0}),
+            "ls": ("filesystem", {"fs": 2.0}),
+            "disk": ("filesystem", {"disk": 1.5}),
+            "storage": ("storage", {"disk": 2.0}),
+            "network": ("network", {"network": 2.0}),
+            "connection": ("network", {"network": 2.0}),
+            "socket": ("network", {"network": 2.0}),
+            "ip": ("network", {"network": 2.0}),
+            "script": ("scripting", {"script": 2.0}),
+            "python": ("scripting", {"script": 2.0}),
+            "code": ("scripting", {"script": 2.0}),
+            "write": ("create", {"write": 1.5}),
+            "report": ("create", {"content": 1.5}),
+            "command": ("explore", {"system": 1.0}),
+            "explore": ("explore", {"system": 1.5}),
+            "process": ("process", {"process": 2.0}),
+            "memory": ("memory", {"memory": 2.0, "system": 0.5}),
+            "cpu": ("cpu", {"cpu": 2.0, "system": 0.5}),
+            "hardware": ("hardware", {"system": 1.0, "cpu": 1.0}),
+        }
+
+        import re
+        for kw, (dir_name, c_bias) in kw_dirs.items():
+            if re.search(r'\b' + kw + r'\b', text):
+                direction = dir_name
+                cluster_bias = c_bias
+                break
+
+        if not direction:
+            # 默认: 探索
+            direction = "explore"
+            cluster_bias = {"system": 1.0}
+
+        # 设置方向
+        self._self_direction = direction
+        self._self_remaining = 5  # 接下来 5 步按方向走
+        self._self_plan_steps = 0
+
+        # 应用 cluster 偏置
+        if hasattr(self, 'cmd_selector'):
+            self.cmd_selector.cluster_bias = cluster_bias
+
+        if random.random() < 0.3:
+            print(f"  [SELF-DIR] {direction}: {intention[:60]}...")
+
+    def _direction_step(self) -> tuple[str | None, dict | None]:
+        """按当前方向执行一步"""
+        self._self_remaining -= 1
+        self._self_plan_steps += 1
+        dir = self._self_direction
+        step_n = self._self_plan_steps
+
+        if dir == "filesystem":
+            # 步1-2: OBSERVE 文件系统, 步3+: 总结
+            if step_n <= 2:
+                return "OBSERVE", {"path": "/"}
+            else:
+                return "CREATE", {"path": f"/tmp/fs_summary_{self.step_count}.md",
+                                  "content": f"# Filesystem overview (step {self.step_count})\n"}
+        elif dir == "network":
+            return "TRY", {"custom_args": ["ip", "addr"]}
+        elif dir == "scripting":
+            if step_n <= 1:
+                return "OBSERVE", {"path": "/workspace/scripts"}
+            else:
+                return "CREATE", {"path": f"/tmp/script_{self.step_count}.py",
+                                  "content": "#!/usr/bin/env python3\nprint('script by agent')\n"}
+        elif dir == "create":
+            return "CREATE", {"path": f"/tmp/creation_{self.step_count}.md",
+                              "content": f"# Creation step {self.step_count}\n"}
+        elif dir == "explore":
+            cluster, cmd_args = self.cmd_selector.select()
+            return "TRY", {"custom_args": cmd_args, "cluster": cluster}
+        elif dir == "process":
+            return "TRY", {"custom_args": ["ps", "aux"]}
+        elif dir == "memory":
+            return "OBSERVE", {"path": "/proc/meminfo"}
+        elif dir == "cpu":
+            return "OBSERVE", {"path": "/proc/cpuinfo"}
+        else:
+            return "TRY", {"custom_args": ["uname", "-a"]}
 
     def step(self) -> tuple[bool, float]:
         """执行一步: P10 MODE/GOAL/ACTION路由"""
@@ -1353,7 +1550,32 @@ class OnlineAgent:
                 if n_inf > 0:
                     print(f"  [INFER] {n_inf} 个推断")
 
-        # P12/P13++: 知识拓展 (先跑固定phase, 完成后自动切换为自发现)
+        # P16 R2: TransitionMiner 因果挖掘 (低频率)
+        if (self.step_count > 50 and self._adaptive_should("mine_causal", 0.02)
+                and hasattr(self, 'transition_miner')):
+            try:
+                candidates = self.transition_miner.mine(
+                    path=self._transition_file,
+                    graph=self.workbench.graph if hasattr(self.workbench, 'graph') else None,
+                    window=500,
+                )
+                if candidates:
+                    # 写入 FactGraph
+                    self.transition_miner.apply_to_graph(
+                        candidates, self.workbench.graph, step=self.step_count)
+                    # 生成假设
+                    hyps = self.hypothesis_engine.generate(
+                        candidates, self.workbench.graph)
+                    if hyps:
+                        self._latest_hypotheses = hyps
+                        print(f"  [HYPOTHESIS] {len(hyps)} 个假设 (来自 {len(candidates)} 候选边)")
+                        for h in hyps[:3]:
+                            print(f"    {h['if_node']} → {h['then_node']} "
+                                  f"(priority={h['priority']:.3f})")
+            except Exception as e:
+                if random.random() < 0.05:
+                    print(f"  [MINER-ERR] {e}")
+
         if hasattr(self, 'knowledge_mapper') and self.step_count > 10:
             any_remaining = any(
                 not self.knowledge_mapper.is_phase_done(p)
@@ -1462,6 +1684,8 @@ class OnlineAgent:
             force_create=force_create,
             knowledge_mapper=self.knowledge_mapper if hasattr(self, 'knowledge_mapper') else None,
             tool_registry=self.tool_registry if hasattr(self, 'tool_registry') else None,
+            hypothesis_engine=self.hypothesis_engine if hasattr(self, 'hypothesis_engine') else None,
+            fact_graph=self.workbench.graph if hasattr(self.workbench, 'graph') else None,
         )
         if goal:
             intent = goal.intent
@@ -1471,6 +1695,64 @@ class OnlineAgent:
             self.ab_stats["goal_driven"] = self.ab_stats.get("goal_driven", 0) + 1
             if random.random() < 0.15:
                 print(f"  [GOAL] ({goal.source}) {intent}")
+            # P16 R3: 假设验证实验
+            if hasattr(goal, 'type') and goal.type == "hypothesis_test":
+                h_key = params.get("hypothesis_key", "")
+                if (h_key and hasattr(self, 'experiment_planner')
+                        and self.sandbox
+                        and self.step_count - self._last_experiment_step >= 10):
+                    try:
+                        hypothesis = params.get("hypothesis", {})
+                        plan = self.experiment_planner.plan(hypothesis)
+                        if plan:
+                            plan["_step"] = self.step_count
+                            result = self.experiment_planner.execute_plan(plan, self.sandbox)
+                            verdict = self.verdict.evaluate(
+                                plan, result, self.workbench.graph)
+                            self._last_experiment_step = self.step_count
+                            print(f"  [EXPERIMENT] {h_key}: {verdict['verdict']} "
+                                  f"(score={verdict['score']:.2f})")
+                            if verdict["edge_removed"]:
+                                print(f"  [EXPERIMENT] Edge removed: "
+                                      f"weight={verdict['old_weight']} < -0.5")
+                            # P16 R4: Feed verdict to WorldModel
+                            if hasattr(self, 'world_model_v4') and plan.get("cmd"):
+                                try:
+                                    wm_input = f"{h_key} {verdict['verdict']} score={verdict['score']}"
+                                    wm_emb = self.classifier.get_embedding(wm_input).detach().clone()
+                                    self.world_model_v4.update(
+                                        wm_emb, thought_vector.clone(),
+                                        INTENTS.index("TRY"),
+                                        f"experiment: {verdict['verdict']}",
+                                        verdict["n_support"] if verdict["verdict"] == "support" else 1,
+                                        verdict["score"],
+                                    )
+                                except Exception:
+                                    pass
+                            # P16 R4: Auto schema — verified edge → schema
+                            if (verdict["verdict"] == "support"
+                                    and verdict["score"] > 0.5
+                                    and hasattr(self.workbench, 'graph')):
+                                try:
+                                    g = self.workbench.graph
+                                    parts = h_key.split(":", 2)
+                                    if len(parts) == 3:
+                                        sk, _, dk = parts
+                                        if sk in g.nodes and dk in g.nodes:
+                                            cat_src = g.nodes[sk].category
+                                            cat_dst = g.nodes[dk].category
+                                            if cat_src == cat_dst:
+                                                schema = g.schemas.setdefault(cat_src, [])
+                                                if dk not in schema:
+                                                    schema.append(dk)
+                                                    print(f"  [SCHEMA] Added {dk} to {cat_src} schema")
+                                except Exception:
+                                    pass
+                            intent = "TRY"
+                            params = {"custom_args": plan["cmd"].split()}
+                    except Exception as e:
+                        if random.random() < 0.1:
+                            print(f"  [EXPERIMENT-ERR] {e}")
             # P10: 即使有目标, 也检查多样性 (防止 GoalGenerator 返回同类型目标)
             if len(self.intent_history) >= 8:
                 recent10 = self.intent_history[-8:]
@@ -1494,6 +1776,40 @@ class OnlineAgent:
                         self._last_action_source = "diversity"
                         if random.random() < 0.1:
                             print(f"  [DIVERSITY] 强制 {forced} (GoalGenerator 多样性调整)")
+
+        # P17: 保持 LLM 异步生成管道运行
+        if (hasattr(self, 'creative_writer')
+                and self.creative_writer._async_enabled
+                and getattr(self.creative_writer, '_async_result', None) is None
+                and self.step_count % 5 == 0):
+            try:
+                self.creative_writer.generate_async(self.workbench)
+            except Exception:
+                pass
+
+        # P17: 自我反思 — 每 20 步问 LLM "你想做什么"
+        if (hasattr(self, 'self_model') and hasattr(self, 'creative_writer')
+                and self.creative_writer
+                and self.step_count > 30
+                and self.step_count % 20 == 0
+                and self._self_remaining <= 0):
+            try:
+                intention = self.creative_writer.generate_self_reflect(
+                    self.workbench, timeout=90)
+                if intention and len(intention.strip()) > 10:
+                    self._parse_and_apply_direction(intention.strip())
+            except Exception as e:
+                if random.random() < 0.1:
+                    print(f"  [SELF-ERR] {e}")
+
+        # P17: 方向持久期 — 每步按方向选择
+        if self._self_remaining > 0 and not used_goal:
+            dir_intent, dir_params = self._direction_step()
+            if dir_intent:
+                intent = dir_intent
+                params = dir_params
+                used_goal = True
+                self._last_action_source = "self_reflect"
 
         # 3. Fallback: 全局多样性 (15步未覆盖意图)
         if not used_goal and len(self.intent_history) >= 15:
@@ -1793,6 +2109,8 @@ class OnlineAgent:
             except Exception:
                 multi_results = None
 
+        # P16 R1: Ensure _pre_state defined for all paths
+        _pre_state = {}
         if multi_results and len(multi_results) > 0 and multi_results[0].exit_code != -1:
             # 多命令: 合并输出, 用第一条为主结果
             output_parts = []
@@ -1810,6 +2128,13 @@ class OnlineAgent:
             result = multi_results[0]
             self.multi_cmds_count += 1
         else:
+            # P16 R1: Capture pre_state before execution
+            _pre_state = {}
+            wb = self.workbench
+            if hasattr(wb, 'graph') and wb.graph:
+                _pre_state = {k: n.value for k, n in wb.graph.nodes.items()}
+            elif hasattr(wb, 'facts'):
+                _pre_state = {k: v.get("value", "") for k, v in wb.facts.items()}
             result = self.engine.execute(intent, params)
             output = (result.stdout or result.stderr or "")
         
@@ -1818,7 +2143,7 @@ class OnlineAgent:
             cmd_name = " ".join(str(a) for a in params.get("custom_args", []))
         else:
             cmd_name = str(params.get("path", params.get("cmd", intent)))
-
+        
         # P8.0: 失败后自动恢复
         if result.exit_code != 0 and hasattr(self, 'error_recovery'):
             new_result, recovery_info = self.error_recovery.recover(
@@ -1829,60 +2154,6 @@ class OnlineAgent:
                 output = (result.stdout or result.stderr or "")
                 if random.random() < 0.2:
                     print(f"  [RECOVER] {recovery_info.get('action', '?')} -> OK")
-
-        # 全量日志 (含正确步数)
-        _log_execution(intent, params, result, output, state_text, step=self.step_count)
-        
-        # CUSTOM 回传结果 + 意图发现
-        if intent == "CUSTOM":
-            custom_args = params.get("custom_args", [])
-            cluster_name = params.get("cluster", "UNKNOWN")
-            cmd_name = custom_args[0] if custom_args else ""
-            # RND 好奇心估计 (用于探索 bonus)
-            se = self.classifier.get_embedding(state_text).clone()
-            rnd_novelty_est = float(self.rnd.compute_novelty(se))
-            self.cmd_selector.record_result(
-                cluster=cluster_name,
-                cmd=cmd_name,
-                success=(result.exit_code == 0),
-                novelty=rnd_novelty_est,
-                reward=float(result.exit_code == 0),
-            )
-            # 如果是元命令, 挖掘新命令
-            cmd_str = " ".join(custom_args)
-            if self.cmd_selector.is_discovery_command(custom_args) and output:
-                discovered = self.cmd_miner.mine(output, source=cmd_str)
-                for d in discovered:
-                    self.cmd_selector.add_command(d["cluster"], d["name"])
-                if discovered:
-                    print(f"\n  ⛏️ 发现 {len(discovered)} 个新命令!")
-                    for d in discovered[:10]:
-                        print(f"     {d['name']:20s} → {d['cluster']}")
-                    if len(discovered) > 10:
-                        print(f"     ... 还有 {len(discovered)-10} 个")
-            
-            # 记录轨迹用于自动意图发现
-            if (result.exit_code == 0) and output:
-                self.intent_discoverer.add_custom_trajectory(
-                    state_text=state_text,
-                    cmd_args=custom_args,
-                    output=output,
-                    success=True,
-                )
-                # 检查是否可以发现新意图
-                if self.intent_discoverer.ready():
-                    self.intent_discoverer.filter_known(INTENTS)
-                    new_intents = self.intent_discoverer.discover()
-                    if new_intents:
-                        print(f"\n  🆕 发现 {len(new_intents)} 个候选意图!")
-                        for ni in new_intents:
-                            print(f"     {ni['name']:20s} ({ni['n_samples']}条, 例: {ni['cmd_base']})")
-                        # P6.3: 标记已汇报, 避免每步刷屏
-                        self.intent_discoverer.mark_reported([ni['name'] for ni in new_intents])
-                        # P6.4: 自动接入稳定新意图 (>=5样本)
-                        stable = [ni for ni in new_intents if ni['n_samples'] >= 5]
-                        if stable:
-                            self._expand_intents(stable)
 
         # 5. 更新状态
         cmd_summary = f"{intent} depth={depth}" if depth > 1 else f"{intent} {params}"
@@ -1908,6 +2179,14 @@ class OnlineAgent:
         discovery_before = self.workbench.get_current_discovery()
         if result.exit_code == 0:
             self.workbench.extract_facts(intent, cmd_name, output, params, self.step_count)
+
+        # P16 R1: Capture post_state after fact extraction
+        _post_state = {}
+        _wb = self.workbench
+        if hasattr(_wb, 'graph') and _wb.graph:
+            _post_state = {k: n.value for k, n in _wb.graph.nodes.items()}
+        elif hasattr(_wb, 'facts'):
+            _post_state = {k: v.get("value", "") for k, v in _wb.facts.items()}
 
         # 6. 世界模型好奇心 + RND 新颖度
         next_state_text = self.state_encoder.get_state_text(thought_label=thought_label)
@@ -2004,6 +2283,20 @@ class OnlineAgent:
         step_success = (result.exit_code == 0) and bool(output)
         if step_success:
             self.success_count += 1
+        # P17: SelfModel 记录
+        if hasattr(self, 'self_model'):
+            try:
+                n_facts_new = max(0, len(self.workbench.facts) - facts_before)
+                self.self_model.record(
+                    intent=intent, success=step_success, reward=reward,
+                    step=self.step_count,
+                    output_len=len(output),
+                    n_facts=n_facts_new,
+                    path=params.get("path", ""),
+                    content_len=len(params.get("content", "")),
+                )
+            except Exception:
+                pass
 
         # P15: WM 自我反思 (预测 vs 实际)
         if hasattr(self, 'world_model_v4') and thought_vector is not None and intent:
@@ -2091,6 +2384,8 @@ class OnlineAgent:
             if not hasattr(self, '_run_id'):
                 self._run_id = f"run_{self.step_count}"
             self.pstore.save_all(self, run_stats=stats)
+            if hasattr(self, 'self_model'):
+                self.self_model.save()
 
         # P5.1: 自引用 — 自引用 — 自适应频率
         if self.sandbox and self.step_count > 0 and self._adaptive_should("self_review", 0.03):
@@ -2194,6 +2489,23 @@ class OnlineAgent:
             if pruned > 0:
                 print(f"  [META] 淘汰 {pruned} 个低效行为. "
                       f"现存: {meta_stats['total_behaviors']} 个")
+
+        # P16 R1: Record transition
+        _transition = {
+            "step": self.step_count,
+            "pre_state": _pre_state if '_pre_state' in dir() else {},
+            "action": intent,
+            "params": str(params)[:200],
+            "cmd": cmd_name if 'cmd_name' in dir() else intent,
+            "post_state": _post_state if '_post_state' in dir() else {},
+            "exit_code": result.exit_code,
+            "output_len": len(output) if 'output' in dir() else 0,
+            "had_new_facts": new_fact_this_step if 'new_fact_this_step' in dir() else False,
+            "reward": reward,
+        }
+        self._transitions.append(_transition)
+        if len(self._transitions) >= self._transition_flush_size:
+            self._flush_transitions()
 
         return step_success, reward
 

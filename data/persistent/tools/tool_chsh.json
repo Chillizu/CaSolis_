@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "chsh"
+  ],
+  "desc": "run chsh with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

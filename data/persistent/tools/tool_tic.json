@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "tic"
+  ],
+  "desc": "run tic with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

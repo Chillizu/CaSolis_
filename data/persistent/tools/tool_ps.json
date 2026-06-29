@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "ps"
+  ],
+  "desc": "run ps with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

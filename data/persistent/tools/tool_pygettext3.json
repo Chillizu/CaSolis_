@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "pygettext3"
+  ],
+  "desc": "run pygettext3 with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

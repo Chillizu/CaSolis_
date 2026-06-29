@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "pkill"
+  ],
+  "desc": "run pkill with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

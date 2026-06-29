@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "add-shell"
+  ],
+  "desc": "run add-shell with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

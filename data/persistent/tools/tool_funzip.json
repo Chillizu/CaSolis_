@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "funzip"
+  ],
+  "desc": "run funzip with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

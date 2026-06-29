@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "bashbug"
+  ],
+  "desc": "run bashbug with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

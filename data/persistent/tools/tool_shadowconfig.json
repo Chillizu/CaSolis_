@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "shadowconfig"
+  ],
+  "desc": "run shadowconfig with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "faillog"
+  ],
+  "desc": "run faillog with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "scriptreplay"
+  ],
+  "desc": "run scriptreplay with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

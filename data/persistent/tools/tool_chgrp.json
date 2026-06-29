@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "chgrp"
+  ],
+  "desc": "run chgrp with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

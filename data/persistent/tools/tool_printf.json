@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "printf"
+  ],
+  "desc": "run printf with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

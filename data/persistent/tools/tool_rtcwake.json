@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "rtcwake"
+  ],
+  "desc": "run rtcwake with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

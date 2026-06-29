@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "debconf-communicate"
+  ],
+  "desc": "run debconf-communicate with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

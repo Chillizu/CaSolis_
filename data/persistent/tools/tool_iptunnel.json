@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "iptunnel"
+  ],
+  "desc": "run iptunnel with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

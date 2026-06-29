@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "rmdir"
+  ],
+  "desc": "run rmdir with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

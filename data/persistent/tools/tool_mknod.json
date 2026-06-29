@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "mknod"
+  ],
+  "desc": "run mknod with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

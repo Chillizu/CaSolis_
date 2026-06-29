@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "mke2fs"
+  ],
+  "desc": "run mke2fs with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

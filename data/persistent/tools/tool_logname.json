@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "logname"
+  ],
+  "desc": "run logname with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

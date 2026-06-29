@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "gpgv"
+  ],
+  "desc": "run gpgv with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

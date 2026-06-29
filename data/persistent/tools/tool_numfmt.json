@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "numfmt"
+  ],
+  "desc": "run numfmt with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "pivot_root"
+  ],
+  "desc": "run pivot_root with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

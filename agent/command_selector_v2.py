@@ -66,6 +66,9 @@ class HierarchicalSelector:
             "ls /usr/bin": ["ls", "/usr/bin"],
             "ls /bin": ["ls", "/bin"],
         }
+
+        # P17: 外部方向偏置 (来自自省)
+        self.cluster_bias: dict[str, float] = {}  # cluster_name → bonus
     
     def register_cluster(self, name: str, commands: list[str]):
         """注册一个 cluster 及其命令"""
@@ -149,6 +152,9 @@ class HierarchicalSelector:
             success_rate = stats["success"] / max(n, 1) if n > 0 else 0.5
             
             scores[c] = avg_reward + ucb
+            # P17: 自省方向偏置
+            bonus = self.cluster_bias.get(c, 0.0)
+            scores[c] += bonus
         
         # Softmax over clusters
         temp = self.cluster_temp

@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "nc.openbsd"
+  ],
+  "desc": "run nc.openbsd with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "seq"
+  ],
+  "desc": "run seq with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

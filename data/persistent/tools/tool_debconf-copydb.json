@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "debconf-copydb"
+  ],
+  "desc": "run debconf-copydb with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

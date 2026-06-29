@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "stat"
+  ],
+  "desc": "run stat with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

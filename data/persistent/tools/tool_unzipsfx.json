@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "unzipsfx"
+  ],
+  "desc": "run unzipsfx with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "zramctl"
+  ],
+  "desc": "run zramctl with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

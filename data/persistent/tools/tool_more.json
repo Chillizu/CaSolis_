@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "more"
+  ],
+  "desc": "run more with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

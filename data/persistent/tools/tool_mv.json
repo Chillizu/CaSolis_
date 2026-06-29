@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "mv"
+  ],
+  "desc": "run mv with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

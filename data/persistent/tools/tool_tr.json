@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "tr"
+  ],
+  "desc": "run tr with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "remove-shell"
+  ],
+  "desc": "run remove-shell with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

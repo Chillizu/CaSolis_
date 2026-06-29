@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "mkhomedir_helper"
+  ],
+  "desc": "run mkhomedir_helper with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

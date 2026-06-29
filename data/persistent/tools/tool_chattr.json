@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "chattr"
+  ],
+  "desc": "run chattr with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

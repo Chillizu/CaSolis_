@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "unlink"
+  ],
+  "desc": "run unlink with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

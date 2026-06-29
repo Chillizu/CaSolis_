@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "uptime"
+  ],
+  "desc": "run uptime with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

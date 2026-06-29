@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "basenc"
+  ],
+  "desc": "run basenc with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "blockdev"
+  ],
+  "desc": "run blockdev with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

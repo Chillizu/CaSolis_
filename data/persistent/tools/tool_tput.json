@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "tput"
+  ],
+  "desc": "run tput with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

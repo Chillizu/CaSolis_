@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "fstab-decode"
+  ],
+  "desc": "run fstab-decode with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

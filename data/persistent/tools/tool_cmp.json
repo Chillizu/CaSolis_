@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "cmp"
+  ],
+  "desc": "run cmp with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

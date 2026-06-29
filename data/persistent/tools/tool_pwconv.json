@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "pwconv"
+  ],
+  "desc": "run pwconv with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

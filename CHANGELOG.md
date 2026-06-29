@@ -5,6 +5,30 @@
 
 ---
 
+## [2026-06-29] P16 — 认知推理层设计方案
+
+### 新增设计文档
+- `REASONING_LAYER_DESIGN.md` — 基于 BeliefGraph + TransitionMiner + HypothesisEngine + ExperimentPlanner + Verdict/Reflection 的 P16 推理层设计
+
+### 设计要点
+- 不依赖 LLM, 复用 MiniLM + GrowingWorldModel V4
+- 把 FactGraph 升级为 BeliefGraph: 节点/边带置信度与证据计数
+- Transition Miner 从 (pre_state, action, post_state) 中做轻量因果发现
+- HypothesisEngine 生成可验证假设, ExperimentPlanner 设计沙箱实验
+- Verdict/Reflection 更新信念图并训练世界模型
+- 集成进现有 MODE -> GOAL -> ACTION 层级: GoalGenerator 新增 `hypothesis_test` 类型
+
+### 实施路线
+- R1: 记录与测量
+- R2: 离线因果挖掘
+- R3: 在线实验闭环
+- R4: 自我改进反馈
+
+### 风险
+- 相关误判为因果、假设爆炸、WM 预测不准、主动干预沙箱状态
+
+---
+
 ## [2026-06-25] P10 — 层级架构完成
 
 ### 新增模块

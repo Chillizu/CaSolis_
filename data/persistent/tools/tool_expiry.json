@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "expiry"
+  ],
+  "desc": "run expiry with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

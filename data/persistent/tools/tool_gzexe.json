@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "gzexe"
+  ],
+  "desc": "run gzexe with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "rarp"
+  ],
+  "desc": "run rarp with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

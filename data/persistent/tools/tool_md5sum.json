@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "md5sum"
+  ],
+  "desc": "run md5sum with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "fsfreeze"
+  ],
+  "desc": "run fsfreeze with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

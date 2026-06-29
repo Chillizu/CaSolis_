@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "shuf"
+  ],
+  "desc": "run shuf with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

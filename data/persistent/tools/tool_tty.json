@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "tty"
+  ],
+  "desc": "run tty with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

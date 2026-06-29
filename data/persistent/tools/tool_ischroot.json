@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "ischroot"
+  ],
+  "desc": "run ischroot with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

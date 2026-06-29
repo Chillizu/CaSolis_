@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "cksum"
+  ],
+  "desc": "run cksum with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

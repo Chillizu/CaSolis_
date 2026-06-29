@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "gunzip"
+  ],
+  "desc": "run gunzip with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

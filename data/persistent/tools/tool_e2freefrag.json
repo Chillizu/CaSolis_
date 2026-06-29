@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "e2freefrag"
+  ],
+  "desc": "run e2freefrag with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

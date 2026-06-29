@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "badblocks"
+  ],
+  "desc": "run badblocks with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

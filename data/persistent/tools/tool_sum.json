@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "sum"
+  ],
+  "desc": "run sum with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

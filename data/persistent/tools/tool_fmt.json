@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "fmt"
+  ],
+  "desc": "run fmt with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

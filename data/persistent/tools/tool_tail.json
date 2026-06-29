@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "tail"
+  ],
+  "desc": "run tail with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

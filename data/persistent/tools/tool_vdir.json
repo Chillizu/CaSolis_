@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "vdir"
+  ],
+  "desc": "run vdir with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

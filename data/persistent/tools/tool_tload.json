@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "tload"
+  ],
+  "desc": "run tload with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

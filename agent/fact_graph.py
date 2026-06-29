@@ -15,7 +15,6 @@ import json
 from typing import Optional
 
 
-# ── 边类型 ──
 EDGE_REQUIRES = "requires"       # A 缺少 B 时应补充 (os_name → os_version_id)
 EDGE_VERIFIES = "verifies"       # A 验证 B (hostname → hostname_cmd)
 EDGE_EXTENDS = "extends"         # A 深化 B (cpu_cores → cpu_model)
@@ -23,17 +22,22 @@ EDGE_LOCATED_IN = "located_in"   # 文件在目录下
 EDGE_DERIVED_FROM = "derived"    # 事实从某命令输出推导
 EDGE_CONFLICTS = "conflicts"     # A 与 B 矛盾
 EDGE_SAME_AS = "same_as"         # A 等价 B
-
+# P16 R1: 推理层边类型
+EDGE_CORRELATES = "correlates"   # 统计共现 (TransitionMiner 产出)
+EDGE_CAUSES = "causes"           # 干预验证后 (ExperimentPlanner 产出)
+EDGE_PREDICTS = "predicts"       # 世界模型预测关系 (WM 产出)
+EDGE_INHIBITS = "inhibits"       # 负相关 (TransitionMiner 产出)
 
 class Node:
-    __slots__ = ("value", "category", "confidence", "step", "source_cmd", "count")
+    __slots__ = ("value", "category", "confidence", "n_evidence", "step", "source_cmd", "count")
     
     def __init__(self, value: str, category: str = "general",
-                 confidence: float = 1.0, step: int = 0,
-                 source_cmd: str = ""):
+                 confidence: float = 1.0, n_evidence: int = 0,
+                 step: int = 0, source_cmd: str = ""):
         self.value = value
         self.category = category
         self.confidence = confidence
+        self.n_evidence = n_evidence
         self.step = step
         self.source_cmd = source_cmd[:50]
         self.count = 1
@@ -43,6 +47,7 @@ class Node:
             "value": self.value,
             "category": self.category,
             "confidence": self.confidence,
+            "n_evidence": self.n_evidence,
             "step": self.step,
             "source_cmd": self.source_cmd,
             "count": self.count,
@@ -50,9 +55,14 @@ class Node:
 
     @classmethod
     def from_dict(cls, d: dict) -> "Node":
-        n = cls(d["value"], d.get("category", "general"),
-                d.get("confidence", 1.0), d.get("step", 0),
-                d.get("source_cmd", ""))
+        n = cls(
+            d["value"],
+            category=d.get("category", "general"),
+            confidence=d.get("confidence", 1.0),
+            n_evidence=d.get("n_evidence", 0),
+            step=d.get("step", 0),
+            source_cmd=d.get("source_cmd", ""),
+        )
         n.count = d.get("count", 1)
         return n
 
@@ -89,8 +99,8 @@ class FactGraph:
     # ── 节点操作 ──
 
     def add_node(self, key: str, value: str, category: str = "general",
-                 confidence: float = 1.0, step: int = 0,
-                 source_cmd: str = "") -> bool:
+                 confidence: float = 1.0, n_evidence: int = 0,
+                 step: int = 0, source_cmd: str = "") -> bool:
         """添加或更新节点, 返回是否为新节点"""
         if not self._is_valid_value(value):
             return False
@@ -101,7 +111,10 @@ class FactGraph:
                 # LRU 淘汰: 移除最旧节点
                 oldest = min(self.nodes, key=lambda k: self.nodes[k].step)
                 self._remove_node(oldest)
-            self.nodes[key] = Node(value, category, confidence, step, source_cmd)
+            self.nodes[key] = Node(
+                value, category=category, confidence=confidence,
+                n_evidence=n_evidence, step=step, source_cmd=source_cmd,
+            )
             self._current_discovery = key
             # 自动建边: 根据 schema 关系
             self._auto_link(key, category, step)
@@ -109,6 +122,7 @@ class FactGraph:
             old = self.nodes[key]
             old.value = value[:100]
             old.confidence = min(old.confidence + 0.15, 1.0)
+            old.n_evidence = old.n_evidence + 1
             old.step = step
             old.count += 1
             old.category = category
@@ -139,7 +153,8 @@ class FactGraph:
     # ── 边操作 ──
 
     def add_edge(self, src: str, dst: str, rel: str, weight: float = 1.0,
-                 step: int = 0):
+                 step: int = 0, n_support: int = 0, n_against: int = 0,
+                 hypothesis_key: str = ""):
         """添加一条边 src --rel--> dst"""
         if src not in self.nodes or dst not in self.nodes:
             return
@@ -150,8 +165,16 @@ class FactGraph:
             if e["to"] == dst and e["rel"] == rel:
                 e["weight"] = max(e["weight"], weight)
                 e["step"] = step
+                e["n_support"] = e.get("n_support", 0) + n_support
+                e["n_against"] = e.get("n_against", 0) + n_against
+                if hypothesis_key:
+                    e["hypothesis_key"] = hypothesis_key
                 return
-        self.edges[src].append({"to": dst, "rel": rel, "weight": weight, "step": step})
+        self.edges[src].append({
+            "to": dst, "rel": rel, "weight": weight, "step": step,
+            "n_support": n_support, "n_against": n_against,
+            "hypothesis_key": hypothesis_key,
+        })
 
     def get_edges(self, key: str, rel: Optional[str] = None) -> list[dict]:
         """获取节点的出边, 可选按关系过滤"""

@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "pr"
+  ],
+  "desc": "run pr with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

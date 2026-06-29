@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "domainname"
+  ],
+  "desc": "run domainname with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "tune2fs"
+  ],
+  "desc": "run tune2fs with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}
