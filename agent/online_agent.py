@@ -900,6 +900,31 @@ class OnlineAgent:
         untried = [c for c in untried if ' ' not in c]
         return untried[:30]  # 限制30个 (原20)
 
+    def _create_script_from_commands(self):
+        """从418命令池组合随机命令生成shell脚本并执行"""
+        import random, base64
+        all_cmds = getattr(self.knowledge_mapper, '_all_available_commands', [])
+        if len(all_cmds) < 3:
+            return
+        chosen = random.sample(all_cmds, min(random.randint(3, 5), len(all_cmds)))
+        lines = ["#!/bin/bash", "# Auto-generated from 418 command pool", "set -e", ""]
+        for cmd in chosen:
+            lines.append(f"echo '=== {cmd} ==='")
+            lines.append(f"{cmd} 2>&1 || echo '(exit: $?)'")
+            lines.append("")
+        script = "\n".join(lines)
+        name = f"cmd_{self.step_count}.sh"
+        encoded = base64.b64encode(script.encode()).decode()
+        self.sandbox.execute("mkdir -p /workspace/scripts")
+        self.sandbox.execute(f"echo '{encoded}' | base64 -d > /workspace/scripts/{name}")
+        self.sandbox.execute(f"chmod +x /workspace/scripts/{name}")
+        r = self.sandbox.execute(f"/workspace/scripts/{name} 2>&1", timeout=30)
+        if r and r.stdout and len(r.stdout) > 20:
+            self.workbench.extract_facts("CMDPOOL", name, r.stdout[:500], {}, self.step_count)
+            print(f"  [CMDPOOL] {name} ({len(chosen)} cmds) -> {len(r.stdout)}B")
+        elif r:
+            print(f"  [CMDPOOL] {name} -> {len(r.stdout or '')}B (short)")
+
     def _validate_custom(self, args: list) -> list:
         """
         P9.4: 验证 CUSTOM 命令参数
@@ -2039,6 +2064,8 @@ class OnlineAgent:
         # P5.3c: 脚本创作 — 每25步生成一个 shell 脚本
         if self.step_count > 20 and self.step_count % 25 == 0:
             self._create_and_run_script()
+        if self.step_count > 50 and self.step_count % 30 == 0:
+            self._create_script_from_commands()
 
         # LLM 异步结果检查: 每步检查 CreativeWriter 是否完成生成
         # LLM sync generation every 100 steps
@@ -2046,20 +2073,33 @@ class OnlineAgent:
             import threading
             def _sync_llm():
                 try:
-                    prompt = self.creative_writer.build_prompt(self.workbench, "report")
-                    text = self.creative_writer.generate(prompt, timeout=120.0)
-                    if text and len(text) > 100:
-                        path = f"/tmp/llm_sync_{self.step_count}.md"
-                        import base64
-                        encoded = base64.b64encode(text.encode()).decode()
-                        self.sandbox.execute(f"echo '{encoded}' | base64 -d > {path}")
-                        key = f"llm_sync_{self.step_count}"
-                        self.workbench._add_fact(key, text[:80], "LLM",
+                    import base64 as _b64
+                    # 报告生成
+                    r_prompt = self.creative_writer.build_prompt(self.workbench, "report")
+                    r_text = self.creative_writer.generate(r_prompt, timeout=120.0)
+                    if r_text and len(r_text) > 100:
+                        r_path = f"/tmp/llm_sync_{self.step_count}.md"
+                        encoded = _b64.b64encode(r_text.encode()).decode()
+                        self.sandbox.execute(f"echo '{encoded}' | base64 -d > {r_path}")
+                        self.workbench._add_fact(f"llm_sync_{self.step_count}", r_text[:80], "LLM",
                             f"sync:{self.step_count}", self.step_count, category="content")
-                        self._total_create_content += len(text)
-                        print(f"  [LLM-SYNC] {len(text)}B -> {path}")
+                        self._total_create_content += len(r_text)
+                        print(f"  [LLM] report {len(r_text)}B -> {r_path}")
+
+                    # 代码生成 (让LLM写Python脚本)
+                    c_prompt = self.creative_writer.build_prompt(self.workbench, "code")
+                    c_text = self.creative_writer.generate(c_prompt, timeout=120.0)
+                    if c_text and len(c_text) > 80:
+                        c_path = f"/tmp/llm_code_{self.step_count}.py"
+                        encoded = _b64.b64encode(c_text.encode()).decode()
+                        self.sandbox.execute(f"echo '{encoded}' | base64 -d > {c_path}")
+                        self.sandbox.execute(f"chmod +x {c_path}")
+                        r = self.sandbox.execute(f"python3 {c_path} 2>&1", timeout=15)
+                        out = (r.stdout or r.stderr or "").strip()
+                        self.workbench.extract_facts("LLM_CODE", c_path, out, {}, self.step_count)
+                        print(f"  [LLM] code {len(c_text)}B -> {c_path} {'OK' if r.exit_code==0 else 'FAIL'}")
                 except Exception as e:
-                    print(f"  [LLM-SYNC] error: {e}")
+                    print(f"  [LLM] error: {e}")
             t = threading.Thread(target=_sync_llm, daemon=True)
             t.start()
 
