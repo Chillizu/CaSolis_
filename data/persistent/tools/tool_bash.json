@@ -1,7 +1,6 @@
 {
   "cmd": [
-    "bash",
-    "--version"
+    "bash"
   ],
   "desc": "run bash with arguments",
   "cat": "discovered",

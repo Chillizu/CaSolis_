@@ -1,7 +1,6 @@
 {
   "cmd": [
-    "bc",
-    "--version"
+    "bc"
   ],
   "desc": "run bc with arguments",
   "cat": "discovered",

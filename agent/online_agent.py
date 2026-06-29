@@ -1598,6 +1598,27 @@ class OnlineAgent:
                 if random.random() < 0.05:
                     print(f"  [MINER-ERR] {e}")
 
+        # P18: DoCalculusEngine — 干预评分 (补充 TransitionMiner 的统计关联)
+        if (hasattr(self, 'workbench') and hasattr(self.workbench, 'graph')
+                and hasattr(self.workbench.graph, 'edges')
+                and self.step_count % 50 == 0):
+            try:
+                from agent.do_calculus import DoCalculusEngine
+                dc = DoCalculusEngine()
+                n_edges = dc.add_from_factgraph(self.workbench.graph)
+                if n_edges > 0 and hasattr(self, '_transitions'):
+                    # 对 FactGraph 中每个因果边计算干预评分
+                    for src, edge_list in self.workbench.graph.edges.items():
+                        for e in edge_list:
+                            dst = e.get("to", "")
+                            rel = e.get("rel", "")
+                            if rel in ("causes", "predicts") and len(self._transitions) > 5:
+                                cs = dc.causal_score(src, dst, self._transitions)
+                                # 将 causal_score 存到边 metadata
+                                e["causal_score"] = round(cs, 3)
+            except Exception:
+                pass
+
         if hasattr(self, 'knowledge_mapper') and self.step_count > 10:
             any_remaining = any(
                 not self.knowledge_mapper.is_phase_done(p)
@@ -1808,22 +1829,24 @@ class OnlineAgent:
                 self.creative_writer.generate_async(self.workbench)
             except Exception:
                 pass
-
-        # P17: 自我反思 — 每 20 步问 LLM "你想做什么"
+        # P17: 自我反思 — 检查异步自省结果
         if (hasattr(self, 'self_model') and hasattr(self, 'creative_writer')
                 and self.creative_writer
                 and self.step_count > 30
-                and self.step_count % 20 == 0
                 and self._self_remaining <= 0):
-            try:
-                intention = self.creative_writer.generate_self_reflect(
-                    self.workbench, timeout=90)
+            cw = self.creative_writer
+            sr = getattr(cw, '_self_reflect_result', None)
+            if sr is not None:
+                intention = sr.get("content", "")
+                cw._self_reflect_result = None
                 if intention and len(intention.strip()) > 10:
                     self._parse_and_apply_direction(intention.strip())
-            except Exception as e:
-                if random.random() < 0.1:
-                    print(f"  [SELF-ERR] {e}")
-
+            elif self.step_count % 20 == 0:
+                # 每 20 步触发自省 async
+                try:
+                    cw.generate_async(self.workbench, "self_reflect")
+                except Exception:
+                    pass
         # P17: 方向持久期 — 每步按方向选择
         if self._self_remaining > 0 and not used_goal:
             dir_intent, dir_params = self._direction_step()

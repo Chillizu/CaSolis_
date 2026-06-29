@@ -1,7 +1,6 @@
 {
   "cmd": [
-    "apt-get",
-    "--version"
+    "apt-get"
   ],
   "desc": "run apt-get with arguments",
   "cat": "discovered",

@@ -15,25 +15,18 @@ P2: 异步 + 质量评估
   - prompt 不传敏感信息
 """
 
-import json
-import os
-import subprocess
-import time
-from typing import Optional
+import os, urllib.request, json
 
 
-# ── Ollama 调用 ──
+
 
 def _ollama_generate(prompt: str, model: str = "gemma4:e4b",
                      base_url: str = "http://localhost:11434",
-                     timeout: float = 30.0,
+                     timeout: float | None = None,
                      max_tokens: int = 1024,
                      temperature: float = 0.5) -> Optional[str]:
-    """调用 Ollama /api/chat, 超时返回 None
-
-    gemma4:e4b 在 /api/generate 下长 prompt 返回空,
-    /api/chat 正常工作。
-    """
+    """调用 Ollama /api/chat, 超时返回 None"""
+    timeout = timeout if timeout is not None else 120.0
     try:
         import urllib.request
         import urllib.error
@@ -97,17 +90,17 @@ def _deepseek_generate(prompt: str,
         return None
 
 
-def _ollama_health(base_url: str = "http://localhost:11434") -> bool:
-    """检查 Ollama 是否运行且模型可用"""
+def _ollama_health(base_url: str = "http://localhost:11434",
+                   model: str = "qwen3.5:0.8b") -> bool:
+    """检查 Ollama 是否运行且配置的模型可用"""
     try:
-        import urllib.request
-        import urllib.error
+        import urllib.request, urllib.error
         req = urllib.request.Request(f"{base_url}/api/tags")
         with urllib.request.urlopen(req, timeout=3) as resp:
             data = json.loads(resp.read().decode())
             models = [m["name"] for m in data.get("models", [])]
-            # 检查 gemma4:e4b 或类似名字
-            return any("gemma" in m.lower() for m in models)
+            # 检查配置的模型是否在可用列表中
+            return any(model in m for m in models)
     except Exception:
         return False
 
@@ -256,6 +249,7 @@ class CreativeWriter:
         # P2: 异步
         self._async_enabled = False
         self._async_result: Optional[dict] = None
+        self._self_reflect_result: Optional[dict] = None
 
     def _load_prompts(self) -> dict:
         """加载 prompt 模板 (内嵌, 避免 yaml 依赖)"""
@@ -307,30 +301,22 @@ class CreativeWriter:
         """检查后端是否可用: Ollama 或 DeepSeek"""
         if self.api_backend == "deepseek":
             return self._deepseek_ok
-        return _ollama_health(self.base_url)
+        return _ollama_health(self.base_url, self.model)
 
     def is_thermal_ok(self) -> bool:
         """CPU 温度安全?"""
         return _thermal_ok(self.thermal_threshold)
 
-    def generate(self, prompt: str, timeout: Optional[float] = None) -> Optional[str]:
-        """根据 api_backend 调用对应后端"""
-        if self.api_backend == "deepseek" and self._deepseek_ok:
-            return _deepseek_generate(
-                prompt=prompt,
-                api_key=self.api_key,
-                timeout=timeout or self.timeout,
-                max_tokens=self.max_tokens,
-                temperature=self.temperature,
-            )
-        return _ollama_generate(
-            prompt=prompt,
-            model=self.model,
-            base_url=self.base_url,
-            timeout=timeout or self.timeout,
-            max_tokens=self.max_tokens,
-            temperature=self.temperature,
-        )
+    def build_prompt(self, workbench, style: str = "report") -> str:
+        """构建 LLM prompt"""
+        template = self._prompts.get(style, self._prompts.get("report", ""))
+        facts_text = _build_facts_section(workbench)
+        rels_text = _build_relationships_section(workbench)
+        gaps_text = _build_gaps_section(workbench)
+
+        prompt = template.replace("{facts_section}", facts_text)
+        prompt = prompt.replace("{relationships_section}", rels_text)
+        prompt = prompt.replace("{gaps_section}", gaps_text)
         # P17: self_reflect 不传 facts, 传 self_description
         if style == "self_reflect":
             self_desc = getattr(workbench, 'self_model', None)
@@ -348,14 +334,17 @@ class CreativeWriter:
         return prompt
 
     def generate(self, prompt: str, timeout: Optional[float] = None) -> Optional[str]:
-        """调用 Ollama 生成"""
+        """根据 api_backend 调用对应后端"""
+        if self.api_backend == "deepseek" and self._deepseek_ok:
+            return _deepseek_generate(
+                prompt=prompt, api_key=self.api_key,
+                timeout=timeout or self.timeout,
+                max_tokens=self.max_tokens, temperature=self.temperature,
+            )
         return _ollama_generate(
-            prompt=prompt,
-            model=self.model,
-            base_url=self.base_url,
+            prompt=prompt, model=self.model, base_url=self.base_url,
             timeout=timeout or self.timeout,
-            max_tokens=self.max_tokens,
-            temperature=self.temperature,
+            max_tokens=self.max_tokens, temperature=self.temperature,
         )
 
     def generate_self_reflect(
@@ -366,73 +355,6 @@ class CreativeWriter:
         prompt = self.build_prompt(workbench, "self_reflect")
         return self.generate(prompt, timeout=timeout)
 
-    def generate_content(self, workbench, style: Optional[str] = None,
-                         timeout: Optional[float] = None) -> dict:
-        """
-        主入口: 生成内容
-
-        Returns:
-          {"content": str, "path": str, "desc": str, "size": int, "source": "llm"|"fallback"}
-        """
-        self.stats["total_calls"] += 1
-
-        # 1. P2 异步结果检查
-        if self._async_enabled and self._async_result:
-            result = self._async_result
-            self._async_result = None
-            if result and result["source"] == "llm":
-                return result
-
-        # 2. 安全检查
-        if not self.enabled:
-            return self._fallback(workbench, style, "disabled")
-
-        if not self.health_check():
-            return self._fallback(workbench, style, "ollama_unavailable")
-
-        if not self.is_thermal_ok():
-            self.stats["thermal_skip"] += 1
-            return self._fallback(workbench, style, "thermal_throttle")
-
-        # 3. 构建 prompt
-        effective_style = style or "report"
-        prompt = self.build_prompt(workbench, effective_style)
-
-        # 4. 生成
-        text = self.generate(prompt, timeout)
-
-        if text is None:
-            self.stats["timeout"] += 1
-            return self._fallback(workbench, style, "timeout")
-
-        # 5. 质量检查
-        quality = _check_hallucination(text, self._last_facts_text)
-        if quality < 0.3:
-            # 严重幻觉, 降级
-            return self._fallback(workbench, style, f"hallucination({quality:.2f})")
-
-        # 6. 构建返回
-        self.stats["llm_success"] += 1
-        step = getattr(workbench, '_step_counter', 0) or 0
-        desc_map = {
-            "report": "LLM生成:系统报告",
-            "analysis": "LLM生成:分析",
-            "story": "LLM生成:叙事",
-            "code": "LLM生成:Python脚本",
-        }
-        path_map = {
-            "report": f"/tmp/llm_report_{step}.md",
-            "analysis": f"/tmp/llm_analysis_{step}.md",
-            "story": f"/tmp/llm_story_{step}.md",
-            "code": f"/tmp/llm_script_{step}.py",
-        }
-        return {
-            "content": text,
-            "path": path_map.get(effective_style, f"/tmp/llm_output_{step}.md"),
-            "desc": desc_map.get(effective_style, "LLM生成内容"),
-            "size": len(text),
-            "source": "llm",
-        }
 
     def _fallback(self, workbench, style: Optional[str] = None,
                   reason: str = "") -> dict:
@@ -483,7 +405,7 @@ class CreativeWriter:
         import threading
         import traceback
         if self._async_result is not None:
-            return  # 已有未消费的结果, 不重复启动
+            return
         if not self.is_thermal_ok():
             self.stats["thermal_skip"] += 1
             return
@@ -493,19 +415,24 @@ class CreativeWriter:
 
         def _run():
             try:
-                text = self.generate(prompt, timeout=None)  # no extra timeout, thread has 60s from self.timeout
+                text = self.generate(prompt, timeout=None)
                 if text:
                     quality = _check_hallucination(text, self._last_facts_text)
                     if quality >= 0.3:
                         step = getattr(workbench, '_step_counter', 0) or 0
-                        desc_map = {"report": "LLM报告", "analysis": "LLM分析", "story": "LLM叙事", "code": "LLM脚本"}
+                        desc_map = {
+                            "report": "LLM报告", "analysis": "LLM分析",
+                            "story": "LLM叙事", "code": "LLM脚本",
+                            "self_reflect": "SELF:反思",
+                        }
                         path_map = {
                             "report": f"/tmp/llm_report_{step}.md",
                             "analysis": f"/tmp/llm_analysis_{step}.md",
                             "story": f"/tmp/llm_story_{step}.md",
                             "code": f"/tmp/llm_script_{step}.py",
+                            "self_reflect": f"/tmp/self_intent_{step}.md",
                         }
-                        self._async_result = {
+                        result = {
                             "content": text,
                             "path": path_map.get(effective_style, f"/tmp/llm_output_{step}.md"),
                             "desc": desc_map.get(effective_style, "LLM内容"),
@@ -513,8 +440,13 @@ class CreativeWriter:
                             "source": "llm",
                             "quality": quality,
                         }
+                        if effective_style == "self_reflect":
+                            # 自省结果存到独立位置, 不冲突
+                            self._self_reflect_result = result
+                        else:
+                            self._async_result = result
             except Exception:
-                pass  # 线程异常不抛到主循环
+                pass
 
         t = threading.Thread(target=_run, daemon=True)
         t.start()
