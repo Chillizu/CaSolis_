@@ -130,8 +130,10 @@ class GoalGenerator:
             creates = self._create_candidates(workbench, step)
             if creates:
                 candidates.extend(creates)
-        # 6b: 每20步后, 无条件注入 CREATE 目标
-        if step > 20 and step % 20 == 0:
+        # 6b: 自适应注入 CREATE 目标
+        n_create_recent = sum(1 for h in self.goal_history[-10:] if h['type'] == 'content_create')
+        create_prob = 0.05 * (1.0 - min(n_create_recent / 5.0, 1.0))  # 最近CREATE越多, 概率越低
+        if step > 20 and random.random() < create_prob:
             creates = self._create_candidates(workbench, step)
             if creates:
                 candidates.extend(creates)

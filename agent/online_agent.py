@@ -805,6 +805,10 @@ class OnlineAgent:
             "run_llm":      0.15 * (1.0 - n_infs / 15.0) + 0.05 * (1.0 - saturation),
             "run_tool":     0.2 * (1.0 - n_tools / max(n_commands, 1)),
             "self_review":  0.1 * (1.0 - saturation),
+            "infer":        0.05 * (1.0 - n_infs / 20.0),
+            "discover_cmd": 0.1 * cmd_left,
+            "mode_select":  0.15,
+            "self_goal":    0.1 * (1.0 - n_infs / 15.0) + 0.05 * (1.0 - saturation),
         }
         
         prob = probs.get(action, base_rate)
@@ -907,7 +911,7 @@ class OnlineAgent:
                         and cmd not in self._discovered_commands):
                         self._discovered_commands.add(cmd)
                         new_cmds.append(cmd)
-            if new_cmds and self.step_count % 100 == 0:
+            if new_cmds and random.random() < 0.01:
                 print(f"  [SCAN] 发现 {len(new_cmds)} 个新命令: {', '.join(new_cmds[:5])}...")
             return new_cmds
         except Exception:
@@ -1145,7 +1149,7 @@ class OnlineAgent:
                     emb, cond_emb.squeeze(0), candidates_v4
                 )
                 intent_name = best_name
-                if intent_name and self.step_count % 10 == 0:
+                if intent_name and random.random() < 0.1:
                     print(f"  [IMAGINE-V4] best={intent_name} value={best_val:.3f}")
                 return intent_name
 
@@ -1200,7 +1204,7 @@ class OnlineAgent:
                 return None
 
             intent_name = INTENTS[best_idx] if best_idx < len(INTENTS) else None
-            if intent_name and self.step_count % 10 == 0:
+            if intent_name and random.random() < 0.1:
                 top5 = scores.topk(min(5, n)).indices.tolist()
                 top5_str = ", ".join(f"{INTENTS[i]}={scores[i]:.2f}" for i in top5)
                 print(f"  [IMAGINE] scores: {top5_str}")
@@ -1340,8 +1344,8 @@ class OnlineAgent:
         state_text = self.state_encoder.get_state_text(thought_label=thought_label)
         state_emb = self.classifier.get_embedding(state_text).detach().clone()
 
-        # 2. 推理引擎: 每 20 步自动发现事实关系
-        if self.step_count > 10 and self.step_count % 20 == 0:
+        # 2. 推理引擎: 自适应频率
+        if self.step_count > 10 and self._adaptive_should("infer", 0.05):
             if hasattr(self, 'workbench') and hasattr(self.workbench, 'graph'):
                 from agent.inference_engine import InferenceEngine
                 ie = InferenceEngine(self.workbench.graph)
@@ -1360,7 +1364,8 @@ class OnlineAgent:
                 phase_intervals = {"B": 15, "C": 20, "D": 25, "E": 30}
                 for phase in ["B", "C", "D", "E"]:
                     if not self.knowledge_mapper.is_phase_done(phase):
-                        if self.step_count % phase_intervals.get(phase, 15) == 0:
+                        phase_prob = 1.0 / phase_intervals.get(phase, 15)  # 转换间隔为概率
+                        if random.random() < phase_prob:
                             n_new = self.knowledge_mapper.run_phase(phase, self.step_count)
                             if n_new > 0:
                                 print(f"  [KNOWLEDGE] Phase {phase}: {n_new} 个新事实")
@@ -1374,8 +1379,8 @@ class OnlineAgent:
                     if n_cmds > 0:
                         print(f"  [DISCOVER] 扫描到 {n_cmds} 个可用命令")
 
-                # 每10步发现一个新命令
-                if self.step_count > 30 and self.step_count % 10 == 0:
+                # 自适应发现新命令
+                if self.step_count > 30 and self._adaptive_should("discover_cmd", 0.1):
                     n_new = self.knowledge_mapper.discover_next(
                         self.step_count, rnd=self.rnd
                     )
@@ -1464,7 +1469,7 @@ class OnlineAgent:
             used_goal = True
             self._last_action_source = "goal_driven"
             self.ab_stats["goal_driven"] = self.ab_stats.get("goal_driven", 0) + 1
-            if self.step_count % 6 == 0:
+            if random.random() < 0.15:
                 print(f"  [GOAL] ({goal.source}) {intent}")
             # P10: 即使有目标, 也检查多样性 (防止 GoalGenerator 返回同类型目标)
             if len(self.intent_history) >= 8:
@@ -1487,7 +1492,7 @@ class OnlineAgent:
                         intent = forced
                         used_goal = True
                         self._last_action_source = "diversity"
-                        if self.step_count % 10 == 0:
+                        if random.random() < 0.1:
                             print(f"  [DIVERSITY] 强制 {forced} (GoalGenerator 多样性调整)")
 
         # 3. Fallback: 全局多样性 (15步未覆盖意图)
@@ -1511,7 +1516,7 @@ class OnlineAgent:
                 used_goal = True
                 self._last_action_source = "diversity"
                 self.ab_stats["goal_driven"] = self.ab_stats.get("goal_driven", 0) + 1
-                if self.step_count % 10 == 0:
+                if random.random() < 0.1:
                     n_total = len(INTENTS) - 1
                     print(f"  [DIVERSITY] 强制 {forced} ({n_total-len(covered)}种未覆盖)")
 
@@ -1528,7 +1533,7 @@ class OnlineAgent:
                 print(f"  [CHAIN] {intent} (链{cs+1}/3)")
 
         # 5. Fallback: 自生成目标
-        if not used_goal and self.workbench and self.step_count > 10 and self.step_count % 6 == 0:
+        if not used_goal and self.workbench and self.step_count > 10 and self._adaptive_should("self_goal", 0.15):
             self_goal = self.workbench.generate_self_goal()
             if self_goal:
                 intent, params = self_goal
@@ -1536,11 +1541,11 @@ class OnlineAgent:
                 used_goal = True
                 self._last_action_source = "goal_driven"
                 self.ab_stats["goal_driven"] += 1
-                if self.step_count % 12 == 0:
+                if random.random() < 0.1:
                     print(f"  [SELF-GOAL] {intent} (事实缺口)")
 
         # 6. Fallback: 探针 (概率门控)
-        if not used_goal and self.workbench and self.step_count % 3 == 0 and random.random() < self.probe_rate:
+        if not used_goal and self.workbench and random.random() < self.probe_rate:
             if not hasattr(self, "_probe_find_count"):
                 self._probe_find_count = 0
             probe = self.workbench.get_curiosity_probe(self.state_encoder.explored_paths)
@@ -1557,7 +1562,7 @@ class OnlineAgent:
                     used_goal = True
                     self._last_action_source = "probe"
                     self.ab_stats["goal_driven"] += 1
-                    if self.step_count % 6 == 0:
+                    if random.random() < 0.15:
                         print(f"  [PROBE] {params.get('custom_args', ['?'])}")
 
         # 7. Fallback: P9.7 想象力 (概率门控)
@@ -1576,7 +1581,7 @@ class OnlineAgent:
                 else:
                     cluster, cmd_args = self.cmd_selector.select()
                     params = {"custom_args": cmd_args, "cluster": cluster}
-                if self.step_count % 20 == 0:
+                if random.random() < 0.05:
                     print(f"  [CURIOSITY] RND新颖度低({rnd_avg:.4f}), 强制CUSTOM探索")
                 used_goal = True
                 self._last_action_source = "imagination"
@@ -1600,7 +1605,7 @@ class OnlineAgent:
                     self._last_action_source = "imagination"
                     self.ab_stats["imagined"] = self.ab_stats.get("imagined", 0) + 1
                     self.ab_stats["goal_driven"] += 1
-                if self.step_count % 4 == 0:
+                if random.random() < 0.25:
                     print(f"  [IMAGINE] {intent}")
 
         if not used_goal:
@@ -1655,7 +1660,7 @@ class OnlineAgent:
                                 self.ab_stats["conductor"] += 1
                                 self._last_cond_logits = logits.detach().clone()
                     except Exception as e:
-                        if self.step_count % 10 == 0:
+                        if random.random() < 0.1:
                             print(f"  [CONDUCTOR-ERR] {e}")
 
             if not used_conductor:
@@ -1822,7 +1827,7 @@ class OnlineAgent:
             if new_result and new_result.exit_code == 0:
                 result = new_result
                 output = (result.stdout or result.stderr or "")
-                if self.step_count % 5 == 0:
+                if random.random() < 0.2:
                     print(f"  [RECOVER] {recovery_info.get('action', '?')} -> OK")
 
         # 全量日志 (含正确步数)
@@ -1919,17 +1924,17 @@ class OnlineAgent:
         if intent != "CUSTOM":
             self.rnd.update(state_emb)
         
-        # P8.5: 周期性 RND 软重置 (防止好奇心饱和)
-        # P9.7: 兴趣重置 — 每20步部分重置RND预测器, 防止新颖度归零
-        if self.step_count > 0 and self.step_count % 20 == 0:
-            self.rnd.interest_reset(fraction=0.3)
-            if self.step_count % 100 == 0:
-                print(f"  [RND] 兴趣重置 (每20步)")
-        if self.step_count > 0 and self.step_count % 50 == 0:
+        # RND 自适应重置 (基于新颖度状态)
+        if self.step_count > 0:
             rnd_stats = self.rnd.get_novelty_stats()
+            # 高新颖度: 偶尔重置, 低新颖度: 频繁重置
+            reset_prob = max(0.01, min(0.1, 0.05 + (0.006 - rnd_stats['running_errors_avg']) * 10))
+            if random.random() < reset_prob:
+                self.rnd.interest_reset(fraction=0.3)
+            # 软重置: 预测误差持续偏低时
             if rnd_stats['running_errors_avg'] < 0.006:
                 self.rnd.soft_reset(factor=0.4)
-                if self.step_count % 100 == 0:
+                if random.random() < 0.01:
                     print(f"  [RND] 软重置 (avg={rnd_stats['running_errors_avg']:.4f})")
 
         # 7. 计算多样性
@@ -2179,12 +2184,13 @@ class OnlineAgent:
             delta = 0.5 if (step_success and new_fact_this_step) else \
                     (0.1 if step_success else -0.4)
             self.meta.record(f"intent_{intent}_{asrc}", delta, self.step_count)
-        # 每50步淘汰 + 保存 + 打印摘要
-        if self.step_count > 0 and self.step_count % 50 == 0:
+        # 自适应淘汰 + 保存 + 打印摘要
+        meta_stats = self.meta.get_stats()
+        meta_prob = 0.02 * (1.0 + meta_stats['total_behaviors'] / 50.0)
+        if self.step_count > 0 and random.random() < meta_prob:
             pruned = self.meta.prune(min_trials=5, threshold=-0.2,
                                      max_age=300, current_step=self.step_count)
             self.meta.save()
-            meta_stats = self.meta.get_stats()
             if pruned > 0:
                 print(f"  [META] 淘汰 {pruned} 个低效行为. "
                       f"现存: {meta_stats['total_behaviors']} 个")
@@ -2325,8 +2331,9 @@ class OnlineAgent:
             })
         v4_loss = self.world_model_v4.train_on_buffer(v4_samples)
         self._wm_loss_history.append(v4_loss if v4_loss > 0 else 0.0)
-        # 保存 V4 checkpoint
-        if self.step_count % 50 == 0:
+        # 自适应保存 V4 checkpoint
+        _save_prob = 0.02 if len(self._wm_loss_history) < 5 else 0.02 + 0.03 * min(1.0, abs(v4_loss - self._wm_loss_history[-1]) / 0.1)
+        if random.random() < _save_prob:
             import os as _os
             _os.makedirs("checkpoints/world_model", exist_ok=True)
             self.world_model_v4.save("checkpoints/world_model/v4_latest.pt")
@@ -2380,22 +2387,21 @@ class OnlineAgent:
                           f"新颖度 avg={rnd_stats['running_errors_avg']:.4f}  |  "
                           f"缓冲区 {self.buffer.size}{cond_info}")
 
-            # C: RND 自动软重置 (新颖度持续过低时)
-            if i > 0 and i % 100 == 0:
+            # C: RND 自适应软重置 (基于新颖度状态)
+            if i > 0 and random.random() < 0.01:
                 rnd_stats = self.rnd.get_novelty_stats()
-                # P6.3: 降低阈值, 更快触发软重置
                 if rnd_stats['running_errors_avg'] < 0.008:
                     self.rnd.soft_reset(factor=0.3)
                     if verbose:
                         print(f"  [RND] 新颖度略低({rnd_stats['running_errors_avg']:.4f}), 软重置")
-            # P6.3: 每200步强制全量重置 (彻底遗忘旧状态分布)
-            if i > 0 and i % 200 == 0:
+            # P6.3: 自适应全量重置
+            if i > 0 and random.random() < 0.005:
                 self.rnd.reset()
                 if verbose:
-                    print(f"  [RND] 200步强制全量重置")
+                    print(f"  [RND] 自适应全量重置")
 
-            # 每隔 N 步显示统计
-            if verbose and (i + 1) % 10 == 0:
+            # 自适应显示统计
+            if verbose and random.random() < 0.1:
                 recent_intents = self.intent_history[-10:]
                 intent_dist = {intent: recent_intents.count(intent) for intent in set(recent_intents)}
                 print(f"  [{i+1:4d}] 奖励={reward:.2f}  "
