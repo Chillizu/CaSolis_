@@ -775,6 +775,41 @@ class OnlineAgent:
 
         return total_loss / max(n_batches, 1)
 
+    def _adaptive_should(self, action: str, base_rate: float = 0.5) -> bool:
+        """根据系统状态自适应决定是否执行某动作 — 替代硬编码 step%N
+        
+        Args:
+            action: 动作名 ("make_tool", "make_script", "run_llm", etc.)
+            base_rate: 基础概率 (0~1)
+            
+        Returns:
+            True/False
+        """
+        import random
+        
+        # 获取系统状态
+        n_facts = len(self.workbench.graph.nodes) if hasattr(self.workbench, 'graph') else 100
+        km = getattr(self, 'knowledge_mapper', None)
+        n_commands = len(getattr(km, '_all_available_commands', [])) if km else 0
+        n_tools = len(getattr(self.tool_registry, '_index', {})) if hasattr(self, 'tool_registry') else 10
+        n_infs = sum(1 for n in self.workbench.graph.nodes.values() 
+                     if n.category == 'inference') if hasattr(self.workbench, 'graph') else 0
+        
+        # 饱和度: 0=饱和, 1=有很多空间
+        saturation = max(0.0, 1.0 - n_facts / 400.0)
+        cmd_left = max(0.0, 1.0 - n_tools / max(n_commands, 1))
+        
+        probs = {
+            "make_tool":    0.3 * saturation + 0.3 * cmd_left,
+            "make_script":  0.2 * saturation + 0.2 * (1.0 - n_infs / 20.0),
+            "run_llm":      0.15 * (1.0 - n_infs / 15.0) + 0.05 * (1.0 - saturation),
+            "run_tool":     0.2 * (1.0 - n_tools / max(n_commands, 1)),
+            "self_review":  0.1 * (1.0 - saturation),
+        }
+        
+        prob = probs.get(action, base_rate)
+        return random.random() < prob
+
     def _create_and_run_script(self):
         """
         P5.3c: 基于工作栏事实生成 shell 脚本并执行
@@ -1348,8 +1383,8 @@ class OnlineAgent:
                         ks = self.knowledge_mapper.get_exploration_stats()
                         print(f"  [DISCOVER] 探索: {ks['explored']}/{ks['total_available']} 命令")
 
-                # P13++: 从418命令池自造新工具 (每10步1个)
-                if hasattr(self, 'tool_factory') and hasattr(self, 'knowledge_mapper') and self.step_count % 10 == 0:
+                # P13++: 从418命令池自造新工具 (自适应)
+                if hasattr(self, 'tool_factory') and hasattr(self, 'knowledge_mapper') and self._adaptive_should("make_tool", 0.1):
                     new_tools = self.tool_factory.discover_new_tools(
                         self.knowledge_mapper, n=1)
                     if new_tools:
@@ -1359,8 +1394,8 @@ class OnlineAgent:
                                 tool_type="utility")
                         print(f"  [TOOL_AUTO] 新生成 {len(new_tools)} 个工具: {new_tools}")
 
-        # P13: 每50步尝试运行一个工具
-        if hasattr(self, 'tool_registry') and self.step_count > 20 and self.step_count % 50 == 0:
+        # P13: 自适应运行工具
+        if hasattr(self, 'tool_registry') and self.step_count > 20 and self._adaptive_should("run_tool", 0.02):
             tool = self.tool_registry.get_best_tool()
             if tool:
                 env = {
@@ -2052,8 +2087,8 @@ class OnlineAgent:
                 self._run_id = f"run_{self.step_count}"
             self.pstore.save_all(self, run_stats=stats)
 
-        # P5.1: 自引用 — 每30步读自己的发现日志
-        if self.sandbox and self.step_count > 0 and self.step_count % 30 == 0:
+        # P5.1: 自引用 — 自引用 — 自适应频率
+        if self.sandbox and self.step_count > 0 and self._adaptive_should("self_review", 0.03):
             try:
                 r = self.sandbox.execute("tail -5 /tmp/discoveries.md 2>/dev/null || echo ''")
                 if r.stdout and len(r.stdout) > 20:
@@ -2061,47 +2096,49 @@ class OnlineAgent:
             except Exception:
                 pass
 
-        # P5.3c: 脚本创作 — 每25步生成一个 shell 脚本
-        if self.step_count > 20 and self.step_count % 25 == 0:
+        # P5.3c: 脚本创作 — 自适应频率
+        if self.step_count > 20 and self._adaptive_should("make_script", 0.04):
             self._create_and_run_script()
-        if self.step_count > 50 and self.step_count % 30 == 0:
+        if self.step_count > 50 and self._adaptive_should("make_script", 0.03):
             self._create_script_from_commands()
 
         # LLM 异步结果检查: 每步检查 CreativeWriter 是否完成生成
-        # LLM sync generation every 100 steps
-        if self.creative_writer and self.step_count > 50 and self.step_count % 100 == 0:
+        # LLM sync generation (自适应频率, 并行报告+代码)
+        if self.creative_writer and self.step_count > 50 and self._adaptive_should("run_llm", 0.01):
             import threading
-            def _sync_llm():
+            def _llm_report():
                 try:
                     import base64 as _b64
-                    # 报告生成
-                    r_prompt = self.creative_writer.build_prompt(self.workbench, "report")
-                    r_text = self.creative_writer.generate(r_prompt, timeout=120.0)
-                    if r_text and len(r_text) > 100:
-                        r_path = f"/tmp/llm_sync_{self.step_count}.md"
-                        encoded = _b64.b64encode(r_text.encode()).decode()
-                        self.sandbox.execute(f"echo '{encoded}' | base64 -d > {r_path}")
-                        self.workbench._add_fact(f"llm_sync_{self.step_count}", r_text[:80], "LLM",
+                    p = self.creative_writer.build_prompt(self.workbench, "report")
+                    t = self.creative_writer.generate(p, timeout=120.0)
+                    if t and len(t) > 100:
+                        path = f"/tmp/llm_sync_{self.step_count}.md"
+                        enc = _b64.b64encode(t.encode()).decode()
+                        self.sandbox.execute(f"echo '{enc}' | base64 -d > {path}")
+                        self.workbench._add_fact(f"llm_sync_{self.step_count}", t[:80], "LLM",
                             f"sync:{self.step_count}", self.step_count, category="content")
-                        self._total_create_content += len(r_text)
-                        print(f"  [LLM] report {len(r_text)}B -> {r_path}")
-
-                    # 代码生成 (让LLM写Python脚本)
-                    c_prompt = self.creative_writer.build_prompt(self.workbench, "code")
-                    c_text = self.creative_writer.generate(c_prompt, timeout=120.0)
-                    if c_text and len(c_text) > 80:
-                        c_path = f"/tmp/llm_code_{self.step_count}.py"
-                        encoded = _b64.b64encode(c_text.encode()).decode()
-                        self.sandbox.execute(f"echo '{encoded}' | base64 -d > {c_path}")
-                        self.sandbox.execute(f"chmod +x {c_path}")
-                        r = self.sandbox.execute(f"python3 {c_path} 2>&1", timeout=15)
-                        out = (r.stdout or r.stderr or "").strip()
-                        self.workbench.extract_facts("LLM_CODE", c_path, out, {}, self.step_count)
-                        print(f"  [LLM] code {len(c_text)}B -> {c_path} {'OK' if r.exit_code==0 else 'FAIL'}")
+                        self._total_create_content += len(t)
+                        print(f"  [LLM] report {len(t)}B -> {path}")
                 except Exception as e:
-                    print(f"  [LLM] error: {e}")
-            t = threading.Thread(target=_sync_llm, daemon=True)
-            t.start()
+                    print(f"  [LLM] report error: {e}")
+            def _llm_code():
+                try:
+                    import base64 as _b64
+                    p = self.creative_writer.build_prompt(self.workbench, "code")
+                    t = self.creative_writer.generate(p, timeout=120.0)
+                    if t and len(t) > 80:
+                        path = f"/tmp/llm_code_{self.step_count}.py"
+                        enc = _b64.b64encode(t.encode()).decode()
+                        self.sandbox.execute(f"echo '{enc}' | base64 -d > {path}")
+                        self.sandbox.execute(f"chmod +x {path}")
+                        r = self.sandbox.execute(f"python3 {path} 2>&1", timeout=15)
+                        out = (r.stdout or r.stderr or "").strip()
+                        self.workbench.extract_facts("LLM_CODE", path, out, {}, self.step_count)
+                        print(f"  [LLM] code {len(t)}B -> {path} {'OK' if r.exit_code==0 else 'FAIL'}")
+                except Exception as e:
+                    print(f"  [LLM] code error: {e}")
+            threading.Thread(target=_llm_report, daemon=True).start()
+            threading.Thread(target=_llm_code, daemon=True).start()
 
         # LLM async result check every 5 steps
         if self.creative_writer and self.step_count % 5 == 0:
