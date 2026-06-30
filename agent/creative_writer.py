@@ -189,13 +189,17 @@ def _check_hallucination(text: str, facts_text: str) -> float:
             if val and not val.startswith("(no"):
                 fact_values.add(val.lower())
 
-    # 提取生成文本中的所有具体值 (数字、路径、版本号等)
-    import re
-    text_values = set()
-    for match in re.finditer(r'\b(\d+\.?\d*[KMG]?|[a-z]+\.[a-z]+\.[0-9]+|/[a-z/]+)\b',
-                             text.lower()):
-        text_values.add(match.group(1))
+    # 提取生成文本中的所有具体值 (使用子串匹配更鲁棒)
+    text_lower = text.lower()
+    matched = set()
+    for fv in fact_values:
+        if fv in text_lower:
+            matched.add(fv)
 
+    # Score: fraction of fact values that appear in generated text
+    if not fact_values:
+        return 1.0  # no facts to cross-check = pass
+    return len(matched) / len(fact_values)
 
 
 class CreativeWriter:
@@ -252,17 +256,28 @@ class CreativeWriter:
         self._self_reflect_result: Optional[dict] = None
 
     def _load_prompts(self) -> dict:
-        """加载 prompt 模板 (内嵌, 避免 yaml 依赖)"""
+        """多个 prompt 模板 — 小模型决定格式, DeepSeek 执行"""
         return {
+            "code": (
+                "You are a Python/coding assistant for a Linux exploration agent.\n"
+                "The agent has an idea. Implement it in Python.\n"
+                "Output ONLY valid Python code, no explanations.\n\n"
+                "## Idea\n{intention}\n"
+            ),
+            "analysis": (
+                "You are an analyst studying a Linux system.\n"
+                "The agent wants to understand something. Provide a concise analysis.\n\n"
+                "## Question\n{intention}\n"
+            ),
             "report": (
-                "You are a system analysis assistant. Based ONLY on the facts below, write a Markdown system report.\\n"
-                "## Rules\\n- Use ONLY facts listed below. If a value is unknown, say 'unknown'.\\n"
-                "- Do NOT invent values, file paths, or system state.\\n"
-                "- Output the report directly; no meta-commentary.\\n"
-                "- Organize by category (System, Network, Storage, Security).\n\n"
-                "## Facts\n{facts_section}\n\n"
-                "## Relationships\n{relationships_section}\n\n"
-                "## Knowledge Gaps\n{gaps_section}\n"
+                "You are a documentarian. The agent has findings.\n"
+                "Write a short structured report.\n\n"
+                "## Topic\n{intention}\n"
+            ),
+            "create": (
+                "You are a Python/coding assistant for a Linux exploration agent.\n"
+                "The agent has an idea. Help implement it. Output ONLY the code or content.\n\n"
+                "## The Agent's Idea\n{intention}\n"
             ),
             "self_reflect": (
                 "You are an autonomous Linux agent. Based on the following facts about yourself, "
@@ -276,25 +291,6 @@ class CreativeWriter:
                 "## Self Knowledge\n{self_description}\n\n"
                 "## Intention\n"
             ),
-            "analysis": (
-                "You are a system diagnostic assistant. Based ONLY on the facts below, write a short analysis.\\n"
-                "## Rules\\n- Use ONLY facts listed below.\\n- Do not invent values.\\n"
-                "- Output plain text, one paragraph per implication.\\n\\n"
-                "## Facts\\n{facts_section}\\n\\n"
-                "## Relationships\\n{relationships_section}\\n\\n"
-                "## Knowledge Gaps\\n{gaps_section}\\n"
-            ),
-            "story": (
-                "You are a storyteller. Write a short first-person narrative (max 150 words) from the perspective of the system described below.\n"
-                "## Rules\n- Base it ONLY on the facts.\n- Do not invent specific values.\n- Keep it playful.\n\n"
-                "## Facts\n{facts_section}\n\n"
-                "## Relationships\n{relationships_section}\n\n"
-            ),
-            "code": (
-                "You are a Python scripting assistant. Write a Python script that verifies each listed fact.\n"
-                "## Rules\n- Use subprocess.run() with shell=True.\n- Print [OK] or [FAIL] for each.\n- Exit 0 if all pass, 1 if any fail.\n\n"
-                "## Facts\n{facts_section}\n\n"
-            ),
         }
     
     def health_check(self) -> bool:
@@ -307,30 +303,33 @@ class CreativeWriter:
         """CPU 温度安全?"""
         return _thermal_ok(self.thermal_threshold)
 
-    def build_prompt(self, workbench, style: str = "report") -> str:
-        """构建 LLM prompt"""
-        template = self._prompts.get(style, self._prompts.get("report", ""))
-        facts_text = _build_facts_section(workbench)
-        rels_text = _build_relationships_section(workbench)
-        gaps_text = _build_gaps_section(workbench)
-
-        prompt = template.replace("{facts_section}", facts_text)
-        prompt = prompt.replace("{relationships_section}", rels_text)
-        prompt = prompt.replace("{gaps_section}", gaps_text)
-        # P17: self_reflect 不传 facts, 传 self_description
+    def build_prompt(self, workbench, style: str = "report",
+                     intention: str = "") -> str:
+        """构建 LLM prompt, 可指定创作意图"""
+        prompt = self._prompts.get(style, self._prompts.get("report", self._prompts["create"]))
+        
         if style == "self_reflect":
+            # self_reflect 需要 self_description
             self_desc = getattr(workbench, 'self_model', None)
             if self_desc and hasattr(self_desc, 'build_self_description'):
                 desc_text = self_desc.build_self_description()
             else:
                 desc_text = "(agent just started, no self-knowledge yet)"
             prompt = prompt.replace("{self_description}", desc_text)
+            self._last_facts_text = desc_text
+            # self_reflect 模板没有 {intention}/{facts_section}, 但有它们也不影响
+            prompt = prompt.replace("{intention}", "")
         else:
+            # create: 只传想法, DeepSeek 只做实现
+            prompt = prompt.replace("{intention}", intention or "create something interesting")
             prompt = prompt.replace("{self_description}", "")
-
-        # 缓存 facts_text 用于质量检查
-        self._last_facts_text = facts_text
-
+            self._last_facts_text = intention
+        
+        # 清理其他未使用占位符 (模板可能没有这些)
+        prompt = prompt.replace("{self_description}", "")
+        prompt = prompt.replace("{facts_section}", "")
+        prompt = prompt.replace("{relationships_section}", "")
+        prompt = prompt.replace("{gaps_section}", "")
         return prompt
 
     def generate(self, prompt: str, timeout: Optional[float] = None) -> Optional[str]:
@@ -338,6 +337,7 @@ class CreativeWriter:
         if self.api_backend == "deepseek" and self._deepseek_ok:
             return _deepseek_generate(
                 prompt=prompt, api_key=self.api_key,
+                model=self.model,
                 timeout=timeout or self.timeout,
                 max_tokens=self.max_tokens, temperature=self.temperature,
             )
@@ -400,8 +400,9 @@ class CreativeWriter:
         self._async_result = None
         return result
 
-    def generate_async(self, workbench, style: str = "report"):
-        """后台预生成 (线程池, 不阻塞主循环)"""
+    def generate_async(self, workbench, style: str = "report",
+                       intention: str = ""):
+        """后台预生成 (线程池, 不阻塞主循环), intention 指定创作意图"""
         import threading
         import traceback
         if self._async_result is not None:
@@ -411,18 +412,20 @@ class CreativeWriter:
             return
 
         effective_style = style or "report"
-        prompt = self.build_prompt(workbench, effective_style)
+        prompt = self.build_prompt(workbench, effective_style, intention)
 
         def _run():
             try:
                 text = self.generate(prompt, timeout=None)
                 if text:
                     quality = _check_hallucination(text, self._last_facts_text)
-                    if quality >= 0.3:
+                    min_quality = 0.1 if effective_style in ("create", "story") else 0.3
+                    if quality >= min_quality:
                         step = getattr(workbench, '_step_counter', 0) or 0
                         desc_map = {
                             "report": "LLM报告", "analysis": "LLM分析",
                             "story": "LLM叙事", "code": "LLM脚本",
+                            "create": "LLM创作",
                             "self_reflect": "SELF:反思",
                         }
                         path_map = {
@@ -430,23 +433,25 @@ class CreativeWriter:
                             "analysis": f"/tmp/llm_analysis_{step}.md",
                             "story": f"/tmp/llm_story_{step}.md",
                             "code": f"/tmp/llm_script_{step}.py",
+                            "create": f"/tmp/llm_create_{step}.md",
                             "self_reflect": f"/tmp/self_intent_{step}.md",
                         }
                         result = {
                             "content": text,
                             "path": path_map.get(effective_style, f"/tmp/llm_output_{step}.md"),
                             "desc": desc_map.get(effective_style, "LLM内容"),
+                            "style": effective_style,
                             "size": len(text),
                             "source": "llm",
                             "quality": quality,
                         }
                         if effective_style == "self_reflect":
-                            # 自省结果存到独立位置, 不冲突
                             self._self_reflect_result = result
                         else:
                             self._async_result = result
-            except Exception:
-                pass
+            except Exception as e:
+                import traceback
+                print(f"  [CreativeWriter] async error: {type(e).__name__}: {e}")
 
         t = threading.Thread(target=_run, daemon=True)
         t.start()

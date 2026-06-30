@@ -54,7 +54,273 @@ class GoalGenerator:
         self._intent_usage: dict[str, int] = {}
         self._total_goals = 0
         self._filled_gaps: set[str] = set()  # 已填过的缺口, 防止重复
+        self._format_stats: dict[str, dict[str, int]] = {
+            "code": {"ok": 0, "fail": 0},
+            "analysis": {"ok": 0, "fail": 0},
+            "report": {"ok": 0, "fail": 0},
+        }
+        self._inferences: dict = {}
 
+    def decide_creative_intention(self, wb, step: int) -> dict:
+        """小模型思维: 看数据, 产生真实的好奇心, 发具体任务给 DeepSeek 实现"""
+        if not hasattr(self, '_create_type_history'):
+            self._create_type_history = []
+
+        facts = wb.facts if hasattr(wb, 'facts') and wb.facts else {}
+        cats = {}
+        for k, v in facts.items():
+            cat = v.get('category', 'general') if isinstance(v, dict) else 'general'
+            cats[cat] = cats.get(cat, 0) + 1
+
+        observations = []
+        
+        # 数值类观察: 扫描全部事实, 发现有趣的值
+        key_patterns = {
+            ("kernel-limit", "shmmax", "shmall", "shm"): lambda v: v > 1e15,
+            ("cpu", "cpu_core", "nproc", "core", "cpu"): lambda v: 1 < v < 10000,
+            ("memory", "mem", "memory", "swap", "anon", "cache", "buffer"): lambda v: v > 1e6,
+            ("fs-limit", "nr_open", "file-max", "inode", "max_files", "max_user"): lambda v: v > 1e6,
+            ("process", "pid_max", "process", "pid"): lambda v: 100 < v < 1e8,
+            ("erratic", "tcp_ehash", "negative", "invalid"): lambda v: v < 0,
+        }
+        for k, v in facts.items():
+            if isinstance(v, dict): v_raw = v.get('value', '')
+            else: v_raw = v
+            try: fv = float(v_raw)
+            except: continue
+            kl = k.lower()
+            for (tag, *keywords), check in key_patterns.items():
+                if any(kw in kl for kw in keywords):
+                    if check(fv):
+                        short = k.split('.')[-1]
+                        if tag == "kernel-limit":
+                            observations.append((tag, f"{short}={fv:.0e}"))
+                        elif tag == "memory":
+                            observations.append((tag, f"{short}={fv/1e6:.0f}MB"))
+                        elif tag == "cpu":
+                            observations.append((tag, f"{short}={fv}"))
+                        else:
+                            observations.append((tag, f"{short}={fv:.0e}" if abs(fv) > 1e6 else f"{short}={fv:.0f}"))
+                        break
+
+        # P19: CodeArchive — 自我成长观测
+        if hasattr(self, 'code_archive') and self.code_archive:
+            try:
+                arch_obs = self.code_archive.get_observations()
+                observations.extend(arch_obs)
+            except Exception:
+                pass
+        if not observations:
+            observations.append(("random-explore", "nothing stands out"))
+        
+        # 标签级多样性: 避免同一观察类型被连续选
+        if not hasattr(self, '_tag_history'):
+            self._tag_history = []
+        recent_tags = self._tag_history[-4:]
+        weighted_obs = []
+        for otag, otxt in observations:
+            penalty = 0.5 if otag in recent_tags else 0.0
+            score = 1.0 - penalty
+            weighted_obs.append((score, otag, otxt))
+        scores = [s for s, _, _ in weighted_obs]
+        total = sum(scores) + 0.001
+        probs = [s / total for s in scores]
+        idx = random.choices(range(len(weighted_obs)), weights=probs, k=1)[0]
+        _, tag, obs_text = weighted_obs[idx]
+        self._tag_history.append(tag)
+        if len(self._tag_history) > 20:
+            self._tag_history = self._tag_history[-20:]
+        
+        # 基于观察类型选择最匹配的模板组
+        tag_mode_map = {
+            "cpu":       "cpu",
+            "kernel-limit": "kernel-limit",
+            "memory":    "memory",
+            "erratic":   "erratic",
+            "fs-limit":  "fs-limit",
+            "process":   "process",
+            "network":   "network",
+            "command-catalog": "command-catalog",
+            "content-overload": "content-overload",
+            "no-inference": "no-inference",
+            "system":    "system",
+            "boredom":   "boredom",
+            "code-archive": "code-archive",
+            "code-growth": "code-growth",
+            "code-stuck": "code-stuck",
+            "code-compose": "code-compose",
+            "code-milestone": "code-milestone",
+            "random-explore": "random-explore",
+        }
+
+        template_key = tag_mode_map.get(tag, "random-explore")
+        ideas = self._generate_ideas(template_key, obs_text)
+        
+        if not ideas:
+            ideas = [(0.3, "code", f"I wonder what happens if I explore /proc/sys more deeply. Let me write a Python script that reads every writable file in /proc/sys and reports current values.")]
+
+        # ── 阶段3: 多样性筛选 ──
+        recent = self._create_type_history[-6:]
+        scored = []
+        for score, style, idea in ideas:
+            # 与近期想法去重 (基于关键词重叠)
+            idea_words = set(idea.lower().split())
+            overlap = 0.0
+            for h in recent:
+                h_words = set(h.lower().split())
+                jac = len(idea_words & h_words) / max(len(idea_words | h_words), 1)
+                overlap = max(overlap, jac)
+            penalty = 0.6 if overlap > 0.4 else 0.0
+            scored.append((score - penalty, style, idea))
+        
+        scored.sort(key=lambda x: -x[0])
+        score, style, idea = scored[0]
+        self._create_type_history.append(idea)
+        if len(self._create_type_history) > 50:
+            self._create_type_history = self._create_type_history[-50:]
+        return {"style": style, "intention": idea, "category": "idea"}
+    
+    def record_format_result(self, fmt: str, success: bool):
+        """记录格式执行结果, 用于自适应调权"""
+        if fmt not in self._format_stats:
+            self._format_stats[fmt] = {"ok": 0, "fail": 0}
+        if success:
+            self._format_stats[fmt]["ok"] += 1
+        else:
+            self._format_stats[fmt]["fail"] += 1
+    
+    def _generate_ideas(self, tag: str, obs: str) -> list:
+        """结构化组合 + 输出格式选择"""
+        KEY = obs.split("=")[0].strip() if "=" in obs else tag
+        VALUE = obs.split("=")[-1].strip() if "=" in obs else obs
+        
+        domains = {
+            "cpu": "CPU layer", "kernel-limit": "kernel parameter space",
+            "memory": "memory hierarchy", "erratic": "anomalous behavior",
+            "fs-limit": "filesystem boundary", "process": "process lifecycle",
+            "network": "network topology", "command-catalog": "command ecosystem",
+            "content-overload": "content collection", "no-inference": "correlation landscape",
+            "system": "system baseline", "boredom": "unexplored territory",
+            "random-explore": "unknown subsystem",
+            "code-archive": "my code history", "code-growth": "my skill trajectory",
+            "code-stuck": "my current plateau", "code-compose": "my script collection",
+            "code-milestone": "my recent output",
+        }
+        domain = domains.get(tag, "system state")
+        source = self._derive_source(tag, KEY, VALUE)
+        
+        # 输出格式: 不同标签偏好不同格式
+        format_bias = {
+            "cpu":  {"code": 0.5, "analysis": 0.4, "report": 0.1},
+            "kernel-limit":  {"code": 0.6, "analysis": 0.3, "report": 0.1},
+            "memory":  {"code": 0.4, "analysis": 0.5, "report": 0.1},
+            "erratic":  {"code": 0.3, "analysis": 0.6, "report": 0.1},
+            "fs-limit":  {"code": 0.5, "analysis": 0.4, "report": 0.1},
+            "process":  {"code": 0.4, "analysis": 0.5, "report": 0.1},
+            "network":  {"code": 0.4, "analysis": 0.5, "report": 0.1},
+            "command-catalog":  {"code": 0.2, "analysis": 0.6, "report": 0.2},
+            "content-overload":  {"code": 0.2, "analysis": 0.6, "report": 0.2},
+            "no-inference":  {"code": 0.3, "analysis": 0.6, "report": 0.1},
+            "system":  {"code": 0.2, "analysis": 0.3, "report": 0.5},
+            "boredom":  {"code": 0.5, "analysis": 0.3, "report": 0.2},
+            "random-explore":  {"code": 0.4, "analysis": 0.4, "report": 0.2},
+            "code-archive":  {"code": 0.6, "analysis": 0.2, "report": 0.2},
+            "code-growth":  {"code": 0.6, "analysis": 0.3, "report": 0.1},
+            "code-stuck":  {"code": 0.6, "analysis": 0.3, "report": 0.1},
+            "code-compose":  {"code": 0.6, "analysis": 0.3, "report": 0.1},
+            "code-milestone":  {"code": 0.6, "analysis": 0.3, "report": 0.1},
+        }
+        probs = format_bias.get(tag, {"code": 0.5, "analysis": 0.3, "report": 0.2})
+        # 经验调整: 某个格式总失败就降权
+        if hasattr(self, '_format_stats'):
+            for fmt in list(probs.keys()):
+                s = self._format_stats.get(fmt, {"ok": 1, "fail": 1})
+                ratio = s["ok"] / max(s["ok"] + s["fail"], 1)
+                if ratio < 0.2:
+                    probs[fmt] *= 0.3
+        fmt_choices = list(probs.keys())
+        fmt_weights = [max(probs[f], 0.05) for f in fmt_choices]
+        output_format = random.choices(fmt_choices, weights=fmt_weights, k=1)[0]
+        
+        # 格式决定动词表和框架
+        if output_format == "analysis":
+            verbs = ["analyze", "examine", "investigate", "study", "review"]
+            frames = [
+                "I want to analyze the {domain} using {source}",
+                "I want to study {domain} — examine {source} data",
+                "I want to investigate {domain} through {source}",
+                "I want to look into {domain} by checking {source}",
+            ]
+        elif output_format == "report":
+            verbs = ["document", "summarize", "report", "record", "describe"]
+            frames = [
+                "I want to document the {domain} from {source}",
+                "I want a report on {domain} — data from {source}",
+                "I want to record findings about {domain} using {source}",
+                "I want to summarize what {source} tells us about {domain}",
+            ]
+        else:
+            verbs = ["analyze", "benchmark", "catalog", "cross-reference",
+                     "monitor", "probe", "stress-test", "validate", "visualize"]
+            frames = [
+                "I want to write a Python script that {verb}s the {domain} from {source}",
+                "I want write Python code to {verb} {domain} — data: {source}",
+                "I want to build a tool that {verb}s {domain} via {source}",
+                "I want a Python script to {verb} the {domain} using {source}",
+            ]
+        
+        selected = random.choices(verbs, k=min(4, len(verbs)))
+        result = []
+        for verb in selected:
+            frame = random.choice(frames)
+            text = frame.format(verb=verb, domain=domain, source=source)
+            result.append((0.8, output_format, text))
+        return result
+    
+    def _derive_source(self, tag: str, key: str, value: str) -> str:
+        """从事实的键名推导数据源 — 无硬编码路径"""
+        kl = key.lower()
+        if 'cmd_' in kl or 'command' in kl:
+            return "package metadata"
+        if 'generic_kernel' in kl:
+            return "/proc/sys/kernel"
+        if 'generic_net' in kl:
+            return "/proc/sys/net"
+        if 'generic_fs' in kl:
+            return "/proc/sys/fs"
+        if 'llm_' in kl or 'content' in kl:
+            return "generated content files"
+        if 'inf_' in kl:
+            return "inference results"
+        if 'hostname' in kl or 'node' in kl:
+            return "system identification"
+        if 'mem' in kl or 'swap' in kl:
+            return "/proc/meminfo"
+        if 'cpu' in kl or 'nproc' in kl:
+            return "/proc/cpuinfo"
+        if 'load' in kl or 'uptime' in kl:
+            return "/proc/loadavg"
+        if 'net' in kl or 'tcp' in kl or 'ip' in kl:
+            return "/proc/net"
+        if 'pid' in kl or 'process' in kl or 'thread' in kl:
+            return "/proc filesystem"
+        if 'sch' in kl or 'sched' in kl:
+            return "/proc/sched_debug"
+        if 'interrupt' in kl or 'irq' in kl:
+            return "/proc/interrupts"
+        if 'disk' in kl or 'io' in kl or 'block' in kl:
+            return "/proc/diskstats"
+        if 'module' in kl or 'driver' in kl or 'device' in kl:
+            return "/sys filesystem"
+        if 'archive' in kl or 'code' in kl:
+            return "my code archive"
+        fbs = {
+            "kernel-limit": "/proc/sys", "fs-limit": "/proc/sys/fs",
+            "erratic": "/proc/sys", "random-explore": "/proc and /sys",
+            "boredom": "alternate /proc interfaces",
+        }
+        return fbs.get(tag, "/proc filesystem")
+    
     def generate(self, mode: str, workbench=None, rnd_avg: float = 0.0,
                  step: int = 0, recent_intents: Optional[list[str]] = None,
                  force_create: bool = False,
@@ -62,28 +328,9 @@ class GoalGenerator:
                  hypothesis_engine=None, fact_graph=None) -> Optional[Goal]:
         """
         动态生成最佳目标 — 所有决策由数据驱动
-
-        Args:
-          mode: EXPLORE | CREATE | LEARN
-          knowledge_mapper: KnowledgeMapper 实例
-          tool_registry: ToolRegistry 实例
-          hypothesis_engine: P16 R3 假设引擎 (LEARN 模式使用)
-          fact_graph: P16 R3 FactGraph (用于假设生成)
         """
-        if workbench is None:
-            return None
-
-        # 收集推理节点 (影响目标选择)
-        self._inferences = self._collect_inferences(workbench)
-
-        recent = recent_intents or []
-        candidates = []
-
-        # 更新 intent→命令映射 (从 KnowledgeMapper)
-        if knowledge_mapper and hasattr(knowledge_mapper, 'get_intent_command_map'):
-            self._intent_command_map = knowledge_mapper.get_intent_command_map()
-
-        # ── 1. 试用发现的新命令 ──
+        candidates: list[Goal] = []
+    
         n_try = self._try_command_candidates(knowledge_mapper, step)
         candidates.extend(n_try)
 
@@ -138,8 +385,8 @@ class GoalGenerator:
                     pass
 
         # ── 5. 多样性: 降频权 (温和版本) ──
-        if recent:
-            intent_freq = {i: recent.count(i) for i in set(recent)}
+        if recent_intents:
+            intent_freq = {i: recent_intents.count(i) for i in set(recent_intents)}
             for c in candidates:
                 freq = intent_freq.get(c.intent, 0)
                 # 只在频率 > 3 时才降权, 且降幅温和
@@ -354,8 +601,9 @@ class GoalGenerator:
                     goal.source = f"rnd_gap:{missing}"
                     candidates.append(goal)
 
-        # 探针 (但避免重复)
-        if hasattr(wb, '_build_dynamic_probes'):
+            # 收集推理用于过滤探针
+            self._inferences = self._collect_inferences(wb)
+            # 探针 (但避免重复)
             if not hasattr(self, '_last_probe_key'):
                 self._last_probe_key = ""
             explored = set()
@@ -402,83 +650,46 @@ class GoalGenerator:
         return candidates
 
     def _create_candidates(self, wb, step: int) -> list[Goal]:
-        """CREATE: 用已有事实生成内容, 不需要新事实"""
-        candidates = []
-
-        # 1. 优先 CreativeWriter (LLM 异步结果检查)
+        """CREATE: 只产出 LLM 真正生成的内容。模板不在了。"""
+        # 有 LLM: 只消费异步结果, 不生成任何模板内容
         if self.creative_writer is not None:
-            # 先检查缓存 (不阻塞)
+            # 读异步结果但不消费 (check_async_result 会清除, 留给 step() 去消费)
             async_result = getattr(self.creative_writer, '_async_result', None)
             if async_result and async_result.get("source", "") == "llm":
-                result = self.creative_writer.check_async_result()
-                if result:
-                    content = result.get("content", "")
-                    path = result.get("path", f"/tmp/llm_report_{step}.md")
-                    if content:
-                        candidates.append(Goal(
-                            "content_create", "CREATE",
-                            {"path": path, "content": content},
-                            priority=0.7, source="llm_create",
-                            description=f"LLM: {result.get('desc','report')} ({len(content)}B)"
-                        ))
-                        return candidates
-            # LLM 未就绪, 继续模板
+                content = async_result.get("content", "")
+                if content and len(content) > 40:
+                    style = async_result.get("style", "output")
+                    path = async_result.get("path", f"/tmp/llm_{style}_{step}.md")
+                    return [Goal(
+                        "content_create", "CREATE",
+                        {"path": path, "content": content},
+                        priority=0.8, source="llm_create",
+                        description=f"LLM: {async_result.get('desc',style)} ({len(content)}B)"
+                    )]
+            return []
 
-        # 2. 模板回退: 从 FactGraph 收集已有事实
-        facts_dict = {}
+        # 无 LLM: 极简模板 fallback
         graph = getattr(wb, 'graph', None)
+        facts = {}
         if graph and graph.nodes:
-            for key, node in graph.nodes.items():
-                facts_dict[key] = node.value
+            for k, n in graph.nodes.items():
+                facts[k] = n.value
         elif hasattr(wb, 'facts'):
-            facts_dict = {k: v.get('value', '') for k, v in wb.facts.items()}
-
-        if len(facts_dict) < 3:
-            return candidates
-
-        # 生成内容: 只选有意义的系统/网络/包/能力事实
-        sorted_facts = []
-        if graph and graph.nodes:
-            meaningful = []
-            for key, node in graph.nodes.items():
-                if node.category in ("system", "package", "network", "capability", "file"):
-                    meaningful.append((key, node))
-            meaningful.sort(key=lambda x: (x[1].confidence, x[1].step), reverse=True)
-            sorted_facts = meaningful[:10]
-        else:
-            sorted_facts = list(facts_dict.items())[:10]
-
-        if not sorted_facts:
-            return candidates
-
-        # 如果有推理, 用推理引导创作内容
-        inferences = list(self._inferences.values()) if hasattr(self, '_inferences') else []
-
-        lines = [f"# Folunar Report (step {step})", ""]
-        if inferences:
-            lines.append("## Inferences")
-            for inf in inferences[:5]:
-                lines.append(f"- {inf}")
-            lines.append("")
-
-        lines.append("## Facts")
-        for key, node in sorted_facts:
-            val = str(node.value if not isinstance(node, tuple) else node[1])[:60]
-            cat = getattr(node, 'category', 'general') if not isinstance(node, tuple) else 'general'
-            lines.append(f"- [{cat}] {key}: {val}")
-        content = "\n".join(lines)
-
-        if content and len(content) > 50:
-            path = f"/tmp/report_{step}.md"
-            candidates.append(Goal(
-                "content_create", "CREATE",
-                {"path": path, "content": content},
-                priority=0.6, source="auto_report",
-                description=f"报告: {len(content)}B"
-            ))
-
-        return candidates
-
+            facts = {k: v.get('value','') for k, v in wb.facts.items()}
+        if len(facts) < 3:
+            return []
+        lines = [f"# State Snapshot (step {step})"]
+        for k, v in list(facts.items())[:8]:
+            lines.append(f"- {k}: {str(v)[:60]}")
+        c = "\n".join(lines)
+        if len(c) < 40:
+            return []
+        return [Goal(
+            "content_create", "CREATE",
+            {"path": f"/tmp/state_{step}.md", "content": c},
+            priority=0.5, source="fallback",
+            description=f"快照: {len(c)}B"
+        )]
     def _self_generate_experiment(self, wb, step: int) -> Optional[Goal]:
         """
         从已有事实组合出新实验 — 无缺口时自生成
@@ -582,6 +793,10 @@ class GoalGenerator:
 
     def _has_inference(self, keyword: str) -> bool:
         """检查是否有包含关键词的推理"""
+        if not hasattr(self, '_inferences'):
+            return False
+        if not self._inferences:
+            return False
         for val in self._inferences.values():
             if keyword in val.lower():
                 return True

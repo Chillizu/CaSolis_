@@ -56,6 +56,7 @@ from agent.goal_generator import GoalGenerator
 from agent.world_model_v4 import GrowingWorldModel
 from agent.episodic_memory import EpisodicMemory
 from agent.creative_writer import CreativeWriter
+from agent.code_archive import CodeArchive
 from benchmark.param_extractor import ParameterExtractor
 from benchmark.template_engine import TemplateEngine, ExecResult
 from collections import deque
@@ -191,6 +192,7 @@ class OnlineAgent:
         mode: str = "auto",  # stable | creative | auto
         api_backend: str = "",
         api_key: str = "",
+        model: str = "qwen3.5:0.8b",
     ):
         # Conductor checkpoint 自动选择: 线上对齐版 > 原始版
         if conductor_checkpoint is None:
@@ -261,12 +263,15 @@ class OnlineAgent:
         # P17: SelfModel (自我意识统计)
         from agent.self_model import SelfModel
         self.self_model = SelfModel()
+        # 挂到 workbench 上供 CreativeWriter 自省 prompt 使用
+        self.workbench.self_model = self.self_model
 
         self.creative_writer = None
         try:
             cw_backend = api_backend or os.environ.get("DEEPSEEK_BACKEND", "ollama")
             cw_key = api_key or os.environ.get("DEEPSEEK_API_KEY", "")
             self.creative_writer = CreativeWriter(
+                model=model,
                 timeout=120.0,
                 max_tokens=2048,
                 api_backend=cw_backend,
@@ -281,6 +286,9 @@ class OnlineAgent:
             print(f"  ⚠️ CreativeWriter 初始化失败: {e}")
 
         self.goal_generator = GoalGenerator(creative_writer=self.creative_writer)
+        # P19: CodeArchive — 持久化代码, 追踪成长
+        self.code_archive = CodeArchive()
+        self.goal_generator.code_archive = self.code_archive
         if self.creative_writer:
             self.creative_writer.enable_async()
             self._last_llm_step = -100
@@ -656,19 +664,48 @@ class OnlineAgent:
         if novelty > novelty_threshold:
             reward += novelty * novelty_mult
 
-        # P9.2: 创作奖励 — CREATE 成功写文件
+        # P9.2: 创作奖励 — 区分模板/LLM/代码
         if intent == "CREATE" and success:
             written_bytes = self._get_written_file_size(result, params)
-            reward += 0.3
-            reward += min(0.5, written_bytes / 100.0 * 0.1)
-            # 重复写同一文件惩罚
+            source = params.get("source", "") if isinstance(params, dict) else ""
+            # 代码执行奖励 (通过 sync LLM 路径, 已在 _llm_code 中单独处理)
+            # 这里只处理 GoalGenerator 来的 CREATE
+            if source in ("auto_report", "auto_analysis", "auto_experiment"):
+                # 模板内容: 基础奖励
+                reward += 0.2
+                reward += min(0.3, written_bytes / 200.0 * 0.1)
+            elif source == "llm_create":
+                # LLM 生成内容: 中等奖励
+                reward += 0.5
+                reward += min(0.6, written_bytes / 100.0 * 0.1)
+            elif source == "auto_script":
+                # 脚本模板: 尝试执行
+                script_path = params.get("path", "")
+                if script_path:
+                    r = self.sandbox.execute(f"bash {script_path} 2>&1 | head -5", timeout=10)
+                    executed_ok = r and r.exit_code == 0
+                    if executed_ok:
+                        reward += 1.5
+                        reward += min(0.5, len((r.stdout or "")) / 100.0 * 0.1)
+                        print(f"  [SCRIPT] {script_path} 执行成功 +{reward:.1f}")
+                    else:
+                        reward += 0.3  # 尝试就有奖励
+            else:
+                reward += 0.3
+                reward += min(0.5, written_bytes / 100.0 * 0.1)
+            # 新路径惩罚
             write_key = f"write:{params.get('path','')}"
             if getattr(self, "_recent_writes", {}).get(write_key, 0) > self.step_count - 30:
                 reward *= 0.3
             if not hasattr(self, "_recent_writes"):
                 self._recent_writes = {}
             self._recent_writes[write_key] = self.step_count
-
+            # 创作来源多样性奖励
+            if not hasattr(self, "_last_create_source"):
+                self._last_create_source = ""
+            if source and source != self._last_create_source:
+                reward += 0.3  # 换类型有额外奖励
+            self._last_create_source = source
         # 创意模式: 强多样性奖励
         diversity_weight = 0.5 if use_creative else 0.3
         reward += intent_diversity * diversity_weight
@@ -1820,13 +1857,19 @@ class OnlineAgent:
                         if random.random() < 0.1:
                             print(f"  [DIVERSITY] 强制 {forced} (GoalGenerator 多样性调整)")
 
-        # P17: 保持 LLM 异步生成管道运行
+        # P17: 保持 LLM 异步生成管道运行 — 小模型决定意图, DeepSeek 执行
         if (hasattr(self, 'creative_writer')
                 and self.creative_writer._async_enabled
                 and getattr(self.creative_writer, '_async_result', None) is None
                 and self.step_count % 5 == 0):
             try:
-                self.creative_writer.generate_async(self.workbench)
+                intention = self.goal_generator.decide_creative_intention(
+                    self.workbench, self.step_count)
+                self.creative_writer.generate_async(
+                    self.workbench,
+                    style=intention.get("style", "create"),
+                    intention=intention["intention"],
+                )
             except Exception:
                 pass
         # P17: 自我反思 — 检查异步自省结果
@@ -2432,23 +2475,17 @@ class OnlineAgent:
             if hasattr(self, 'self_model'):
                 self.self_model.save()
 
-        # P5.1: 自引用 — 自引用 — 自适应频率
+        # P5.1: 自引用 — 自适应频率
         if self.sandbox and self.step_count > 0 and self._adaptive_should("self_review", 0.03):
             try:
                 r = self.sandbox.execute("tail -5 /tmp/discoveries.md 2>/dev/null || echo ''")
                 if r.stdout and len(r.stdout) > 20:
-                    self.workbench.extract_facts("SELF", "self-review", r.stdout, {}, self.step_count)
+                    self.workbench._add_fact("self_discovery", r.stdout.strip()[:80],
+                        "system", "self_monitor", self.step_count, category="meta")
             except Exception:
                 pass
 
-        # P5.3c: 脚本创作 — 自适应频率
-        if self.step_count > 20 and self._adaptive_should("make_script", 0.04):
-            self._create_and_run_script()
-        if self.step_count > 50 and self._adaptive_should("make_script", 0.03):
-            self._create_script_from_commands()
-
-        # LLM 异步结果检查: 每步检查 CreativeWriter 是否完成生成
-        # LLM sync generation (自适应频率, 并行报告+代码)
+        # LLM sync generation (自适应频率, 并行报告 + 可执行代码 + 自动重试)
         if self.creative_writer and self.step_count > 50 and self._adaptive_should("run_llm", 0.01):
             import threading
             def _llm_report():
@@ -2478,13 +2515,53 @@ class OnlineAgent:
                         self.sandbox.execute(f"chmod +x {path}")
                         r = self.sandbox.execute(f"python3 {path} 2>&1", timeout=15)
                         out = (r.stdout or r.stderr or "").strip()
-                        self.workbench.extract_facts("LLM_CODE", path, out, {}, self.step_count)
-                        print(f"  [LLM] code {len(t)}B -> {path} {'OK' if r.exit_code==0 else 'FAIL'}")
+                        exit_ok = r and r.exit_code == 0
+                        if exit_ok:
+                            self._total_create_content += len(t)
+                            self.workbench.extract_facts("LLM_CODE", path, out, {}, self.step_count)
+                            self.total_reward += 2.0
+                            print(f"  [LLM] code {len(t)}B -> {path} OK +2.0!")
+                        else:
+                            error_preview = out[:400]
+                            retry_prompt = (
+                                f"The Python script below failed with error:\n"
+                                f"```\n{error_preview}\n```\n\n"
+                                f"Fix the bug. Output ONLY the corrected Python code, no explanation.\n"
+                                f"```python\n{t}\n"
+                            )
+                            t2 = self.creative_writer.generate(retry_prompt, timeout=120.0)
+                            if t2 and len(t2) > 80:
+                                path2 = f"/tmp/llm_code_{self.step_count}_retry.py"
+                                # 剥离 retry 输出的围栏
+                                if t2.startswith('```'):
+                                    nli = t2.find('\n')
+                                    if nli > 0: t2 = t2[nli+1:]
+                                    if t2.rstrip().endswith('```'):
+                                        t2 = t2[:t2.rfind('```')].rstrip()
+                                t2 = t2.strip()
+                                if not t2.startswith('#!'):
+                                    t2 = '#!/usr/bin/env python3\n' + t2
+                                enc2 = _b64.b64encode(t2.encode()).decode()
+                                self.sandbox.execute(f"echo '{enc2}' | base64 -d > {path2}")
+                                self.sandbox.execute(f"chmod +x {path2}")
+                                r2 = self.sandbox.execute(f"python3 {path2} 2>&1", timeout=15)
+                                out2 = (r2.stdout or r2.stderr or "").strip()
+                                if r2 and r2.exit_code == 0:
+                                    self._total_create_content += len(t2)
+                                    self.workbench.extract_facts("LLM_CODE", path2, out2, {}, self.step_count)
+                                    self.total_reward += 1.5
+                                    print(f"  [LLM] code retry {len(t2)}B -> {path2} OK +1.5!")
+                                else:
+                                    self.workbench.extract_facts("LLM_CODE", path,
+                                        t + "\n---\n" + error_preview,
+                                        f"failed: {out2[:200]}", self.step_count)
+                                    print(f"  [LLM] code {len(t)}B FAIL (retry also failed)")
+                            else:
+                                print(f"  [LLM] code {len(t)}B FAIL ({error_preview[:80]})")
                 except Exception as e:
                     print(f"  [LLM] code error: {e}")
             threading.Thread(target=_llm_report, daemon=True).start()
             threading.Thread(target=_llm_code, daemon=True).start()
-
         # LLM async result check every 5 steps
         if self.creative_writer and self.step_count % 5 == 0:
             async_result = self.creative_writer.check_async_result()
@@ -2492,6 +2569,19 @@ class OnlineAgent:
                 content = async_result.get("content", "")
                 path = async_result.get("path", f"/tmp/llm_output_{self.step_count}.md")
                 if content and self.sandbox and len(content) > 50:
+                    # 剥离 Markdown 代码围栏 (```python ... ```)
+                    if content.startswith('```'):
+                        # 移除开头的 ``` 行 (可能 ```python, ```py, 或 ```)
+                        first_newline = content.find('\n')
+                        if first_newline > 0:
+                            content = content[first_newline+1:]
+                        # 移除结尾的 ``` 行
+                        if content.rstrip().endswith('```'):
+                            last_fence = content.rfind('```')
+                            content = content[:last_fence].rstrip()
+                    content = content.strip()
+                    if path.endswith('.py') and not content.startswith('#!'):
+                        content = '#!/usr/bin/env python3\n' + content
                     import base64
                     encoded = base64.b64encode(content.encode()).decode()
                     self.sandbox.execute(f"echo '{encoded}' | base64 -d > {path}")
@@ -2500,6 +2590,19 @@ class OnlineAgent:
                         f"async:{async_result.get('desc','content')}",
                         self.step_count, category="content")
                     self._total_create_content += len(content)
+                    # P19: CodeArchive — 持久化代码
+                    if hasattr(self, 'code_archive') and self.code_archive:
+                        try:
+                            from pathlib import Path
+                            self.code_archive.save(
+                                filename=Path(path).name,
+                                content=content,
+                                step=self.step_count,
+                                idea=async_result.get('desc', '') or content[:200],
+                                success=True,
+                            )
+                        except Exception:
+                            pass
 
         # P5.4: 元学习 — 记录步效用 + 定期淘汰
         asrc = self._last_action_source
@@ -2591,8 +2694,10 @@ class OnlineAgent:
                     )
                     if self.step_count % 50 == 0:
                         self.world_model_v5.save(self._wm5_checkpoint)
-            except Exception:
-                pass
+                    if self.step_count % 100 == 0:
+                        print(f"  [WM5] train loss={loss:.4f}")
+            except Exception as e:
+                print(f"  [WM5] train error: {e}")
 
         return step_success, reward
 
