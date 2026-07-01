@@ -2413,7 +2413,7 @@ class OnlineAgent:
         ):
             try:
                 intent_idx_h = INTENTS.index(intent) if intent in INTENTS else 0
-                habit_params = self.habit_system.suggest(intent_idx_h, state_emb)
+                habit_params = self.habit_system.suggest(intent_idx_h, state_emb, current_params=params)
                 if habit_params is not None:
                     params = dict(habit_params)
                     if random.random() < 0.15:

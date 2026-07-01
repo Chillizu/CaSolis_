@@ -7,10 +7,13 @@
 - 无训练参数, 纯统计型。
 - 置信度阈值和最小成功次数在构造时配置, 便于测试和调参。
 - LEARN 模式下不应使用习惯 (由调用方控制)。
+- 习惯键为 (intent, 命令模板), 不同命令在同一意图下各自累积统计,
+  避免第一个成功的命令锁死整个意图。
 """
 
 import copy
-from dataclasses import dataclass, field
+import re
+from dataclasses import dataclass
 from typing import Any, Optional
 
 
@@ -18,7 +21,8 @@ from typing import Any, Optional
 class Habit:
     """单个习惯记录"""
     intent: int
-    key: str
+    key: str          # 命令模板名 (如 "cat", "free", "tool_gather_packages")
+    composite_key: tuple  # (intent, key) 完整键
     params: dict
     success_count: int = 0
     failure_count: int = 0
@@ -47,7 +51,11 @@ class Habit:
 
 
 class HabitSystem:
-    """意图级习惯系统: 统计成功/失败, 高置信度时推荐历史参数"""
+    """(意图, 命令)级习惯系统: 按具体命令统计成功/失败, 高置信度时推荐历史参数。
+
+    通过将习惯键从纯意图提升到 (意图, 命令模板), 解决「一个 intent 只有一个解法」的固化问题。
+    不同命令在同一 intent 下各自积累统计, 互不干扰。
+    """
 
     def __init__(
         self,
@@ -56,12 +64,29 @@ class HabitSystem:
     ):
         self.confidence_threshold = confidence_threshold
         self.min_success_count = min_success_count
-        # key = intent (first cut, conservative and simple)
-        self.habits: dict[int, Habit] = {}
+        self.habits: dict[tuple[int, str], Habit] = {}
 
-    def _make_key(self, intent: int, params: dict) -> int:
-        """习惯键: 第一版仅使用 intent, 避免过早过度特化。"""
-        return intent
+    def _normalize_command(self, intent: int, params: dict) -> str:
+        """从 params 提取命令模板名。
+
+        TRY: custom_args 的第一个词 (如 cat, free, tool_gather_packages)
+        OBSERVE/CREATE: path 的 basename 或动作类型
+        回退: intent 名称
+        """
+        custom = params.get("custom_args")
+        if custom and isinstance(custom, (list, tuple)) and len(custom) > 0:
+            cmd = str(custom[0])
+            return re.sub(r'\.(py|sh|pl)$', '', cmd.split('/')[-1])
+
+        path = params.get("path")
+        if path and isinstance(path, str):
+            return path.split('/')[-1].split('.')[0] or "file"
+
+        return f"intent_{intent}"
+
+    def _make_key(self, intent: int, params: dict) -> tuple[int, str]:
+        """习惯键: (intent, 命令模板)"""
+        return (intent, self._normalize_command(intent, params))
 
     def register(
         self,
@@ -71,12 +96,13 @@ class HabitSystem:
         reward: float,
         step: int,
     ) -> Habit:
-        """注册一次经验, 更新或创建对应习惯。"""
+        """注册一次经验, 更新或创建对应命令的习惯。"""
         key = self._make_key(intent, params)
         if key not in self.habits:
             self.habits[key] = Habit(
                 intent=intent,
-                key=str(intent),
+                key=key[1],
+                composite_key=key,
                 params=copy.deepcopy(params),
                 created_step=step,
             )
@@ -88,14 +114,29 @@ class HabitSystem:
         self,
         intent: int,
         state_emb: Optional[Any] = None,
+        current_params: Optional[dict] = None,
     ) -> Optional[dict]:
-        """为指定意图推荐高置信度习惯的参数; 无合适习惯返回 None。"""
+        """为指定意图和当前参数推荐高置信度习惯的参数。
+
+        当提供 current_params 时, 只匹配与当前命令相同模板的习惯;
+        若该命令无习惯 (或置信度不足), 返回 None。
+        这避免了一个意图下不同命令互相覆盖参数。
+
+        无合适习惯返回 None。
+        """
         candidates = [
             h for h in self.habits.values()
             if h.intent == intent
             and h.confidence >= self.confidence_threshold
             and h.success_count >= self.min_success_count
         ]
+
+        if current_params is not None:
+            current_key = self._make_key(intent, current_params)
+            candidates = [h for h in candidates if h.composite_key == current_key]
+            if not candidates:
+                return None
+
         if not candidates:
             return None
 
@@ -122,10 +163,10 @@ class HabitSystem:
                 {
                     "intent": h.intent,
                     "key": h.key,
-                    "confidence": h.confidence,
+                    "confidence": round(h.confidence, 3),
                     "success_count": h.success_count,
                     "failure_count": h.failure_count,
-                    "total_reward": h.total_reward,
+                    "total_reward": round(h.total_reward, 4),
                     "last_used_step": h.last_used_step,
                 }
                 for h in sorted_habits[:5]
