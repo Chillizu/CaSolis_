@@ -2624,6 +2624,7 @@ class OnlineAgent:
             success=(result.exit_code == 0) and bool(output),
             exit_code=result.exit_code,
             thought=thought_vector.tolist() if thought_vector.numel() > 0 else [],
+            recorded_step=self.step_count,
         ))
 
         # 9. 记录统计
@@ -2784,21 +2785,6 @@ class OnlineAgent:
         # LLM sync generation (自适应频率, 并行报告 + 可执行代码 + 自动重试)
         if self.creative_writer and self.step_count > 50 and self._adaptive_should("run_llm", 0.01):
             import threading
-            def _llm_report():
-                try:
-                    import base64 as _b64
-                    p = self.creative_writer.build_prompt(self.workbench, "report")
-                    t = self.creative_writer.generate(p, timeout=120.0)
-                    if t and len(t) > 100:
-                        path = f"/tmp/llm_sync_{self.step_count}.md"
-                        enc = _b64.b64encode(t.encode()).decode()
-                        self.sandbox.execute(f"echo '{enc}' | base64 -d > {path}")
-                        self.workbench._add_fact(f"llm_sync_{self.step_count}", t[:80], "LLM",
-                            f"sync:{self.step_count}", self.step_count, category="content")
-                        self._total_create_content += len(t)
-                        print(f"  [LLM] report {len(t)}B -> {path}")
-                except Exception as e:
-                    print(f"  [LLM] report error: {e}")
             def _llm_code():
                 try:
                     import base64 as _b64
@@ -2828,7 +2814,6 @@ class OnlineAgent:
                             t2 = self.creative_writer.generate(retry_prompt, timeout=120.0)
                             if t2 and len(t2) > 80:
                                 path2 = f"/tmp/llm_code_{self.step_count}_retry.py"
-                                # 剥离 retry 输出的围栏
                                 if t2.startswith('```'):
                                     nli = t2.find('\n')
                                     if nli > 0: t2 = t2[nli+1:]
@@ -2856,7 +2841,6 @@ class OnlineAgent:
                                 print(f"  [LLM] code {len(t)}B FAIL ({error_preview[:80]})")
                 except Exception as e:
                     print(f"  [LLM] code error: {e}")
-            threading.Thread(target=_llm_report, daemon=True).start()
             threading.Thread(target=_llm_code, daemon=True).start()
         # LLM async result check every 5 steps
         if self.creative_writer and self.step_count % 5 == 0:
@@ -3095,9 +3079,15 @@ class OnlineAgent:
         self.optimizer.zero_grad()
 
         logits = self.classifier.head(embs)
-        loss = torch.nn.functional.cross_entropy(
-            logits, torch.tensor(labels, device=self.device)
+        # Ornith-1.0 风格 staleness 加权: 旧经验按年龄指数衰减贡献
+        ce_loss = torch.nn.functional.cross_entropy(
+            logits, torch.tensor(labels, device=self.device), reduction='none'
         )
+        staleness_weights = torch.tensor(
+            [e.staleness_weight(self.step_count) for e in batch],
+            device=self.device, dtype=torch.float32
+        )
+        loss = (ce_loss * staleness_weights).mean()
 
         loss.backward()
         torch.nn.utils.clip_grad_norm_(self.classifier.head.parameters(), 1.0)
