@@ -5,7 +5,37 @@
 
 ---
 
-## [2026-07-01] P20 — Brain-Reference Architecture
+## [2026-07-01] Self-Scaffolding Phase 1 — 计划接入主循环
+
+### 新增
+- `scripts/test_self_scaffolding.py` — 计划容器单元测试
+- `scripts/test_self_scaffolding_smoke.py` — 30 步主循环烟测
+- `scripts/compare_self_scaffolding.py` — 启用/禁用脚手架行为对比
+
+### 修改
+- `agent/online_agent.py`:
+  - 新增 `_active_plan`, `_plan_step_count`, `_max_plan_steps`, `_plan_trajectories` 状态
+  - 新增 `_get_active_plan_goal`, `_mark_plan_step_done`, `_finish_active_plan` 方法
+  - 主循环每步以自适应概率调用 `GoalGenerator.decide_plan()` 生成计划
+  - 当存在活跃计划时, 优先执行计划步骤并保护其不被多样性强制覆盖
+  - 保存 `last_state_emb` / `last_thought` 用于计划反馈
+  - 新增 `_train_plan_scaffold_feedback()`: 用 Conductor head 代理预测 scaffold quality 做 MSE 回归
+  - 将 `plan_id`, `plan_step`, `plan_success_rate` 传入 `DetailedLogger`
+- `agent/goal_generator.py`:
+  - 新增 `_plan_topic_stats` 和 `record_plan_outcome()`: 按 topic 统计计划成败
+  - 在 `decide_plan()` 中用历史成功率微调主题选择
+- `agent/detailed_logger.py`:
+  - `log_step()` 增加 `plan_id`, `plan_step`, `plan_success_rate` 字段和 `**kwargs`
+- `agent/inference_engine.py`:
+  - 修复 `_infer_patterns()` 迭代图节点时字典被修改的 `RuntimeError`
+
+### 验证
+- 单元测试通过: `python3 scripts/test_self_scaffolding.py`
+- 30 步烟测通过: 97% 成功率, 多个计划 100% 完成
+- 50 步对比: 启用脚手架 vs 禁用 → 成功率 92% vs 60%, 意图熵 1.086 vs 0.858, 计划数 2 vs 0
+
+---
+
 
 ### 新增文档
 - `doc/BRAIN_REFERENCE.md` — 将 P10-P19 模块映射到大脑功能区, 包含信号流图和模块对照表

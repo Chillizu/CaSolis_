@@ -20,6 +20,7 @@ import os
 import random
 from typing import Optional
 
+from agent.planner import Plan
 
 class Goal:
     """一个可执行目标"""
@@ -64,6 +65,7 @@ class GoalGenerator:
         self._active_plan: Optional[Plan] = None
         self._plan_history: list = []
         self._plan_probability = 0.40  # 40% 概率输出计划而非单句
+        self._plan_topic_stats: dict[str, dict] = {}  # topic -> {"ok": int, "fail": int}
 
 
     def decide_creative_intention(self, wb, step: int) -> dict:
@@ -224,7 +226,6 @@ class GoalGenerator:
             return None
         if random.random() > self._plan_probability:
             return None
-        from agent.planner import Plan
         # 1. 找当前观察标签
         facts = wb.facts if hasattr(wb, 'facts') and wb.facts else {}
         tags = []
@@ -239,6 +240,15 @@ class GoalGenerator:
         if not tag_counts:
             return None
         top_tag = max(tag_counts, key=tag_counts.get)
+        # Self-Scaffolding: 用历史计划成功率微调主题选择, 保留频次权重
+        if len(tag_counts) > 1:
+            sorted_tags = sorted(tag_counts.keys(), key=lambda t: tag_counts[t], reverse=True)
+            best_tag = max(
+                sorted_tags[:3],
+                key=lambda t: self._topic_success_rate(t) * (0.5 + 0.5 * tag_counts[t] / max(tag_counts.values()))
+            )
+            if best_tag != top_tag:
+                top_tag = best_tag
         # 2. 生成步骤链: 保证 code → analysis → report 各一步
         steps = []
         formats_needed = ["code", "analysis", "report"]  # 构建→分析→报告
@@ -301,6 +311,26 @@ class GoalGenerator:
             self._format_stats[fmt]["ok"] += 1
         else:
             self._format_stats[fmt]["fail"] += 1
+
+    # ── Self-Scaffolding: 计划结果反馈 ──
+
+    def record_plan_outcome(self, plan: Plan, success_rate: float):
+        """记录计划完成情况, 用于自适应调整计划生成."""
+        topic = plan.topic or "unknown"
+        if topic not in self._plan_topic_stats:
+            self._plan_topic_stats[topic] = {"ok": 0, "fail": 0}
+        n_steps = len(plan.steps)
+        n_ok = round(success_rate * n_steps)
+        self._plan_topic_stats[topic]["ok"] += n_ok
+        self._plan_topic_stats[topic]["fail"] += (n_steps - n_ok)
+        print(f"  [PLAN-STATS] topic={topic} ok={self._plan_topic_stats[topic]['ok']} fail={self._plan_topic_stats[topic]['fail']}")
+
+    def _topic_success_rate(self, topic: str) -> float:
+        stats = self._plan_topic_stats.get(topic, {"ok": 0, "fail": 0})
+        total = stats["ok"] + stats["fail"]
+        if total == 0:
+            return 0.5  # 无历史时中性先验
+        return stats["ok"] / total
     
     def _generate_ideas(self, tag: str, obs: str) -> list:
         """结构化组合 + 输出格式选择"""

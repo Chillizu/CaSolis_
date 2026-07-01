@@ -53,7 +53,8 @@ from agent.intent_discoverer import IntentDiscoverer
 from agent.error_recovery import ErrorRecovery
 from agent.workbench import Workbench
 from agent.meta_selector import MetaCognitiveSelector
-from agent.goal_generator import GoalGenerator
+from agent.goal_generator import GoalGenerator, Goal
+from agent.planner import Plan
 from agent.world_model_v4 import GrowingWorldModel
 from agent.episodic_memory import EpisodicMemory
 from agent.creative_writer import CreativeWriter
@@ -505,6 +506,14 @@ class OnlineAgent:
         self._self_direction: str = ""      # 当前方向描述
         self._self_remaining: int = 0       # 剩余偏置步数
         self._self_plan_steps: int = 0      # 当前规划的第几步
+        # Self-Scaffolding: 多步计划执行状态
+        self._active_plan: Optional[Plan] = None
+        self._plan_step_count: int = 0
+        self._max_plan_steps: int = 10
+        self._plan_trajectories: deque = deque(maxlen=50)  # (state_emb, thought, scaffold_quality)
+        self._last_plan_success_rate: float = -1.0
+        self._last_plan_id: str = ""
+        self._last_plan_step_count: int = -1
         self.logger = DetailedLogger()  # P9: 超级日志
 
         # 失败抑制: 同一 intent+params 失败后 N 步内不再尝试
@@ -580,6 +589,92 @@ class OnlineAgent:
         goal = self.explore_targets[self.goal_idx % len(self.explore_targets)]
         self.goal_idx += 1
         return goal
+
+    # ── Self-Scaffolding: 多步计划执行 ──
+
+    def _get_active_plan_goal(self) -> Optional[Goal]:
+        """如果存在未完成计划, 返回下一步对应的 Goal; 否则返回 None."""
+        if self._active_plan is None or self._active_plan.done:
+            return None
+        step = self._active_plan.current_step
+        if step is None:
+            return None
+        style = step.get("style", "code")
+        desc = step.get("desc", "")
+        step_id = step.get("id", 0)
+        if style == "code":
+            intent = "CREATE"
+            params = {
+                "path": f"/tmp/plan_{self.step_count}_{step_id}.py",
+                "content": f"# {desc}\nprint('plan step {step_id}')\n",
+            }
+        elif style in ("analysis", "report"):
+            intent = "OBSERVE"
+            # 尝试从描述推断观察目标
+            inferred = self.param_extractor.extract(
+                "READ", desc, workbench=self.workbench
+            ) if self.param_extractor else {}
+            path = inferred.get("path", "/etc/hostname")
+            params = {"path": path}
+        else:
+            intent = "CREATE"
+            params = {
+                "path": f"/tmp/plan_{self.step_count}_{step_id}.md",
+                "content": desc,
+            }
+        return Goal(
+            goal_type="plan_step",
+            intent=intent,
+            params=params,
+            priority=0.85,
+            source="plan",
+            description=desc,
+        )
+
+    def _mark_plan_step_done(self, success: bool, file_path: str = ""):
+        """标记当前计划步骤完成, 并推进到下一步."""
+        if self._active_plan is None:
+            return
+        step = self._active_plan.current_step
+        if step:
+            step["success"] = success
+            self._active_plan.mark_step_done(step["id"], file_path)
+        self._plan_step_count += 1
+        # 更新当前计划成功率, 供日志使用
+        n_steps = len(self._active_plan.steps)
+        n_ok = sum(1 for s in self._active_plan.steps if s.get("success"))
+        self._last_plan_success_rate = n_ok / n_steps if n_steps > 0 else 0.0
+        self._last_plan_id = self._active_plan.plan_id
+        self._last_plan_step_count = self._plan_step_count
+        if self._plan_step_count >= self._max_plan_steps or self._active_plan.done:
+            self._finish_active_plan()
+
+    def _finish_active_plan(self):
+        """计划结束, 计算统计并清理状态."""
+        if self._active_plan is None:
+            return
+        plan = self._active_plan
+        n_steps = len(plan.steps)
+        n_ok = sum(1 for s in plan.steps if s.get("success"))
+        success_rate = n_ok / n_steps if n_steps > 0 else 0.0
+        self._last_plan_success_rate = success_rate
+        print(f"  [PLAN-COMPLETE] {plan.plan_id}: {success_rate:.0%} ({n_ok}/{n_steps})")
+        # 记录计划轨迹用于 Conductor 反馈
+        if hasattr(self, "state_encoder") and self.state_encoder:
+            state_emb = None
+            try:
+                state_emb = self.state_encoder.get_current_embedding()
+            except Exception:
+                pass
+            if state_emb is None and hasattr(self, "last_state_emb"):
+                state_emb = self.last_state_emb
+            if state_emb is not None and hasattr(self, "last_thought") and self.last_thought is not None:
+                scaffold_quality = success_rate * 2.0 - 1.0  # 映射到 [-1, 1]
+                self._plan_trajectories.append((state_emb, self.last_thought, scaffold_quality))
+        # 将结果反馈给计划生成器
+        self.goal_generator.record_plan_outcome(plan, success_rate)
+        self._active_plan = None
+        self._plan_step_count = 0
 
     # ── P16 R1: Transition recording ──
 
@@ -965,6 +1060,31 @@ class OnlineAgent:
         self.conductor_trajectories.clear()
 
         return total_loss / max(n_batches, 1)
+
+    def _train_plan_scaffold_feedback(self):
+        """Self-Scaffolding: 用计划轨迹质量微调 Conductor."""
+        if not self._plan_trajectories or not self.conductor_path_active:
+            return 0.0
+        try:
+            states = torch.stack([s for s, _, _ in self._plan_trajectories])
+            thoughts = torch.stack([t for _, t, _ in self._plan_trajectories])
+            qualities = torch.tensor(
+                [q for _, _, q in self._plan_trajectories],
+                device=self.device, dtype=torch.float32,
+            )
+            self.nanny.conductor.head.train()
+            # 用 Conductor head 的 logits 均值作为 scaffold quality 代理
+            pred = self.nanny.conductor.head(states).mean(dim=1)
+            loss = torch.nn.functional.mse_loss(pred, qualities)
+            self.conductor_optimizer.zero_grad()
+            loss.backward()
+            self.conductor_optimizer.step()
+            self._plan_trajectories.clear()
+            return loss.item()
+        except Exception as e:
+            if random.random() < 0.1:
+                print(f"  [PLAN-TRAIN-ERR] {e}")
+            return 0.0
 
     def _adaptive_should(self, action: str, base_rate: float = 0.5) -> bool:
         """根据系统状态自适应决定是否执行某动作 — 替代硬编码 step%N
@@ -1831,6 +1951,9 @@ class OnlineAgent:
         thought_label = f"{self.current_mode}:{thought_label}" if thought_label else self.current_mode
         state_text = self.state_encoder.get_state_text(thought_label=thought_label, salience_hints=salience_hints)
         state_emb = self.classifier.get_embedding(state_text).detach().clone()
+        # Self-Scaffolding: 保留当前状态/思考向量用于计划反馈
+        self.last_state_emb = state_emb.detach().clone()
+        self.last_thought = thought_vector.detach().clone() if isinstance(thought_vector, torch.Tensor) else thought_vector
 
         # 2. 推理引擎: 自适应频率
         if self.step_count > 10 and self._adaptive_should("infer", 0.05):
@@ -1987,6 +2110,13 @@ class OnlineAgent:
                 force_create = True
                 self._last_llm_step = self.step_count
 
+        # Self-Scaffolding: 无活跃计划时以一定概率生成新计划
+        _scaffold_enabled = os.environ.get("SELF_SCAFFOLD_DISABLE", "0") != "1"
+        if _scaffold_enabled and self._active_plan is None and self._adaptive_should("use_plan", 0.25):
+            plan = self.goal_generator.decide_plan(self.workbench, self.step_count)
+            if plan:
+                self._active_plan = plan
+
         goal = self.goal_generator.generate(
             mode=self.current_mode,
             workbench=self.workbench,
@@ -1999,12 +2129,22 @@ class OnlineAgent:
             hypothesis_engine=self.hypothesis_engine if hasattr(self, 'hypothesis_engine') else None,
             fact_graph=self.workbench.graph if hasattr(self.workbench, 'graph') else None,
         )
+        # Self-Scaffolding: 如果存在活跃计划步，优先用它覆盖 GoalGenerator 的单步目标
+        plan_override = False
+        plan_goal = self._get_active_plan_goal()
+        if plan_goal:
+            goal = plan_goal
+            plan_override = True
         if goal:
             intent = goal.intent
             params = dict(goal.params)
             used_goal = True
-            self._last_action_source = "goal_driven"
-            self.ab_stats["goal_driven"] = self.ab_stats.get("goal_driven", 0) + 1
+            if plan_override:
+                self._last_action_source = "plan_step"
+                self.ab_stats["plan_step"] = self.ab_stats.get("plan_step", 0) + 1
+            else:
+                self._last_action_source = "goal_driven"
+                self.ab_stats["goal_driven"] = self.ab_stats.get("goal_driven", 0) + 1
             if random.random() < 0.15:
                 print(f"  [GOAL] ({goal.source}) {intent}")
             # P16 R3: 假设验证实验
@@ -2066,7 +2206,8 @@ class OnlineAgent:
                         if random.random() < 0.1:
                             print(f"  [EXPERIMENT-ERR] {e}")
             # P10: 即使有目标, 也检查多样性 (防止 GoalGenerator 返回同类型目标)
-            if len(self.intent_history) >= 8:
+            # Self-Scaffolding: 计划步骤不强制多样性覆盖, 保证脚手架按序执行
+            if not plan_override and len(self.intent_history) >= 8:
                 recent10 = self.intent_history[-8:]
                 covered = set(recent10)
                 if len(covered) <= 4 and random.random() < 0.4:
@@ -2653,6 +2794,15 @@ class OnlineAgent:
             except Exception:
                 pass
 
+        # Self-Scaffolding: 标记计划步骤完成
+        if self._last_action_source == "plan_step":
+            try:
+                file_path = params.get("path", "")
+                self._mark_plan_step_done(success=step_success, file_path=file_path)
+            except Exception as e:
+                if random.random() < 0.1:
+                    print(f"  [PLAN-ERR] mark step done: {e}")
+
         # P15: WM 自我反思 (预测 vs 实际)
         if hasattr(self, 'world_model_v4') and thought_vector is not None and intent:
             try:
@@ -2742,6 +2892,9 @@ class OnlineAgent:
                 rnd_state=self.rnd.get_novelty_stats(),
                 salience_stats=salience_stats,
                 habit_stats=habit_stats,
+                plan_id=self._last_plan_id if self._last_action_source == "plan_step" else "",
+                plan_step=self._last_plan_step_count if self._last_action_source == "plan_step" else -1,
+                plan_success_rate=self._last_plan_success_rate if self._last_action_source == "plan_step" else -1.0,
             )
             if random.random() < 0.05 and (salience_stats or habit_stats):
                 print(f"  [SAL] last={salience_stats.get('last', 0):.2f} mean={salience_stats.get('mean', 0):.2f} max={salience_stats.get('max', 0):.2f}")
@@ -3178,6 +3331,12 @@ class OnlineAgent:
                 n_cond=self.ab_stats["conductor"],
                 n_clf=self.ab_stats["classifier"],
             )
+        except Exception:
+            pass
+
+        # Self-Scaffolding: 用计划成败反馈微调 Conductor
+        try:
+            self._train_plan_scaffold_feedback()
         except Exception:
             pass
 

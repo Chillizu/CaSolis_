@@ -111,7 +111,7 @@ class InferenceEngine:
         }
 
         max_patterns = 20
-        for key, node in self.graph.nodes.items():
+        for key, node in list(self.graph.nodes.items()):
             if n_new >= max_patterns:
                 break
             val = str(node.value)

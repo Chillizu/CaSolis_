@@ -54,7 +54,9 @@ class DetailedLogger:
                  train_loss: Optional[float] = None,
                  recovery_action: str = "",
                  salience_stats: Optional[dict] = None,
-                 habit_stats: Optional[dict] = None):
+                 habit_stats: Optional[dict] = None,
+                 plan_id: str = "", plan_step: int = -1,
+                 plan_success_rate: float = -1.0, **kwargs):
         """记录一步的完整状态"""
         entry = {
             "event": "step",
@@ -79,6 +81,9 @@ class DetailedLogger:
                 "max": round(rnd_state.get("current_max_error", 0), 6),
             },
             "recovery": recovery_action,
+            "plan_id": plan_id,
+            "plan_step": plan_step,
+            "plan_success_rate": round(plan_success_rate, 4),
         }
         if cond_logits_summary:
             entry["conductor"] = cond_logits_summary
