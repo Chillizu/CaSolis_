@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "dpkg-split"
+  ],
+  "desc": "run dpkg-split with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

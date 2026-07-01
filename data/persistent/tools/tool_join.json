@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "join"
+  ],
+  "desc": "run join with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

@@ -1,0 +1,39 @@
+训练 BPE tokenizer...
+
+
+
+  词表: 2022 tokens
+    ls -la                         → 3 tokens
+    total 128                      → 2 tokens
+    root                           → 1 tokens
+    Filesystem                     → 1 tokens
+    Linux                          → 1 tokens
+    MemTotal:                      → 2 tokens
+    hello world                    → 2 tokens
+
+离线预训练 — 通用模型
+   参数: 1,053,766
+   词表: 2022 | 隐藏: 256
+   数据: 674 条
+
+  epoch 25/300 | loss: 0.2172
+  epoch 50/300 | loss: 0.1606
+  epoch 75/300 | loss: 0.0706
+  epoch 100/300 | loss: 0.0962
+  epoch 125/300 | loss: 0.0619
+  epoch 150/300 | loss: 0.0794
+  epoch 175/300 | loss: 0.0657
+  epoch 200/300 | loss: 0.0734
+  epoch 225/300 | loss: 0.0712
+  epoch 250/300 | loss: 0.0660
+  epoch 275/300 | loss: 0.0830
+  epoch 300/300 | loss: 0.0616
+
+✅ 离线预训练完成！
+生成测试:  $ echo foo
+foo
+Swap:    17179865088  3656032256 13523832832
+d 1 root root   30 May  9 02:12 cache
+drwxr-xr-x 1 root root   66 May  9 02:05 lib
+drwxrwsr-x 1 root staff   0 Apr 18  2022 include
+drwxr-x

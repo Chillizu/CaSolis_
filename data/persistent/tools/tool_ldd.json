@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "ldd"
+  ],
+  "desc": "run ldd with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

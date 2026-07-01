@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "rmt-tar"
+  ],
+  "desc": "run rmt-tar with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

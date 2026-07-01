@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "findmnt"
+  ],
+  "desc": "run findmnt with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

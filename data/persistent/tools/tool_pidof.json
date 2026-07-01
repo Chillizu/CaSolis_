@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "pidof"
+  ],
+  "desc": "run pidof with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

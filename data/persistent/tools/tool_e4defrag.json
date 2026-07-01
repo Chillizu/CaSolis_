@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "e4defrag"
+  ],
+  "desc": "run e4defrag with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

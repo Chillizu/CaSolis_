@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "apt-mark"
+  ],
+  "desc": "run apt-mark with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

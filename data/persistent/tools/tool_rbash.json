@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "rbash"
+  ],
+  "desc": "run rbash with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

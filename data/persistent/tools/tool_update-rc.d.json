@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "update-rc.d"
+  ],
+  "desc": "run update-rc.d with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

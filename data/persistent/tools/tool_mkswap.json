@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "mkswap"
+  ],
+  "desc": "run mkswap with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

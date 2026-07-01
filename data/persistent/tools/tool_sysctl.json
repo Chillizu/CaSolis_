@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "sysctl"
+  ],
+  "desc": "run sysctl with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

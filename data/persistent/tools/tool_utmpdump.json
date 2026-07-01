@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "utmpdump"
+  ],
+  "desc": "run utmpdump with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

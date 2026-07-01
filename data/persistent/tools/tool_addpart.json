@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "addpart"
+  ],
+  "desc": "run addpart with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

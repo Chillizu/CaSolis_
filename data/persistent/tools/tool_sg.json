@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "sg"
+  ],
+  "desc": "run sg with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "delpart"
+  ],
+  "desc": "run delpart with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

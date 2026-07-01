@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "paste"
+  ],
+  "desc": "run paste with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

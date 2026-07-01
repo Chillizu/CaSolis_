@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "od"
+  ],
+  "desc": "run od with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

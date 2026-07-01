@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "grpunconv"
+  ],
+  "desc": "run grpunconv with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

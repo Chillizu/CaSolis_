@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "pmap"
+  ],
+  "desc": "run pmap with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

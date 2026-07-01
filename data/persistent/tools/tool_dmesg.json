@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "dmesg"
+  ],
+  "desc": "run dmesg with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

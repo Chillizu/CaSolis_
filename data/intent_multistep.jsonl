@@ -1,0 +1,210 @@
+{"source": "multistep", "state_text": "当前目录: /proc 已知文件: shadow 上步: 浏览 /proc 看看有没有有趣的内容 历史: 无", "intent": "EXPLORE", "intent_id": 6, "step": 1}
+{"source": "multistep", "state_text": "当前目录: / 已知文件: shadow 上步: 浏览 / 中的所有文件 历史: 前一步显示了帮助信息", "intent": "LIST", "intent_id": 1, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /tmp 已知文件: syslog 上步: 获取当前时间 历史: 无", "intent": "INFO", "intent_id": 3, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: shadow 上步: 浏览 /etc 中的所有文件 历史: 前一步输出了系统信息", "intent": "LIST", "intent_id": 1, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: shadow 上步: 获取当前时间 历史: 无", "intent": "INFO", "intent_id": 3, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /proc 已知文件: passwd 上步: 在 /etc/passwd 中搜索 root 历史: 前一步列出了目录列表, 共 5 项", "intent": "SEARCH", "intent_id": 2, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /home 已知文件: group 上步: 过滤 /etc/group 中的 root 历史: 前一步列出了目录列表, 共 31 项", "intent": "SEARCH", "intent_id": 2, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /tmp 已知文件: hostname 上步: 读取 /etc/hostname 历史: 无", "intent": "READ", "intent_id": 0, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /proc 已知文件: shells 上步: 看看 /proc 目录里有什么 历史: 前一步输出了系统信息", "intent": "EXPLORE", "intent_id": 6, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /home 已知文件: cpuinfo 上步: 过滤 /etc/cpuinfo 中的 error 历史: 前一步搜索到了 51 行匹配结果", "intent": "SEARCH", "intent_id": 2, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /tmp 已知文件: fstab 上步: 探索 /tmp 目录 历史: 无", "intent": "EXPLORE", "intent_id": 6, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /tmp 已知文件: meminfo 上步: 探索 /tmp 目录 历史: 无", "intent": "EXPLORE", "intent_id": 6, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /home 已知文件: hostname 上步: 查看 /etc/hostname 的内容 历史: 无", "intent": "READ", "intent_id": 0, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /var/log 已知文件: hosts 上步: 确认 java 是否存在 历史: 无", "intent": "INSPECT", "intent_id": 4, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /opt 已知文件: services 上步: 检查 ffmpeg 是否安装 历史: 无", "intent": "INSPECT", "intent_id": 4, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /usr/bin 已知文件: fstab 上步: 从 fstab 中查找 root 历史: 无", "intent": "SEARCH", "intent_id": 2, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /tmp 已知文件: passwd 上步: 读取 /etc/passwd 历史: 无", "intent": "READ", "intent_id": 0, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /opt 已知文件: meminfo 上步: 浏览 /opt 中的所有文件 历史: 无", "intent": "LIST", "intent_id": 1, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /usr/bin 已知文件: hostname 上步: 读取 /etc/hostname 历史: 前一步列出了目录列表, 共 88 项", "intent": "READ", "intent_id": 0, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /opt 已知文件: services 上步: 列出 /opt 目录 历史: 无", "intent": "LIST", "intent_id": 1, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /home 已知文件: group 上步: 查看运行时间 历史: 无", "intent": "INFO", "intent_id": 3, "step": 1}
+{"source": "multistep", "state_text": "当前目录: / 已知文件: shells 上步: 打开 /etc/shells 看看 历史: 前一步列出了目录列表, 共 44 项", "intent": "READ", "intent_id": 0, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: passwd 上步: 打开 /etc/passwd 看看 历史: 无", "intent": "READ", "intent_id": 0, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /tmp 已知文件: shadow 上步: 了解 nginx 的用法 历史: 前一步确认了命令存在", "intent": "HELP", "intent_id": 7, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /home 已知文件: hosts 上步: 计算 hosts 的行数 历史: 前一步输出了文件内容, 共 83 行", "intent": "COUNT", "intent_id": 5, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /proc 已知文件: shadow 上步: 计算 shadow 的行数 历史: 前一步搜索到了 66 行匹配结果", "intent": "COUNT", "intent_id": 5, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /usr/bin 已知文件: hostname 上步: 列出 /usr/bin 目录 历史: 无", "intent": "LIST", "intent_id": 1, "step": 1}
+{"source": "multistep", "state_text": "当前目录: / 已知文件: hostname 上步: 查看 / 的内容 历史: 前一步输出了系统信息", "intent": "LIST", "intent_id": 1, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /proc 已知文件: cpuinfo 上步: 查看 docker 的帮助文档 历史: 无", "intent": "HELP", "intent_id": 7, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: services 上步: 探索 /etc 目录 历史: 无", "intent": "EXPLORE", "intent_id": 6, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /home 已知文件: syslog 上步: 过滤 /etc/syslog 中的 failed 历史: 无", "intent": "SEARCH", "intent_id": 2, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /var/log 已知文件: shells 上步: 查看内存信息 历史: 无", "intent": "INFO", "intent_id": 3, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /opt 已知文件: cpuinfo 上步: 查看 vim 的帮助文档 历史: 无", "intent": "HELP", "intent_id": 7, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /var/log 已知文件: services 上步: 检查 java 是否安装 历史: 无", "intent": "INSPECT", "intent_id": 4, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /usr/bin 已知文件: hosts 上步: 浏览 /usr/bin 中的所有文件 历史: 无", "intent": "LIST", "intent_id": 1, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /proc 已知文件: passwd 上步: 列举 /proc 的子目录 历史: 无", "intent": "LIST", "intent_id": 1, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /opt 已知文件: shadow 上步: 查看 ssh 命令能不能用 历史: 无", "intent": "INSPECT", "intent_id": 4, "step": 1}
+{"source": "multistep", "state_text": "当前目录: / 已知文件: environment 上步: 在 /etc/environment 中搜索 warning 历史: 前一步统计了行数: 6 行", "intent": "SEARCH", "intent_id": 2, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /proc 已知文件: shells 上步: 查看当前用户 历史: 无", "intent": "INFO", "intent_id": 3, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /home 已知文件: services 上步: 统计 /etc/services 有多少行 历史: 前一步输出了文件内容, 共 99 行", "intent": "COUNT", "intent_id": 5, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /tmp 已知文件: fstab 上步: 在 /etc/fstab 中搜索 warning 历史: 前一步浏览了目录结构", "intent": "SEARCH", "intent_id": 2, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /proc 已知文件: meminfo 上步: 查看 /proc 的内容 历史: 前一步输出了系统信息", "intent": "LIST", "intent_id": 1, "step": 2}
+{"source": "multistep", "state_text": "当前目录: / 已知文件: hosts 上步: 了解 make 的用法 历史: 无", "intent": "HELP", "intent_id": 7, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /usr/bin 已知文件: fstab 上步: 探索 /usr/bin 目录 历史: 无", "intent": "EXPLORE", "intent_id": 6, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: environment 上步: 查看 curl 命令能不能用 历史: 无", "intent": "INSPECT", "intent_id": 4, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /tmp 已知文件: hostname 上步: 探索 /tmp 目录 历史: 无", "intent": "EXPLORE", "intent_id": 6, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: services 上步: 阅读 /etc/services 文件 历史: 无", "intent": "READ", "intent_id": 0, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: passwd 上步: 浏览 /etc 中的所有文件 历史: 无", "intent": "LIST", "intent_id": 1, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /home 已知文件: hostname 上步: 过滤 /etc/hostname 中的 error 历史: 前一步输出了文件内容, 共 78 行", "intent": "SEARCH", "intent_id": 2, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: shadow 上步: 看看 /etc 目录里有什么 历史: 无", "intent": "EXPLORE", "intent_id": 6, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /opt 已知文件: fstab 上步: 查看运行时间 历史: 无", "intent": "INFO", "intent_id": 3, "step": 1}
+{"source": "multistep", "state_text": "当前目录: / 已知文件: cpuinfo 上步: 浏览 / 中的所有文件 历史: 前一步显示了帮助信息", "intent": "LIST", "intent_id": 1, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: services 上步: 数一数 /etc/services 有几行 历史: 前一步输出了文件内容, 共 49 行", "intent": "COUNT", "intent_id": 5, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /opt 已知文件: cpuinfo 上步: 在 /etc/cpuinfo 中搜索 error 历史: 无", "intent": "SEARCH", "intent_id": 2, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /tmp 已知文件: shells 上步: 计算 shells 的行数 历史: 前一步输出了文件内容, 共 30 行", "intent": "COUNT", "intent_id": 5, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: hostname 上步: 在 /etc/hostname 里搜索 admin 历史: 前一步列出了目录列表, 共 17 项", "intent": "SEARCH", "intent_id": 2, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: hostname 上步: 浏览 /etc 中的所有文件 历史: 无", "intent": "LIST", "intent_id": 1, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /usr/bin 已知文件: hosts 上步: 统计文件的行数 历史: 前一步列出了目录列表, 共 57 项", "intent": "COUNT", "intent_id": 5, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /proc 已知文件: environment 上步: 查看 /proc 的内容 历史: 无", "intent": "LIST", "intent_id": 1, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /var/log 已知文件: syslog 上步: 探索 /var/log 目录 历史: 无", "intent": "EXPLORE", "intent_id": 6, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /proc 已知文件: syslog 上步: 从 syslog 中查找 error 历史: 无", "intent": "SEARCH", "intent_id": 2, "step": 1}
+{"source": "multistep", "state_text": "当前目录: / 已知文件: meminfo 上步: 在 //meminfo 里搜索 admin 历史: 无", "intent": "SEARCH", "intent_id": 2, "step": 1}
+{"source": "multistep", "state_text": "当前目录: / 已知文件: services 上步: 数一数 /etc/services 有几行 历史: 前一步列出了目录列表, 共 11 项", "intent": "COUNT", "intent_id": 5, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /opt 已知文件: services 上步: 了解 make 的用法 历史: 无", "intent": "HELP", "intent_id": 7, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /tmp 已知文件: services 上步: 浏览 /tmp 看看有没有有趣的内容 历史: 无", "intent": "EXPLORE", "intent_id": 6, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /usr/bin 已知文件: shadow 上步: 获取当前时间 历史: 无", "intent": "INFO", "intent_id": 3, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /opt 已知文件: shells 上步: 看看 /opt 目录里有什么 历史: 无", "intent": "EXPLORE", "intent_id": 6, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /var/log 已知文件: group 上步: 查看 CPU 核心数 历史: 无", "intent": "INFO", "intent_id": 3, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /proc 已知文件: cpuinfo 上步: 看看 /proc 里有什么 历史: 前一步显示了帮助信息", "intent": "LIST", "intent_id": 1, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /usr/bin 已知文件: services 上步: 查看 /usr/bin 的内容 历史: 前一步浏览了目录结构", "intent": "LIST", "intent_id": 1, "step": 2}
+{"source": "multistep", "state_text": "当前目录: / 已知文件: hostname 上步: 查看主机名 历史: 无", "intent": "INFO", "intent_id": 3, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /proc 已知文件: environment 上步: 过滤 /etc/environment 中的 nobody 历史: 前一步列出了目录列表, 共 58 项", "intent": "SEARCH", "intent_id": 2, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /tmp 已知文件: shadow 上步: 检查 ssh 的安装状态 历史: 无", "intent": "INSPECT", "intent_id": 4, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: hostname 上步: 过滤 /etc/hostname 中的 error 历史: 前一步搜索到了 9 行匹配结果", "intent": "SEARCH", "intent_id": 2, "step": 2}
+{"source": "multistep", "state_text": "当前目录: / 已知文件: fstab 上步: 在 //fstab 里搜索 admin 历史: 前一步输出了文件内容, 共 58 行", "intent": "SEARCH", "intent_id": 2, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /usr/bin 已知文件: syslog 上步: 看看 /usr/bin 目录里有什么 历史: 无", "intent": "EXPLORE", "intent_id": 6, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /home 已知文件: group 上步: 列出 /home 目录 历史: 无", "intent": "LIST", "intent_id": 1, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /opt 已知文件: group 上步: 浏览 /opt 中的所有文件 历史: 无", "intent": "LIST", "intent_id": 1, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: fstab 上步: 看看 /etc 里有什么 历史: 无", "intent": "LIST", "intent_id": 1, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /proc 已知文件: hosts 上步: 查看 CPU 核心数 历史: 无", "intent": "INFO", "intent_id": 3, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /proc 已知文件: syslog 上步: 探索 /proc 目录 历史: 无", "intent": "EXPLORE", "intent_id": 6, "step": 1}
+{"source": "multistep", "state_text": "当前目录: / 已知文件: environment 上步: 阅读 /etc/environment 文件 历史: 无", "intent": "READ", "intent_id": 0, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /tmp 已知文件: cpuinfo 上步: 探索 /tmp 目录 历史: 无", "intent": "EXPLORE", "intent_id": 6, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /usr/bin 已知文件: fstab 上步: 在 /usr/bin/fstab 里搜索 admin 历史: 前一步列出了目录列表, 共 70 项", "intent": "SEARCH", "intent_id": 2, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /tmp 已知文件: environment 上步: 阅读 /etc/environment 文件 历史: 前一步列出了目录列表, 共 18 项", "intent": "READ", "intent_id": 0, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /var/log 已知文件: fstab 上步: 列出 /var/log 目录 历史: 无", "intent": "LIST", "intent_id": 1, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /opt 已知文件: cpuinfo 上步: 浏览 /opt 中的所有文件 历史: 无", "intent": "LIST", "intent_id": 1, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /home 已知文件: services 上步: 读取 /etc/services 历史: 无", "intent": "READ", "intent_id": 0, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: environment 上步: 过滤 /etc/environment 中的 admin 历史: 前一步搜索到了 92 行匹配结果", "intent": "SEARCH", "intent_id": 2, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /tmp 已知文件: syslog 上步: 查看 CPU 信息 历史: 前一步输出了系统信息", "intent": "INFO", "intent_id": 3, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: hosts 上步: 查看 /etc/hosts 的内容 历史: 前一步浏览了目录结构", "intent": "READ", "intent_id": 0, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: syslog 上步: 在 /etc/syslog 中搜索 nobody 历史: 前一步列出了目录列表, 共 30 项", "intent": "SEARCH", "intent_id": 2, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: hosts 上步: 看看 /etc 目录里有什么 历史: 无", "intent": "EXPLORE", "intent_id": 6, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /opt 已知文件: group 上步: 查阅 perl 的手册 历史: 前一步确认了命令存在", "intent": "HELP", "intent_id": 7, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /home 已知文件: shadow 上步: 查看系统信息 历史: 前一步浏览了目录结构", "intent": "INFO", "intent_id": 3, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: hostname 上步: 在 /etc/hostname 里搜索 nobody 历史: 无", "intent": "SEARCH", "intent_id": 2, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: environment 上步: 查看 gcc 有哪些选项 历史: 前一步确认了命令存在", "intent": "HELP", "intent_id": 7, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: environment 上步: 浏览 /etc 中的所有文件 历史: 前一步输出了系统信息", "intent": "LIST", "intent_id": 1, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /usr/bin 已知文件: fstab 上步: 从 fstab 中查找 root 历史: 前一步浏览了目录结构", "intent": "SEARCH", "intent_id": 2, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /proc 已知文件: services 上步: 列举 /proc 的子目录 历史: 无", "intent": "LIST", "intent_id": 1, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /var/log 已知文件: services 上步: 查看 git 的帮助文档 历史: 前一步确认了命令存在", "intent": "HELP", "intent_id": 7, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /usr/bin 已知文件: syslog 上步: 浏览 /usr/bin 中的所有文件 历史: 无", "intent": "LIST", "intent_id": 1, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /opt 已知文件: cpuinfo 上步: 列出 /opt 目录 历史: 前一步显示了帮助信息", "intent": "LIST", "intent_id": 1, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /var/log 已知文件: syslog 上步: 查看磁盘使用情况 历史: 前一步输出了系统信息", "intent": "INFO", "intent_id": 3, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /home 已知文件: group 上步: 获取当前时间 历史: 前一步输出了系统信息", "intent": "INFO", "intent_id": 3, "step": 2}
+{"source": "multistep", "state_text": "当前目录: / 已知文件: hosts 上步: 查看 / 的内容 历史: 前一步显示了帮助信息", "intent": "LIST", "intent_id": 1, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /usr/bin 已知文件: hosts 上步: 过滤 /etc/hosts 中的 failed 历史: 前一步统计了行数: 42 行", "intent": "SEARCH", "intent_id": 2, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /proc 已知文件: shadow 上步: 查看系统信息 历史: 前一步浏览了目录结构", "intent": "INFO", "intent_id": 3, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /proc 已知文件: services 上步: 统计 /etc/services 有多少行 历史: 前一步列出了目录列表, 共 75 项", "intent": "COUNT", "intent_id": 5, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: group 上步: 查看主机名 历史: 无", "intent": "INFO", "intent_id": 3, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /var/log 已知文件: hostname 上步: 列举 /var/log 的子目录 历史: 无", "intent": "LIST", "intent_id": 1, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /tmp 已知文件: hostname 上步: 查看系统信息 历史: 前一步浏览了目录结构", "intent": "INFO", "intent_id": 3, "step": 2}
+{"source": "multistep", "state_text": "当前目录: / 已知文件: meminfo 上步: 数一数 /etc/meminfo 有几行 历史: 前一步输出了文件内容, 共 41 行", "intent": "COUNT", "intent_id": 5, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: cpuinfo 上步: 查看 /etc/cpuinfo 的内容 历史: 前一步列出了目录列表, 共 34 项", "intent": "READ", "intent_id": 0, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /usr/bin 已知文件: hosts 上步: 统计 /etc/hosts 有多少行 历史: 无", "intent": "COUNT", "intent_id": 5, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /home 已知文件: syslog 上步: 过滤 /etc/syslog 中的 root 历史: 前一步搜索到了 12 行匹配结果", "intent": "SEARCH", "intent_id": 2, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /opt 已知文件: shells 上步: 在 /opt/shells 里搜索 root 历史: 无", "intent": "SEARCH", "intent_id": 2, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /proc 已知文件: syslog 上步: 数一数 /etc/syslog 有几行 历史: 前一步搜索到了 85 行匹配结果", "intent": "COUNT", "intent_id": 5, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /home 已知文件: shadow 上步: 过滤 /etc/shadow 中的 root 历史: 前一步统计了行数: 61 行", "intent": "SEARCH", "intent_id": 2, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /usr/bin 已知文件: shadow 上步: 读取 /etc/shadow 历史: 前一步列出了目录列表, 共 72 项", "intent": "READ", "intent_id": 0, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: passwd 上步: 列举 /etc 的子目录 历史: 无", "intent": "LIST", "intent_id": 1, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /opt 已知文件: fstab 上步: 获取当前时间 历史: 前一步输出了系统信息", "intent": "INFO", "intent_id": 3, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /var/log 已知文件: hosts 上步: 了解 perl 的用法 历史: 前一步确认了命令存在", "intent": "HELP", "intent_id": 7, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /usr/bin 已知文件: syslog 上步: 过滤 /etc/syslog 中的 nobody 历史: 前一步浏览了目录结构", "intent": "SEARCH", "intent_id": 2, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /usr/bin 已知文件: fstab 上步: 统计 /etc/fstab 有多少行 历史: 前一步搜索到了 20 行匹配结果", "intent": "COUNT", "intent_id": 5, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /proc 已知文件: passwd 上步: 统计 /etc/passwd 有多少行 历史: 前一步列出了目录列表, 共 8 项", "intent": "COUNT", "intent_id": 5, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /var/log 已知文件: shells 上步: 在 /etc/shells 中搜索 failed 历史: 前一步搜索到了 80 行匹配结果", "intent": "SEARCH", "intent_id": 2, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /opt 已知文件: cpuinfo 上步: 统计文件的行数 历史: 前一步列出了目录列表, 共 38 项", "intent": "COUNT", "intent_id": 5, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /tmp 已知文件: hostname 上步: 统计文件的行数 历史: 前一步输出了文件内容, 共 82 行", "intent": "COUNT", "intent_id": 5, "step": 2}
+{"source": "multistep", "state_text": "当前目录: / 已知文件: environment 上步: 统计文件的行数 历史: 前一步输出了文件内容, 共 38 行", "intent": "COUNT", "intent_id": 5, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /tmp 已知文件: shells 上步: 浏览 /tmp 看看有没有有趣的内容 历史: 无", "intent": "EXPLORE", "intent_id": 6, "step": 1}
+{"source": "multistep", "state_text": "当前目录: / 已知文件: shells 上步: 列出 / 目录 历史: 无", "intent": "LIST", "intent_id": 1, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /tmp 已知文件: cpuinfo 上步: 获取当前时间 历史: 前一步浏览了目录结构", "intent": "INFO", "intent_id": 3, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /proc 已知文件: shadow 上步: 过滤 /etc/shadow 中的 root 历史: 无", "intent": "SEARCH", "intent_id": 2, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /usr/bin 已知文件: fstab 上步: 看看 /usr/bin 里有什么 历史: 无", "intent": "LIST", "intent_id": 1, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /home 已知文件: cpuinfo 上步: 找出包含 warning 的行 历史: 无", "intent": "SEARCH", "intent_id": 2, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /opt 已知文件: fstab 上步: 查看 CPU 信息 历史: 无", "intent": "INFO", "intent_id": 3, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /home 已知文件: shadow 上步: 找出包含 admin 的行 历史: 无", "intent": "SEARCH", "intent_id": 2, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /var/log 已知文件: syslog 上步: 查看当前用户 历史: 前一步浏览了目录结构", "intent": "INFO", "intent_id": 3, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /var/log 已知文件: cpuinfo 上步: 探索 /var/log 目录 历史: 无", "intent": "EXPLORE", "intent_id": 6, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /home 已知文件: passwd 上步: 过滤 /etc/passwd 中的 warning 历史: 无", "intent": "SEARCH", "intent_id": 2, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /var/log 已知文件: group 上步: 看看 /var/log 目录里有什么 历史: 前一步输出了系统信息", "intent": "EXPLORE", "intent_id": 6, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /opt 已知文件: services 上步: 显示 /etc/services 的内容 历史: 前一步列出了目录列表, 共 33 项", "intent": "READ", "intent_id": 0, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /usr/bin 已知文件: shadow 上步: 浏览 /usr/bin 中的所有文件 历史: 无", "intent": "LIST", "intent_id": 1, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /var/log 已知文件: syslog 上步: 查看主机名 历史: 无", "intent": "INFO", "intent_id": 3, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /opt 已知文件: environment 上步: 探索 /opt 目录 历史: 无", "intent": "EXPLORE", "intent_id": 6, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: fstab 上步: 查看运行时间 历史: 前一步列出了目录列表, 共 17 项", "intent": "INFO", "intent_id": 3, "step": 2}
+{"source": "multistep", "state_text": "当前目录: / 已知文件: fstab 上步: 读取 /etc/fstab 历史: 无", "intent": "READ", "intent_id": 0, "step": 1}
+{"source": "multistep", "state_text": "当前目录: / 已知文件: environment 上步: 统计 /etc/environment 有多少行 历史: 无", "intent": "COUNT", "intent_id": 5, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /usr/bin 已知文件: hostname 上步: 查看运行时间 历史: 前一步浏览了目录结构", "intent": "INFO", "intent_id": 3, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /proc 已知文件: meminfo 上步: 在 /proc/meminfo 里搜索 error 历史: 前一步搜索到了 79 行匹配结果", "intent": "SEARCH", "intent_id": 2, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /usr/bin 已知文件: shadow 上步: 查看 CPU 信息 历史: 前一步输出了系统信息", "intent": "INFO", "intent_id": 3, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /opt 已知文件: environment 上步: 看看 /opt 里有什么 历史: 前一步浏览了目录结构", "intent": "LIST", "intent_id": 1, "step": 2}
+{"source": "multistep", "state_text": "当前目录: / 已知文件: services 上步: 浏览 / 中的所有文件 历史: 无", "intent": "LIST", "intent_id": 1, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /opt 已知文件: services 上步: 数一数 /etc/services 有几行 历史: 前一步搜索到了 23 行匹配结果", "intent": "COUNT", "intent_id": 5, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /var/log 已知文件: cpuinfo 上步: 查看当前用户 历史: 前一步浏览了目录结构", "intent": "INFO", "intent_id": 3, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /opt 已知文件: shells 上步: 查看 /opt 的内容 历史: 前一步浏览了目录结构", "intent": "LIST", "intent_id": 1, "step": 2}
+{"source": "multistep", "state_text": "当前目录: / 已知文件: shadow 上步: 查阅 perl 的手册 历史: 无", "intent": "HELP", "intent_id": 7, "step": 1}
+{"source": "multistep", "state_text": "当前目录: / 已知文件: meminfo 上步: 统计文件的行数 历史: 前一步搜索到了 40 行匹配结果", "intent": "COUNT", "intent_id": 5, "step": 2}
+{"source": "multistep", "state_text": "当前目录: / 已知文件: cpuinfo 上步: 查阅 git 的手册 历史: 无", "intent": "HELP", "intent_id": 7, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /tmp 已知文件: shells 上步: 列举 /tmp 的子目录 历史: 前一步浏览了目录结构", "intent": "LIST", "intent_id": 1, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /tmp 已知文件: services 上步: 浏览 /tmp 中的所有文件 历史: 前一步浏览了目录结构", "intent": "LIST", "intent_id": 1, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /tmp 已知文件: environment 上步: 列举 /tmp 的子目录 历史: 无", "intent": "LIST", "intent_id": 1, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /opt 已知文件: group 上步: 检查 java 是否安装 历史: 无", "intent": "INSPECT", "intent_id": 4, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /var/log 已知文件: shells 上步: 过滤 /etc/shells 中的 error 历史: 无", "intent": "SEARCH", "intent_id": 2, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /proc 已知文件: meminfo 上步: 查看主机名 历史: 无", "intent": "INFO", "intent_id": 3, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /tmp 已知文件: meminfo 上步: 查看 /tmp 的内容 历史: 前一步浏览了目录结构", "intent": "LIST", "intent_id": 1, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: cpuinfo 上步: 浏览 /etc 中的所有文件 历史: 无", "intent": "LIST", "intent_id": 1, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /usr/bin 已知文件: syslog 上步: 获取当前时间 历史: 前一步列出了目录列表, 共 85 项", "intent": "INFO", "intent_id": 3, "step": 2}
+{"source": "multistep", "state_text": "当前目录: / 已知文件: shells 上步: 在 //shells 里搜索 warning 历史: 无", "intent": "SEARCH", "intent_id": 2, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /opt 已知文件: services 上步: 找出包含 admin 的行 历史: 无", "intent": "SEARCH", "intent_id": 2, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /tmp 已知文件: passwd 上步: 过滤 /etc/passwd 中的 admin 历史: 前一步输出了文件内容, 共 28 行", "intent": "SEARCH", "intent_id": 2, "step": 2}
+{"source": "multistep", "state_text": "当前目录: / 已知文件: meminfo 上步: 阅读 /etc/meminfo 文件 历史: 无", "intent": "READ", "intent_id": 0, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: passwd 上步: 找出包含 root 的行 历史: 前一步输出了文件内容, 共 87 行", "intent": "SEARCH", "intent_id": 2, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /home 已知文件: hosts 上步: 打开 /etc/hosts 看看 历史: 无", "intent": "READ", "intent_id": 0, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /proc 已知文件: syslog 上步: 读取 /etc/syslog 历史: 前一步浏览了目录结构", "intent": "READ", "intent_id": 0, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /opt 已知文件: cpuinfo 上步: 找出包含 error 的行 历史: 前一步搜索到了 21 行匹配结果", "intent": "SEARCH", "intent_id": 2, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /opt 已知文件: services 上步: 查阅 nginx 的手册 历史: 前一步确认了命令存在", "intent": "HELP", "intent_id": 7, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /opt 已知文件: services 上步: 浏览 /opt 中的所有文件 历史: 前一步显示了帮助信息", "intent": "LIST", "intent_id": 1, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: group 上步: 获取当前时间 历史: 前一步输出了系统信息", "intent": "INFO", "intent_id": 3, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /opt 已知文件: shadow 上步: 查阅 python3 的手册 历史: 前一步确认了命令存在", "intent": "HELP", "intent_id": 7, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /home 已知文件: shadow 上步: 浏览 /home 看看有没有有趣的内容 历史: 无", "intent": "EXPLORE", "intent_id": 6, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /opt 已知文件: group 上步: 统计 /etc/group 有多少行 历史: 前一步列出了目录列表, 共 1 项", "intent": "COUNT", "intent_id": 5, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: syslog 上步: 看看 /etc 里有什么 历史: 无", "intent": "LIST", "intent_id": 1, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /var/log 已知文件: shells 上步: 查看系统信息 历史: 前一步输出了系统信息", "intent": "INFO", "intent_id": 3, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: shadow 上步: 看看 /etc 里有什么 历史: 前一步浏览了目录结构", "intent": "LIST", "intent_id": 1, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /proc 已知文件: hosts 上步: 查看 /proc 的内容 历史: 无", "intent": "LIST", "intent_id": 1, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: environment 上步: 在 /etc/environment 里搜索 error 历史: 无", "intent": "SEARCH", "intent_id": 2, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /opt 已知文件: fstab 上步: 看看 /opt 目录里有什么 历史: 前一步输出了系统信息", "intent": "EXPLORE", "intent_id": 6, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: passwd 上步: 统计 /etc/passwd 有多少行 历史: 前一步列出了目录列表, 共 22 项", "intent": "COUNT", "intent_id": 5, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /proc 已知文件: passwd 上步: 列出 /proc 目录 历史: 无", "intent": "LIST", "intent_id": 1, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /tmp 已知文件: shells 上步: 显示 /etc/shells 的内容 历史: 无", "intent": "READ", "intent_id": 0, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /home 已知文件: shadow 上步: 统计 /etc/shadow 有多少行 历史: 前一步搜索到了 61 行匹配结果", "intent": "COUNT", "intent_id": 5, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: services 上步: 打开 /etc/services 看看 历史: 前一步浏览了目录结构", "intent": "READ", "intent_id": 0, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: passwd 上步: 查看内存信息 历史: 前一步列出了目录列表, 共 25 项", "intent": "INFO", "intent_id": 3, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: environment 上步: 查看当前用户 历史: 无", "intent": "INFO", "intent_id": 3, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /usr/bin 已知文件: services 上步: 浏览 /usr/bin 看看有没有有趣的内容 历史: 无", "intent": "EXPLORE", "intent_id": 6, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /usr/bin 已知文件: hostname 上步: 探索 /usr/bin 目录 历史: 无", "intent": "EXPLORE", "intent_id": 6, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /home 已知文件: passwd 上步: 数一数 /etc/passwd 有几行 历史: 前一步搜索到了 46 行匹配结果", "intent": "COUNT", "intent_id": 5, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /var/log 已知文件: fstab 上步: 过滤 /etc/fstab 中的 warning 历史: 前一步列出了目录列表, 共 65 项", "intent": "SEARCH", "intent_id": 2, "step": 2}
+{"source": "multistep", "state_text": "当前目录: / 已知文件: shells 上步: 在 /etc/shells 中搜索 error 历史: 前一步搜索到了 15 行匹配结果", "intent": "SEARCH", "intent_id": 2, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /opt 已知文件: meminfo 上步: 查看 CPU 信息 历史: 前一步列出了目录列表, 共 83 项", "intent": "INFO", "intent_id": 3, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /var/log 已知文件: hostname 上步: 数一数 /etc/hostname 有几行 历史: 前一步列出了目录列表, 共 73 项", "intent": "COUNT", "intent_id": 5, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /proc 已知文件: hosts 上步: 在 /proc/hosts 里搜索 nobody 历史: 前一步列出了目录列表, 共 1 项", "intent": "SEARCH", "intent_id": 2, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: services 上步: 读取 /etc/services 历史: 无", "intent": "READ", "intent_id": 0, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /home 已知文件: shadow 上步: 计算 shadow 的行数 历史: 无", "intent": "COUNT", "intent_id": 5, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /proc 已知文件: meminfo 上步: 过滤 /etc/meminfo 中的 failed 历史: 无", "intent": "SEARCH", "intent_id": 2, "step": 1}
+{"source": "multistep", "state_text": "当前目录: /proc 已知文件: hosts 上步: 浏览 /proc 看看有没有有趣的内容 历史: 前一步输出了系统信息", "intent": "EXPLORE", "intent_id": 6, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /opt 已知文件: shells 上步: 统计 /etc/shells 有多少行 历史: 前一步搜索到了 75 行匹配结果", "intent": "COUNT", "intent_id": 5, "step": 2}
+{"source": "multistep", "state_text": "当前目录: /etc 已知文件: services 上步: 在 /etc/services 中搜索 admin 历史: 前一步输出了文件内容, 共 65 行", "intent": "SEARCH", "intent_id": 2, "step": 2}

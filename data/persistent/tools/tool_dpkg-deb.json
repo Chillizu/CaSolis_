@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "dpkg-deb"
+  ],
+  "desc": "run dpkg-deb with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

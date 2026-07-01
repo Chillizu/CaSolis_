@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "dpkg-fsys-usrunmess"
+  ],
+  "desc": "run dpkg-fsys-usrunmess with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

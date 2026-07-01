@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "apt-cache"
+  ],
+  "desc": "run apt-cache with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

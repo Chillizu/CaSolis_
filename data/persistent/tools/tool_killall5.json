@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "killall5"
+  ],
+  "desc": "run killall5 with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

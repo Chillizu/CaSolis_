@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "groupadd"
+  ],
+  "desc": "run groupadd with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

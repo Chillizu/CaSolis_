@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "c_rehash"
+  ],
+  "desc": "run c_rehash with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

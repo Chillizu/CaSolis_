@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "vipw"
+  ],
+  "desc": "run vipw with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

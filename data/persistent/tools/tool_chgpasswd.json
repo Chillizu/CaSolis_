@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "chgpasswd"
+  ],
+  "desc": "run chgpasswd with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

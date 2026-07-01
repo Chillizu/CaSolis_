@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "debconf-set-selections"
+  ],
+  "desc": "run debconf-set-selections with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

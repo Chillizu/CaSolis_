@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "pam_timestamp_check"
+  ],
+  "desc": "run pam_timestamp_check with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

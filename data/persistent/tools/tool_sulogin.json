@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "sulogin"
+  ],
+  "desc": "run sulogin with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

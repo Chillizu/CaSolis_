@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "cut"
+  ],
+  "desc": "run cut with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

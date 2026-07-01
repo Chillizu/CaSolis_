@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "faillock"
+  ],
+  "desc": "run faillock with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

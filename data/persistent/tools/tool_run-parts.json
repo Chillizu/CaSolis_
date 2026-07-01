@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "run-parts"
+  ],
+  "desc": "run run-parts with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

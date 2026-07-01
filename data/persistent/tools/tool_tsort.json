@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "tsort"
+  ],
+  "desc": "run tsort with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

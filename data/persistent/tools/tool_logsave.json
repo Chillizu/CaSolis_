@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "logsave"
+  ],
+  "desc": "run logsave with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

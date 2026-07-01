@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "pdb3"
+  ],
+  "desc": "run pdb3 with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

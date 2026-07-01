@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "realpath"
+  ],
+  "desc": "run realpath with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

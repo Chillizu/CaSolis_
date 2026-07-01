@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "cppw"
+  ],
+  "desc": "run cppw with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

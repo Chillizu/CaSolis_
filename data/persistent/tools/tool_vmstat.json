@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "vmstat"
+  ],
+  "desc": "run vmstat with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

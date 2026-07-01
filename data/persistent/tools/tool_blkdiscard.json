@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "blkdiscard"
+  ],
+  "desc": "run blkdiscard with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "pwdx"
+  ],
+  "desc": "run pwdx with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "update-shells"
+  ],
+  "desc": "run update-shells with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

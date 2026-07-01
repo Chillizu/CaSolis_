@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "service"
+  ],
+  "desc": "run service with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

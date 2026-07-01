@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "unix_chkpwd"
+  ],
+  "desc": "run unix_chkpwd with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

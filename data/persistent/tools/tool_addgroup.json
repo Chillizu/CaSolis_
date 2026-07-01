@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "addgroup"
+  ],
+  "desc": "run addgroup with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

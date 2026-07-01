@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "taskset"
+  ],
+  "desc": "run taskset with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

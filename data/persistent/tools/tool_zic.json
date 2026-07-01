@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "zic"
+  ],
+  "desc": "run zic with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "stdbuf"
+  ],
+  "desc": "run stdbuf with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

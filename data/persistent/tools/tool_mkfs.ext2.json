@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "mkfs.ext2"
+  ],
+  "desc": "run mkfs.ext2 with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

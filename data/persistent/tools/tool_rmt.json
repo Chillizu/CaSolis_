@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "rmt"
+  ],
+  "desc": "run rmt with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

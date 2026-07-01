@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "mktemp"
+  ],
+  "desc": "run mktemp with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

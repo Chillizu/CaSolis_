@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "expand"
+  ],
+  "desc": "run expand with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

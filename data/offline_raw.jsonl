@@ -1,0 +1,350 @@
+{"cmd": "ls /usr/bin | head -15", "output": "[\naddpart\napt\napt-cache\napt-cdrom\napt-config\napt-get\napt-key\napt-mark\narch\nawk\nb2sum\nbase32\nbase64\nbasename"}
+{"cmd": "cat /proc/cpuinfo 2>/dev/null | head -10", "output": "processor\t: 0\nvendor_id\t: GenuineIntel\ncpu family\t: 6\nmodel\t\t: 170\nmodel name\t: Intel(R) Core(TM) Ultra 9 185H\nstepping\t: 4\nmicrocode\t: 0x28\ncpu MHz\t\t: 1696.651\ncache size\t: 24576 KB\nphysical id\t: 0"}
+{"cmd": "ls -la /var 2>/dev/null | head -10", "output": "total 8\ndrwxr-xr-x 1 root root   90 May  9 02:12 .\ndrwxr-xr-x 1 root root    0 Jun 10 04:33 ..\ndrwxr-xr-x 1 root root    0 Apr 18  2022 backups\ndrwxr-xr-x 1 root root   36 May  9 02:12 cache\ndrwxr-xr-x 1 root root   66 May  9 02:05 lib\ndrwxrwsr-x 1 root staff   0 Apr 18  2022 local\nlrwxrwxrwx 1 root root    9 May  9 02:05 lock -> /run/lock\ndrwxr-xr-x 1 root root  124 May  9 02:05 log\ndrwxrwsr-x 1 root mail    0 May  9 02:05 mail"}
+{"cmd": "uname -r", "output": "7.0.10-arch1-1"}
+{"cmd": "ls -la /bin 2>/dev/null | head -10", "output": "lrwxrwxrwx 1 root root 7 May  9 02:05 /bin -> usr/bin"}
+{"cmd": "free -h 2>/dev/null", "output": "total        used        free      shared  buff/cache   available\nMem:            30Gi       7.3Gi       7.8Gi       1.7Gi        15Gi        21Gi\nSwap:           15Gi       3.4Gi        12Gi"}
+{"cmd": "du -sh /etc 2>/dev/null", "output": "520K\t/etc"}
+{"cmd": "id bin 2>/dev/null", "output": "uid=2(bin) gid=2(bin) groups=2(bin)"}
+{"cmd": "ls /var/log 2>/dev/null | head -10", "output": "alternatives.log\napt\nbootstrap.log\nbtmp\ndpkg.log\nfaillog\nlastlog\nwtmp"}
+{"cmd": "ls /var 2>/dev/null | head -10", "output": "backups\ncache\nlib\nlocal\nlock\nlog\nmail\nopt\nrun\nspool"}
+{"cmd": "echo hello", "output": "hello"}
+{"cmd": "ls -la /dev 2>/dev/null | head -10", "output": "total 0\ndrwxr-xr-x 5 root root  340 Jun 10 04:33 .\ndrwxr-xr-x 1 root root    0 Jun 10 04:33 ..\nlrwxrwxrwx 1 root root   11 Jun 10 04:33 core -> /proc/kcore\nlrwxrwxrwx 1 root root   13 Jun 10 04:33 fd -> /proc/self/fd\ncrw-rw-rw- 1 root root 1, 7 Jun 10 04:33 full\ndrwxrwxrwt 2 root root   40 Jun 10 04:33 mqueue\ncrw-rw-rw- 1 root root 1, 3 Jun 10 04:33 null\nlrwxrwxrwx 1 root root    8 Jun 10 04:33 ptmx -> pts/ptmx\ndrwxr-xr-x 2 root root    0 Jun 10 04:33 pts"}
+{"cmd": "uname -n", "output": "a4d1c419a1b9"}
+{"cmd": "echo HELLO", "output": "HELLO"}
+{"cmd": "mount | head -10 2>/dev/null", "output": "overlay on / type overlay (rw,relatime,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5336/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5337/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5337/work,index=off)\nproc on /proc type proc (rw,nosuid,nodev,noexec,relatime)\ntmpfs on /dev type tmpfs (rw,nosuid,size=65536k,mode=755,inode64,huge=within_size)\ndevpts on /dev/pts type devpts (rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=666)\nsysfs on /sys type sysfs (ro,nosuid,nodev,noexec,relatime)\ncgroup on /sys/fs/cgroup type cgroup2 (ro,nosuid,nodev,noexec,relatime,nsdelegate,memory_recursiveprot,memory_hugetlb_accounting)\nmqueue on /dev/mqueue type mqueue (rw,nosuid,nodev,noexec,relatime)\nshm on /dev/shm type tmpfs (rw,nosuid,nodev,noexec,relatime,size=65536k,inode64,huge=within_size)\n/dev/nvme0n1p5 on /etc/resolv.conf type btrfs (rw,relatime,ssd,discard=async,space_cache=v2,subvolid=5,subvol=/)\n/dev/nvme0n1p5 on /etc/hostname type btrfs (rw,relatime,ssd,discard=async,space_cache=v2,subvolid=5,subvol=/)"}
+{"cmd": "cat /etc/os-release 2>/dev/null | head -10", "output": "PRETTY_NAME=\"Ubuntu 22.04.5 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"22.04\"\nVERSION=\"22.04.5 LTS (Jammy Jellyfish)\"\nVERSION_CODENAME=jammy\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\""}
+{"cmd": "ls -la /usr 2>/dev/null | head -10", "output": "total 0\ndrwxr-xr-x 1 root root  116 May  9 02:05 .\ndrwxr-xr-x 1 root root    0 Jun 10 04:33 ..\ndrwxr-xr-x 1 root root 3644 May  9 02:12 bin\ndrwxr-xr-x 1 root root    0 Apr 18  2022 games\ndrwxr-xr-x 1 root root    0 Apr 18  2022 include\ndrwxr-xr-x 1 root root  190 May  9 02:12 lib\ndrwxr-xr-x 1 root root    0 May  9 02:05 lib32\ndrwxr-xr-x 1 root root   40 May  9 02:12 lib64\ndrwxr-xr-x 1 root root   26 May  9 02:05 libexec"}
+{"cmd": "id root 2>/dev/null", "output": "uid=0(root) gid=0(root) groups=0(root)"}
+{"cmd": "date +%Y-%m-%d", "output": "2026-06-10"}
+{"cmd": "uname -a", "output": "Linux a4d1c419a1b9 7.0.10-arch1-1 #1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000 x86_64 x86_64 x86_64 GNU/Linux"}
+{"cmd": "ls -la /tmp 2>/dev/null | head -10", "output": "total 0\ndrwxrwxrwt 1 root root 0 May  9 02:12 .\ndrwxr-xr-x 1 root root 0 Jun 10 04:33 .."}
+{"cmd": "free  2>/dev/null", "output": "total        used        free      shared  buff/cache   available\nMem:        32452140     7656212     8158660     1758800    16637268    22335708\nSwap:       16777212     3570352    13206860"}
+{"cmd": "uptime -s 2>/dev/null", "output": "2026-06-02 14:27:58"}
+{"cmd": "ls -la /home 2>/dev/null | head -8", "output": "total 0\ndrwxr-xr-x 1 root root 0 Apr 18  2022 .\ndrwxr-xr-x 1 root root 0 Jun 10 04:33 .."}
+{"cmd": "cat /etc/hosts | head -10", "output": "127.0.0.1\tlocalhost\n::1\tlocalhost ip6-localhost ip6-loopback\nfe00::\tip6-localnet\nff00::\tip6-mcastprefix\nff02::1\tip6-allnodes\nff02::2\tip6-allrouters\n172.17.0.2\ta4d1c419a1b9"}
+{"cmd": "ls -la /tmp 2>/dev/null | head -8", "output": "total 0\ndrwxrwxrwt 1 root root 0 May  9 02:12 .\ndrwxr-xr-x 1 root root 0 Jun 10 04:33 .."}
+{"cmd": "date", "output": "Wed Jun 10 04:33:23 UTC 2026"}
+{"cmd": "hostname", "output": "a4d1c419a1b9"}
+{"cmd": "date +%s", "output": "1781066003"}
+{"cmd": "id nobody 2>/dev/null", "output": "uid=65534(nobody) gid=65534(nogroup) groups=65534(nogroup)"}
+{"cmd": "ls / 2>/dev/null | head -10", "output": "bin\nboot\ndev\netc\nhome\nlib\nlib32\nlib64\nlibx32\nmedia"}
+{"cmd": "ls -la /etc 2>/dev/null | head -10", "output": "total 164\ndrwxr-xr-x 1 root root      56 Jun 10 04:33 .\ndrwxr-xr-x 1 root root       0 Jun 10 04:33 ..\n-rw------- 1 root root       0 May  9 02:05 .pwd.lock\n-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf\ndrwxr-xr-x 1 root root      52 May  9 02:12 alternatives\ndrwxr-xr-x 1 root root     162 May  9 02:05 apt\n-rw-r--r-- 1 root root    2319 Jan  6  2022 bash.bashrc\n-rw-r--r-- 1 root root     367 Dec 16  2020 bindresvport.blacklist\ndrwxr-xr-x 1 root root      20 May  9 02:12 cloud"}
+{"cmd": "which ls which cat which bash which python3", "output": "/usr/bin/ls\n/usr/bin/which\n/usr/bin/cat\n/usr/bin/which\n/usr/bin/bash\n/usr/bin/which"}
+{"cmd": "ls -la /root 2>/dev/null | head -10", "output": "total 8\ndrwx------ 1 root root   30 May  9 02:12 .\ndrwxr-xr-x 1 root root    0 Jun 10 04:33 ..\n-rw-r--r-- 1 root root 3106 Oct 15  2021 .bashrc\n-rw-r--r-- 1 root root  161 Jul  9  2019 .profile"}
+{"cmd": "ls /bin | head -15", "output": "[\naddpart\napt\napt-cache\napt-cdrom\napt-config\napt-get\napt-key\napt-mark\narch\nawk\nb2sum\nbase32\nbase64\nbasename"}
+{"cmd": "free -m 2>/dev/null", "output": "total        used        free      shared  buff/cache   available\nMem:           31691        7482        7963        1715       16245       21772\nSwap:          16383        3486       12897"}
+{"cmd": "du -sh /var 2>/dev/null", "output": "5.0M\t/var"}
+{"cmd": "uname -s", "output": "Linux"}
+{"cmd": "uptime", "output": "04:33:24 up 7 days, 14:05,  0 users,  load average: 1.14, 2.32, 1.98"}
+{"cmd": "env | head -10", "output": "HOSTNAME=a4d1c419a1b9\nPWD=/\nHOME=/root\nSHLVL=0\nPATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\n_=/usr/bin/env"}
+{"cmd": "ls -la /var 2>/dev/null | head -8", "output": "total 8\ndrwxr-xr-x 1 root root   90 May  9 02:12 .\ndrwxr-xr-x 1 root root    0 Jun 10 04:33 ..\ndrwxr-xr-x 1 root root    0 Apr 18  2022 backups\ndrwxr-xr-x 1 root root   36 May  9 02:12 cache\ndrwxr-xr-x 1 root root   66 May  9 02:05 lib\ndrwxrwsr-x 1 root staff   0 Apr 18  2022 local\nlrwxrwxrwx 1 root root    9 May  9 02:05 lock -> /run/lock"}
+{"cmd": "lscpu 2>/dev/null | head -10", "output": "Architecture:                            x86_64\nCPU op-mode(s):                          32-bit, 64-bit\nAddress sizes:                           46 bits physical, 48 bits virtual\nByte Order:                              Little Endian\nCPU(s):                                  22\nOn-line CPU(s) list:                     0-21\nVendor ID:                               GenuineIntel\nModel name:                              Intel(R) Core(TM) Ultra 9 185H\nCPU family:                              6\nModel:                                   170"}
+{"cmd": "id daemon 2>/dev/null", "output": "uid=1(daemon) gid=1(daemon) groups=1(daemon)"}
+{"cmd": "ls /etc 2>/dev/null | head -10", "output": "adduser.conf\nalternatives\napt\nbash.bashrc\nbindresvport.blacklist\ncloud\ncron.d\ncron.daily\ndebconf.conf\ndebian_version"}
+{"cmd": "echo hi there", "output": "hi there"}
+{"cmd": "ls -la / 2>/dev/null | head -8", "output": "total 24\ndrwxr-xr-x   1 root root   0 Jun 10 04:33 .\ndrwxr-xr-x   1 root root   0 Jun 10 04:33 ..\n-rwxr-xr-x   1 root root   0 Jun 10 04:33 .dockerenv\nlrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin\ndrwxr-xr-x   1 root root   0 Apr 18  2022 boot\ndrwxr-xr-x   5 root root 340 Jun 10 04:33 dev\ndrwxr-xr-x   1 root root  56 Jun 10 04:33 etc"}
+{"cmd": "ls /sys/class/net 2>/dev/null | head -5", "output": "eth0\nlo"}
+{"cmd": "ls /bin 2>/dev/null | head -10", "output": "[\naddpart\napt\napt-cache\napt-cdrom\napt-config\napt-get\napt-key\napt-mark\narch"}
+{"cmd": "echo hello world", "output": "hello world"}
+{"cmd": "id  2>/dev/null", "output": "uid=0(root) gid=0(root) groups=0(root)"}
+{"cmd": "df  / 2>/dev/null | head -5", "output": "Filesystem     1K-blocks     Used Available Use% Mounted on\noverlay        134217728 34496380  99025540  26% /"}
+{"cmd": "du -sh /home 2>/dev/null", "output": "0\t/home"}
+{"cmd": "cat /etc/issue 2>/dev/null", "output": "Ubuntu 22.04.5 LTS \\n \\l"}
+{"cmd": "df -m / 2>/dev/null | head -5", "output": "Filesystem     1M-blocks  Used Available Use% Mounted on\noverlay           131072 33688     96705  26% /"}
+{"cmd": "du -sh / 2>/dev/null", "output": "82M\t/"}
+{"cmd": "uname -v", "output": "#1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000"}
+{"cmd": "ls -la /proc 2>/dev/null | head -10", "output": "total 0\ndr-xr-xr-x 573 root root     0 Jun 10 04:33 .\ndrwxr-xr-x   1 root root     0 Jun 10 04:33 ..\ndr-xr-xr-x   9 root root     0 Jun 10 04:33 1\ndr-xr-xr-x   9 root root     0 Jun 10 04:33 525\ndr-xr-xr-x   9 root root     0 Jun 10 04:33 531\ndr-xr-xr-x   9 root root     0 Jun 10 04:33 532\ndrwxrwxrwt   2 root root    40 Jun 10 04:33 acpi\ndrwxrwxrwt   2 root root    40 Jun 10 04:33 asound\n-r--r--r--   1 root root     0 Jun 10 04:33 bootconfig"}
+{"cmd": "ls /proc 2>/dev/null | head -10", "output": "1\n533\n539\n540\nacpi\nasound\nbootconfig\nbuddyinfo\nbus\ncgroups"}
+{"cmd": "ls -la / 2>/dev/null | head -10", "output": "total 24\ndrwxr-xr-x   1 root root   0 Jun 10 04:33 .\ndrwxr-xr-x   1 root root   0 Jun 10 04:33 ..\n-rwxr-xr-x   1 root root   0 Jun 10 04:33 .dockerenv\nlrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin\ndrwxr-xr-x   1 root root   0 Apr 18  2022 boot\ndrwxr-xr-x   5 root root 340 Jun 10 04:33 dev\ndrwxr-xr-x   1 root root  56 Jun 10 04:33 etc\ndrwxr-xr-x   1 root root   0 Apr 18  2022 home\nlrwxrwxrwx   1 root root   7 May  9 02:05 lib -> usr/lib"}
+{"cmd": "ls /usr 2>/dev/null | head -10", "output": "bin\ngames\ninclude\nlib\nlib32\nlib64\nlibexec\nlibx32\nlocal\nsbin"}
+{"cmd": "ls -la /home 2>/dev/null | head -10", "output": "total 0\ndrwxr-xr-x 1 root root 0 Apr 18  2022 .\ndrwxr-xr-x 1 root root 0 Jun 10 04:33 .."}
+{"cmd": "cat /etc/hostname", "output": "a4d1c419a1b9"}
+{"cmd": "ls /dev 2>/dev/null | head -10", "output": "core\nfd\nfull\nmqueue\nnull\nptmx\npts\nrandom\nshm\nstderr"}
+{"cmd": "du -sh /tmp 2>/dev/null", "output": "0\t/tmp"}
+{"cmd": "free -b 2>/dev/null", "output": "total        used        free      shared  buff/cache   available\nMem:     33230991360  7833395200  8266858496  1852366848 17130737664 22601445376\nSwap:    17179865088  3656032256 13523832832"}
+{"cmd": "date -u", "output": "Wed Jun 10 04:33:25 UTC 2026"}
+{"cmd": "cat /proc/meminfo 2>/dev/null | head -10", "output": "MemTotal:       32452140 kB\nMemFree:         8069236 kB\nMemAvailable:   22067852 kB\nBuffers:             648 kB\nCached:         15440040 kB\nSwapCached:        87956 kB\nActive:          7669024 kB\nInactive:       12837792 kB\nActive(anon):    6227360 kB\nInactive(anon):   701732 kB"}
+{"cmd": "df -h / 2>/dev/null | head -5", "output": "Filesystem      Size  Used Avail Use% Mounted on\noverlay         128G   33G   95G  26% /"}
+{"cmd": "ls -la /etc 2>/dev/null | head -8", "output": "total 164\ndrwxr-xr-x 1 root root      56 Jun 10 04:33 .\ndrwxr-xr-x 1 root root       0 Jun 10 04:33 ..\n-rw------- 1 root root       0 May  9 02:05 .pwd.lock\n-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf\ndrwxr-xr-x 1 root root      52 May  9 02:12 alternatives\ndrwxr-xr-x 1 root root     162 May  9 02:05 apt\n-rw-r--r-- 1 root root    2319 Jan  6  2022 bash.bashrc"}
+{"cmd": "locale", "output": "LANG=\nLANGUAGE=\nLC_CTYPE=\"POSIX\"\nLC_NUMERIC=\"POSIX\"\nLC_TIME=\"POSIX\"\nLC_COLLATE=\"POSIX\"\nLC_MONETARY=\"POSIX\"\nLC_MESSAGES=\"POSIX\"\nLC_PAPER=\"POSIX\"\nLC_NAME=\"POSIX\"\nLC_ADDRESS=\"POSIX\"\nLC_TELEPHONE=\"POSIX\"\nLC_MEASUREMENT=\"POSIX\"\nLC_IDENTIFICATION=\"POSIX\"\nLC_ALL="}
+{"cmd": "ls -la /home 2>/dev/null | head -10", "output": "total 0\ndrwxr-xr-x 1 root root 0 Apr 18  2022 .\ndrwxr-xr-x 1 root root 0 Jun 10 04:33 .."}
+{"cmd": "du -sh / 2>/dev/null", "output": "82M\t/"}
+{"cmd": "echo HELLO", "output": "HELLO"}
+{"cmd": "hostname", "output": "a4d1c419a1b9"}
+{"cmd": "du -sh /tmp 2>/dev/null", "output": "0\t/tmp"}
+{"cmd": "uptime", "output": "04:33:26 up 7 days, 14:05,  0 users,  load average: 1.21, 2.31, 1.98"}
+{"cmd": "uname -v", "output": "#1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000"}
+{"cmd": "ls /var 2>/dev/null | head -10", "output": "backups\ncache\nlib\nlocal\nlock\nlog\nmail\nopt\nrun\nspool"}
+{"cmd": "ls -la /dev 2>/dev/null | head -10", "output": "total 0\ndrwxr-xr-x 5 root root  340 Jun 10 04:33 .\ndrwxr-xr-x 1 root root    0 Jun 10 04:33 ..\nlrwxrwxrwx 1 root root   11 Jun 10 04:33 core -> /proc/kcore\nlrwxrwxrwx 1 root root   13 Jun 10 04:33 fd -> /proc/self/fd\ncrw-rw-rw- 1 root root 1, 7 Jun 10 04:33 full\ndrwxrwxrwt 2 root root   40 Jun 10 04:33 mqueue\ncrw-rw-rw- 1 root root 1, 3 Jun 10 04:33 null\nlrwxrwxrwx 1 root root    8 Jun 10 04:33 ptmx -> pts/ptmx\ndrwxr-xr-x 2 root root    0 Jun 10 04:33 pts"}
+{"cmd": "du -sh /home 2>/dev/null", "output": "0\t/home"}
+{"cmd": "cat /proc/cpuinfo 2>/dev/null | head -10", "output": "processor\t: 0\nvendor_id\t: GenuineIntel\ncpu family\t: 6\nmodel\t\t: 170\nmodel name\t: Intel(R) Core(TM) Ultra 9 185H\nstepping\t: 4\nmicrocode\t: 0x28\ncpu MHz\t\t: 2399.602\ncache size\t: 24576 KB\nphysical id\t: 0"}
+{"cmd": "free -m 2>/dev/null", "output": "total        used        free      shared  buff/cache   available\nMem:           31691        7484        7897        1738       16309       21568\nSwap:          16383        3486       12897"}
+{"cmd": "ls -la /var 2>/dev/null | head -10", "output": "total 8\ndrwxr-xr-x 1 root root   90 May  9 02:12 .\ndrwxr-xr-x 1 root root    0 Jun 10 04:33 ..\ndrwxr-xr-x 1 root root    0 Apr 18  2022 backups\ndrwxr-xr-x 1 root root   36 May  9 02:12 cache\ndrwxr-xr-x 1 root root   66 May  9 02:05 lib\ndrwxrwsr-x 1 root staff   0 Apr 18  2022 local\nlrwxrwxrwx 1 root root    9 May  9 02:05 lock -> /run/lock\ndrwxr-xr-x 1 root root  124 May  9 02:05 log\ndrwxrwsr-x 1 root mail    0 May  9 02:05 mail"}
+{"cmd": "id  2>/dev/null", "output": "uid=0(root) gid=0(root) groups=0(root)"}
+{"cmd": "df -m / 2>/dev/null | head -5", "output": "Filesystem     1M-blocks  Used Available Use% Mounted on\noverlay           131072 33688     96705  26% /"}
+{"cmd": "echo hello", "output": "hello"}
+{"cmd": "mount | head -10 2>/dev/null", "output": "overlay on / type overlay (rw,relatime,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5336/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5337/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5337/work,index=off)\nproc on /proc type proc (rw,nosuid,nodev,noexec,relatime)\ntmpfs on /dev type tmpfs (rw,nosuid,size=65536k,mode=755,inode64,huge=within_size)\ndevpts on /dev/pts type devpts (rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=666)\nsysfs on /sys type sysfs (ro,nosuid,nodev,noexec,relatime)\ncgroup on /sys/fs/cgroup type cgroup2 (ro,nosuid,nodev,noexec,relatime,nsdelegate,memory_recursiveprot,memory_hugetlb_accounting)\nmqueue on /dev/mqueue type mqueue (rw,nosuid,nodev,noexec,relatime)\nshm on /dev/shm type tmpfs (rw,nosuid,nodev,noexec,relatime,size=65536k,inode64,huge=within_size)\n/dev/nvme0n1p5 on /etc/resolv.conf type btrfs (rw,relatime,ssd,discard=async,space_cache=v2,subvolid=5,subvol=/)\n/dev/nvme0n1p5 on /etc/hostname type btrfs (rw,relatime,ssd,discard=async,space_cache=v2,subvolid=5,subvol=/)"}
+{"cmd": "ls /proc 2>/dev/null | head -10", "output": "1\n763\n769\n770\nacpi\nasound\nbootconfig\nbuddyinfo\nbus\ncgroups"}
+{"cmd": "uptime -s 2>/dev/null", "output": "2026-06-02 14:27:58"}
+{"cmd": "ls / 2>/dev/null | head -10", "output": "bin\nboot\ndev\netc\nhome\nlib\nlib32\nlib64\nlibx32\nmedia"}
+{"cmd": "env | head -10", "output": "HOSTNAME=a4d1c419a1b9\nPWD=/\nHOME=/root\nSHLVL=0\nPATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\n_=/usr/bin/env"}
+{"cmd": "ls -la /home 2>/dev/null | head -8", "output": "total 0\ndrwxr-xr-x 1 root root 0 Apr 18  2022 .\ndrwxr-xr-x 1 root root 0 Jun 10 04:33 .."}
+{"cmd": "ls /dev 2>/dev/null | head -10", "output": "core\nfd\nfull\nmqueue\nnull\nptmx\npts\nrandom\nshm\nstderr"}
+{"cmd": "ls -la /etc 2>/dev/null | head -10", "output": "total 164\ndrwxr-xr-x 1 root root      56 Jun 10 04:33 .\ndrwxr-xr-x 1 root root       0 Jun 10 04:33 ..\n-rw------- 1 root root       0 May  9 02:05 .pwd.lock\n-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf\ndrwxr-xr-x 1 root root      52 May  9 02:12 alternatives\ndrwxr-xr-x 1 root root     162 May  9 02:05 apt\n-rw-r--r-- 1 root root    2319 Jan  6  2022 bash.bashrc\n-rw-r--r-- 1 root root     367 Dec 16  2020 bindresvport.blacklist\ndrwxr-xr-x 1 root root      20 May  9 02:12 cloud"}
+{"cmd": "which ls which cat which bash which python3", "output": "/usr/bin/ls\n/usr/bin/which\n/usr/bin/cat\n/usr/bin/which\n/usr/bin/bash\n/usr/bin/which"}
+{"cmd": "date", "output": "Wed Jun 10 04:33:27 UTC 2026"}
+{"cmd": "ls -la / 2>/dev/null | head -10", "output": "total 24\ndrwxr-xr-x   1 root root   0 Jun 10 04:33 .\ndrwxr-xr-x   1 root root   0 Jun 10 04:33 ..\n-rwxr-xr-x   1 root root   0 Jun 10 04:33 .dockerenv\nlrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin\ndrwxr-xr-x   1 root root   0 Apr 18  2022 boot\ndrwxr-xr-x   5 root root 340 Jun 10 04:33 dev\ndrwxr-xr-x   1 root root  56 Jun 10 04:33 etc\ndrwxr-xr-x   1 root root   0 Apr 18  2022 home\nlrwxrwxrwx   1 root root   7 May  9 02:05 lib -> usr/lib"}
+{"cmd": "ls /sys/class/net 2>/dev/null | head -5", "output": "eth0\nlo"}
+{"cmd": "ls /var/log 2>/dev/null | head -10", "output": "alternatives.log\napt\nbootstrap.log\nbtmp\ndpkg.log\nfaillog\nlastlog\nwtmp"}
+{"cmd": "du -sh /var 2>/dev/null", "output": "5.0M\t/var"}
+{"cmd": "date -u", "output": "Wed Jun 10 04:33:27 UTC 2026"}
+{"cmd": "id nobody 2>/dev/null", "output": "uid=65534(nobody) gid=65534(nogroup) groups=65534(nogroup)"}
+{"cmd": "uname -a", "output": "Linux a4d1c419a1b9 7.0.10-arch1-1 #1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000 x86_64 x86_64 x86_64 GNU/Linux"}
+{"cmd": "free -b 2>/dev/null", "output": "total        used        free      shared  buff/cache   available\nMem:     33230991360  7870353408  8484425728  1935626240 16876212224 22857555968\nSwap:    17179865088  3656032256 13523832832"}
+{"cmd": "lscpu 2>/dev/null | head -10", "output": "Architecture:                            x86_64\nCPU op-mode(s):                          32-bit, 64-bit\nAddress sizes:                           46 bits physical, 48 bits virtual\nByte Order:                              Little Endian\nCPU(s):                                  22\nOn-line CPU(s) list:                     0-21\nVendor ID:                               GenuineIntel\nModel name:                              Intel(R) Core(TM) Ultra 9 185H\nCPU family:                              6\nModel:                                   170"}
+{"cmd": "echo hi there", "output": "hi there"}
+{"cmd": "ls /bin 2>/dev/null | head -10", "output": "[\naddpart\napt\napt-cache\napt-cdrom\napt-config\napt-get\napt-key\napt-mark\narch"}
+{"cmd": "cat /etc/hosts | head -10", "output": "127.0.0.1\tlocalhost\n::1\tlocalhost ip6-localhost ip6-loopback\nfe00::\tip6-localnet\nff00::\tip6-mcastprefix\nff02::1\tip6-allnodes\nff02::2\tip6-allrouters\n172.17.0.2\ta4d1c419a1b9"}
+{"cmd": "ls -la /usr 2>/dev/null | head -10", "output": "total 0\ndrwxr-xr-x 1 root root  116 May  9 02:05 .\ndrwxr-xr-x 1 root root    0 Jun 10 04:33 ..\ndrwxr-xr-x 1 root root 3644 May  9 02:12 bin\ndrwxr-xr-x 1 root root    0 Apr 18  2022 games\ndrwxr-xr-x 1 root root    0 Apr 18  2022 include\ndrwxr-xr-x 1 root root  190 May  9 02:12 lib\ndrwxr-xr-x 1 root root    0 May  9 02:05 lib32\ndrwxr-xr-x 1 root root   40 May  9 02:12 lib64\ndrwxr-xr-x 1 root root   26 May  9 02:05 libexec"}
+{"cmd": "cat /proc/meminfo 2>/dev/null | head -10", "output": "MemTotal:       32452140 kB\nMemFree:         8279568 kB\nMemAvailable:   22315852 kB\nBuffers:             648 kB\nCached:         15191652 kB\nSwapCached:        87984 kB\nActive:          7718872 kB\nInactive:       12553628 kB\nActive(anon):    6320800 kB\nInactive(anon):   703964 kB"}
+{"cmd": "uname -s", "output": "Linux"}
+{"cmd": "id bin 2>/dev/null", "output": "uid=2(bin) gid=2(bin) groups=2(bin)"}
+{"cmd": "uname -r", "output": "7.0.10-arch1-1"}
+{"cmd": "ls -la /etc 2>/dev/null | head -8", "output": "total 164\ndrwxr-xr-x 1 root root      56 Jun 10 04:33 .\ndrwxr-xr-x 1 root root       0 Jun 10 04:33 ..\n-rw------- 1 root root       0 May  9 02:05 .pwd.lock\n-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf\ndrwxr-xr-x 1 root root      52 May  9 02:12 alternatives\ndrwxr-xr-x 1 root root     162 May  9 02:05 apt\n-rw-r--r-- 1 root root    2319 Jan  6  2022 bash.bashrc"}
+{"cmd": "ls -la / 2>/dev/null | head -8", "output": "total 24\ndrwxr-xr-x   1 root root   0 Jun 10 04:33 .\ndrwxr-xr-x   1 root root   0 Jun 10 04:33 ..\n-rwxr-xr-x   1 root root   0 Jun 10 04:33 .dockerenv\nlrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin\ndrwxr-xr-x   1 root root   0 Apr 18  2022 boot\ndrwxr-xr-x   5 root root 340 Jun 10 04:33 dev\ndrwxr-xr-x   1 root root  56 Jun 10 04:33 etc"}
+{"cmd": "date +%Y-%m-%d", "output": "2026-06-10"}
+{"cmd": "free  2>/dev/null", "output": "total        used        free      shared  buff/cache   available\nMem:        32452140     7727420     8229616     1904632    16495104    22151244\nSwap:       16777212     3570344    13206868"}
+{"cmd": "ls -la /root 2>/dev/null | head -10", "output": "total 8\ndrwx------ 1 root root   30 May  9 02:12 .\ndrwxr-xr-x 1 root root    0 Jun 10 04:33 ..\n-rw-r--r-- 1 root root 3106 Oct 15  2021 .bashrc\n-rw-r--r-- 1 root root  161 Jul  9  2019 .profile"}
+{"cmd": "ls -la /proc 2>/dev/null | head -10", "output": "total 0\ndr-xr-xr-x 530 root root     0 Jun 10 04:33 .\ndrwxr-xr-x   1 root root     0 Jun 10 04:33 ..\ndr-xr-xr-x   9 root root     0 Jun 10 04:33 1\ndr-xr-xr-x   9 root root     0 Jun 10 04:33 1050\ndr-xr-xr-x   9 root root     0 Jun 10 04:33 1056\ndr-xr-xr-x   9 root root     0 Jun 10 04:33 1057\ndrwxrwxrwt   2 root root    40 Jun 10 04:33 acpi\ndrwxrwxrwt   2 root root    40 Jun 10 04:33 asound\n-r--r--r--   1 root root     0 Jun 10 04:33 bootconfig"}
+{"cmd": "ls -la /tmp 2>/dev/null | head -8", "output": "total 0\ndrwxrwxrwt 1 root root 0 May  9 02:12 .\ndrwxr-xr-x 1 root root 0 Jun 10 04:33 .."}
+{"cmd": "locale", "output": "LANG=\nLANGUAGE=\nLC_CTYPE=\"POSIX\"\nLC_NUMERIC=\"POSIX\"\nLC_TIME=\"POSIX\"\nLC_COLLATE=\"POSIX\"\nLC_MONETARY=\"POSIX\"\nLC_MESSAGES=\"POSIX\"\nLC_PAPER=\"POSIX\"\nLC_NAME=\"POSIX\"\nLC_ADDRESS=\"POSIX\"\nLC_TELEPHONE=\"POSIX\"\nLC_MEASUREMENT=\"POSIX\"\nLC_IDENTIFICATION=\"POSIX\"\nLC_ALL="}
+{"cmd": "ls /usr/bin | head -15", "output": "[\naddpart\napt\napt-cache\napt-cdrom\napt-config\napt-get\napt-key\napt-mark\narch\nawk\nb2sum\nbase32\nbase64\nbasename"}
+{"cmd": "df  / 2>/dev/null | head -5", "output": "Filesystem     1K-blocks     Used Available Use% Mounted on\noverlay        134217728 34496380  99025540  26% /"}
+{"cmd": "df -h / 2>/dev/null | head -5", "output": "Filesystem      Size  Used Avail Use% Mounted on\noverlay         128G   33G   95G  26% /"}
+{"cmd": "date +%s", "output": "1781066008"}
+{"cmd": "id daemon 2>/dev/null", "output": "uid=1(daemon) gid=1(daemon) groups=1(daemon)"}
+{"cmd": "cat /etc/issue 2>/dev/null", "output": "Ubuntu 22.04.5 LTS \\n \\l"}
+{"cmd": "id root 2>/dev/null", "output": "uid=0(root) gid=0(root) groups=0(root)"}
+{"cmd": "du -sh /etc 2>/dev/null", "output": "520K\t/etc"}
+{"cmd": "cat /etc/os-release 2>/dev/null | head -10", "output": "PRETTY_NAME=\"Ubuntu 22.04.5 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"22.04\"\nVERSION=\"22.04.5 LTS (Jammy Jellyfish)\"\nVERSION_CODENAME=jammy\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\""}
+{"cmd": "cat /etc/hostname", "output": "a4d1c419a1b9"}
+{"cmd": "ls /etc 2>/dev/null | head -10", "output": "adduser.conf\nalternatives\napt\nbash.bashrc\nbindresvport.blacklist\ncloud\ncron.d\ncron.daily\ndebconf.conf\ndebian_version"}
+{"cmd": "echo hello world", "output": "hello world"}
+{"cmd": "ls -la /var 2>/dev/null | head -8", "output": "total 8\ndrwxr-xr-x 1 root root   90 May  9 02:12 .\ndrwxr-xr-x 1 root root    0 Jun 10 04:33 ..\ndrwxr-xr-x 1 root root    0 Apr 18  2022 backups\ndrwxr-xr-x 1 root root   36 May  9 02:12 cache\ndrwxr-xr-x 1 root root   66 May  9 02:05 lib\ndrwxrwsr-x 1 root staff   0 Apr 18  2022 local\nlrwxrwxrwx 1 root root    9 May  9 02:05 lock -> /run/lock"}
+{"cmd": "uname -n", "output": "a4d1c419a1b9"}
+{"cmd": "ls /usr 2>/dev/null | head -10", "output": "bin\ngames\ninclude\nlib\nlib32\nlib64\nlibexec\nlibx32\nlocal\nsbin"}
+{"cmd": "ls /bin | head -15", "output": "[\naddpart\napt\napt-cache\napt-cdrom\napt-config\napt-get\napt-key\napt-mark\narch\nawk\nb2sum\nbase32\nbase64\nbasename"}
+{"cmd": "ls -la /bin 2>/dev/null | head -10", "output": "lrwxrwxrwx 1 root root 7 May  9 02:05 /bin -> usr/bin"}
+{"cmd": "free -h 2>/dev/null", "output": "total        used        free      shared  buff/cache   available\nMem:            30Gi       7.4Gi       7.8Gi       1.8Gi        15Gi        21Gi\nSwap:           15Gi       3.4Gi        12Gi"}
+{"cmd": "ls -la /tmp 2>/dev/null | head -10", "output": "total 0\ndrwxrwxrwt 1 root root 0 May  9 02:12 .\ndrwxr-xr-x 1 root root 0 Jun 10 04:33 .."}
+{"cmd": "ls / 2>/dev/null | head -10", "output": "bin\nboot\ndev\netc\nhome\nlib\nlib32\nlib64\nlibx32\nmedia"}
+{"cmd": "free -h 2>/dev/null", "output": "total        used        free      shared  buff/cache   available\nMem:            30Gi       7.4Gi       7.9Gi       1.8Gi        15Gi        21Gi\nSwap:           15Gi       3.4Gi        12Gi"}
+{"cmd": "ls -la /home 2>/dev/null | head -8", "output": "total 0\ndrwxr-xr-x 1 root root 0 Apr 18  2022 .\ndrwxr-xr-x 1 root root 0 Jun 10 04:33 .."}
+{"cmd": "id daemon 2>/dev/null", "output": "uid=1(daemon) gid=1(daemon) groups=1(daemon)"}
+{"cmd": "id bin 2>/dev/null", "output": "uid=2(bin) gid=2(bin) groups=2(bin)"}
+{"cmd": "echo hello world", "output": "hello world"}
+{"cmd": "du -sh /etc 2>/dev/null", "output": "520K\t/etc"}
+{"cmd": "du -sh /tmp 2>/dev/null", "output": "0\t/tmp"}
+{"cmd": "df -h / 2>/dev/null | head -5", "output": "Filesystem      Size  Used Avail Use% Mounted on\noverlay         128G   33G   95G  26% /"}
+{"cmd": "uname -r", "output": "7.0.10-arch1-1"}
+{"cmd": "ls /etc 2>/dev/null | head -10", "output": "adduser.conf\nalternatives\napt\nbash.bashrc\nbindresvport.blacklist\ncloud\ncron.d\ncron.daily\ndebconf.conf\ndebian_version"}
+{"cmd": "locale", "output": "LANG=\nLANGUAGE=\nLC_CTYPE=\"POSIX\"\nLC_NUMERIC=\"POSIX\"\nLC_TIME=\"POSIX\"\nLC_COLLATE=\"POSIX\"\nLC_MONETARY=\"POSIX\"\nLC_MESSAGES=\"POSIX\"\nLC_PAPER=\"POSIX\"\nLC_NAME=\"POSIX\"\nLC_ADDRESS=\"POSIX\"\nLC_TELEPHONE=\"POSIX\"\nLC_MEASUREMENT=\"POSIX\"\nLC_IDENTIFICATION=\"POSIX\"\nLC_ALL="}
+{"cmd": "ls -la / 2>/dev/null | head -8", "output": "total 24\ndrwxr-xr-x   1 root root   0 Jun 10 04:33 .\ndrwxr-xr-x   1 root root   0 Jun 10 04:33 ..\n-rwxr-xr-x   1 root root   0 Jun 10 04:33 .dockerenv\nlrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin\ndrwxr-xr-x   1 root root   0 Apr 18  2022 boot\ndrwxr-xr-x   5 root root 340 Jun 10 04:33 dev\ndrwxr-xr-x   1 root root  56 Jun 10 04:33 etc"}
+{"cmd": "ls -la /var 2>/dev/null | head -8", "output": "total 8\ndrwxr-xr-x 1 root root   90 May  9 02:12 .\ndrwxr-xr-x 1 root root    0 Jun 10 04:33 ..\ndrwxr-xr-x 1 root root    0 Apr 18  2022 backups\ndrwxr-xr-x 1 root root   36 May  9 02:12 cache\ndrwxr-xr-x 1 root root   66 May  9 02:05 lib\ndrwxrwsr-x 1 root staff   0 Apr 18  2022 local\nlrwxrwxrwx 1 root root    9 May  9 02:05 lock -> /run/lock"}
+{"cmd": "mount | head -10 2>/dev/null", "output": "overlay on / type overlay (rw,relatime,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5336/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5337/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5337/work,index=off)\nproc on /proc type proc (rw,nosuid,nodev,noexec,relatime)\ntmpfs on /dev type tmpfs (rw,nosuid,size=65536k,mode=755,inode64,huge=within_size)\ndevpts on /dev/pts type devpts (rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=666)\nsysfs on /sys type sysfs (ro,nosuid,nodev,noexec,relatime)\ncgroup on /sys/fs/cgroup type cgroup2 (ro,nosuid,nodev,noexec,relatime,nsdelegate,memory_recursiveprot,memory_hugetlb_accounting)\nmqueue on /dev/mqueue type mqueue (rw,nosuid,nodev,noexec,relatime)\nshm on /dev/shm type tmpfs (rw,nosuid,nodev,noexec,relatime,size=65536k,inode64,huge=within_size)\n/dev/nvme0n1p5 on /etc/resolv.conf type btrfs (rw,relatime,ssd,discard=async,space_cache=v2,subvolid=5,subvol=/)\n/dev/nvme0n1p5 on /etc/hostname type btrfs (rw,relatime,ssd,discard=async,space_cache=v2,subvolid=5,subvol=/)"}
+{"cmd": "date +%Y-%m-%d", "output": "2026-06-10"}
+{"cmd": "lscpu 2>/dev/null | head -10", "output": "Architecture:                            x86_64\nCPU op-mode(s):                          32-bit, 64-bit\nAddress sizes:                           46 bits physical, 48 bits virtual\nByte Order:                              Little Endian\nCPU(s):                                  22\nOn-line CPU(s) list:                     0-21\nVendor ID:                               GenuineIntel\nModel name:                              Intel(R) Core(TM) Ultra 9 185H\nCPU family:                              6\nModel:                                   170"}
+{"cmd": "ls /bin | head -15", "output": "[\naddpart\napt\napt-cache\napt-cdrom\napt-config\napt-get\napt-key\napt-mark\narch\nawk\nb2sum\nbase32\nbase64\nbasename"}
+{"cmd": "uname -s", "output": "Linux"}
+{"cmd": "date +%s", "output": "1781066010"}
+{"cmd": "ls -la /etc 2>/dev/null | head -10", "output": "total 164\ndrwxr-xr-x 1 root root      56 Jun 10 04:33 .\ndrwxr-xr-x 1 root root       0 Jun 10 04:33 ..\n-rw------- 1 root root       0 May  9 02:05 .pwd.lock\n-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf\ndrwxr-xr-x 1 root root      52 May  9 02:12 alternatives\ndrwxr-xr-x 1 root root     162 May  9 02:05 apt\n-rw-r--r-- 1 root root    2319 Jan  6  2022 bash.bashrc\n-rw-r--r-- 1 root root     367 Dec 16  2020 bindresvport.blacklist\ndrwxr-xr-x 1 root root      20 May  9 02:12 cloud"}
+{"cmd": "free -b 2>/dev/null", "output": "total        used        free      shared  buff/cache   available\nMem:     33230991360  7948267520  8418070528  1923862528 16864653312 22447493120\nSwap:    17179865088  3656032256 13523832832"}
+{"cmd": "ls /sys/class/net 2>/dev/null | head -5", "output": "eth0\nlo"}
+{"cmd": "du -sh /home 2>/dev/null", "output": "0\t/home"}
+{"cmd": "date -u", "output": "Wed Jun 10 04:33:30 UTC 2026"}
+{"cmd": "uname -a", "output": "Linux a4d1c419a1b9 7.0.10-arch1-1 #1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000 x86_64 x86_64 x86_64 GNU/Linux"}
+{"cmd": "env | head -10", "output": "HOSTNAME=a4d1c419a1b9\nPWD=/\nHOME=/root\nSHLVL=0\nPATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\n_=/usr/bin/env"}
+{"cmd": "echo hello", "output": "hello"}
+{"cmd": "uname -v", "output": "#1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000"}
+{"cmd": "uptime", "output": "04:33:30 up 7 days, 14:05,  0 users,  load average: 1.75, 2.41, 2.01"}
+{"cmd": "ls -la /home 2>/dev/null | head -10", "output": "total 0\ndrwxr-xr-x 1 root root 0 Apr 18  2022 .\ndrwxr-xr-x 1 root root 0 Jun 10 04:33 .."}
+{"cmd": "cat /etc/hosts | head -10", "output": "127.0.0.1\tlocalhost\n::1\tlocalhost ip6-localhost ip6-loopback\nfe00::\tip6-localnet\nff00::\tip6-mcastprefix\nff02::1\tip6-allnodes\nff02::2\tip6-allrouters\n172.17.0.2\ta4d1c419a1b9"}
+{"cmd": "du -sh /var 2>/dev/null", "output": "5.0M\t/var"}
+{"cmd": "ls -la /root 2>/dev/null | head -10", "output": "total 8\ndrwx------ 1 root root   30 May  9 02:12 .\ndrwxr-xr-x 1 root root    0 Jun 10 04:33 ..\n-rw-r--r-- 1 root root 3106 Oct 15  2021 .bashrc\n-rw-r--r-- 1 root root  161 Jul  9  2019 .profile"}
+{"cmd": "df  / 2>/dev/null | head -5", "output": "Filesystem     1K-blocks     Used Available Use% Mounted on\noverlay        134217728 34496380  99025540  26% /"}
+{"cmd": "ls -la /dev 2>/dev/null | head -10", "output": "total 0\ndrwxr-xr-x 5 root root  340 Jun 10 04:33 .\ndrwxr-xr-x 1 root root    0 Jun 10 04:33 ..\nlrwxrwxrwx 1 root root   11 Jun 10 04:33 core -> /proc/kcore\nlrwxrwxrwx 1 root root   13 Jun 10 04:33 fd -> /proc/self/fd\ncrw-rw-rw- 1 root root 1, 7 Jun 10 04:33 full\ndrwxrwxrwt 2 root root   40 Jun 10 04:33 mqueue\ncrw-rw-rw- 1 root root 1, 3 Jun 10 04:33 null\nlrwxrwxrwx 1 root root    8 Jun 10 04:33 ptmx -> pts/ptmx\ndrwxr-xr-x 2 root root    0 Jun 10 04:33 pts"}
+{"cmd": "hostname", "output": "a4d1c419a1b9"}
+{"cmd": "ls /usr/bin | head -15", "output": "[\naddpart\napt\napt-cache\napt-cdrom\napt-config\napt-get\napt-key\napt-mark\narch\nawk\nb2sum\nbase32\nbase64\nbasename"}
+{"cmd": "cat /proc/meminfo 2>/dev/null | head -10", "output": "MemTotal:       32452140 kB\nMemFree:         8264264 kB\nMemAvailable:   21933220 kB\nBuffers:             648 kB\nCached:         15180640 kB\nSwapCached:        88052 kB\nActive:          7727108 kB\nInactive:       12553776 kB\nActive(anon):    6329048 kB\nInactive(anon):   703964 kB"}
+{"cmd": "free  2>/dev/null", "output": "total        used        free      shared  buff/cache   available\nMem:        32452140     7719760     8260636     1881068    16471744    21929584\nSwap:       16777212     3570344    13206868"}
+{"cmd": "id nobody 2>/dev/null", "output": "uid=65534(nobody) gid=65534(nogroup) groups=65534(nogroup)"}
+{"cmd": "ls -la / 2>/dev/null | head -10", "output": "total 24\ndrwxr-xr-x   1 root root   0 Jun 10 04:33 .\ndrwxr-xr-x   1 root root   0 Jun 10 04:33 ..\n-rwxr-xr-x   1 root root   0 Jun 10 04:33 .dockerenv\nlrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin\ndrwxr-xr-x   1 root root   0 Apr 18  2022 boot\ndrwxr-xr-x   5 root root 340 Jun 10 04:33 dev\ndrwxr-xr-x   1 root root  56 Jun 10 04:33 etc\ndrwxr-xr-x   1 root root   0 Apr 18  2022 home\nlrwxrwxrwx   1 root root   7 May  9 02:05 lib -> usr/lib"}
+{"cmd": "cat /etc/hostname", "output": "a4d1c419a1b9"}
+{"cmd": "id root 2>/dev/null", "output": "uid=0(root) gid=0(root) groups=0(root)"}
+{"cmd": "date", "output": "Wed Jun 10 04:33:31 UTC 2026"}
+{"cmd": "ls /proc 2>/dev/null | head -10", "output": "1\n1648\n1654\n1655\nacpi\nasound\nbootconfig\nbuddyinfo\nbus\ncgroups"}
+{"cmd": "ls /var/log 2>/dev/null | head -10", "output": "alternatives.log\napt\nbootstrap.log\nbtmp\ndpkg.log\nfaillog\nlastlog\nwtmp"}
+{"cmd": "ls -la /tmp 2>/dev/null | head -10", "output": "total 0\ndrwxrwxrwt 1 root root 0 May  9 02:12 .\ndrwxr-xr-x 1 root root 0 Jun 10 04:33 .."}
+{"cmd": "ls -la /bin 2>/dev/null | head -10", "output": "lrwxrwxrwx 1 root root 7 May  9 02:05 /bin -> usr/bin"}
+{"cmd": "ls -la /var 2>/dev/null | head -10", "output": "total 8\ndrwxr-xr-x 1 root root   90 May  9 02:12 .\ndrwxr-xr-x 1 root root    0 Jun 10 04:33 ..\ndrwxr-xr-x 1 root root    0 Apr 18  2022 backups\ndrwxr-xr-x 1 root root   36 May  9 02:12 cache\ndrwxr-xr-x 1 root root   66 May  9 02:05 lib\ndrwxrwsr-x 1 root staff   0 Apr 18  2022 local\nlrwxrwxrwx 1 root root    9 May  9 02:05 lock -> /run/lock\ndrwxr-xr-x 1 root root  124 May  9 02:05 log\ndrwxrwsr-x 1 root mail    0 May  9 02:05 mail"}
+{"cmd": "ls /var 2>/dev/null | head -10", "output": "backups\ncache\nlib\nlocal\nlock\nlog\nmail\nopt\nrun\nspool"}
+{"cmd": "ls -la /etc 2>/dev/null | head -8", "output": "total 164\ndrwxr-xr-x 1 root root      56 Jun 10 04:33 .\ndrwxr-xr-x 1 root root       0 Jun 10 04:33 ..\n-rw------- 1 root root       0 May  9 02:05 .pwd.lock\n-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf\ndrwxr-xr-x 1 root root      52 May  9 02:12 alternatives\ndrwxr-xr-x 1 root root     162 May  9 02:05 apt\n-rw-r--r-- 1 root root    2319 Jan  6  2022 bash.bashrc"}
+{"cmd": "cat /etc/os-release 2>/dev/null | head -10", "output": "PRETTY_NAME=\"Ubuntu 22.04.5 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"22.04\"\nVERSION=\"22.04.5 LTS (Jammy Jellyfish)\"\nVERSION_CODENAME=jammy\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\""}
+{"cmd": "ls -la /tmp 2>/dev/null | head -8", "output": "total 0\ndrwxrwxrwt 1 root root 0 May  9 02:12 .\ndrwxr-xr-x 1 root root 0 Jun 10 04:33 .."}
+{"cmd": "which ls which cat which bash which python3", "output": "/usr/bin/ls\n/usr/bin/which\n/usr/bin/cat\n/usr/bin/which\n/usr/bin/bash\n/usr/bin/which"}
+{"cmd": "echo hi there", "output": "hi there"}
+{"cmd": "echo HELLO", "output": "HELLO"}
+{"cmd": "ls -la /usr 2>/dev/null | head -10", "output": "total 0\ndrwxr-xr-x 1 root root  116 May  9 02:05 .\ndrwxr-xr-x 1 root root    0 Jun 10 04:33 ..\ndrwxr-xr-x 1 root root 3644 May  9 02:12 bin\ndrwxr-xr-x 1 root root    0 Apr 18  2022 games\ndrwxr-xr-x 1 root root    0 Apr 18  2022 include\ndrwxr-xr-x 1 root root  190 May  9 02:12 lib\ndrwxr-xr-x 1 root root    0 May  9 02:05 lib32\ndrwxr-xr-x 1 root root   40 May  9 02:12 lib64\ndrwxr-xr-x 1 root root   26 May  9 02:05 libexec"}
+{"cmd": "id  2>/dev/null", "output": "uid=0(root) gid=0(root) groups=0(root)"}
+{"cmd": "cat /proc/cpuinfo 2>/dev/null | head -10", "output": "processor\t: 0\nvendor_id\t: GenuineIntel\ncpu family\t: 6\nmodel\t\t: 170\nmodel name\t: Intel(R) Core(TM) Ultra 9 185H\nstepping\t: 4\nmicrocode\t: 0x28\ncpu MHz\t\t: 2099.893\ncache size\t: 24576 KB\nphysical id\t: 0"}
+{"cmd": "ls /bin 2>/dev/null | head -10", "output": "[\naddpart\napt\napt-cache\napt-cdrom\napt-config\napt-get\napt-key\napt-mark\narch"}
+{"cmd": "du -sh / 2>/dev/null", "output": "82M\t/"}
+{"cmd": "free -m 2>/dev/null", "output": "total        used        free      shared  buff/cache   available\nMem:           31691        7593        8001        1847       16096       21349\nSwap:          16383        3486       12897"}
+{"cmd": "ls -la /proc 2>/dev/null | head -10", "output": "total 0\ndr-xr-xr-x 530 root root     0 Jun 10 04:33 .\ndrwxr-xr-x   1 root root     0 Jun 10 04:33 ..\ndr-xr-xr-x   9 root root     0 Jun 10 04:33 1\ndr-xr-xr-x   9 root root     0 Jun 10 04:33 1813\ndr-xr-xr-x   9 root root     0 Jun 10 04:33 1818\ndr-xr-xr-x   9 root root     0 Jun 10 04:33 1819\ndrwxrwxrwt   2 root root    40 Jun 10 04:33 acpi\ndrwxrwxrwt   2 root root    40 Jun 10 04:33 asound\n-r--r--r--   1 root root     0 Jun 10 04:33 bootconfig"}
+{"cmd": "df -m / 2>/dev/null | head -5", "output": "Filesystem     1M-blocks  Used Available Use% Mounted on\noverlay           131072 33688     96705  26% /"}
+{"cmd": "uname -n", "output": "a4d1c419a1b9"}
+{"cmd": "cat /etc/issue 2>/dev/null", "output": "Ubuntu 22.04.5 LTS \\n \\l"}
+{"cmd": "uptime -s 2>/dev/null", "output": "2026-06-02 14:27:58"}
+{"cmd": "ls /dev 2>/dev/null | head -10", "output": "core\nfd\nfull\nmqueue\nnull\nptmx\npts\nrandom\nshm\nstderr"}
+{"cmd": "ls /usr 2>/dev/null | head -10", "output": "bin\ngames\ninclude\nlib\nlib32\nlib64\nlibexec\nlibx32\nlocal\nsbin"}
+{"cmd": "ls -la /var 2>/dev/null | head -8", "output": "total 8\ndrwxr-xr-x 1 root root   90 May  9 02:12 .\ndrwxr-xr-x 1 root root    0 Jun 10 04:33 ..\ndrwxr-xr-x 1 root root    0 Apr 18  2022 backups\ndrwxr-xr-x 1 root root   36 May  9 02:12 cache\ndrwxr-xr-x 1 root root   66 May  9 02:05 lib\ndrwxrwsr-x 1 root staff   0 Apr 18  2022 local\nlrwxrwxrwx 1 root root    9 May  9 02:05 lock -> /run/lock"}
+{"cmd": "free -m 2>/dev/null", "output": "total        used        free      shared  buff/cache   available\nMem:           31691        7543        8053        1845       16094       21401\nSwap:          16383        3486       12897"}
+{"cmd": "echo hi there", "output": "hi there"}
+{"cmd": "mount | head -10 2>/dev/null", "output": "overlay on / type overlay (rw,relatime,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5336/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5337/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5337/work,index=off)\nproc on /proc type proc (rw,nosuid,nodev,noexec,relatime)\ntmpfs on /dev type tmpfs (rw,nosuid,size=65536k,mode=755,inode64,huge=within_size)\ndevpts on /dev/pts type devpts (rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=666)\nsysfs on /sys type sysfs (ro,nosuid,nodev,noexec,relatime)\ncgroup on /sys/fs/cgroup type cgroup2 (ro,nosuid,nodev,noexec,relatime,nsdelegate,memory_recursiveprot,memory_hugetlb_accounting)\nmqueue on /dev/mqueue type mqueue (rw,nosuid,nodev,noexec,relatime)\nshm on /dev/shm type tmpfs (rw,nosuid,nodev,noexec,relatime,size=65536k,inode64,huge=within_size)\n/dev/nvme0n1p5 on /etc/resolv.conf type btrfs (rw,relatime,ssd,discard=async,space_cache=v2,subvolid=5,subvol=/)\n/dev/nvme0n1p5 on /etc/hostname type btrfs (rw,relatime,ssd,discard=async,space_cache=v2,subvolid=5,subvol=/)"}
+{"cmd": "ls /etc 2>/dev/null | head -10", "output": "adduser.conf\nalternatives\napt\nbash.bashrc\nbindresvport.blacklist\ncloud\ncron.d\ncron.daily\ndebconf.conf\ndebian_version"}
+{"cmd": "ls /proc 2>/dev/null | head -10", "output": "1\n1900\n1906\n1907\nacpi\nasound\nbootconfig\nbuddyinfo\nbus\ncgroups"}
+{"cmd": "id  2>/dev/null", "output": "uid=0(root) gid=0(root) groups=0(root)"}
+{"cmd": "du -sh /home 2>/dev/null", "output": "0\t/home"}
+{"cmd": "uname -s", "output": "Linux"}
+{"cmd": "echo hello", "output": "hello"}
+{"cmd": "cat /proc/cpuinfo 2>/dev/null | head -10", "output": "processor\t: 0\nvendor_id\t: GenuineIntel\ncpu family\t: 6\nmodel\t\t: 170\nmodel name\t: Intel(R) Core(TM) Ultra 9 185H\nstepping\t: 4\nmicrocode\t: 0x28\ncpu MHz\t\t: 4500.000\ncache size\t: 24576 KB\nphysical id\t: 0"}
+{"cmd": "uptime", "output": "04:33:33 up 7 days, 14:05,  0 users,  load average: 1.75, 2.41, 2.01"}
+{"cmd": "ls /usr 2>/dev/null | head -10", "output": "bin\ngames\ninclude\nlib\nlib32\nlib64\nlibexec\nlibx32\nlocal\nsbin"}
+{"cmd": "ls -la / 2>/dev/null | head -8", "output": "total 24\ndrwxr-xr-x   1 root root   0 Jun 10 04:33 .\ndrwxr-xr-x   1 root root   0 Jun 10 04:33 ..\n-rwxr-xr-x   1 root root   0 Jun 10 04:33 .dockerenv\nlrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin\ndrwxr-xr-x   1 root root   0 Apr 18  2022 boot\ndrwxr-xr-x   5 root root 340 Jun 10 04:33 dev\ndrwxr-xr-x   1 root root  56 Jun 10 04:33 etc"}
+{"cmd": "cat /etc/issue 2>/dev/null", "output": "Ubuntu 22.04.5 LTS \\n \\l"}
+{"cmd": "id root 2>/dev/null", "output": "uid=0(root) gid=0(root) groups=0(root)"}
+{"cmd": "du -sh /etc 2>/dev/null", "output": "520K\t/etc"}
+{"cmd": "df  / 2>/dev/null | head -5", "output": "Filesystem     1K-blocks     Used Available Use% Mounted on\noverlay        134217728 34496380  99025540  26% /"}
+{"cmd": "ls -la /etc 2>/dev/null | head -8", "output": "total 164\ndrwxr-xr-x 1 root root      56 Jun 10 04:33 .\ndrwxr-xr-x 1 root root       0 Jun 10 04:33 ..\n-rw------- 1 root root       0 May  9 02:05 .pwd.lock\n-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf\ndrwxr-xr-x 1 root root      52 May  9 02:12 alternatives\ndrwxr-xr-x 1 root root     162 May  9 02:05 apt\n-rw-r--r-- 1 root root    2319 Jan  6  2022 bash.bashrc"}
+{"cmd": "locale", "output": "LANG=\nLANGUAGE=\nLC_CTYPE=\"POSIX\"\nLC_NUMERIC=\"POSIX\"\nLC_TIME=\"POSIX\"\nLC_COLLATE=\"POSIX\"\nLC_MONETARY=\"POSIX\"\nLC_MESSAGES=\"POSIX\"\nLC_PAPER=\"POSIX\"\nLC_NAME=\"POSIX\"\nLC_ADDRESS=\"POSIX\"\nLC_TELEPHONE=\"POSIX\"\nLC_MEASUREMENT=\"POSIX\"\nLC_IDENTIFICATION=\"POSIX\"\nLC_ALL="}
+{"cmd": "ls -la /bin 2>/dev/null | head -10", "output": "lrwxrwxrwx 1 root root 7 May  9 02:05 /bin -> usr/bin"}
+{"cmd": "uname -v", "output": "#1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000"}
+{"cmd": "uname -r", "output": "7.0.10-arch1-1"}
+{"cmd": "ls / 2>/dev/null | head -10", "output": "bin\nboot\ndev\netc\nhome\nlib\nlib32\nlib64\nlibx32\nmedia"}
+{"cmd": "cat /etc/os-release 2>/dev/null | head -10", "output": "PRETTY_NAME=\"Ubuntu 22.04.5 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"22.04\"\nVERSION=\"22.04.5 LTS (Jammy Jellyfish)\"\nVERSION_CODENAME=jammy\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\""}
+{"cmd": "id daemon 2>/dev/null", "output": "uid=1(daemon) gid=1(daemon) groups=1(daemon)"}
+{"cmd": "uptime -s 2>/dev/null", "output": "2026-06-02 14:27:58"}
+{"cmd": "ls /sys/class/net 2>/dev/null | head -5", "output": "eth0\nlo"}
+{"cmd": "du -sh /tmp 2>/dev/null", "output": "0\t/tmp"}
+{"cmd": "du -sh /var 2>/dev/null", "output": "5.0M\t/var"}
+{"cmd": "ls -la /home 2>/dev/null | head -10", "output": "total 0\ndrwxr-xr-x 1 root root 0 Apr 18  2022 .\ndrwxr-xr-x 1 root root 0 Jun 10 04:33 .."}
+{"cmd": "echo HELLO", "output": "HELLO"}
+{"cmd": "ls -la /proc 2>/dev/null | head -10", "output": "total 0\ndr-xr-xr-x 529 root root     0 Jun 10 04:33 .\ndrwxr-xr-x   1 root root     0 Jun 10 04:33 ..\ndr-xr-xr-x   9 root root     0 Jun 10 04:33 1\ndr-xr-xr-x   9 root root     0 Jun 10 04:33 2138\ndr-xr-xr-x   9 root root     0 Jun 10 04:33 2144\ndr-xr-xr-x   9 root root     0 Jun 10 04:33 2145\ndrwxrwxrwt   2 root root    40 Jun 10 04:33 acpi\ndrwxrwxrwt   2 root root    40 Jun 10 04:33 asound\n-r--r--r--   1 root root     0 Jun 10 04:33 bootconfig"}
+{"cmd": "id nobody 2>/dev/null", "output": "uid=65534(nobody) gid=65534(nogroup) groups=65534(nogroup)"}
+{"cmd": "date +%Y-%m-%d", "output": "2026-06-10"}
+{"cmd": "ls /bin 2>/dev/null | head -10", "output": "[\naddpart\napt\napt-cache\napt-cdrom\napt-config\napt-get\napt-key\napt-mark\narch"}
+{"cmd": "date -u", "output": "Wed Jun 10 04:33:34 UTC 2026"}
+{"cmd": "cat /etc/hostname", "output": "a4d1c419a1b9"}
+{"cmd": "df -m / 2>/dev/null | head -5", "output": "Filesystem     1M-blocks  Used Available Use% Mounted on\noverlay           131072 33688     96705  26% /"}
+{"cmd": "ls -la /var 2>/dev/null | head -10", "output": "total 8\ndrwxr-xr-x 1 root root   90 May  9 02:12 .\ndrwxr-xr-x 1 root root    0 Jun 10 04:33 ..\ndrwxr-xr-x 1 root root    0 Apr 18  2022 backups\ndrwxr-xr-x 1 root root   36 May  9 02:12 cache\ndrwxr-xr-x 1 root root   66 May  9 02:05 lib\ndrwxrwsr-x 1 root staff   0 Apr 18  2022 local\nlrwxrwxrwx 1 root root    9 May  9 02:05 lock -> /run/lock\ndrwxr-xr-x 1 root root  124 May  9 02:05 log\ndrwxrwsr-x 1 root mail    0 May  9 02:05 mail"}
+{"cmd": "uname -a", "output": "Linux a4d1c419a1b9 7.0.10-arch1-1 #1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000 x86_64 x86_64 x86_64 GNU/Linux"}
+{"cmd": "free -h 2>/dev/null", "output": "total        used        free      shared  buff/cache   available\nMem:            30Gi       7.3Gi       8.0Gi       1.8Gi        15Gi        20Gi\nSwap:           15Gi       3.4Gi        12Gi"}
+{"cmd": "ls -la /root 2>/dev/null | head -10", "output": "total 8\ndrwx------ 1 root root   30 May  9 02:12 .\ndrwxr-xr-x 1 root root    0 Jun 10 04:33 ..\n-rw-r--r-- 1 root root 3106 Oct 15  2021 .bashrc\n-rw-r--r-- 1 root root  161 Jul  9  2019 .profile"}
+{"cmd": "uname -n", "output": "a4d1c419a1b9"}
+{"cmd": "lscpu 2>/dev/null | head -10", "output": "Architecture:                            x86_64\nCPU op-mode(s):                          32-bit, 64-bit\nAddress sizes:                           46 bits physical, 48 bits virtual\nByte Order:                              Little Endian\nCPU(s):                                  22\nOn-line CPU(s) list:                     0-21\nVendor ID:                               GenuineIntel\nModel name:                              Intel(R) Core(TM) Ultra 9 185H\nCPU family:                              6\nModel:                                   170"}
+{"cmd": "date", "output": "Wed Jun 10 04:33:35 UTC 2026"}
+{"cmd": "ls -la /home 2>/dev/null | head -8", "output": "total 0\ndrwxr-xr-x 1 root root 0 Apr 18  2022 .\ndrwxr-xr-x 1 root root 0 Jun 10 04:33 .."}
+{"cmd": "free  2>/dev/null", "output": "total        used        free      shared  buff/cache   available\nMem:        32452140     7637988     8371524     1852012    16442628    22040420\nSwap:       16777212     3570344    13206868"}
+{"cmd": "ls -la /usr 2>/dev/null | head -10", "output": "total 0\ndrwxr-xr-x 1 root root  116 May  9 02:05 .\ndrwxr-xr-x 1 root root    0 Jun 10 04:33 ..\ndrwxr-xr-x 1 root root 3644 May  9 02:12 bin\ndrwxr-xr-x 1 root root    0 Apr 18  2022 games\ndrwxr-xr-x 1 root root    0 Apr 18  2022 include\ndrwxr-xr-x 1 root root  190 May  9 02:12 lib\ndrwxr-xr-x 1 root root    0 May  9 02:05 lib32\ndrwxr-xr-x 1 root root   40 May  9 02:12 lib64\ndrwxr-xr-x 1 root root   26 May  9 02:05 libexec"}
+{"cmd": "ls /var 2>/dev/null | head -10", "output": "backups\ncache\nlib\nlocal\nlock\nlog\nmail\nopt\nrun\nspool"}
+{"cmd": "df -h / 2>/dev/null | head -5", "output": "Filesystem      Size  Used Avail Use% Mounted on\noverlay         128G   33G   95G  26% /"}
+{"cmd": "ls /dev 2>/dev/null | head -10", "output": "core\nfd\nfull\nmqueue\nnull\nptmx\npts\nrandom\nshm\nstderr"}
+{"cmd": "ls -la /etc 2>/dev/null | head -10", "output": "total 164\ndrwxr-xr-x 1 root root      56 Jun 10 04:33 .\ndrwxr-xr-x 1 root root       0 Jun 10 04:33 ..\n-rw------- 1 root root       0 May  9 02:05 .pwd.lock\n-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf\ndrwxr-xr-x 1 root root      52 May  9 02:12 alternatives\ndrwxr-xr-x 1 root root     162 May  9 02:05 apt\n-rw-r--r-- 1 root root    2319 Jan  6  2022 bash.bashrc\n-rw-r--r-- 1 root root     367 Dec 16  2020 bindresvport.blacklist\ndrwxr-xr-x 1 root root      20 May  9 02:12 cloud"}
+{"cmd": "ls -la /tmp 2>/dev/null | head -10", "output": "total 0\ndrwxrwxrwt 1 root root 0 May  9 02:12 .\ndrwxr-xr-x 1 root root 0 Jun 10 04:33 .."}
+{"cmd": "hostname", "output": "a4d1c419a1b9"}
+{"cmd": "echo hello world", "output": "hello world"}
+{"cmd": "ls -la /dev 2>/dev/null | head -10", "output": "total 0\ndrwxr-xr-x 5 root root  340 Jun 10 04:33 .\ndrwxr-xr-x 1 root root    0 Jun 10 04:33 ..\nlrwxrwxrwx 1 root root   11 Jun 10 04:33 core -> /proc/kcore\nlrwxrwxrwx 1 root root   13 Jun 10 04:33 fd -> /proc/self/fd\ncrw-rw-rw- 1 root root 1, 7 Jun 10 04:33 full\ndrwxrwxrwt 2 root root   40 Jun 10 04:33 mqueue\ncrw-rw-rw- 1 root root 1, 3 Jun 10 04:33 null\nlrwxrwxrwx 1 root root    8 Jun 10 04:33 ptmx -> pts/ptmx\ndrwxr-xr-x 2 root root    0 Jun 10 04:33 pts"}
+{"cmd": "cat /proc/meminfo 2>/dev/null | head -10", "output": "MemTotal:       32452140 kB\nMemFree:         8129408 kB\nMemAvailable:   21807652 kB\nBuffers:             648 kB\nCached:         15175304 kB\nSwapCached:        88204 kB\nActive:          7799020 kB\nInactive:       12563024 kB\nActive(anon):    6400944 kB\nInactive(anon):   703964 kB"}
+{"cmd": "ls -la / 2>/dev/null | head -10", "output": "total 24\ndrwxr-xr-x   1 root root   0 Jun 10 04:33 .\ndrwxr-xr-x   1 root root   0 Jun 10 04:33 ..\n-rwxr-xr-x   1 root root   0 Jun 10 04:33 .dockerenv\nlrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin\ndrwxr-xr-x   1 root root   0 Apr 18  2022 boot\ndrwxr-xr-x   5 root root 340 Jun 10 04:33 dev\ndrwxr-xr-x   1 root root  56 Jun 10 04:33 etc\ndrwxr-xr-x   1 root root   0 Apr 18  2022 home\nlrwxrwxrwx   1 root root   7 May  9 02:05 lib -> usr/lib"}
+{"cmd": "date +%s", "output": "1781066015"}
+{"cmd": "free -b 2>/dev/null", "output": "total        used        free      shared  buff/cache   available\nMem:     33230991360  8172216320  8198131712  1909211136 16860643328 22205677568\nSwap:    17179865088  3656032256 13523832832"}
+{"cmd": "ls /bin | head -15", "output": "[\naddpart\napt\napt-cache\napt-cdrom\napt-config\napt-get\napt-key\napt-mark\narch\nawk\nb2sum\nbase32\nbase64\nbasename"}
+{"cmd": "du -sh / 2>/dev/null", "output": "82M\t/"}
+{"cmd": "env | head -10", "output": "HOSTNAME=a4d1c419a1b9\nPWD=/\nHOME=/root\nSHLVL=0\nPATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\n_=/usr/bin/env"}
+{"cmd": "cat /etc/hosts | head -10", "output": "127.0.0.1\tlocalhost\n::1\tlocalhost ip6-localhost ip6-loopback\nfe00::\tip6-localnet\nff00::\tip6-mcastprefix\nff02::1\tip6-allnodes\nff02::2\tip6-allrouters\n172.17.0.2\ta4d1c419a1b9"}
+{"cmd": "which ls which cat which bash which python3", "output": "/usr/bin/ls\n/usr/bin/which\n/usr/bin/cat\n/usr/bin/which\n/usr/bin/bash\n/usr/bin/which"}
+{"cmd": "ls /var/log 2>/dev/null | head -10", "output": "alternatives.log\napt\nbootstrap.log\nbtmp\ndpkg.log\nfaillog\nlastlog\nwtmp"}
+{"cmd": "ls -la /tmp 2>/dev/null | head -8", "output": "total 0\ndrwxrwxrwt 1 root root 0 May  9 02:12 .\ndrwxr-xr-x 1 root root 0 Jun 10 04:33 .."}
+{"cmd": "ls /usr/bin | head -15", "output": "[\naddpart\napt\napt-cache\napt-cdrom\napt-config\napt-get\napt-key\napt-mark\narch\nawk\nb2sum\nbase32\nbase64\nbasename"}
+{"cmd": "id bin 2>/dev/null", "output": "uid=2(bin) gid=2(bin) groups=2(bin)"}
+{"cmd": "ls -la /bin 2>/dev/null | head -10", "output": "lrwxrwxrwx 1 root root 7 May  9 02:05 /bin -> usr/bin"}
+{"cmd": "ls -la /dev 2>/dev/null | head -10", "output": "total 0\ndrwxr-xr-x 5 root root  340 Jun 10 04:33 .\ndrwxr-xr-x 1 root root    0 Jun 10 04:33 ..\nlrwxrwxrwx 1 root root   11 Jun 10 04:33 core -> /proc/kcore\nlrwxrwxrwx 1 root root   13 Jun 10 04:33 fd -> /proc/self/fd\ncrw-rw-rw- 1 root root 1, 7 Jun 10 04:33 full\ndrwxrwxrwt 2 root root   40 Jun 10 04:33 mqueue\ncrw-rw-rw- 1 root root 1, 3 Jun 10 04:33 null\nlrwxrwxrwx 1 root root    8 Jun 10 04:33 ptmx -> pts/ptmx\ndrwxr-xr-x 2 root root    0 Jun 10 04:33 pts"}
+{"cmd": "free -m 2>/dev/null", "output": "total        used        free      shared  buff/cache   available\nMem:           31691        8010        7640        1779       16040       21000\nSwap:          16383        3486       12897"}
+{"cmd": "echo hello world", "output": "hello world"}
+{"cmd": "ls /usr 2>/dev/null | head -10", "output": "bin\ngames\ninclude\nlib\nlib32\nlib64\nlibexec\nlibx32\nlocal\nsbin"}
+{"cmd": "echo hello", "output": "hello"}
+{"cmd": "ls -la /home 2>/dev/null | head -10", "output": "total 0\ndrwxr-xr-x 1 root root 0 Apr 18  2022 .\ndrwxr-xr-x 1 root root 0 Jun 10 04:33 .."}
+{"cmd": "cat /proc/cpuinfo 2>/dev/null | head -10", "output": "processor\t: 0\nvendor_id\t: GenuineIntel\ncpu family\t: 6\nmodel\t\t: 170\nmodel name\t: Intel(R) Core(TM) Ultra 9 185H\nstepping\t: 4\nmicrocode\t: 0x28\ncpu MHz\t\t: 4500.045\ncache size\t: 24576 KB\nphysical id\t: 0"}
+{"cmd": "ls /bin 2>/dev/null | head -10", "output": "[\naddpart\napt\napt-cache\napt-cdrom\napt-config\napt-get\napt-key\napt-mark\narch"}
+{"cmd": "du -sh /etc 2>/dev/null", "output": "520K\t/etc"}
+{"cmd": "ls /bin | head -15", "output": "[\naddpart\napt\napt-cache\napt-cdrom\napt-config\napt-get\napt-key\napt-mark\narch\nawk\nb2sum\nbase32\nbase64\nbasename"}
+{"cmd": "cat /proc/meminfo 2>/dev/null | head -10", "output": "MemTotal:       32452140 kB\nMemFree:         7857472 kB\nMemAvailable:   21538276 kB\nBuffers:             648 kB\nCached:         15135816 kB\nSwapCached:        88508 kB\nActive:          8086884 kB\nInactive:       12565136 kB\nActive(anon):    6688456 kB\nInactive(anon):   703964 kB"}
+{"cmd": "uname -a", "output": "Linux a4d1c419a1b9 7.0.10-arch1-1 #1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000 x86_64 x86_64 x86_64 GNU/Linux"}
+{"cmd": "id root 2>/dev/null", "output": "uid=0(root) gid=0(root) groups=0(root)"}
+{"cmd": "ls -la /etc 2>/dev/null | head -8", "output": "total 164\ndrwxr-xr-x 1 root root      56 Jun 10 04:33 .\ndrwxr-xr-x 1 root root       0 Jun 10 04:33 ..\n-rw------- 1 root root       0 May  9 02:05 .pwd.lock\n-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf\ndrwxr-xr-x 1 root root      52 May  9 02:12 alternatives\ndrwxr-xr-x 1 root root     162 May  9 02:05 apt\n-rw-r--r-- 1 root root    2319 Jan  6  2022 bash.bashrc"}
+{"cmd": "ls -la /usr 2>/dev/null | head -10", "output": "total 0\ndrwxr-xr-x 1 root root  116 May  9 02:05 .\ndrwxr-xr-x 1 root root    0 Jun 10 04:33 ..\ndrwxr-xr-x 1 root root 3644 May  9 02:12 bin\ndrwxr-xr-x 1 root root    0 Apr 18  2022 games\ndrwxr-xr-x 1 root root    0 Apr 18  2022 include\ndrwxr-xr-x 1 root root  190 May  9 02:12 lib\ndrwxr-xr-x 1 root root    0 May  9 02:05 lib32\ndrwxr-xr-x 1 root root   40 May  9 02:12 lib64\ndrwxr-xr-x 1 root root   26 May  9 02:05 libexec"}
+{"cmd": "cat /etc/issue 2>/dev/null", "output": "Ubuntu 22.04.5 LTS \\n \\l"}
+{"cmd": "date +%Y-%m-%d", "output": "2026-06-10"}
+{"cmd": "echo HELLO", "output": "HELLO"}
+{"cmd": "echo hi there", "output": "hi there"}
+{"cmd": "ls -la /tmp 2>/dev/null | head -8", "output": "total 0\ndrwxrwxrwt 1 root root 0 May  9 02:12 .\ndrwxr-xr-x 1 root root 0 Jun 10 04:33 .."}
+{"cmd": "uname -s", "output": "Linux"}
+{"cmd": "ls -la /home 2>/dev/null | head -8", "output": "total 0\ndrwxr-xr-x 1 root root 0 Apr 18  2022 .\ndrwxr-xr-x 1 root root 0 Jun 10 04:33 .."}
+{"cmd": "id  2>/dev/null", "output": "uid=0(root) gid=0(root) groups=0(root)"}
+{"cmd": "du -sh /tmp 2>/dev/null", "output": "0\t/tmp"}
+{"cmd": "ls /var/log 2>/dev/null | head -10", "output": "alternatives.log\napt\nbootstrap.log\nbtmp\ndpkg.log\nfaillog\nlastlog\nwtmp"}
+{"cmd": "lscpu 2>/dev/null | head -10", "output": "Architecture:                            x86_64\nCPU op-mode(s):                          32-bit, 64-bit\nAddress sizes:                           46 bits physical, 48 bits virtual\nByte Order:                              Little Endian\nCPU(s):                                  22\nOn-line CPU(s) list:                     0-21\nVendor ID:                               GenuineIntel\nModel name:                              Intel(R) Core(TM) Ultra 9 185H\nCPU family:                              6\nModel:                                   170"}
+{"cmd": "cat /etc/hosts | head -10", "output": "127.0.0.1\tlocalhost\n::1\tlocalhost ip6-localhost ip6-loopback\nfe00::\tip6-localnet\nff00::\tip6-mcastprefix\nff02::1\tip6-allnodes\nff02::2\tip6-allrouters\n172.17.0.2\ta4d1c419a1b9"}
+{"cmd": "uname -r", "output": "7.0.10-arch1-1"}
+{"cmd": "hostname", "output": "a4d1c419a1b9"}
+{"cmd": "date +%s", "output": "1781066017"}
+{"cmd": "df  / 2>/dev/null | head -5", "output": "Filesystem     1K-blocks     Used Available Use% Mounted on\noverlay        134217728 34496380  99025540  26% /"}
+{"cmd": "free  2>/dev/null", "output": "total        used        free      shared  buff/cache   available\nMem:        32452140     7966104     8044520     1838988    16441516    21725328\nSwap:       16777212     3570344    13206868"}
+{"cmd": "which ls which cat which bash which python3", "output": "/usr/bin/ls\n/usr/bin/which\n/usr/bin/cat\n/usr/bin/which\n/usr/bin/bash\n/usr/bin/which"}
+{"cmd": "ls /var 2>/dev/null | head -10", "output": "backups\ncache\nlib\nlocal\nlock\nlog\nmail\nopt\nrun\nspool"}
+{"cmd": "ls -la / 2>/dev/null | head -8", "output": "total 24\ndrwxr-xr-x   1 root root   0 Jun 10 04:33 .\ndrwxr-xr-x   1 root root   0 Jun 10 04:33 ..\n-rwxr-xr-x   1 root root   0 Jun 10 04:33 .dockerenv\nlrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin\ndrwxr-xr-x   1 root root   0 Apr 18  2022 boot\ndrwxr-xr-x   5 root root 340 Jun 10 04:33 dev\ndrwxr-xr-x   1 root root  56 Jun 10 04:33 etc"}
+{"cmd": "mount | head -10 2>/dev/null", "output": "overlay on / type overlay (rw,relatime,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5336/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5337/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5337/work,index=off)\nproc on /proc type proc (rw,nosuid,nodev,noexec,relatime)\ntmpfs on /dev type tmpfs (rw,nosuid,size=65536k,mode=755,inode64,huge=within_size)\ndevpts on /dev/pts type devpts (rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=666)\nsysfs on /sys type sysfs (ro,nosuid,nodev,noexec,relatime)\ncgroup on /sys/fs/cgroup type cgroup2 (ro,nosuid,nodev,noexec,relatime,nsdelegate,memory_recursiveprot,memory_hugetlb_accounting)\nmqueue on /dev/mqueue type mqueue (rw,nosuid,nodev,noexec,relatime)\nshm on /dev/shm type tmpfs (rw,nosuid,nodev,noexec,relatime,size=65536k,inode64,huge=within_size)\n/dev/nvme0n1p5 on /etc/resolv.conf type btrfs (rw,relatime,ssd,discard=async,space_cache=v2,subvolid=5,subvol=/)\n/dev/nvme0n1p5 on /etc/hostname type btrfs (rw,relatime,ssd,discard=async,space_cache=v2,subvolid=5,subvol=/)"}
+{"cmd": "uptime", "output": "04:33:38 up 7 days, 14:05,  0 users,  load average: 1.77, 2.40, 2.01"}
+{"cmd": "uname -n", "output": "a4d1c419a1b9"}
+{"cmd": "ls -la /tmp 2>/dev/null | head -10", "output": "total 0\ndrwxrwxrwt 1 root root 0 May  9 02:12 .\ndrwxr-xr-x 1 root root 0 Jun 10 04:33 .."}
+{"cmd": "du -sh /home 2>/dev/null", "output": "0\t/home"}
+{"cmd": "free -b 2>/dev/null", "output": "total        used        free      shared  buff/cache   available\nMem:     33230991360  8134180864  8250372096  1893441536 16846438400 22259515392\nSwap:    17179865088  3656032256 13523832832"}
+{"cmd": "ls -la /etc 2>/dev/null | head -10", "output": "total 164\ndrwxr-xr-x 1 root root      56 Jun 10 04:33 .\ndrwxr-xr-x 1 root root       0 Jun 10 04:33 ..\n-rw------- 1 root root       0 May  9 02:05 .pwd.lock\n-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf\ndrwxr-xr-x 1 root root      52 May  9 02:12 alternatives\ndrwxr-xr-x 1 root root     162 May  9 02:05 apt\n-rw-r--r-- 1 root root    2319 Jan  6  2022 bash.bashrc\n-rw-r--r-- 1 root root     367 Dec 16  2020 bindresvport.blacklist\ndrwxr-xr-x 1 root root      20 May  9 02:12 cloud"}
+{"cmd": "ls /dev 2>/dev/null | head -10", "output": "core\nfd\nfull\nmqueue\nnull\nptmx\npts\nrandom\nshm\nstderr"}
+{"cmd": "free -h 2>/dev/null", "output": "total        used        free      shared  buff/cache   available\nMem:            30Gi       7.6Gi       7.7Gi       1.8Gi        15Gi        20Gi\nSwap:           15Gi       3.4Gi        12Gi"}
+{"cmd": "ls / 2>/dev/null | head -10", "output": "bin\nboot\ndev\netc\nhome\nlib\nlib32\nlib64\nlibx32\nmedia"}
+{"cmd": "date", "output": "Wed Jun 10 04:33:38 UTC 2026"}
+{"cmd": "id daemon 2>/dev/null", "output": "uid=1(daemon) gid=1(daemon) groups=1(daemon)"}
+{"cmd": "ls -la /var 2>/dev/null | head -10", "output": "total 8\ndrwxr-xr-x 1 root root   90 May  9 02:12 .\ndrwxr-xr-x 1 root root    0 Jun 10 04:33 ..\ndrwxr-xr-x 1 root root    0 Apr 18  2022 backups\ndrwxr-xr-x 1 root root   36 May  9 02:12 cache\ndrwxr-xr-x 1 root root   66 May  9 02:05 lib\ndrwxrwsr-x 1 root staff   0 Apr 18  2022 local\nlrwxrwxrwx 1 root root    9 May  9 02:05 lock -> /run/lock\ndrwxr-xr-x 1 root root  124 May  9 02:05 log\ndrwxrwsr-x 1 root mail    0 May  9 02:05 mail"}
+{"cmd": "env | head -10", "output": "HOSTNAME=a4d1c419a1b9\nPWD=/\nHOME=/root\nSHLVL=0\nPATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\n_=/usr/bin/env"}
+{"cmd": "ls -la /proc 2>/dev/null | head -10", "output": "total 0\ndr-xr-xr-x 531 root root     0 Jun 10 04:33 .\ndrwxr-xr-x   1 root root     0 Jun 10 04:33 ..\ndr-xr-xr-x   9 root root     0 Jun 10 04:33 1\ndr-xr-xr-x   9 root root     0 Jun 10 04:33 2949\ndr-xr-xr-x   9 root root     0 Jun 10 04:33 2955\ndr-xr-xr-x   9 root root     0 Jun 10 04:33 2956\ndrwxrwxrwt   2 root root    40 Jun 10 04:33 acpi\ndrwxrwxrwt   2 root root    40 Jun 10 04:33 asound\n-r--r--r--   1 root root     0 Jun 10 04:33 bootconfig"}
+{"cmd": "ls /usr/bin | head -15", "output": "[\naddpart\napt\napt-cache\napt-cdrom\napt-config\napt-get\napt-key\napt-mark\narch\nawk\nb2sum\nbase32\nbase64\nbasename"}
+{"cmd": "ls /proc 2>/dev/null | head -10", "output": "1\n2966\n2972\n2973\nacpi\nasound\nbootconfig\nbuddyinfo\nbus\ncgroups"}
+{"cmd": "id bin 2>/dev/null", "output": "uid=2(bin) gid=2(bin) groups=2(bin)"}
+{"cmd": "uname -v", "output": "#1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000"}
+{"cmd": "ls -la /var 2>/dev/null | head -8", "output": "total 8\ndrwxr-xr-x 1 root root   90 May  9 02:12 .\ndrwxr-xr-x 1 root root    0 Jun 10 04:33 ..\ndrwxr-xr-x 1 root root    0 Apr 18  2022 backups\ndrwxr-xr-x 1 root root   36 May  9 02:12 cache\ndrwxr-xr-x 1 root root   66 May  9 02:05 lib\ndrwxrwsr-x 1 root staff   0 Apr 18  2022 local\nlrwxrwxrwx 1 root root    9 May  9 02:05 lock -> /run/lock"}
+{"cmd": "cat /etc/hostname", "output": "a4d1c419a1b9"}
+{"cmd": "du -sh /var 2>/dev/null", "output": "5.0M\t/var"}
+{"cmd": "locale", "output": "LANG=\nLANGUAGE=\nLC_CTYPE=\"POSIX\"\nLC_NUMERIC=\"POSIX\"\nLC_TIME=\"POSIX\"\nLC_COLLATE=\"POSIX\"\nLC_MONETARY=\"POSIX\"\nLC_MESSAGES=\"POSIX\"\nLC_PAPER=\"POSIX\"\nLC_NAME=\"POSIX\"\nLC_ADDRESS=\"POSIX\"\nLC_TELEPHONE=\"POSIX\"\nLC_MEASUREMENT=\"POSIX\"\nLC_IDENTIFICATION=\"POSIX\"\nLC_ALL="}
+{"cmd": "cat /etc/os-release 2>/dev/null | head -10", "output": "PRETTY_NAME=\"Ubuntu 22.04.5 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"22.04\"\nVERSION=\"22.04.5 LTS (Jammy Jellyfish)\"\nVERSION_CODENAME=jammy\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\""}
+{"cmd": "uptime -s 2>/dev/null", "output": "2026-06-02 14:27:58"}
+{"cmd": "date -u", "output": "Wed Jun 10 04:33:39 UTC 2026"}
+{"cmd": "id nobody 2>/dev/null", "output": "uid=65534(nobody) gid=65534(nogroup) groups=65534(nogroup)"}
+{"cmd": "ls /sys/class/net 2>/dev/null | head -5", "output": "eth0\nlo"}
+{"cmd": "df -h / 2>/dev/null | head -5", "output": "Filesystem      Size  Used Avail Use% Mounted on\noverlay         128G   33G   95G  26% /"}
+{"cmd": "ls -la /root 2>/dev/null | head -10", "output": "total 8\ndrwx------ 1 root root   30 May  9 02:12 .\ndrwxr-xr-x 1 root root    0 Jun 10 04:33 ..\n-rw-r--r-- 1 root root 3106 Oct 15  2021 .bashrc\n-rw-r--r-- 1 root root  161 Jul  9  2019 .profile"}
+{"cmd": "df -m / 2>/dev/null | head -5", "output": "Filesystem     1M-blocks  Used Available Use% Mounted on\noverlay           131072 33688     96705  26% /"}
+{"cmd": "ls -la / 2>/dev/null | head -10", "output": "total 24\ndrwxr-xr-x   1 root root   0 Jun 10 04:33 .\ndrwxr-xr-x   1 root root   0 Jun 10 04:33 ..\n-rwxr-xr-x   1 root root   0 Jun 10 04:33 .dockerenv\nlrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin\ndrwxr-xr-x   1 root root   0 Apr 18  2022 boot\ndrwxr-xr-x   5 root root 340 Jun 10 04:33 dev\ndrwxr-xr-x   1 root root  56 Jun 10 04:33 etc\ndrwxr-xr-x   1 root root   0 Apr 18  2022 home\nlrwxrwxrwx   1 root root   7 May  9 02:05 lib -> usr/lib"}
+{"cmd": "du -sh / 2>/dev/null", "output": "82M\t/"}
+{"cmd": "ls /etc 2>/dev/null | head -10", "output": "adduser.conf\nalternatives\napt\nbash.bashrc\nbindresvport.blacklist\ncloud\ncron.d\ncron.daily\ndebconf.conf\ndebian_version"}

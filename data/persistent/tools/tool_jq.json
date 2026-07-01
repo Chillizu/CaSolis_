@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "jq"
+  ],
+  "desc": "run jq with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

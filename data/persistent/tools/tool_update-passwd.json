@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "update-passwd"
+  ],
+  "desc": "run update-passwd with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "fsck.ext4"
+  ],
+  "desc": "run fsck.ext4 with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "readprofile"
+  ],
+  "desc": "run readprofile with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

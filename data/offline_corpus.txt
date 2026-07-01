@@ -1,0 +1,4470 @@
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+apt-config
+apt-get
+apt-key
+apt-mark
+arch
+awk
+b2sum
+base32
+base64
+basename
+
+$ ls /usr/bin | head -15
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+apt-config
+apt-get
+apt-key
+apt-mark
+arch
+awk
+b2sum
+base32
+base64
+basename
+
+processor	: 0
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 170
+model name	: Intel(R) Core(TM) Ultra 9 185H
+stepping	: 4
+microcode	: 0x28
+cpu MHz		: 1696.651
+cache size	: 24576 KB
+physical id	: 0
+
+$ cat /proc/cpuinfo 2>/dev/null | head -10
+processor	: 0
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 170
+model name	: Intel(R) Core(TM) Ultra 9 185H
+stepping	: 4
+microcode	: 0x28
+cpu MHz		: 1696.651
+cache size	: 24576 KB
+physical id	: 0
+
+total 8
+drwxr-xr-x 1 root root   90 May  9 02:12 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+drwxr-xr-x 1 root root    0 Apr 18  2022 backups
+drwxr-xr-x 1 root root   36 May  9 02:12 cache
+drwxr-xr-x 1 root root   66 May  9 02:05 lib
+drwxrwsr-x 1 root staff   0 Apr 18  2022 local
+lrwxrwxrwx 1 root root    9 May  9 02:05 lock -> /run/lock
+drwxr-xr-x 1 root root  124 May  9 02:05 log
+drwxrwsr-x 1 root mail    0 May  9 02:05 mail
+
+$ ls -la /var 2>/dev/null | head -10
+total 8
+drwxr-xr-x 1 root root   90 May  9 02:12 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+drwxr-xr-x 1 root root    0 Apr 18  2022 backups
+drwxr-xr-x 1 root root   36 May  9 02:12 cache
+drwxr-xr-x 1 root root   66 May  9 02:05 lib
+drwxrwsr-x 1 root staff   0 Apr 18  2022 local
+lrwxrwxrwx 1 root root    9 May  9 02:05 lock -> /run/lock
+drwxr-xr-x 1 root root  124 May  9 02:05 log
+drwxrwsr-x 1 root mail    0 May  9 02:05 mail
+
+7.0.10-arch1-1
+
+$ uname -r
+7.0.10-arch1-1
+
+lrwxrwxrwx 1 root root 7 May  9 02:05 /bin -> usr/bin
+
+$ ls -la /bin 2>/dev/null | head -10
+lrwxrwxrwx 1 root root 7 May  9 02:05 /bin -> usr/bin
+
+total        used        free      shared  buff/cache   available
+Mem:            30Gi       7.3Gi       7.8Gi       1.7Gi        15Gi        21Gi
+Swap:           15Gi       3.4Gi        12Gi
+
+$ free -h 2>/dev/null
+total        used        free      shared  buff/cache   available
+Mem:            30Gi       7.3Gi       7.8Gi       1.7Gi        15Gi        21Gi
+Swap:           15Gi       3.4Gi        12Gi
+
+520K	/etc
+
+$ du -sh /etc 2>/dev/null
+520K	/etc
+
+uid=2(bin) gid=2(bin) groups=2(bin)
+
+$ id bin 2>/dev/null
+uid=2(bin) gid=2(bin) groups=2(bin)
+
+alternatives.log
+apt
+bootstrap.log
+btmp
+dpkg.log
+faillog
+lastlog
+wtmp
+
+$ ls /var/log 2>/dev/null | head -10
+alternatives.log
+apt
+bootstrap.log
+btmp
+dpkg.log
+faillog
+lastlog
+wtmp
+
+backups
+cache
+lib
+local
+lock
+log
+mail
+opt
+run
+spool
+
+$ ls /var 2>/dev/null | head -10
+backups
+cache
+lib
+local
+lock
+log
+mail
+opt
+run
+spool
+
+hello
+
+$ echo hello
+hello
+
+total 0
+drwxr-xr-x 5 root root  340 Jun 10 04:33 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+lrwxrwxrwx 1 root root   11 Jun 10 04:33 core -> /proc/kcore
+lrwxrwxrwx 1 root root   13 Jun 10 04:33 fd -> /proc/self/fd
+crw-rw-rw- 1 root root 1, 7 Jun 10 04:33 full
+drwxrwxrwt 2 root root   40 Jun 10 04:33 mqueue
+crw-rw-rw- 1 root root 1, 3 Jun 10 04:33 null
+lrwxrwxrwx 1 root root    8 Jun 10 04:33 ptmx -> pts/ptmx
+drwxr-xr-x 2 root root    0 Jun 10 04:33 pts
+
+$ ls -la /dev 2>/dev/null | head -10
+total 0
+drwxr-xr-x 5 root root  340 Jun 10 04:33 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+lrwxrwxrwx 1 root root   11 Jun 10 04:33 core -> /proc/kcore
+lrwxrwxrwx 1 root root   13 Jun 10 04:33 fd -> /proc/self/fd
+crw-rw-rw- 1 root root 1, 7 Jun 10 04:33 full
+drwxrwxrwt 2 root root   40 Jun 10 04:33 mqueue
+crw-rw-rw- 1 root root 1, 3 Jun 10 04:33 null
+lrwxrwxrwx 1 root root    8 Jun 10 04:33 ptmx -> pts/ptmx
+drwxr-xr-x 2 root root    0 Jun 10 04:33 pts
+
+a4d1c419a1b9
+
+$ uname -n
+a4d1c419a1b9
+
+HELLO
+
+$ echo HELLO
+HELLO
+
+overlay on / type overlay (rw,relatime,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5336/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5337/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5337/work,index=off)
+proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
+tmpfs on /dev type tmpfs (rw,nosuid,size=65536k,mode=755,inode64,huge=within_size)
+devpts on /dev/pts type devpts (rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=666)
+sysfs on /sys type sysfs (ro,nosuid,nodev,noexec,relatime)
+cgroup on /sys/fs/cgroup type cgroup2 (ro,nosuid,nodev,noexec,relatime,nsdelegate,memory_recursiveprot,memory_hugetlb_accounting)
+mqueue on /dev/mqueue type mqueue (rw,nosuid,nodev,noexec,relatime)
+shm on /dev/shm type tmpfs (rw,nosuid,nodev,noexec,relatime,size=65536k,inode64,huge=within_size)
+/dev/nvme0n1p5 on /etc/resolv.conf type btrfs (rw,relatime,ssd,discard=async,space_cache=v2,subvolid=5,subvol=/)
+/dev/nvme0n1p5 on /etc/hostname type btrfs (rw,relatime,ssd,discard=async,space_cache=v2,subvolid=5,subvol=/)
+
+$ mount | head -10 2>/dev/null
+overlay on / type overlay (rw,relatime,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5336/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5337/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5337/work,index=off)
+proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
+tmpfs on /dev type tmpfs (rw,nosuid,size=65536k,mode=755,inode64,huge=within_size)
+devpts on /dev/pts type devpts (rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=666)
+sysfs on /sys type sysfs (ro,nosuid,nodev,noexec,relatime)
+cgroup on /sys/fs/cgroup type cgroup2 (ro,nosuid,nodev,noexec,relatime,nsdelegate,memory_recursiveprot,memory_hugetlb_accounting)
+mqueue on /dev/mqueue type mqueue (rw,nosuid,nodev,noexec,relatime)
+shm on /dev/shm type tmpfs (rw,nosuid,nodev,noexec,relatime,size=65536k,inode64,huge=within_size)
+/dev/nvme0n1p5 on /etc/resolv.conf type btrfs (rw,relatime,ssd,discard=async,space_cache=v2,subvolid=5,subvol=/)
+/dev/nvme0n1p5 on /etc/hostname type btrfs (rw,relatime,ssd,discard=async,space_cache=v2,subvolid=5,subvol=/)
+
+PRETTY_NAME="Ubuntu 22.04.5 LTS"
+NAME="Ubuntu"
+VERSION_ID="22.04"
+VERSION="22.04.5 LTS (Jammy Jellyfish)"
+VERSION_CODENAME=jammy
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+
+$ cat /etc/os-release 2>/dev/null | head -10
+PRETTY_NAME="Ubuntu 22.04.5 LTS"
+NAME="Ubuntu"
+VERSION_ID="22.04"
+VERSION="22.04.5 LTS (Jammy Jellyfish)"
+VERSION_CODENAME=jammy
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+
+total 0
+drwxr-xr-x 1 root root  116 May  9 02:05 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+drwxr-xr-x 1 root root 3644 May  9 02:12 bin
+drwxr-xr-x 1 root root    0 Apr 18  2022 games
+drwxr-xr-x 1 root root    0 Apr 18  2022 include
+drwxr-xr-x 1 root root  190 May  9 02:12 lib
+drwxr-xr-x 1 root root    0 May  9 02:05 lib32
+drwxr-xr-x 1 root root   40 May  9 02:12 lib64
+drwxr-xr-x 1 root root   26 May  9 02:05 libexec
+
+$ ls -la /usr 2>/dev/null | head -10
+total 0
+drwxr-xr-x 1 root root  116 May  9 02:05 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+drwxr-xr-x 1 root root 3644 May  9 02:12 bin
+drwxr-xr-x 1 root root    0 Apr 18  2022 games
+drwxr-xr-x 1 root root    0 Apr 18  2022 include
+drwxr-xr-x 1 root root  190 May  9 02:12 lib
+drwxr-xr-x 1 root root    0 May  9 02:05 lib32
+drwxr-xr-x 1 root root   40 May  9 02:12 lib64
+drwxr-xr-x 1 root root   26 May  9 02:05 libexec
+
+uid=0(root) gid=0(root) groups=0(root)
+
+$ id root 2>/dev/null
+uid=0(root) gid=0(root) groups=0(root)
+
+2026-06-10
+
+$ date +%Y-%m-%d
+2026-06-10
+
+Linux a4d1c419a1b9 7.0.10-arch1-1 #1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000 x86_64 x86_64 x86_64 GNU/Linux
+
+$ uname -a
+Linux a4d1c419a1b9 7.0.10-arch1-1 #1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000 x86_64 x86_64 x86_64 GNU/Linux
+
+total 0
+drwxrwxrwt 1 root root 0 May  9 02:12 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+$ ls -la /tmp 2>/dev/null | head -10
+total 0
+drwxrwxrwt 1 root root 0 May  9 02:12 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+total        used        free      shared  buff/cache   available
+Mem:        32452140     7656212     8158660     1758800    16637268    22335708
+Swap:       16777212     3570352    13206860
+
+$ free  2>/dev/null
+total        used        free      shared  buff/cache   available
+Mem:        32452140     7656212     8158660     1758800    16637268    22335708
+Swap:       16777212     3570352    13206860
+
+2026-06-02 14:27:58
+
+$ uptime -s 2>/dev/null
+2026-06-02 14:27:58
+
+total 0
+drwxr-xr-x 1 root root 0 Apr 18  2022 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+$ ls -la /home 2>/dev/null | head -8
+total 0
+drwxr-xr-x 1 root root 0 Apr 18  2022 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+127.0.0.1	localhost
+::1	localhost ip6-localhost ip6-loopback
+fe00::	ip6-localnet
+ff00::	ip6-mcastprefix
+ff02::1	ip6-allnodes
+ff02::2	ip6-allrouters
+172.17.0.2	a4d1c419a1b9
+
+$ cat /etc/hosts | head -10
+127.0.0.1	localhost
+::1	localhost ip6-localhost ip6-loopback
+fe00::	ip6-localnet
+ff00::	ip6-mcastprefix
+ff02::1	ip6-allnodes
+ff02::2	ip6-allrouters
+172.17.0.2	a4d1c419a1b9
+
+total 0
+drwxrwxrwt 1 root root 0 May  9 02:12 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+$ ls -la /tmp 2>/dev/null | head -8
+total 0
+drwxrwxrwt 1 root root 0 May  9 02:12 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+Wed Jun 10 04:33:23 UTC 2026
+
+$ date
+Wed Jun 10 04:33:23 UTC 2026
+
+a4d1c419a1b9
+
+$ hostname
+a4d1c419a1b9
+
+1781066003
+
+$ date +%s
+1781066003
+
+uid=65534(nobody) gid=65534(nogroup) groups=65534(nogroup)
+
+$ id nobody 2>/dev/null
+uid=65534(nobody) gid=65534(nogroup) groups=65534(nogroup)
+
+bin
+boot
+dev
+etc
+home
+lib
+lib32
+lib64
+libx32
+media
+
+$ ls / 2>/dev/null | head -10
+bin
+boot
+dev
+etc
+home
+lib
+lib32
+lib64
+libx32
+media
+
+total 164
+drwxr-xr-x 1 root root      56 Jun 10 04:33 .
+drwxr-xr-x 1 root root       0 Jun 10 04:33 ..
+-rw------- 1 root root       0 May  9 02:05 .pwd.lock
+-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf
+drwxr-xr-x 1 root root      52 May  9 02:12 alternatives
+drwxr-xr-x 1 root root     162 May  9 02:05 apt
+-rw-r--r-- 1 root root    2319 Jan  6  2022 bash.bashrc
+-rw-r--r-- 1 root root     367 Dec 16  2020 bindresvport.blacklist
+drwxr-xr-x 1 root root      20 May  9 02:12 cloud
+
+$ ls -la /etc 2>/dev/null | head -10
+total 164
+drwxr-xr-x 1 root root      56 Jun 10 04:33 .
+drwxr-xr-x 1 root root       0 Jun 10 04:33 ..
+-rw------- 1 root root       0 May  9 02:05 .pwd.lock
+-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf
+drwxr-xr-x 1 root root      52 May  9 02:12 alternatives
+drwxr-xr-x 1 root root     162 May  9 02:05 apt
+-rw-r--r-- 1 root root    2319 Jan  6  2022 bash.bashrc
+-rw-r--r-- 1 root root     367 Dec 16  2020 bindresvport.blacklist
+drwxr-xr-x 1 root root      20 May  9 02:12 cloud
+
+/usr/bin/ls
+/usr/bin/which
+/usr/bin/cat
+/usr/bin/which
+/usr/bin/bash
+/usr/bin/which
+
+$ which ls which cat which bash which python3
+/usr/bin/ls
+/usr/bin/which
+/usr/bin/cat
+/usr/bin/which
+/usr/bin/bash
+/usr/bin/which
+
+total 8
+drwx------ 1 root root   30 May  9 02:12 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+-rw-r--r-- 1 root root 3106 Oct 15  2021 .bashrc
+-rw-r--r-- 1 root root  161 Jul  9  2019 .profile
+
+$ ls -la /root 2>/dev/null | head -10
+total 8
+drwx------ 1 root root   30 May  9 02:12 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+-rw-r--r-- 1 root root 3106 Oct 15  2021 .bashrc
+-rw-r--r-- 1 root root  161 Jul  9  2019 .profile
+
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+apt-config
+apt-get
+apt-key
+apt-mark
+arch
+awk
+b2sum
+base32
+base64
+basename
+
+$ ls /bin | head -15
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+apt-config
+apt-get
+apt-key
+apt-mark
+arch
+awk
+b2sum
+base32
+base64
+basename
+
+total        used        free      shared  buff/cache   available
+Mem:           31691        7482        7963        1715       16245       21772
+Swap:          16383        3486       12897
+
+$ free -m 2>/dev/null
+total        used        free      shared  buff/cache   available
+Mem:           31691        7482        7963        1715       16245       21772
+Swap:          16383        3486       12897
+
+5.0M	/var
+
+$ du -sh /var 2>/dev/null
+5.0M	/var
+
+Linux
+
+$ uname -s
+Linux
+
+04:33:24 up 7 days, 14:05,  0 users,  load average: 1.14, 2.32, 1.98
+
+$ uptime
+04:33:24 up 7 days, 14:05,  0 users,  load average: 1.14, 2.32, 1.98
+
+HOSTNAME=a4d1c419a1b9
+PWD=/
+HOME=/root
+SHLVL=0
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+_=/usr/bin/env
+
+$ env | head -10
+HOSTNAME=a4d1c419a1b9
+PWD=/
+HOME=/root
+SHLVL=0
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+_=/usr/bin/env
+
+total 8
+drwxr-xr-x 1 root root   90 May  9 02:12 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+drwxr-xr-x 1 root root    0 Apr 18  2022 backups
+drwxr-xr-x 1 root root   36 May  9 02:12 cache
+drwxr-xr-x 1 root root   66 May  9 02:05 lib
+drwxrwsr-x 1 root staff   0 Apr 18  2022 local
+lrwxrwxrwx 1 root root    9 May  9 02:05 lock -> /run/lock
+
+$ ls -la /var 2>/dev/null | head -8
+total 8
+drwxr-xr-x 1 root root   90 May  9 02:12 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+drwxr-xr-x 1 root root    0 Apr 18  2022 backups
+drwxr-xr-x 1 root root   36 May  9 02:12 cache
+drwxr-xr-x 1 root root   66 May  9 02:05 lib
+drwxrwsr-x 1 root staff   0 Apr 18  2022 local
+lrwxrwxrwx 1 root root    9 May  9 02:05 lock -> /run/lock
+
+Architecture:                            x86_64
+CPU op-mode(s):                          32-bit, 64-bit
+Address sizes:                           46 bits physical, 48 bits virtual
+Byte Order:                              Little Endian
+CPU(s):                                  22
+On-line CPU(s) list:                     0-21
+Vendor ID:                               GenuineIntel
+Model name:                              Intel(R) Core(TM) Ultra 9 185H
+CPU family:                              6
+Model:                                   170
+
+$ lscpu 2>/dev/null | head -10
+Architecture:                            x86_64
+CPU op-mode(s):                          32-bit, 64-bit
+Address sizes:                           46 bits physical, 48 bits virtual
+Byte Order:                              Little Endian
+CPU(s):                                  22
+On-line CPU(s) list:                     0-21
+Vendor ID:                               GenuineIntel
+Model name:                              Intel(R) Core(TM) Ultra 9 185H
+CPU family:                              6
+Model:                                   170
+
+uid=1(daemon) gid=1(daemon) groups=1(daemon)
+
+$ id daemon 2>/dev/null
+uid=1(daemon) gid=1(daemon) groups=1(daemon)
+
+adduser.conf
+alternatives
+apt
+bash.bashrc
+bindresvport.blacklist
+cloud
+cron.d
+cron.daily
+debconf.conf
+debian_version
+
+$ ls /etc 2>/dev/null | head -10
+adduser.conf
+alternatives
+apt
+bash.bashrc
+bindresvport.blacklist
+cloud
+cron.d
+cron.daily
+debconf.conf
+debian_version
+
+hi there
+
+$ echo hi there
+hi there
+
+total 24
+drwxr-xr-x   1 root root   0 Jun 10 04:33 .
+drwxr-xr-x   1 root root   0 Jun 10 04:33 ..
+-rwxr-xr-x   1 root root   0 Jun 10 04:33 .dockerenv
+lrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin
+drwxr-xr-x   1 root root   0 Apr 18  2022 boot
+drwxr-xr-x   5 root root 340 Jun 10 04:33 dev
+drwxr-xr-x   1 root root  56 Jun 10 04:33 etc
+
+$ ls -la / 2>/dev/null | head -8
+total 24
+drwxr-xr-x   1 root root   0 Jun 10 04:33 .
+drwxr-xr-x   1 root root   0 Jun 10 04:33 ..
+-rwxr-xr-x   1 root root   0 Jun 10 04:33 .dockerenv
+lrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin
+drwxr-xr-x   1 root root   0 Apr 18  2022 boot
+drwxr-xr-x   5 root root 340 Jun 10 04:33 dev
+drwxr-xr-x   1 root root  56 Jun 10 04:33 etc
+
+eth0
+lo
+
+$ ls /sys/class/net 2>/dev/null | head -5
+eth0
+lo
+
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+apt-config
+apt-get
+apt-key
+apt-mark
+arch
+
+$ ls /bin 2>/dev/null | head -10
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+apt-config
+apt-get
+apt-key
+apt-mark
+arch
+
+hello world
+
+$ echo hello world
+hello world
+
+uid=0(root) gid=0(root) groups=0(root)
+
+$ id  2>/dev/null
+uid=0(root) gid=0(root) groups=0(root)
+
+Filesystem     1K-blocks     Used Available Use% Mounted on
+overlay        134217728 34496380  99025540  26% /
+
+$ df  / 2>/dev/null | head -5
+Filesystem     1K-blocks     Used Available Use% Mounted on
+overlay        134217728 34496380  99025540  26% /
+
+0	/home
+
+$ du -sh /home 2>/dev/null
+0	/home
+
+Ubuntu 22.04.5 LTS \n \l
+
+$ cat /etc/issue 2>/dev/null
+Ubuntu 22.04.5 LTS \n \l
+
+Filesystem     1M-blocks  Used Available Use% Mounted on
+overlay           131072 33688     96705  26% /
+
+$ df -m / 2>/dev/null | head -5
+Filesystem     1M-blocks  Used Available Use% Mounted on
+overlay           131072 33688     96705  26% /
+
+82M	/
+
+$ du -sh / 2>/dev/null
+82M	/
+
+#1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000
+
+$ uname -v
+#1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000
+
+total 0
+dr-xr-xr-x 573 root root     0 Jun 10 04:33 .
+drwxr-xr-x   1 root root     0 Jun 10 04:33 ..
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 1
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 525
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 531
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 532
+drwxrwxrwt   2 root root    40 Jun 10 04:33 acpi
+drwxrwxrwt   2 root root    40 Jun 10 04:33 asound
+-r--r--r--   1 root root     0 Jun 10 04:33 bootconfig
+
+$ ls -la /proc 2>/dev/null | head -10
+total 0
+dr-xr-xr-x 573 root root     0 Jun 10 04:33 .
+drwxr-xr-x   1 root root     0 Jun 10 04:33 ..
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 1
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 525
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 531
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 532
+drwxrwxrwt   2 root root    40 Jun 10 04:33 acpi
+drwxrwxrwt   2 root root    40 Jun 10 04:33 asound
+-r--r--r--   1 root root     0 Jun 10 04:33 bootconfig
+
+1
+533
+539
+540
+acpi
+asound
+bootconfig
+buddyinfo
+bus
+cgroups
+
+$ ls /proc 2>/dev/null | head -10
+1
+533
+539
+540
+acpi
+asound
+bootconfig
+buddyinfo
+bus
+cgroups
+
+total 24
+drwxr-xr-x   1 root root   0 Jun 10 04:33 .
+drwxr-xr-x   1 root root   0 Jun 10 04:33 ..
+-rwxr-xr-x   1 root root   0 Jun 10 04:33 .dockerenv
+lrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin
+drwxr-xr-x   1 root root   0 Apr 18  2022 boot
+drwxr-xr-x   5 root root 340 Jun 10 04:33 dev
+drwxr-xr-x   1 root root  56 Jun 10 04:33 etc
+drwxr-xr-x   1 root root   0 Apr 18  2022 home
+lrwxrwxrwx   1 root root   7 May  9 02:05 lib -> usr/lib
+
+$ ls -la / 2>/dev/null | head -10
+total 24
+drwxr-xr-x   1 root root   0 Jun 10 04:33 .
+drwxr-xr-x   1 root root   0 Jun 10 04:33 ..
+-rwxr-xr-x   1 root root   0 Jun 10 04:33 .dockerenv
+lrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin
+drwxr-xr-x   1 root root   0 Apr 18  2022 boot
+drwxr-xr-x   5 root root 340 Jun 10 04:33 dev
+drwxr-xr-x   1 root root  56 Jun 10 04:33 etc
+drwxr-xr-x   1 root root   0 Apr 18  2022 home
+lrwxrwxrwx   1 root root   7 May  9 02:05 lib -> usr/lib
+
+bin
+games
+include
+lib
+lib32
+lib64
+libexec
+libx32
+local
+sbin
+
+$ ls /usr 2>/dev/null | head -10
+bin
+games
+include
+lib
+lib32
+lib64
+libexec
+libx32
+local
+sbin
+
+total 0
+drwxr-xr-x 1 root root 0 Apr 18  2022 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+$ ls -la /home 2>/dev/null | head -10
+total 0
+drwxr-xr-x 1 root root 0 Apr 18  2022 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+a4d1c419a1b9
+
+$ cat /etc/hostname
+a4d1c419a1b9
+
+core
+fd
+full
+mqueue
+null
+ptmx
+pts
+random
+shm
+stderr
+
+$ ls /dev 2>/dev/null | head -10
+core
+fd
+full
+mqueue
+null
+ptmx
+pts
+random
+shm
+stderr
+
+0	/tmp
+
+$ du -sh /tmp 2>/dev/null
+0	/tmp
+
+total        used        free      shared  buff/cache   available
+Mem:     33230991360  7833395200  8266858496  1852366848 17130737664 22601445376
+Swap:    17179865088  3656032256 13523832832
+
+$ free -b 2>/dev/null
+total        used        free      shared  buff/cache   available
+Mem:     33230991360  7833395200  8266858496  1852366848 17130737664 22601445376
+Swap:    17179865088  3656032256 13523832832
+
+Wed Jun 10 04:33:25 UTC 2026
+
+$ date -u
+Wed Jun 10 04:33:25 UTC 2026
+
+MemTotal:       32452140 kB
+MemFree:         8069236 kB
+MemAvailable:   22067852 kB
+Buffers:             648 kB
+Cached:         15440040 kB
+SwapCached:        87956 kB
+Active:          7669024 kB
+Inactive:       12837792 kB
+Active(anon):    6227360 kB
+Inactive(anon):   701732 kB
+
+$ cat /proc/meminfo 2>/dev/null | head -10
+MemTotal:       32452140 kB
+MemFree:         8069236 kB
+MemAvailable:   22067852 kB
+Buffers:             648 kB
+Cached:         15440040 kB
+SwapCached:        87956 kB
+Active:          7669024 kB
+Inactive:       12837792 kB
+Active(anon):    6227360 kB
+Inactive(anon):   701732 kB
+
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         128G   33G   95G  26% /
+
+$ df -h / 2>/dev/null | head -5
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         128G   33G   95G  26% /
+
+total 164
+drwxr-xr-x 1 root root      56 Jun 10 04:33 .
+drwxr-xr-x 1 root root       0 Jun 10 04:33 ..
+-rw------- 1 root root       0 May  9 02:05 .pwd.lock
+-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf
+drwxr-xr-x 1 root root      52 May  9 02:12 alternatives
+drwxr-xr-x 1 root root     162 May  9 02:05 apt
+-rw-r--r-- 1 root root    2319 Jan  6  2022 bash.bashrc
+
+$ ls -la /etc 2>/dev/null | head -8
+total 164
+drwxr-xr-x 1 root root      56 Jun 10 04:33 .
+drwxr-xr-x 1 root root       0 Jun 10 04:33 ..
+-rw------- 1 root root       0 May  9 02:05 .pwd.lock
+-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf
+drwxr-xr-x 1 root root      52 May  9 02:12 alternatives
+drwxr-xr-x 1 root root     162 May  9 02:05 apt
+-rw-r--r-- 1 root root    2319 Jan  6  2022 bash.bashrc
+
+LANG=
+LANGUAGE=
+LC_CTYPE="POSIX"
+LC_NUMERIC="POSIX"
+LC_TIME="POSIX"
+LC_COLLATE="POSIX"
+LC_MONETARY="POSIX"
+LC_MESSAGES="POSIX"
+LC_PAPER="POSIX"
+LC_NAME="POSIX"
+LC_ADDRESS="POSIX"
+LC_TELEPHONE="POSIX"
+LC_MEASUREMENT="POSIX"
+LC_IDENTIFICATION="POSIX"
+LC_ALL=
+
+$ locale
+LANG=
+LANGUAGE=
+LC_CTYPE="POSIX"
+LC_NUMERIC="POSIX"
+LC_TIME="POSIX"
+LC_COLLATE="POSIX"
+LC_MONETARY="POSIX"
+LC_MESSAGES="POSIX"
+LC_PAPER="POSIX"
+LC_NAME="POSIX"
+LC_ADDRESS="POSIX"
+LC_TELEPHONE="POSIX"
+LC_MEASUREMENT="POSIX"
+LC_IDENTIFICATION="POSIX"
+LC_ALL=
+
+total 0
+drwxr-xr-x 1 root root 0 Apr 18  2022 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+$ ls -la /home 2>/dev/null | head -10
+total 0
+drwxr-xr-x 1 root root 0 Apr 18  2022 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+82M	/
+
+$ du -sh / 2>/dev/null
+82M	/
+
+HELLO
+
+$ echo HELLO
+HELLO
+
+a4d1c419a1b9
+
+$ hostname
+a4d1c419a1b9
+
+0	/tmp
+
+$ du -sh /tmp 2>/dev/null
+0	/tmp
+
+04:33:26 up 7 days, 14:05,  0 users,  load average: 1.21, 2.31, 1.98
+
+$ uptime
+04:33:26 up 7 days, 14:05,  0 users,  load average: 1.21, 2.31, 1.98
+
+#1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000
+
+$ uname -v
+#1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000
+
+backups
+cache
+lib
+local
+lock
+log
+mail
+opt
+run
+spool
+
+$ ls /var 2>/dev/null | head -10
+backups
+cache
+lib
+local
+lock
+log
+mail
+opt
+run
+spool
+
+total 0
+drwxr-xr-x 5 root root  340 Jun 10 04:33 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+lrwxrwxrwx 1 root root   11 Jun 10 04:33 core -> /proc/kcore
+lrwxrwxrwx 1 root root   13 Jun 10 04:33 fd -> /proc/self/fd
+crw-rw-rw- 1 root root 1, 7 Jun 10 04:33 full
+drwxrwxrwt 2 root root   40 Jun 10 04:33 mqueue
+crw-rw-rw- 1 root root 1, 3 Jun 10 04:33 null
+lrwxrwxrwx 1 root root    8 Jun 10 04:33 ptmx -> pts/ptmx
+drwxr-xr-x 2 root root    0 Jun 10 04:33 pts
+
+$ ls -la /dev 2>/dev/null | head -10
+total 0
+drwxr-xr-x 5 root root  340 Jun 10 04:33 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+lrwxrwxrwx 1 root root   11 Jun 10 04:33 core -> /proc/kcore
+lrwxrwxrwx 1 root root   13 Jun 10 04:33 fd -> /proc/self/fd
+crw-rw-rw- 1 root root 1, 7 Jun 10 04:33 full
+drwxrwxrwt 2 root root   40 Jun 10 04:33 mqueue
+crw-rw-rw- 1 root root 1, 3 Jun 10 04:33 null
+lrwxrwxrwx 1 root root    8 Jun 10 04:33 ptmx -> pts/ptmx
+drwxr-xr-x 2 root root    0 Jun 10 04:33 pts
+
+0	/home
+
+$ du -sh /home 2>/dev/null
+0	/home
+
+processor	: 0
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 170
+model name	: Intel(R) Core(TM) Ultra 9 185H
+stepping	: 4
+microcode	: 0x28
+cpu MHz		: 2399.602
+cache size	: 24576 KB
+physical id	: 0
+
+$ cat /proc/cpuinfo 2>/dev/null | head -10
+processor	: 0
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 170
+model name	: Intel(R) Core(TM) Ultra 9 185H
+stepping	: 4
+microcode	: 0x28
+cpu MHz		: 2399.602
+cache size	: 24576 KB
+physical id	: 0
+
+total        used        free      shared  buff/cache   available
+Mem:           31691        7484        7897        1738       16309       21568
+Swap:          16383        3486       12897
+
+$ free -m 2>/dev/null
+total        used        free      shared  buff/cache   available
+Mem:           31691        7484        7897        1738       16309       21568
+Swap:          16383        3486       12897
+
+total 8
+drwxr-xr-x 1 root root   90 May  9 02:12 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+drwxr-xr-x 1 root root    0 Apr 18  2022 backups
+drwxr-xr-x 1 root root   36 May  9 02:12 cache
+drwxr-xr-x 1 root root   66 May  9 02:05 lib
+drwxrwsr-x 1 root staff   0 Apr 18  2022 local
+lrwxrwxrwx 1 root root    9 May  9 02:05 lock -> /run/lock
+drwxr-xr-x 1 root root  124 May  9 02:05 log
+drwxrwsr-x 1 root mail    0 May  9 02:05 mail
+
+$ ls -la /var 2>/dev/null | head -10
+total 8
+drwxr-xr-x 1 root root   90 May  9 02:12 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+drwxr-xr-x 1 root root    0 Apr 18  2022 backups
+drwxr-xr-x 1 root root   36 May  9 02:12 cache
+drwxr-xr-x 1 root root   66 May  9 02:05 lib
+drwxrwsr-x 1 root staff   0 Apr 18  2022 local
+lrwxrwxrwx 1 root root    9 May  9 02:05 lock -> /run/lock
+drwxr-xr-x 1 root root  124 May  9 02:05 log
+drwxrwsr-x 1 root mail    0 May  9 02:05 mail
+
+uid=0(root) gid=0(root) groups=0(root)
+
+$ id  2>/dev/null
+uid=0(root) gid=0(root) groups=0(root)
+
+Filesystem     1M-blocks  Used Available Use% Mounted on
+overlay           131072 33688     96705  26% /
+
+$ df -m / 2>/dev/null | head -5
+Filesystem     1M-blocks  Used Available Use% Mounted on
+overlay           131072 33688     96705  26% /
+
+hello
+
+$ echo hello
+hello
+
+overlay on / type overlay (rw,relatime,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5336/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5337/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5337/work,index=off)
+proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
+tmpfs on /dev type tmpfs (rw,nosuid,size=65536k,mode=755,inode64,huge=within_size)
+devpts on /dev/pts type devpts (rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=666)
+sysfs on /sys type sysfs (ro,nosuid,nodev,noexec,relatime)
+cgroup on /sys/fs/cgroup type cgroup2 (ro,nosuid,nodev,noexec,relatime,nsdelegate,memory_recursiveprot,memory_hugetlb_accounting)
+mqueue on /dev/mqueue type mqueue (rw,nosuid,nodev,noexec,relatime)
+shm on /dev/shm type tmpfs (rw,nosuid,nodev,noexec,relatime,size=65536k,inode64,huge=within_size)
+/dev/nvme0n1p5 on /etc/resolv.conf type btrfs (rw,relatime,ssd,discard=async,space_cache=v2,subvolid=5,subvol=/)
+/dev/nvme0n1p5 on /etc/hostname type btrfs (rw,relatime,ssd,discard=async,space_cache=v2,subvolid=5,subvol=/)
+
+$ mount | head -10 2>/dev/null
+overlay on / type overlay (rw,relatime,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5336/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5337/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5337/work,index=off)
+proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
+tmpfs on /dev type tmpfs (rw,nosuid,size=65536k,mode=755,inode64,huge=within_size)
+devpts on /dev/pts type devpts (rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=666)
+sysfs on /sys type sysfs (ro,nosuid,nodev,noexec,relatime)
+cgroup on /sys/fs/cgroup type cgroup2 (ro,nosuid,nodev,noexec,relatime,nsdelegate,memory_recursiveprot,memory_hugetlb_accounting)
+mqueue on /dev/mqueue type mqueue (rw,nosuid,nodev,noexec,relatime)
+shm on /dev/shm type tmpfs (rw,nosuid,nodev,noexec,relatime,size=65536k,inode64,huge=within_size)
+/dev/nvme0n1p5 on /etc/resolv.conf type btrfs (rw,relatime,ssd,discard=async,space_cache=v2,subvolid=5,subvol=/)
+/dev/nvme0n1p5 on /etc/hostname type btrfs (rw,relatime,ssd,discard=async,space_cache=v2,subvolid=5,subvol=/)
+
+1
+763
+769
+770
+acpi
+asound
+bootconfig
+buddyinfo
+bus
+cgroups
+
+$ ls /proc 2>/dev/null | head -10
+1
+763
+769
+770
+acpi
+asound
+bootconfig
+buddyinfo
+bus
+cgroups
+
+2026-06-02 14:27:58
+
+$ uptime -s 2>/dev/null
+2026-06-02 14:27:58
+
+bin
+boot
+dev
+etc
+home
+lib
+lib32
+lib64
+libx32
+media
+
+$ ls / 2>/dev/null | head -10
+bin
+boot
+dev
+etc
+home
+lib
+lib32
+lib64
+libx32
+media
+
+HOSTNAME=a4d1c419a1b9
+PWD=/
+HOME=/root
+SHLVL=0
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+_=/usr/bin/env
+
+$ env | head -10
+HOSTNAME=a4d1c419a1b9
+PWD=/
+HOME=/root
+SHLVL=0
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+_=/usr/bin/env
+
+total 0
+drwxr-xr-x 1 root root 0 Apr 18  2022 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+$ ls -la /home 2>/dev/null | head -8
+total 0
+drwxr-xr-x 1 root root 0 Apr 18  2022 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+core
+fd
+full
+mqueue
+null
+ptmx
+pts
+random
+shm
+stderr
+
+$ ls /dev 2>/dev/null | head -10
+core
+fd
+full
+mqueue
+null
+ptmx
+pts
+random
+shm
+stderr
+
+total 164
+drwxr-xr-x 1 root root      56 Jun 10 04:33 .
+drwxr-xr-x 1 root root       0 Jun 10 04:33 ..
+-rw------- 1 root root       0 May  9 02:05 .pwd.lock
+-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf
+drwxr-xr-x 1 root root      52 May  9 02:12 alternatives
+drwxr-xr-x 1 root root     162 May  9 02:05 apt
+-rw-r--r-- 1 root root    2319 Jan  6  2022 bash.bashrc
+-rw-r--r-- 1 root root     367 Dec 16  2020 bindresvport.blacklist
+drwxr-xr-x 1 root root      20 May  9 02:12 cloud
+
+$ ls -la /etc 2>/dev/null | head -10
+total 164
+drwxr-xr-x 1 root root      56 Jun 10 04:33 .
+drwxr-xr-x 1 root root       0 Jun 10 04:33 ..
+-rw------- 1 root root       0 May  9 02:05 .pwd.lock
+-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf
+drwxr-xr-x 1 root root      52 May  9 02:12 alternatives
+drwxr-xr-x 1 root root     162 May  9 02:05 apt
+-rw-r--r-- 1 root root    2319 Jan  6  2022 bash.bashrc
+-rw-r--r-- 1 root root     367 Dec 16  2020 bindresvport.blacklist
+drwxr-xr-x 1 root root      20 May  9 02:12 cloud
+
+/usr/bin/ls
+/usr/bin/which
+/usr/bin/cat
+/usr/bin/which
+/usr/bin/bash
+/usr/bin/which
+
+$ which ls which cat which bash which python3
+/usr/bin/ls
+/usr/bin/which
+/usr/bin/cat
+/usr/bin/which
+/usr/bin/bash
+/usr/bin/which
+
+Wed Jun 10 04:33:27 UTC 2026
+
+$ date
+Wed Jun 10 04:33:27 UTC 2026
+
+total 24
+drwxr-xr-x   1 root root   0 Jun 10 04:33 .
+drwxr-xr-x   1 root root   0 Jun 10 04:33 ..
+-rwxr-xr-x   1 root root   0 Jun 10 04:33 .dockerenv
+lrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin
+drwxr-xr-x   1 root root   0 Apr 18  2022 boot
+drwxr-xr-x   5 root root 340 Jun 10 04:33 dev
+drwxr-xr-x   1 root root  56 Jun 10 04:33 etc
+drwxr-xr-x   1 root root   0 Apr 18  2022 home
+lrwxrwxrwx   1 root root   7 May  9 02:05 lib -> usr/lib
+
+$ ls -la / 2>/dev/null | head -10
+total 24
+drwxr-xr-x   1 root root   0 Jun 10 04:33 .
+drwxr-xr-x   1 root root   0 Jun 10 04:33 ..
+-rwxr-xr-x   1 root root   0 Jun 10 04:33 .dockerenv
+lrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin
+drwxr-xr-x   1 root root   0 Apr 18  2022 boot
+drwxr-xr-x   5 root root 340 Jun 10 04:33 dev
+drwxr-xr-x   1 root root  56 Jun 10 04:33 etc
+drwxr-xr-x   1 root root   0 Apr 18  2022 home
+lrwxrwxrwx   1 root root   7 May  9 02:05 lib -> usr/lib
+
+eth0
+lo
+
+$ ls /sys/class/net 2>/dev/null | head -5
+eth0
+lo
+
+alternatives.log
+apt
+bootstrap.log
+btmp
+dpkg.log
+faillog
+lastlog
+wtmp
+
+$ ls /var/log 2>/dev/null | head -10
+alternatives.log
+apt
+bootstrap.log
+btmp
+dpkg.log
+faillog
+lastlog
+wtmp
+
+5.0M	/var
+
+$ du -sh /var 2>/dev/null
+5.0M	/var
+
+Wed Jun 10 04:33:27 UTC 2026
+
+$ date -u
+Wed Jun 10 04:33:27 UTC 2026
+
+uid=65534(nobody) gid=65534(nogroup) groups=65534(nogroup)
+
+$ id nobody 2>/dev/null
+uid=65534(nobody) gid=65534(nogroup) groups=65534(nogroup)
+
+Linux a4d1c419a1b9 7.0.10-arch1-1 #1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000 x86_64 x86_64 x86_64 GNU/Linux
+
+$ uname -a
+Linux a4d1c419a1b9 7.0.10-arch1-1 #1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000 x86_64 x86_64 x86_64 GNU/Linux
+
+total        used        free      shared  buff/cache   available
+Mem:     33230991360  7870353408  8484425728  1935626240 16876212224 22857555968
+Swap:    17179865088  3656032256 13523832832
+
+$ free -b 2>/dev/null
+total        used        free      shared  buff/cache   available
+Mem:     33230991360  7870353408  8484425728  1935626240 16876212224 22857555968
+Swap:    17179865088  3656032256 13523832832
+
+Architecture:                            x86_64
+CPU op-mode(s):                          32-bit, 64-bit
+Address sizes:                           46 bits physical, 48 bits virtual
+Byte Order:                              Little Endian
+CPU(s):                                  22
+On-line CPU(s) list:                     0-21
+Vendor ID:                               GenuineIntel
+Model name:                              Intel(R) Core(TM) Ultra 9 185H
+CPU family:                              6
+Model:                                   170
+
+$ lscpu 2>/dev/null | head -10
+Architecture:                            x86_64
+CPU op-mode(s):                          32-bit, 64-bit
+Address sizes:                           46 bits physical, 48 bits virtual
+Byte Order:                              Little Endian
+CPU(s):                                  22
+On-line CPU(s) list:                     0-21
+Vendor ID:                               GenuineIntel
+Model name:                              Intel(R) Core(TM) Ultra 9 185H
+CPU family:                              6
+Model:                                   170
+
+hi there
+
+$ echo hi there
+hi there
+
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+apt-config
+apt-get
+apt-key
+apt-mark
+arch
+
+$ ls /bin 2>/dev/null | head -10
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+apt-config
+apt-get
+apt-key
+apt-mark
+arch
+
+127.0.0.1	localhost
+::1	localhost ip6-localhost ip6-loopback
+fe00::	ip6-localnet
+ff00::	ip6-mcastprefix
+ff02::1	ip6-allnodes
+ff02::2	ip6-allrouters
+172.17.0.2	a4d1c419a1b9
+
+$ cat /etc/hosts | head -10
+127.0.0.1	localhost
+::1	localhost ip6-localhost ip6-loopback
+fe00::	ip6-localnet
+ff00::	ip6-mcastprefix
+ff02::1	ip6-allnodes
+ff02::2	ip6-allrouters
+172.17.0.2	a4d1c419a1b9
+
+total 0
+drwxr-xr-x 1 root root  116 May  9 02:05 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+drwxr-xr-x 1 root root 3644 May  9 02:12 bin
+drwxr-xr-x 1 root root    0 Apr 18  2022 games
+drwxr-xr-x 1 root root    0 Apr 18  2022 include
+drwxr-xr-x 1 root root  190 May  9 02:12 lib
+drwxr-xr-x 1 root root    0 May  9 02:05 lib32
+drwxr-xr-x 1 root root   40 May  9 02:12 lib64
+drwxr-xr-x 1 root root   26 May  9 02:05 libexec
+
+$ ls -la /usr 2>/dev/null | head -10
+total 0
+drwxr-xr-x 1 root root  116 May  9 02:05 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+drwxr-xr-x 1 root root 3644 May  9 02:12 bin
+drwxr-xr-x 1 root root    0 Apr 18  2022 games
+drwxr-xr-x 1 root root    0 Apr 18  2022 include
+drwxr-xr-x 1 root root  190 May  9 02:12 lib
+drwxr-xr-x 1 root root    0 May  9 02:05 lib32
+drwxr-xr-x 1 root root   40 May  9 02:12 lib64
+drwxr-xr-x 1 root root   26 May  9 02:05 libexec
+
+MemTotal:       32452140 kB
+MemFree:         8279568 kB
+MemAvailable:   22315852 kB
+Buffers:             648 kB
+Cached:         15191652 kB
+SwapCached:        87984 kB
+Active:          7718872 kB
+Inactive:       12553628 kB
+Active(anon):    6320800 kB
+Inactive(anon):   703964 kB
+
+$ cat /proc/meminfo 2>/dev/null | head -10
+MemTotal:       32452140 kB
+MemFree:         8279568 kB
+MemAvailable:   22315852 kB
+Buffers:             648 kB
+Cached:         15191652 kB
+SwapCached:        87984 kB
+Active:          7718872 kB
+Inactive:       12553628 kB
+Active(anon):    6320800 kB
+Inactive(anon):   703964 kB
+
+Linux
+
+$ uname -s
+Linux
+
+uid=2(bin) gid=2(bin) groups=2(bin)
+
+$ id bin 2>/dev/null
+uid=2(bin) gid=2(bin) groups=2(bin)
+
+7.0.10-arch1-1
+
+$ uname -r
+7.0.10-arch1-1
+
+total 164
+drwxr-xr-x 1 root root      56 Jun 10 04:33 .
+drwxr-xr-x 1 root root       0 Jun 10 04:33 ..
+-rw------- 1 root root       0 May  9 02:05 .pwd.lock
+-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf
+drwxr-xr-x 1 root root      52 May  9 02:12 alternatives
+drwxr-xr-x 1 root root     162 May  9 02:05 apt
+-rw-r--r-- 1 root root    2319 Jan  6  2022 bash.bashrc
+
+$ ls -la /etc 2>/dev/null | head -8
+total 164
+drwxr-xr-x 1 root root      56 Jun 10 04:33 .
+drwxr-xr-x 1 root root       0 Jun 10 04:33 ..
+-rw------- 1 root root       0 May  9 02:05 .pwd.lock
+-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf
+drwxr-xr-x 1 root root      52 May  9 02:12 alternatives
+drwxr-xr-x 1 root root     162 May  9 02:05 apt
+-rw-r--r-- 1 root root    2319 Jan  6  2022 bash.bashrc
+
+total 24
+drwxr-xr-x   1 root root   0 Jun 10 04:33 .
+drwxr-xr-x   1 root root   0 Jun 10 04:33 ..
+-rwxr-xr-x   1 root root   0 Jun 10 04:33 .dockerenv
+lrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin
+drwxr-xr-x   1 root root   0 Apr 18  2022 boot
+drwxr-xr-x   5 root root 340 Jun 10 04:33 dev
+drwxr-xr-x   1 root root  56 Jun 10 04:33 etc
+
+$ ls -la / 2>/dev/null | head -8
+total 24
+drwxr-xr-x   1 root root   0 Jun 10 04:33 .
+drwxr-xr-x   1 root root   0 Jun 10 04:33 ..
+-rwxr-xr-x   1 root root   0 Jun 10 04:33 .dockerenv
+lrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin
+drwxr-xr-x   1 root root   0 Apr 18  2022 boot
+drwxr-xr-x   5 root root 340 Jun 10 04:33 dev
+drwxr-xr-x   1 root root  56 Jun 10 04:33 etc
+
+2026-06-10
+
+$ date +%Y-%m-%d
+2026-06-10
+
+total        used        free      shared  buff/cache   available
+Mem:        32452140     7727420     8229616     1904632    16495104    22151244
+Swap:       16777212     3570344    13206868
+
+$ free  2>/dev/null
+total        used        free      shared  buff/cache   available
+Mem:        32452140     7727420     8229616     1904632    16495104    22151244
+Swap:       16777212     3570344    13206868
+
+total 8
+drwx------ 1 root root   30 May  9 02:12 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+-rw-r--r-- 1 root root 3106 Oct 15  2021 .bashrc
+-rw-r--r-- 1 root root  161 Jul  9  2019 .profile
+
+$ ls -la /root 2>/dev/null | head -10
+total 8
+drwx------ 1 root root   30 May  9 02:12 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+-rw-r--r-- 1 root root 3106 Oct 15  2021 .bashrc
+-rw-r--r-- 1 root root  161 Jul  9  2019 .profile
+
+total 0
+dr-xr-xr-x 530 root root     0 Jun 10 04:33 .
+drwxr-xr-x   1 root root     0 Jun 10 04:33 ..
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 1
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 1050
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 1056
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 1057
+drwxrwxrwt   2 root root    40 Jun 10 04:33 acpi
+drwxrwxrwt   2 root root    40 Jun 10 04:33 asound
+-r--r--r--   1 root root     0 Jun 10 04:33 bootconfig
+
+$ ls -la /proc 2>/dev/null | head -10
+total 0
+dr-xr-xr-x 530 root root     0 Jun 10 04:33 .
+drwxr-xr-x   1 root root     0 Jun 10 04:33 ..
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 1
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 1050
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 1056
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 1057
+drwxrwxrwt   2 root root    40 Jun 10 04:33 acpi
+drwxrwxrwt   2 root root    40 Jun 10 04:33 asound
+-r--r--r--   1 root root     0 Jun 10 04:33 bootconfig
+
+total 0
+drwxrwxrwt 1 root root 0 May  9 02:12 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+$ ls -la /tmp 2>/dev/null | head -8
+total 0
+drwxrwxrwt 1 root root 0 May  9 02:12 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+LANG=
+LANGUAGE=
+LC_CTYPE="POSIX"
+LC_NUMERIC="POSIX"
+LC_TIME="POSIX"
+LC_COLLATE="POSIX"
+LC_MONETARY="POSIX"
+LC_MESSAGES="POSIX"
+LC_PAPER="POSIX"
+LC_NAME="POSIX"
+LC_ADDRESS="POSIX"
+LC_TELEPHONE="POSIX"
+LC_MEASUREMENT="POSIX"
+LC_IDENTIFICATION="POSIX"
+LC_ALL=
+
+$ locale
+LANG=
+LANGUAGE=
+LC_CTYPE="POSIX"
+LC_NUMERIC="POSIX"
+LC_TIME="POSIX"
+LC_COLLATE="POSIX"
+LC_MONETARY="POSIX"
+LC_MESSAGES="POSIX"
+LC_PAPER="POSIX"
+LC_NAME="POSIX"
+LC_ADDRESS="POSIX"
+LC_TELEPHONE="POSIX"
+LC_MEASUREMENT="POSIX"
+LC_IDENTIFICATION="POSIX"
+LC_ALL=
+
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+apt-config
+apt-get
+apt-key
+apt-mark
+arch
+awk
+b2sum
+base32
+base64
+basename
+
+$ ls /usr/bin | head -15
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+apt-config
+apt-get
+apt-key
+apt-mark
+arch
+awk
+b2sum
+base32
+base64
+basename
+
+Filesystem     1K-blocks     Used Available Use% Mounted on
+overlay        134217728 34496380  99025540  26% /
+
+$ df  / 2>/dev/null | head -5
+Filesystem     1K-blocks     Used Available Use% Mounted on
+overlay        134217728 34496380  99025540  26% /
+
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         128G   33G   95G  26% /
+
+$ df -h / 2>/dev/null | head -5
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         128G   33G   95G  26% /
+
+1781066008
+
+$ date +%s
+1781066008
+
+uid=1(daemon) gid=1(daemon) groups=1(daemon)
+
+$ id daemon 2>/dev/null
+uid=1(daemon) gid=1(daemon) groups=1(daemon)
+
+Ubuntu 22.04.5 LTS \n \l
+
+$ cat /etc/issue 2>/dev/null
+Ubuntu 22.04.5 LTS \n \l
+
+uid=0(root) gid=0(root) groups=0(root)
+
+$ id root 2>/dev/null
+uid=0(root) gid=0(root) groups=0(root)
+
+520K	/etc
+
+$ du -sh /etc 2>/dev/null
+520K	/etc
+
+PRETTY_NAME="Ubuntu 22.04.5 LTS"
+NAME="Ubuntu"
+VERSION_ID="22.04"
+VERSION="22.04.5 LTS (Jammy Jellyfish)"
+VERSION_CODENAME=jammy
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+
+$ cat /etc/os-release 2>/dev/null | head -10
+PRETTY_NAME="Ubuntu 22.04.5 LTS"
+NAME="Ubuntu"
+VERSION_ID="22.04"
+VERSION="22.04.5 LTS (Jammy Jellyfish)"
+VERSION_CODENAME=jammy
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+
+a4d1c419a1b9
+
+$ cat /etc/hostname
+a4d1c419a1b9
+
+adduser.conf
+alternatives
+apt
+bash.bashrc
+bindresvport.blacklist
+cloud
+cron.d
+cron.daily
+debconf.conf
+debian_version
+
+$ ls /etc 2>/dev/null | head -10
+adduser.conf
+alternatives
+apt
+bash.bashrc
+bindresvport.blacklist
+cloud
+cron.d
+cron.daily
+debconf.conf
+debian_version
+
+hello world
+
+$ echo hello world
+hello world
+
+total 8
+drwxr-xr-x 1 root root   90 May  9 02:12 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+drwxr-xr-x 1 root root    0 Apr 18  2022 backups
+drwxr-xr-x 1 root root   36 May  9 02:12 cache
+drwxr-xr-x 1 root root   66 May  9 02:05 lib
+drwxrwsr-x 1 root staff   0 Apr 18  2022 local
+lrwxrwxrwx 1 root root    9 May  9 02:05 lock -> /run/lock
+
+$ ls -la /var 2>/dev/null | head -8
+total 8
+drwxr-xr-x 1 root root   90 May  9 02:12 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+drwxr-xr-x 1 root root    0 Apr 18  2022 backups
+drwxr-xr-x 1 root root   36 May  9 02:12 cache
+drwxr-xr-x 1 root root   66 May  9 02:05 lib
+drwxrwsr-x 1 root staff   0 Apr 18  2022 local
+lrwxrwxrwx 1 root root    9 May  9 02:05 lock -> /run/lock
+
+a4d1c419a1b9
+
+$ uname -n
+a4d1c419a1b9
+
+bin
+games
+include
+lib
+lib32
+lib64
+libexec
+libx32
+local
+sbin
+
+$ ls /usr 2>/dev/null | head -10
+bin
+games
+include
+lib
+lib32
+lib64
+libexec
+libx32
+local
+sbin
+
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+apt-config
+apt-get
+apt-key
+apt-mark
+arch
+awk
+b2sum
+base32
+base64
+basename
+
+$ ls /bin | head -15
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+apt-config
+apt-get
+apt-key
+apt-mark
+arch
+awk
+b2sum
+base32
+base64
+basename
+
+lrwxrwxrwx 1 root root 7 May  9 02:05 /bin -> usr/bin
+
+$ ls -la /bin 2>/dev/null | head -10
+lrwxrwxrwx 1 root root 7 May  9 02:05 /bin -> usr/bin
+
+total        used        free      shared  buff/cache   available
+Mem:            30Gi       7.4Gi       7.8Gi       1.8Gi        15Gi        21Gi
+Swap:           15Gi       3.4Gi        12Gi
+
+$ free -h 2>/dev/null
+total        used        free      shared  buff/cache   available
+Mem:            30Gi       7.4Gi       7.8Gi       1.8Gi        15Gi        21Gi
+Swap:           15Gi       3.4Gi        12Gi
+
+total 0
+drwxrwxrwt 1 root root 0 May  9 02:12 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+$ ls -la /tmp 2>/dev/null | head -10
+total 0
+drwxrwxrwt 1 root root 0 May  9 02:12 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+bin
+boot
+dev
+etc
+home
+lib
+lib32
+lib64
+libx32
+media
+
+$ ls / 2>/dev/null | head -10
+bin
+boot
+dev
+etc
+home
+lib
+lib32
+lib64
+libx32
+media
+
+total        used        free      shared  buff/cache   available
+Mem:            30Gi       7.4Gi       7.9Gi       1.8Gi        15Gi        21Gi
+Swap:           15Gi       3.4Gi        12Gi
+
+$ free -h 2>/dev/null
+total        used        free      shared  buff/cache   available
+Mem:            30Gi       7.4Gi       7.9Gi       1.8Gi        15Gi        21Gi
+Swap:           15Gi       3.4Gi        12Gi
+
+total 0
+drwxr-xr-x 1 root root 0 Apr 18  2022 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+$ ls -la /home 2>/dev/null | head -8
+total 0
+drwxr-xr-x 1 root root 0 Apr 18  2022 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+uid=1(daemon) gid=1(daemon) groups=1(daemon)
+
+$ id daemon 2>/dev/null
+uid=1(daemon) gid=1(daemon) groups=1(daemon)
+
+uid=2(bin) gid=2(bin) groups=2(bin)
+
+$ id bin 2>/dev/null
+uid=2(bin) gid=2(bin) groups=2(bin)
+
+hello world
+
+$ echo hello world
+hello world
+
+520K	/etc
+
+$ du -sh /etc 2>/dev/null
+520K	/etc
+
+0	/tmp
+
+$ du -sh /tmp 2>/dev/null
+0	/tmp
+
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         128G   33G   95G  26% /
+
+$ df -h / 2>/dev/null | head -5
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         128G   33G   95G  26% /
+
+7.0.10-arch1-1
+
+$ uname -r
+7.0.10-arch1-1
+
+adduser.conf
+alternatives
+apt
+bash.bashrc
+bindresvport.blacklist
+cloud
+cron.d
+cron.daily
+debconf.conf
+debian_version
+
+$ ls /etc 2>/dev/null | head -10
+adduser.conf
+alternatives
+apt
+bash.bashrc
+bindresvport.blacklist
+cloud
+cron.d
+cron.daily
+debconf.conf
+debian_version
+
+LANG=
+LANGUAGE=
+LC_CTYPE="POSIX"
+LC_NUMERIC="POSIX"
+LC_TIME="POSIX"
+LC_COLLATE="POSIX"
+LC_MONETARY="POSIX"
+LC_MESSAGES="POSIX"
+LC_PAPER="POSIX"
+LC_NAME="POSIX"
+LC_ADDRESS="POSIX"
+LC_TELEPHONE="POSIX"
+LC_MEASUREMENT="POSIX"
+LC_IDENTIFICATION="POSIX"
+LC_ALL=
+
+$ locale
+LANG=
+LANGUAGE=
+LC_CTYPE="POSIX"
+LC_NUMERIC="POSIX"
+LC_TIME="POSIX"
+LC_COLLATE="POSIX"
+LC_MONETARY="POSIX"
+LC_MESSAGES="POSIX"
+LC_PAPER="POSIX"
+LC_NAME="POSIX"
+LC_ADDRESS="POSIX"
+LC_TELEPHONE="POSIX"
+LC_MEASUREMENT="POSIX"
+LC_IDENTIFICATION="POSIX"
+LC_ALL=
+
+total 24
+drwxr-xr-x   1 root root   0 Jun 10 04:33 .
+drwxr-xr-x   1 root root   0 Jun 10 04:33 ..
+-rwxr-xr-x   1 root root   0 Jun 10 04:33 .dockerenv
+lrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin
+drwxr-xr-x   1 root root   0 Apr 18  2022 boot
+drwxr-xr-x   5 root root 340 Jun 10 04:33 dev
+drwxr-xr-x   1 root root  56 Jun 10 04:33 etc
+
+$ ls -la / 2>/dev/null | head -8
+total 24
+drwxr-xr-x   1 root root   0 Jun 10 04:33 .
+drwxr-xr-x   1 root root   0 Jun 10 04:33 ..
+-rwxr-xr-x   1 root root   0 Jun 10 04:33 .dockerenv
+lrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin
+drwxr-xr-x   1 root root   0 Apr 18  2022 boot
+drwxr-xr-x   5 root root 340 Jun 10 04:33 dev
+drwxr-xr-x   1 root root  56 Jun 10 04:33 etc
+
+total 8
+drwxr-xr-x 1 root root   90 May  9 02:12 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+drwxr-xr-x 1 root root    0 Apr 18  2022 backups
+drwxr-xr-x 1 root root   36 May  9 02:12 cache
+drwxr-xr-x 1 root root   66 May  9 02:05 lib
+drwxrwsr-x 1 root staff   0 Apr 18  2022 local
+lrwxrwxrwx 1 root root    9 May  9 02:05 lock -> /run/lock
+
+$ ls -la /var 2>/dev/null | head -8
+total 8
+drwxr-xr-x 1 root root   90 May  9 02:12 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+drwxr-xr-x 1 root root    0 Apr 18  2022 backups
+drwxr-xr-x 1 root root   36 May  9 02:12 cache
+drwxr-xr-x 1 root root   66 May  9 02:05 lib
+drwxrwsr-x 1 root staff   0 Apr 18  2022 local
+lrwxrwxrwx 1 root root    9 May  9 02:05 lock -> /run/lock
+
+overlay on / type overlay (rw,relatime,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5336/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5337/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5337/work,index=off)
+proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
+tmpfs on /dev type tmpfs (rw,nosuid,size=65536k,mode=755,inode64,huge=within_size)
+devpts on /dev/pts type devpts (rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=666)
+sysfs on /sys type sysfs (ro,nosuid,nodev,noexec,relatime)
+cgroup on /sys/fs/cgroup type cgroup2 (ro,nosuid,nodev,noexec,relatime,nsdelegate,memory_recursiveprot,memory_hugetlb_accounting)
+mqueue on /dev/mqueue type mqueue (rw,nosuid,nodev,noexec,relatime)
+shm on /dev/shm type tmpfs (rw,nosuid,nodev,noexec,relatime,size=65536k,inode64,huge=within_size)
+/dev/nvme0n1p5 on /etc/resolv.conf type btrfs (rw,relatime,ssd,discard=async,space_cache=v2,subvolid=5,subvol=/)
+/dev/nvme0n1p5 on /etc/hostname type btrfs (rw,relatime,ssd,discard=async,space_cache=v2,subvolid=5,subvol=/)
+
+$ mount | head -10 2>/dev/null
+overlay on / type overlay (rw,relatime,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5336/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5337/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5337/work,index=off)
+proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
+tmpfs on /dev type tmpfs (rw,nosuid,size=65536k,mode=755,inode64,huge=within_size)
+devpts on /dev/pts type devpts (rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=666)
+sysfs on /sys type sysfs (ro,nosuid,nodev,noexec,relatime)
+cgroup on /sys/fs/cgroup type cgroup2 (ro,nosuid,nodev,noexec,relatime,nsdelegate,memory_recursiveprot,memory_hugetlb_accounting)
+mqueue on /dev/mqueue type mqueue (rw,nosuid,nodev,noexec,relatime)
+shm on /dev/shm type tmpfs (rw,nosuid,nodev,noexec,relatime,size=65536k,inode64,huge=within_size)
+/dev/nvme0n1p5 on /etc/resolv.conf type btrfs (rw,relatime,ssd,discard=async,space_cache=v2,subvolid=5,subvol=/)
+/dev/nvme0n1p5 on /etc/hostname type btrfs (rw,relatime,ssd,discard=async,space_cache=v2,subvolid=5,subvol=/)
+
+2026-06-10
+
+$ date +%Y-%m-%d
+2026-06-10
+
+Architecture:                            x86_64
+CPU op-mode(s):                          32-bit, 64-bit
+Address sizes:                           46 bits physical, 48 bits virtual
+Byte Order:                              Little Endian
+CPU(s):                                  22
+On-line CPU(s) list:                     0-21
+Vendor ID:                               GenuineIntel
+Model name:                              Intel(R) Core(TM) Ultra 9 185H
+CPU family:                              6
+Model:                                   170
+
+$ lscpu 2>/dev/null | head -10
+Architecture:                            x86_64
+CPU op-mode(s):                          32-bit, 64-bit
+Address sizes:                           46 bits physical, 48 bits virtual
+Byte Order:                              Little Endian
+CPU(s):                                  22
+On-line CPU(s) list:                     0-21
+Vendor ID:                               GenuineIntel
+Model name:                              Intel(R) Core(TM) Ultra 9 185H
+CPU family:                              6
+Model:                                   170
+
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+apt-config
+apt-get
+apt-key
+apt-mark
+arch
+awk
+b2sum
+base32
+base64
+basename
+
+$ ls /bin | head -15
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+apt-config
+apt-get
+apt-key
+apt-mark
+arch
+awk
+b2sum
+base32
+base64
+basename
+
+Linux
+
+$ uname -s
+Linux
+
+1781066010
+
+$ date +%s
+1781066010
+
+total 164
+drwxr-xr-x 1 root root      56 Jun 10 04:33 .
+drwxr-xr-x 1 root root       0 Jun 10 04:33 ..
+-rw------- 1 root root       0 May  9 02:05 .pwd.lock
+-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf
+drwxr-xr-x 1 root root      52 May  9 02:12 alternatives
+drwxr-xr-x 1 root root     162 May  9 02:05 apt
+-rw-r--r-- 1 root root    2319 Jan  6  2022 bash.bashrc
+-rw-r--r-- 1 root root     367 Dec 16  2020 bindresvport.blacklist
+drwxr-xr-x 1 root root      20 May  9 02:12 cloud
+
+$ ls -la /etc 2>/dev/null | head -10
+total 164
+drwxr-xr-x 1 root root      56 Jun 10 04:33 .
+drwxr-xr-x 1 root root       0 Jun 10 04:33 ..
+-rw------- 1 root root       0 May  9 02:05 .pwd.lock
+-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf
+drwxr-xr-x 1 root root      52 May  9 02:12 alternatives
+drwxr-xr-x 1 root root     162 May  9 02:05 apt
+-rw-r--r-- 1 root root    2319 Jan  6  2022 bash.bashrc
+-rw-r--r-- 1 root root     367 Dec 16  2020 bindresvport.blacklist
+drwxr-xr-x 1 root root      20 May  9 02:12 cloud
+
+total        used        free      shared  buff/cache   available
+Mem:     33230991360  7948267520  8418070528  1923862528 16864653312 22447493120
+Swap:    17179865088  3656032256 13523832832
+
+$ free -b 2>/dev/null
+total        used        free      shared  buff/cache   available
+Mem:     33230991360  7948267520  8418070528  1923862528 16864653312 22447493120
+Swap:    17179865088  3656032256 13523832832
+
+eth0
+lo
+
+$ ls /sys/class/net 2>/dev/null | head -5
+eth0
+lo
+
+0	/home
+
+$ du -sh /home 2>/dev/null
+0	/home
+
+Wed Jun 10 04:33:30 UTC 2026
+
+$ date -u
+Wed Jun 10 04:33:30 UTC 2026
+
+Linux a4d1c419a1b9 7.0.10-arch1-1 #1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000 x86_64 x86_64 x86_64 GNU/Linux
+
+$ uname -a
+Linux a4d1c419a1b9 7.0.10-arch1-1 #1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000 x86_64 x86_64 x86_64 GNU/Linux
+
+HOSTNAME=a4d1c419a1b9
+PWD=/
+HOME=/root
+SHLVL=0
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+_=/usr/bin/env
+
+$ env | head -10
+HOSTNAME=a4d1c419a1b9
+PWD=/
+HOME=/root
+SHLVL=0
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+_=/usr/bin/env
+
+hello
+
+$ echo hello
+hello
+
+#1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000
+
+$ uname -v
+#1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000
+
+04:33:30 up 7 days, 14:05,  0 users,  load average: 1.75, 2.41, 2.01
+
+$ uptime
+04:33:30 up 7 days, 14:05,  0 users,  load average: 1.75, 2.41, 2.01
+
+total 0
+drwxr-xr-x 1 root root 0 Apr 18  2022 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+$ ls -la /home 2>/dev/null | head -10
+total 0
+drwxr-xr-x 1 root root 0 Apr 18  2022 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+127.0.0.1	localhost
+::1	localhost ip6-localhost ip6-loopback
+fe00::	ip6-localnet
+ff00::	ip6-mcastprefix
+ff02::1	ip6-allnodes
+ff02::2	ip6-allrouters
+172.17.0.2	a4d1c419a1b9
+
+$ cat /etc/hosts | head -10
+127.0.0.1	localhost
+::1	localhost ip6-localhost ip6-loopback
+fe00::	ip6-localnet
+ff00::	ip6-mcastprefix
+ff02::1	ip6-allnodes
+ff02::2	ip6-allrouters
+172.17.0.2	a4d1c419a1b9
+
+5.0M	/var
+
+$ du -sh /var 2>/dev/null
+5.0M	/var
+
+total 8
+drwx------ 1 root root   30 May  9 02:12 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+-rw-r--r-- 1 root root 3106 Oct 15  2021 .bashrc
+-rw-r--r-- 1 root root  161 Jul  9  2019 .profile
+
+$ ls -la /root 2>/dev/null | head -10
+total 8
+drwx------ 1 root root   30 May  9 02:12 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+-rw-r--r-- 1 root root 3106 Oct 15  2021 .bashrc
+-rw-r--r-- 1 root root  161 Jul  9  2019 .profile
+
+Filesystem     1K-blocks     Used Available Use% Mounted on
+overlay        134217728 34496380  99025540  26% /
+
+$ df  / 2>/dev/null | head -5
+Filesystem     1K-blocks     Used Available Use% Mounted on
+overlay        134217728 34496380  99025540  26% /
+
+total 0
+drwxr-xr-x 5 root root  340 Jun 10 04:33 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+lrwxrwxrwx 1 root root   11 Jun 10 04:33 core -> /proc/kcore
+lrwxrwxrwx 1 root root   13 Jun 10 04:33 fd -> /proc/self/fd
+crw-rw-rw- 1 root root 1, 7 Jun 10 04:33 full
+drwxrwxrwt 2 root root   40 Jun 10 04:33 mqueue
+crw-rw-rw- 1 root root 1, 3 Jun 10 04:33 null
+lrwxrwxrwx 1 root root    8 Jun 10 04:33 ptmx -> pts/ptmx
+drwxr-xr-x 2 root root    0 Jun 10 04:33 pts
+
+$ ls -la /dev 2>/dev/null | head -10
+total 0
+drwxr-xr-x 5 root root  340 Jun 10 04:33 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+lrwxrwxrwx 1 root root   11 Jun 10 04:33 core -> /proc/kcore
+lrwxrwxrwx 1 root root   13 Jun 10 04:33 fd -> /proc/self/fd
+crw-rw-rw- 1 root root 1, 7 Jun 10 04:33 full
+drwxrwxrwt 2 root root   40 Jun 10 04:33 mqueue
+crw-rw-rw- 1 root root 1, 3 Jun 10 04:33 null
+lrwxrwxrwx 1 root root    8 Jun 10 04:33 ptmx -> pts/ptmx
+drwxr-xr-x 2 root root    0 Jun 10 04:33 pts
+
+a4d1c419a1b9
+
+$ hostname
+a4d1c419a1b9
+
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+apt-config
+apt-get
+apt-key
+apt-mark
+arch
+awk
+b2sum
+base32
+base64
+basename
+
+$ ls /usr/bin | head -15
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+apt-config
+apt-get
+apt-key
+apt-mark
+arch
+awk
+b2sum
+base32
+base64
+basename
+
+MemTotal:       32452140 kB
+MemFree:         8264264 kB
+MemAvailable:   21933220 kB
+Buffers:             648 kB
+Cached:         15180640 kB
+SwapCached:        88052 kB
+Active:          7727108 kB
+Inactive:       12553776 kB
+Active(anon):    6329048 kB
+Inactive(anon):   703964 kB
+
+$ cat /proc/meminfo 2>/dev/null | head -10
+MemTotal:       32452140 kB
+MemFree:         8264264 kB
+MemAvailable:   21933220 kB
+Buffers:             648 kB
+Cached:         15180640 kB
+SwapCached:        88052 kB
+Active:          7727108 kB
+Inactive:       12553776 kB
+Active(anon):    6329048 kB
+Inactive(anon):   703964 kB
+
+total        used        free      shared  buff/cache   available
+Mem:        32452140     7719760     8260636     1881068    16471744    21929584
+Swap:       16777212     3570344    13206868
+
+$ free  2>/dev/null
+total        used        free      shared  buff/cache   available
+Mem:        32452140     7719760     8260636     1881068    16471744    21929584
+Swap:       16777212     3570344    13206868
+
+uid=65534(nobody) gid=65534(nogroup) groups=65534(nogroup)
+
+$ id nobody 2>/dev/null
+uid=65534(nobody) gid=65534(nogroup) groups=65534(nogroup)
+
+total 24
+drwxr-xr-x   1 root root   0 Jun 10 04:33 .
+drwxr-xr-x   1 root root   0 Jun 10 04:33 ..
+-rwxr-xr-x   1 root root   0 Jun 10 04:33 .dockerenv
+lrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin
+drwxr-xr-x   1 root root   0 Apr 18  2022 boot
+drwxr-xr-x   5 root root 340 Jun 10 04:33 dev
+drwxr-xr-x   1 root root  56 Jun 10 04:33 etc
+drwxr-xr-x   1 root root   0 Apr 18  2022 home
+lrwxrwxrwx   1 root root   7 May  9 02:05 lib -> usr/lib
+
+$ ls -la / 2>/dev/null | head -10
+total 24
+drwxr-xr-x   1 root root   0 Jun 10 04:33 .
+drwxr-xr-x   1 root root   0 Jun 10 04:33 ..
+-rwxr-xr-x   1 root root   0 Jun 10 04:33 .dockerenv
+lrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin
+drwxr-xr-x   1 root root   0 Apr 18  2022 boot
+drwxr-xr-x   5 root root 340 Jun 10 04:33 dev
+drwxr-xr-x   1 root root  56 Jun 10 04:33 etc
+drwxr-xr-x   1 root root   0 Apr 18  2022 home
+lrwxrwxrwx   1 root root   7 May  9 02:05 lib -> usr/lib
+
+a4d1c419a1b9
+
+$ cat /etc/hostname
+a4d1c419a1b9
+
+uid=0(root) gid=0(root) groups=0(root)
+
+$ id root 2>/dev/null
+uid=0(root) gid=0(root) groups=0(root)
+
+Wed Jun 10 04:33:31 UTC 2026
+
+$ date
+Wed Jun 10 04:33:31 UTC 2026
+
+1
+1648
+1654
+1655
+acpi
+asound
+bootconfig
+buddyinfo
+bus
+cgroups
+
+$ ls /proc 2>/dev/null | head -10
+1
+1648
+1654
+1655
+acpi
+asound
+bootconfig
+buddyinfo
+bus
+cgroups
+
+alternatives.log
+apt
+bootstrap.log
+btmp
+dpkg.log
+faillog
+lastlog
+wtmp
+
+$ ls /var/log 2>/dev/null | head -10
+alternatives.log
+apt
+bootstrap.log
+btmp
+dpkg.log
+faillog
+lastlog
+wtmp
+
+total 0
+drwxrwxrwt 1 root root 0 May  9 02:12 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+$ ls -la /tmp 2>/dev/null | head -10
+total 0
+drwxrwxrwt 1 root root 0 May  9 02:12 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+lrwxrwxrwx 1 root root 7 May  9 02:05 /bin -> usr/bin
+
+$ ls -la /bin 2>/dev/null | head -10
+lrwxrwxrwx 1 root root 7 May  9 02:05 /bin -> usr/bin
+
+total 8
+drwxr-xr-x 1 root root   90 May  9 02:12 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+drwxr-xr-x 1 root root    0 Apr 18  2022 backups
+drwxr-xr-x 1 root root   36 May  9 02:12 cache
+drwxr-xr-x 1 root root   66 May  9 02:05 lib
+drwxrwsr-x 1 root staff   0 Apr 18  2022 local
+lrwxrwxrwx 1 root root    9 May  9 02:05 lock -> /run/lock
+drwxr-xr-x 1 root root  124 May  9 02:05 log
+drwxrwsr-x 1 root mail    0 May  9 02:05 mail
+
+$ ls -la /var 2>/dev/null | head -10
+total 8
+drwxr-xr-x 1 root root   90 May  9 02:12 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+drwxr-xr-x 1 root root    0 Apr 18  2022 backups
+drwxr-xr-x 1 root root   36 May  9 02:12 cache
+drwxr-xr-x 1 root root   66 May  9 02:05 lib
+drwxrwsr-x 1 root staff   0 Apr 18  2022 local
+lrwxrwxrwx 1 root root    9 May  9 02:05 lock -> /run/lock
+drwxr-xr-x 1 root root  124 May  9 02:05 log
+drwxrwsr-x 1 root mail    0 May  9 02:05 mail
+
+backups
+cache
+lib
+local
+lock
+log
+mail
+opt
+run
+spool
+
+$ ls /var 2>/dev/null | head -10
+backups
+cache
+lib
+local
+lock
+log
+mail
+opt
+run
+spool
+
+total 164
+drwxr-xr-x 1 root root      56 Jun 10 04:33 .
+drwxr-xr-x 1 root root       0 Jun 10 04:33 ..
+-rw------- 1 root root       0 May  9 02:05 .pwd.lock
+-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf
+drwxr-xr-x 1 root root      52 May  9 02:12 alternatives
+drwxr-xr-x 1 root root     162 May  9 02:05 apt
+-rw-r--r-- 1 root root    2319 Jan  6  2022 bash.bashrc
+
+$ ls -la /etc 2>/dev/null | head -8
+total 164
+drwxr-xr-x 1 root root      56 Jun 10 04:33 .
+drwxr-xr-x 1 root root       0 Jun 10 04:33 ..
+-rw------- 1 root root       0 May  9 02:05 .pwd.lock
+-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf
+drwxr-xr-x 1 root root      52 May  9 02:12 alternatives
+drwxr-xr-x 1 root root     162 May  9 02:05 apt
+-rw-r--r-- 1 root root    2319 Jan  6  2022 bash.bashrc
+
+PRETTY_NAME="Ubuntu 22.04.5 LTS"
+NAME="Ubuntu"
+VERSION_ID="22.04"
+VERSION="22.04.5 LTS (Jammy Jellyfish)"
+VERSION_CODENAME=jammy
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+
+$ cat /etc/os-release 2>/dev/null | head -10
+PRETTY_NAME="Ubuntu 22.04.5 LTS"
+NAME="Ubuntu"
+VERSION_ID="22.04"
+VERSION="22.04.5 LTS (Jammy Jellyfish)"
+VERSION_CODENAME=jammy
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+
+total 0
+drwxrwxrwt 1 root root 0 May  9 02:12 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+$ ls -la /tmp 2>/dev/null | head -8
+total 0
+drwxrwxrwt 1 root root 0 May  9 02:12 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+/usr/bin/ls
+/usr/bin/which
+/usr/bin/cat
+/usr/bin/which
+/usr/bin/bash
+/usr/bin/which
+
+$ which ls which cat which bash which python3
+/usr/bin/ls
+/usr/bin/which
+/usr/bin/cat
+/usr/bin/which
+/usr/bin/bash
+/usr/bin/which
+
+hi there
+
+$ echo hi there
+hi there
+
+HELLO
+
+$ echo HELLO
+HELLO
+
+total 0
+drwxr-xr-x 1 root root  116 May  9 02:05 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+drwxr-xr-x 1 root root 3644 May  9 02:12 bin
+drwxr-xr-x 1 root root    0 Apr 18  2022 games
+drwxr-xr-x 1 root root    0 Apr 18  2022 include
+drwxr-xr-x 1 root root  190 May  9 02:12 lib
+drwxr-xr-x 1 root root    0 May  9 02:05 lib32
+drwxr-xr-x 1 root root   40 May  9 02:12 lib64
+drwxr-xr-x 1 root root   26 May  9 02:05 libexec
+
+$ ls -la /usr 2>/dev/null | head -10
+total 0
+drwxr-xr-x 1 root root  116 May  9 02:05 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+drwxr-xr-x 1 root root 3644 May  9 02:12 bin
+drwxr-xr-x 1 root root    0 Apr 18  2022 games
+drwxr-xr-x 1 root root    0 Apr 18  2022 include
+drwxr-xr-x 1 root root  190 May  9 02:12 lib
+drwxr-xr-x 1 root root    0 May  9 02:05 lib32
+drwxr-xr-x 1 root root   40 May  9 02:12 lib64
+drwxr-xr-x 1 root root   26 May  9 02:05 libexec
+
+uid=0(root) gid=0(root) groups=0(root)
+
+$ id  2>/dev/null
+uid=0(root) gid=0(root) groups=0(root)
+
+processor	: 0
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 170
+model name	: Intel(R) Core(TM) Ultra 9 185H
+stepping	: 4
+microcode	: 0x28
+cpu MHz		: 2099.893
+cache size	: 24576 KB
+physical id	: 0
+
+$ cat /proc/cpuinfo 2>/dev/null | head -10
+processor	: 0
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 170
+model name	: Intel(R) Core(TM) Ultra 9 185H
+stepping	: 4
+microcode	: 0x28
+cpu MHz		: 2099.893
+cache size	: 24576 KB
+physical id	: 0
+
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+apt-config
+apt-get
+apt-key
+apt-mark
+arch
+
+$ ls /bin 2>/dev/null | head -10
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+apt-config
+apt-get
+apt-key
+apt-mark
+arch
+
+82M	/
+
+$ du -sh / 2>/dev/null
+82M	/
+
+total        used        free      shared  buff/cache   available
+Mem:           31691        7593        8001        1847       16096       21349
+Swap:          16383        3486       12897
+
+$ free -m 2>/dev/null
+total        used        free      shared  buff/cache   available
+Mem:           31691        7593        8001        1847       16096       21349
+Swap:          16383        3486       12897
+
+total 0
+dr-xr-xr-x 530 root root     0 Jun 10 04:33 .
+drwxr-xr-x   1 root root     0 Jun 10 04:33 ..
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 1
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 1813
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 1818
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 1819
+drwxrwxrwt   2 root root    40 Jun 10 04:33 acpi
+drwxrwxrwt   2 root root    40 Jun 10 04:33 asound
+-r--r--r--   1 root root     0 Jun 10 04:33 bootconfig
+
+$ ls -la /proc 2>/dev/null | head -10
+total 0
+dr-xr-xr-x 530 root root     0 Jun 10 04:33 .
+drwxr-xr-x   1 root root     0 Jun 10 04:33 ..
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 1
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 1813
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 1818
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 1819
+drwxrwxrwt   2 root root    40 Jun 10 04:33 acpi
+drwxrwxrwt   2 root root    40 Jun 10 04:33 asound
+-r--r--r--   1 root root     0 Jun 10 04:33 bootconfig
+
+Filesystem     1M-blocks  Used Available Use% Mounted on
+overlay           131072 33688     96705  26% /
+
+$ df -m / 2>/dev/null | head -5
+Filesystem     1M-blocks  Used Available Use% Mounted on
+overlay           131072 33688     96705  26% /
+
+a4d1c419a1b9
+
+$ uname -n
+a4d1c419a1b9
+
+Ubuntu 22.04.5 LTS \n \l
+
+$ cat /etc/issue 2>/dev/null
+Ubuntu 22.04.5 LTS \n \l
+
+2026-06-02 14:27:58
+
+$ uptime -s 2>/dev/null
+2026-06-02 14:27:58
+
+core
+fd
+full
+mqueue
+null
+ptmx
+pts
+random
+shm
+stderr
+
+$ ls /dev 2>/dev/null | head -10
+core
+fd
+full
+mqueue
+null
+ptmx
+pts
+random
+shm
+stderr
+
+bin
+games
+include
+lib
+lib32
+lib64
+libexec
+libx32
+local
+sbin
+
+$ ls /usr 2>/dev/null | head -10
+bin
+games
+include
+lib
+lib32
+lib64
+libexec
+libx32
+local
+sbin
+
+total 8
+drwxr-xr-x 1 root root   90 May  9 02:12 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+drwxr-xr-x 1 root root    0 Apr 18  2022 backups
+drwxr-xr-x 1 root root   36 May  9 02:12 cache
+drwxr-xr-x 1 root root   66 May  9 02:05 lib
+drwxrwsr-x 1 root staff   0 Apr 18  2022 local
+lrwxrwxrwx 1 root root    9 May  9 02:05 lock -> /run/lock
+
+$ ls -la /var 2>/dev/null | head -8
+total 8
+drwxr-xr-x 1 root root   90 May  9 02:12 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+drwxr-xr-x 1 root root    0 Apr 18  2022 backups
+drwxr-xr-x 1 root root   36 May  9 02:12 cache
+drwxr-xr-x 1 root root   66 May  9 02:05 lib
+drwxrwsr-x 1 root staff   0 Apr 18  2022 local
+lrwxrwxrwx 1 root root    9 May  9 02:05 lock -> /run/lock
+
+total        used        free      shared  buff/cache   available
+Mem:           31691        7543        8053        1845       16094       21401
+Swap:          16383        3486       12897
+
+$ free -m 2>/dev/null
+total        used        free      shared  buff/cache   available
+Mem:           31691        7543        8053        1845       16094       21401
+Swap:          16383        3486       12897
+
+hi there
+
+$ echo hi there
+hi there
+
+overlay on / type overlay (rw,relatime,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5336/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5337/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5337/work,index=off)
+proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
+tmpfs on /dev type tmpfs (rw,nosuid,size=65536k,mode=755,inode64,huge=within_size)
+devpts on /dev/pts type devpts (rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=666)
+sysfs on /sys type sysfs (ro,nosuid,nodev,noexec,relatime)
+cgroup on /sys/fs/cgroup type cgroup2 (ro,nosuid,nodev,noexec,relatime,nsdelegate,memory_recursiveprot,memory_hugetlb_accounting)
+mqueue on /dev/mqueue type mqueue (rw,nosuid,nodev,noexec,relatime)
+shm on /dev/shm type tmpfs (rw,nosuid,nodev,noexec,relatime,size=65536k,inode64,huge=within_size)
+/dev/nvme0n1p5 on /etc/resolv.conf type btrfs (rw,relatime,ssd,discard=async,space_cache=v2,subvolid=5,subvol=/)
+/dev/nvme0n1p5 on /etc/hostname type btrfs (rw,relatime,ssd,discard=async,space_cache=v2,subvolid=5,subvol=/)
+
+$ mount | head -10 2>/dev/null
+overlay on / type overlay (rw,relatime,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5336/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5337/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5337/work,index=off)
+proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
+tmpfs on /dev type tmpfs (rw,nosuid,size=65536k,mode=755,inode64,huge=within_size)
+devpts on /dev/pts type devpts (rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=666)
+sysfs on /sys type sysfs (ro,nosuid,nodev,noexec,relatime)
+cgroup on /sys/fs/cgroup type cgroup2 (ro,nosuid,nodev,noexec,relatime,nsdelegate,memory_recursiveprot,memory_hugetlb_accounting)
+mqueue on /dev/mqueue type mqueue (rw,nosuid,nodev,noexec,relatime)
+shm on /dev/shm type tmpfs (rw,nosuid,nodev,noexec,relatime,size=65536k,inode64,huge=within_size)
+/dev/nvme0n1p5 on /etc/resolv.conf type btrfs (rw,relatime,ssd,discard=async,space_cache=v2,subvolid=5,subvol=/)
+/dev/nvme0n1p5 on /etc/hostname type btrfs (rw,relatime,ssd,discard=async,space_cache=v2,subvolid=5,subvol=/)
+
+adduser.conf
+alternatives
+apt
+bash.bashrc
+bindresvport.blacklist
+cloud
+cron.d
+cron.daily
+debconf.conf
+debian_version
+
+$ ls /etc 2>/dev/null | head -10
+adduser.conf
+alternatives
+apt
+bash.bashrc
+bindresvport.blacklist
+cloud
+cron.d
+cron.daily
+debconf.conf
+debian_version
+
+1
+1900
+1906
+1907
+acpi
+asound
+bootconfig
+buddyinfo
+bus
+cgroups
+
+$ ls /proc 2>/dev/null | head -10
+1
+1900
+1906
+1907
+acpi
+asound
+bootconfig
+buddyinfo
+bus
+cgroups
+
+uid=0(root) gid=0(root) groups=0(root)
+
+$ id  2>/dev/null
+uid=0(root) gid=0(root) groups=0(root)
+
+0	/home
+
+$ du -sh /home 2>/dev/null
+0	/home
+
+Linux
+
+$ uname -s
+Linux
+
+hello
+
+$ echo hello
+hello
+
+processor	: 0
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 170
+model name	: Intel(R) Core(TM) Ultra 9 185H
+stepping	: 4
+microcode	: 0x28
+cpu MHz		: 4500.000
+cache size	: 24576 KB
+physical id	: 0
+
+$ cat /proc/cpuinfo 2>/dev/null | head -10
+processor	: 0
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 170
+model name	: Intel(R) Core(TM) Ultra 9 185H
+stepping	: 4
+microcode	: 0x28
+cpu MHz		: 4500.000
+cache size	: 24576 KB
+physical id	: 0
+
+04:33:33 up 7 days, 14:05,  0 users,  load average: 1.75, 2.41, 2.01
+
+$ uptime
+04:33:33 up 7 days, 14:05,  0 users,  load average: 1.75, 2.41, 2.01
+
+bin
+games
+include
+lib
+lib32
+lib64
+libexec
+libx32
+local
+sbin
+
+$ ls /usr 2>/dev/null | head -10
+bin
+games
+include
+lib
+lib32
+lib64
+libexec
+libx32
+local
+sbin
+
+total 24
+drwxr-xr-x   1 root root   0 Jun 10 04:33 .
+drwxr-xr-x   1 root root   0 Jun 10 04:33 ..
+-rwxr-xr-x   1 root root   0 Jun 10 04:33 .dockerenv
+lrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin
+drwxr-xr-x   1 root root   0 Apr 18  2022 boot
+drwxr-xr-x   5 root root 340 Jun 10 04:33 dev
+drwxr-xr-x   1 root root  56 Jun 10 04:33 etc
+
+$ ls -la / 2>/dev/null | head -8
+total 24
+drwxr-xr-x   1 root root   0 Jun 10 04:33 .
+drwxr-xr-x   1 root root   0 Jun 10 04:33 ..
+-rwxr-xr-x   1 root root   0 Jun 10 04:33 .dockerenv
+lrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin
+drwxr-xr-x   1 root root   0 Apr 18  2022 boot
+drwxr-xr-x   5 root root 340 Jun 10 04:33 dev
+drwxr-xr-x   1 root root  56 Jun 10 04:33 etc
+
+Ubuntu 22.04.5 LTS \n \l
+
+$ cat /etc/issue 2>/dev/null
+Ubuntu 22.04.5 LTS \n \l
+
+uid=0(root) gid=0(root) groups=0(root)
+
+$ id root 2>/dev/null
+uid=0(root) gid=0(root) groups=0(root)
+
+520K	/etc
+
+$ du -sh /etc 2>/dev/null
+520K	/etc
+
+Filesystem     1K-blocks     Used Available Use% Mounted on
+overlay        134217728 34496380  99025540  26% /
+
+$ df  / 2>/dev/null | head -5
+Filesystem     1K-blocks     Used Available Use% Mounted on
+overlay        134217728 34496380  99025540  26% /
+
+total 164
+drwxr-xr-x 1 root root      56 Jun 10 04:33 .
+drwxr-xr-x 1 root root       0 Jun 10 04:33 ..
+-rw------- 1 root root       0 May  9 02:05 .pwd.lock
+-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf
+drwxr-xr-x 1 root root      52 May  9 02:12 alternatives
+drwxr-xr-x 1 root root     162 May  9 02:05 apt
+-rw-r--r-- 1 root root    2319 Jan  6  2022 bash.bashrc
+
+$ ls -la /etc 2>/dev/null | head -8
+total 164
+drwxr-xr-x 1 root root      56 Jun 10 04:33 .
+drwxr-xr-x 1 root root       0 Jun 10 04:33 ..
+-rw------- 1 root root       0 May  9 02:05 .pwd.lock
+-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf
+drwxr-xr-x 1 root root      52 May  9 02:12 alternatives
+drwxr-xr-x 1 root root     162 May  9 02:05 apt
+-rw-r--r-- 1 root root    2319 Jan  6  2022 bash.bashrc
+
+LANG=
+LANGUAGE=
+LC_CTYPE="POSIX"
+LC_NUMERIC="POSIX"
+LC_TIME="POSIX"
+LC_COLLATE="POSIX"
+LC_MONETARY="POSIX"
+LC_MESSAGES="POSIX"
+LC_PAPER="POSIX"
+LC_NAME="POSIX"
+LC_ADDRESS="POSIX"
+LC_TELEPHONE="POSIX"
+LC_MEASUREMENT="POSIX"
+LC_IDENTIFICATION="POSIX"
+LC_ALL=
+
+$ locale
+LANG=
+LANGUAGE=
+LC_CTYPE="POSIX"
+LC_NUMERIC="POSIX"
+LC_TIME="POSIX"
+LC_COLLATE="POSIX"
+LC_MONETARY="POSIX"
+LC_MESSAGES="POSIX"
+LC_PAPER="POSIX"
+LC_NAME="POSIX"
+LC_ADDRESS="POSIX"
+LC_TELEPHONE="POSIX"
+LC_MEASUREMENT="POSIX"
+LC_IDENTIFICATION="POSIX"
+LC_ALL=
+
+lrwxrwxrwx 1 root root 7 May  9 02:05 /bin -> usr/bin
+
+$ ls -la /bin 2>/dev/null | head -10
+lrwxrwxrwx 1 root root 7 May  9 02:05 /bin -> usr/bin
+
+#1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000
+
+$ uname -v
+#1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000
+
+7.0.10-arch1-1
+
+$ uname -r
+7.0.10-arch1-1
+
+bin
+boot
+dev
+etc
+home
+lib
+lib32
+lib64
+libx32
+media
+
+$ ls / 2>/dev/null | head -10
+bin
+boot
+dev
+etc
+home
+lib
+lib32
+lib64
+libx32
+media
+
+PRETTY_NAME="Ubuntu 22.04.5 LTS"
+NAME="Ubuntu"
+VERSION_ID="22.04"
+VERSION="22.04.5 LTS (Jammy Jellyfish)"
+VERSION_CODENAME=jammy
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+
+$ cat /etc/os-release 2>/dev/null | head -10
+PRETTY_NAME="Ubuntu 22.04.5 LTS"
+NAME="Ubuntu"
+VERSION_ID="22.04"
+VERSION="22.04.5 LTS (Jammy Jellyfish)"
+VERSION_CODENAME=jammy
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+
+uid=1(daemon) gid=1(daemon) groups=1(daemon)
+
+$ id daemon 2>/dev/null
+uid=1(daemon) gid=1(daemon) groups=1(daemon)
+
+2026-06-02 14:27:58
+
+$ uptime -s 2>/dev/null
+2026-06-02 14:27:58
+
+eth0
+lo
+
+$ ls /sys/class/net 2>/dev/null | head -5
+eth0
+lo
+
+0	/tmp
+
+$ du -sh /tmp 2>/dev/null
+0	/tmp
+
+5.0M	/var
+
+$ du -sh /var 2>/dev/null
+5.0M	/var
+
+total 0
+drwxr-xr-x 1 root root 0 Apr 18  2022 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+$ ls -la /home 2>/dev/null | head -10
+total 0
+drwxr-xr-x 1 root root 0 Apr 18  2022 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+HELLO
+
+$ echo HELLO
+HELLO
+
+total 0
+dr-xr-xr-x 529 root root     0 Jun 10 04:33 .
+drwxr-xr-x   1 root root     0 Jun 10 04:33 ..
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 1
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 2138
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 2144
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 2145
+drwxrwxrwt   2 root root    40 Jun 10 04:33 acpi
+drwxrwxrwt   2 root root    40 Jun 10 04:33 asound
+-r--r--r--   1 root root     0 Jun 10 04:33 bootconfig
+
+$ ls -la /proc 2>/dev/null | head -10
+total 0
+dr-xr-xr-x 529 root root     0 Jun 10 04:33 .
+drwxr-xr-x   1 root root     0 Jun 10 04:33 ..
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 1
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 2138
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 2144
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 2145
+drwxrwxrwt   2 root root    40 Jun 10 04:33 acpi
+drwxrwxrwt   2 root root    40 Jun 10 04:33 asound
+-r--r--r--   1 root root     0 Jun 10 04:33 bootconfig
+
+uid=65534(nobody) gid=65534(nogroup) groups=65534(nogroup)
+
+$ id nobody 2>/dev/null
+uid=65534(nobody) gid=65534(nogroup) groups=65534(nogroup)
+
+2026-06-10
+
+$ date +%Y-%m-%d
+2026-06-10
+
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+apt-config
+apt-get
+apt-key
+apt-mark
+arch
+
+$ ls /bin 2>/dev/null | head -10
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+apt-config
+apt-get
+apt-key
+apt-mark
+arch
+
+Wed Jun 10 04:33:34 UTC 2026
+
+$ date -u
+Wed Jun 10 04:33:34 UTC 2026
+
+a4d1c419a1b9
+
+$ cat /etc/hostname
+a4d1c419a1b9
+
+Filesystem     1M-blocks  Used Available Use% Mounted on
+overlay           131072 33688     96705  26% /
+
+$ df -m / 2>/dev/null | head -5
+Filesystem     1M-blocks  Used Available Use% Mounted on
+overlay           131072 33688     96705  26% /
+
+total 8
+drwxr-xr-x 1 root root   90 May  9 02:12 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+drwxr-xr-x 1 root root    0 Apr 18  2022 backups
+drwxr-xr-x 1 root root   36 May  9 02:12 cache
+drwxr-xr-x 1 root root   66 May  9 02:05 lib
+drwxrwsr-x 1 root staff   0 Apr 18  2022 local
+lrwxrwxrwx 1 root root    9 May  9 02:05 lock -> /run/lock
+drwxr-xr-x 1 root root  124 May  9 02:05 log
+drwxrwsr-x 1 root mail    0 May  9 02:05 mail
+
+$ ls -la /var 2>/dev/null | head -10
+total 8
+drwxr-xr-x 1 root root   90 May  9 02:12 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+drwxr-xr-x 1 root root    0 Apr 18  2022 backups
+drwxr-xr-x 1 root root   36 May  9 02:12 cache
+drwxr-xr-x 1 root root   66 May  9 02:05 lib
+drwxrwsr-x 1 root staff   0 Apr 18  2022 local
+lrwxrwxrwx 1 root root    9 May  9 02:05 lock -> /run/lock
+drwxr-xr-x 1 root root  124 May  9 02:05 log
+drwxrwsr-x 1 root mail    0 May  9 02:05 mail
+
+Linux a4d1c419a1b9 7.0.10-arch1-1 #1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000 x86_64 x86_64 x86_64 GNU/Linux
+
+$ uname -a
+Linux a4d1c419a1b9 7.0.10-arch1-1 #1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000 x86_64 x86_64 x86_64 GNU/Linux
+
+total        used        free      shared  buff/cache   available
+Mem:            30Gi       7.3Gi       8.0Gi       1.8Gi        15Gi        20Gi
+Swap:           15Gi       3.4Gi        12Gi
+
+$ free -h 2>/dev/null
+total        used        free      shared  buff/cache   available
+Mem:            30Gi       7.3Gi       8.0Gi       1.8Gi        15Gi        20Gi
+Swap:           15Gi       3.4Gi        12Gi
+
+total 8
+drwx------ 1 root root   30 May  9 02:12 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+-rw-r--r-- 1 root root 3106 Oct 15  2021 .bashrc
+-rw-r--r-- 1 root root  161 Jul  9  2019 .profile
+
+$ ls -la /root 2>/dev/null | head -10
+total 8
+drwx------ 1 root root   30 May  9 02:12 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+-rw-r--r-- 1 root root 3106 Oct 15  2021 .bashrc
+-rw-r--r-- 1 root root  161 Jul  9  2019 .profile
+
+a4d1c419a1b9
+
+$ uname -n
+a4d1c419a1b9
+
+Architecture:                            x86_64
+CPU op-mode(s):                          32-bit, 64-bit
+Address sizes:                           46 bits physical, 48 bits virtual
+Byte Order:                              Little Endian
+CPU(s):                                  22
+On-line CPU(s) list:                     0-21
+Vendor ID:                               GenuineIntel
+Model name:                              Intel(R) Core(TM) Ultra 9 185H
+CPU family:                              6
+Model:                                   170
+
+$ lscpu 2>/dev/null | head -10
+Architecture:                            x86_64
+CPU op-mode(s):                          32-bit, 64-bit
+Address sizes:                           46 bits physical, 48 bits virtual
+Byte Order:                              Little Endian
+CPU(s):                                  22
+On-line CPU(s) list:                     0-21
+Vendor ID:                               GenuineIntel
+Model name:                              Intel(R) Core(TM) Ultra 9 185H
+CPU family:                              6
+Model:                                   170
+
+Wed Jun 10 04:33:35 UTC 2026
+
+$ date
+Wed Jun 10 04:33:35 UTC 2026
+
+total 0
+drwxr-xr-x 1 root root 0 Apr 18  2022 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+$ ls -la /home 2>/dev/null | head -8
+total 0
+drwxr-xr-x 1 root root 0 Apr 18  2022 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+total        used        free      shared  buff/cache   available
+Mem:        32452140     7637988     8371524     1852012    16442628    22040420
+Swap:       16777212     3570344    13206868
+
+$ free  2>/dev/null
+total        used        free      shared  buff/cache   available
+Mem:        32452140     7637988     8371524     1852012    16442628    22040420
+Swap:       16777212     3570344    13206868
+
+total 0
+drwxr-xr-x 1 root root  116 May  9 02:05 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+drwxr-xr-x 1 root root 3644 May  9 02:12 bin
+drwxr-xr-x 1 root root    0 Apr 18  2022 games
+drwxr-xr-x 1 root root    0 Apr 18  2022 include
+drwxr-xr-x 1 root root  190 May  9 02:12 lib
+drwxr-xr-x 1 root root    0 May  9 02:05 lib32
+drwxr-xr-x 1 root root   40 May  9 02:12 lib64
+drwxr-xr-x 1 root root   26 May  9 02:05 libexec
+
+$ ls -la /usr 2>/dev/null | head -10
+total 0
+drwxr-xr-x 1 root root  116 May  9 02:05 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+drwxr-xr-x 1 root root 3644 May  9 02:12 bin
+drwxr-xr-x 1 root root    0 Apr 18  2022 games
+drwxr-xr-x 1 root root    0 Apr 18  2022 include
+drwxr-xr-x 1 root root  190 May  9 02:12 lib
+drwxr-xr-x 1 root root    0 May  9 02:05 lib32
+drwxr-xr-x 1 root root   40 May  9 02:12 lib64
+drwxr-xr-x 1 root root   26 May  9 02:05 libexec
+
+backups
+cache
+lib
+local
+lock
+log
+mail
+opt
+run
+spool
+
+$ ls /var 2>/dev/null | head -10
+backups
+cache
+lib
+local
+lock
+log
+mail
+opt
+run
+spool
+
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         128G   33G   95G  26% /
+
+$ df -h / 2>/dev/null | head -5
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         128G   33G   95G  26% /
+
+core
+fd
+full
+mqueue
+null
+ptmx
+pts
+random
+shm
+stderr
+
+$ ls /dev 2>/dev/null | head -10
+core
+fd
+full
+mqueue
+null
+ptmx
+pts
+random
+shm
+stderr
+
+total 164
+drwxr-xr-x 1 root root      56 Jun 10 04:33 .
+drwxr-xr-x 1 root root       0 Jun 10 04:33 ..
+-rw------- 1 root root       0 May  9 02:05 .pwd.lock
+-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf
+drwxr-xr-x 1 root root      52 May  9 02:12 alternatives
+drwxr-xr-x 1 root root     162 May  9 02:05 apt
+-rw-r--r-- 1 root root    2319 Jan  6  2022 bash.bashrc
+-rw-r--r-- 1 root root     367 Dec 16  2020 bindresvport.blacklist
+drwxr-xr-x 1 root root      20 May  9 02:12 cloud
+
+$ ls -la /etc 2>/dev/null | head -10
+total 164
+drwxr-xr-x 1 root root      56 Jun 10 04:33 .
+drwxr-xr-x 1 root root       0 Jun 10 04:33 ..
+-rw------- 1 root root       0 May  9 02:05 .pwd.lock
+-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf
+drwxr-xr-x 1 root root      52 May  9 02:12 alternatives
+drwxr-xr-x 1 root root     162 May  9 02:05 apt
+-rw-r--r-- 1 root root    2319 Jan  6  2022 bash.bashrc
+-rw-r--r-- 1 root root     367 Dec 16  2020 bindresvport.blacklist
+drwxr-xr-x 1 root root      20 May  9 02:12 cloud
+
+total 0
+drwxrwxrwt 1 root root 0 May  9 02:12 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+$ ls -la /tmp 2>/dev/null | head -10
+total 0
+drwxrwxrwt 1 root root 0 May  9 02:12 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+a4d1c419a1b9
+
+$ hostname
+a4d1c419a1b9
+
+hello world
+
+$ echo hello world
+hello world
+
+total 0
+drwxr-xr-x 5 root root  340 Jun 10 04:33 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+lrwxrwxrwx 1 root root   11 Jun 10 04:33 core -> /proc/kcore
+lrwxrwxrwx 1 root root   13 Jun 10 04:33 fd -> /proc/self/fd
+crw-rw-rw- 1 root root 1, 7 Jun 10 04:33 full
+drwxrwxrwt 2 root root   40 Jun 10 04:33 mqueue
+crw-rw-rw- 1 root root 1, 3 Jun 10 04:33 null
+lrwxrwxrwx 1 root root    8 Jun 10 04:33 ptmx -> pts/ptmx
+drwxr-xr-x 2 root root    0 Jun 10 04:33 pts
+
+$ ls -la /dev 2>/dev/null | head -10
+total 0
+drwxr-xr-x 5 root root  340 Jun 10 04:33 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+lrwxrwxrwx 1 root root   11 Jun 10 04:33 core -> /proc/kcore
+lrwxrwxrwx 1 root root   13 Jun 10 04:33 fd -> /proc/self/fd
+crw-rw-rw- 1 root root 1, 7 Jun 10 04:33 full
+drwxrwxrwt 2 root root   40 Jun 10 04:33 mqueue
+crw-rw-rw- 1 root root 1, 3 Jun 10 04:33 null
+lrwxrwxrwx 1 root root    8 Jun 10 04:33 ptmx -> pts/ptmx
+drwxr-xr-x 2 root root    0 Jun 10 04:33 pts
+
+MemTotal:       32452140 kB
+MemFree:         8129408 kB
+MemAvailable:   21807652 kB
+Buffers:             648 kB
+Cached:         15175304 kB
+SwapCached:        88204 kB
+Active:          7799020 kB
+Inactive:       12563024 kB
+Active(anon):    6400944 kB
+Inactive(anon):   703964 kB
+
+$ cat /proc/meminfo 2>/dev/null | head -10
+MemTotal:       32452140 kB
+MemFree:         8129408 kB
+MemAvailable:   21807652 kB
+Buffers:             648 kB
+Cached:         15175304 kB
+SwapCached:        88204 kB
+Active:          7799020 kB
+Inactive:       12563024 kB
+Active(anon):    6400944 kB
+Inactive(anon):   703964 kB
+
+total 24
+drwxr-xr-x   1 root root   0 Jun 10 04:33 .
+drwxr-xr-x   1 root root   0 Jun 10 04:33 ..
+-rwxr-xr-x   1 root root   0 Jun 10 04:33 .dockerenv
+lrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin
+drwxr-xr-x   1 root root   0 Apr 18  2022 boot
+drwxr-xr-x   5 root root 340 Jun 10 04:33 dev
+drwxr-xr-x   1 root root  56 Jun 10 04:33 etc
+drwxr-xr-x   1 root root   0 Apr 18  2022 home
+lrwxrwxrwx   1 root root   7 May  9 02:05 lib -> usr/lib
+
+$ ls -la / 2>/dev/null | head -10
+total 24
+drwxr-xr-x   1 root root   0 Jun 10 04:33 .
+drwxr-xr-x   1 root root   0 Jun 10 04:33 ..
+-rwxr-xr-x   1 root root   0 Jun 10 04:33 .dockerenv
+lrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin
+drwxr-xr-x   1 root root   0 Apr 18  2022 boot
+drwxr-xr-x   5 root root 340 Jun 10 04:33 dev
+drwxr-xr-x   1 root root  56 Jun 10 04:33 etc
+drwxr-xr-x   1 root root   0 Apr 18  2022 home
+lrwxrwxrwx   1 root root   7 May  9 02:05 lib -> usr/lib
+
+1781066015
+
+$ date +%s
+1781066015
+
+total        used        free      shared  buff/cache   available
+Mem:     33230991360  8172216320  8198131712  1909211136 16860643328 22205677568
+Swap:    17179865088  3656032256 13523832832
+
+$ free -b 2>/dev/null
+total        used        free      shared  buff/cache   available
+Mem:     33230991360  8172216320  8198131712  1909211136 16860643328 22205677568
+Swap:    17179865088  3656032256 13523832832
+
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+apt-config
+apt-get
+apt-key
+apt-mark
+arch
+awk
+b2sum
+base32
+base64
+basename
+
+$ ls /bin | head -15
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+apt-config
+apt-get
+apt-key
+apt-mark
+arch
+awk
+b2sum
+base32
+base64
+basename
+
+82M	/
+
+$ du -sh / 2>/dev/null
+82M	/
+
+HOSTNAME=a4d1c419a1b9
+PWD=/
+HOME=/root
+SHLVL=0
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+_=/usr/bin/env
+
+$ env | head -10
+HOSTNAME=a4d1c419a1b9
+PWD=/
+HOME=/root
+SHLVL=0
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+_=/usr/bin/env
+
+127.0.0.1	localhost
+::1	localhost ip6-localhost ip6-loopback
+fe00::	ip6-localnet
+ff00::	ip6-mcastprefix
+ff02::1	ip6-allnodes
+ff02::2	ip6-allrouters
+172.17.0.2	a4d1c419a1b9
+
+$ cat /etc/hosts | head -10
+127.0.0.1	localhost
+::1	localhost ip6-localhost ip6-loopback
+fe00::	ip6-localnet
+ff00::	ip6-mcastprefix
+ff02::1	ip6-allnodes
+ff02::2	ip6-allrouters
+172.17.0.2	a4d1c419a1b9
+
+/usr/bin/ls
+/usr/bin/which
+/usr/bin/cat
+/usr/bin/which
+/usr/bin/bash
+/usr/bin/which
+
+$ which ls which cat which bash which python3
+/usr/bin/ls
+/usr/bin/which
+/usr/bin/cat
+/usr/bin/which
+/usr/bin/bash
+/usr/bin/which
+
+alternatives.log
+apt
+bootstrap.log
+btmp
+dpkg.log
+faillog
+lastlog
+wtmp
+
+$ ls /var/log 2>/dev/null | head -10
+alternatives.log
+apt
+bootstrap.log
+btmp
+dpkg.log
+faillog
+lastlog
+wtmp
+
+total 0
+drwxrwxrwt 1 root root 0 May  9 02:12 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+$ ls -la /tmp 2>/dev/null | head -8
+total 0
+drwxrwxrwt 1 root root 0 May  9 02:12 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+apt-config
+apt-get
+apt-key
+apt-mark
+arch
+awk
+b2sum
+base32
+base64
+basename
+
+$ ls /usr/bin | head -15
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+apt-config
+apt-get
+apt-key
+apt-mark
+arch
+awk
+b2sum
+base32
+base64
+basename
+
+uid=2(bin) gid=2(bin) groups=2(bin)
+
+$ id bin 2>/dev/null
+uid=2(bin) gid=2(bin) groups=2(bin)
+
+lrwxrwxrwx 1 root root 7 May  9 02:05 /bin -> usr/bin
+
+$ ls -la /bin 2>/dev/null | head -10
+lrwxrwxrwx 1 root root 7 May  9 02:05 /bin -> usr/bin
+
+total 0
+drwxr-xr-x 5 root root  340 Jun 10 04:33 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+lrwxrwxrwx 1 root root   11 Jun 10 04:33 core -> /proc/kcore
+lrwxrwxrwx 1 root root   13 Jun 10 04:33 fd -> /proc/self/fd
+crw-rw-rw- 1 root root 1, 7 Jun 10 04:33 full
+drwxrwxrwt 2 root root   40 Jun 10 04:33 mqueue
+crw-rw-rw- 1 root root 1, 3 Jun 10 04:33 null
+lrwxrwxrwx 1 root root    8 Jun 10 04:33 ptmx -> pts/ptmx
+drwxr-xr-x 2 root root    0 Jun 10 04:33 pts
+
+$ ls -la /dev 2>/dev/null | head -10
+total 0
+drwxr-xr-x 5 root root  340 Jun 10 04:33 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+lrwxrwxrwx 1 root root   11 Jun 10 04:33 core -> /proc/kcore
+lrwxrwxrwx 1 root root   13 Jun 10 04:33 fd -> /proc/self/fd
+crw-rw-rw- 1 root root 1, 7 Jun 10 04:33 full
+drwxrwxrwt 2 root root   40 Jun 10 04:33 mqueue
+crw-rw-rw- 1 root root 1, 3 Jun 10 04:33 null
+lrwxrwxrwx 1 root root    8 Jun 10 04:33 ptmx -> pts/ptmx
+drwxr-xr-x 2 root root    0 Jun 10 04:33 pts
+
+total        used        free      shared  buff/cache   available
+Mem:           31691        8010        7640        1779       16040       21000
+Swap:          16383        3486       12897
+
+$ free -m 2>/dev/null
+total        used        free      shared  buff/cache   available
+Mem:           31691        8010        7640        1779       16040       21000
+Swap:          16383        3486       12897
+
+hello world
+
+$ echo hello world
+hello world
+
+bin
+games
+include
+lib
+lib32
+lib64
+libexec
+libx32
+local
+sbin
+
+$ ls /usr 2>/dev/null | head -10
+bin
+games
+include
+lib
+lib32
+lib64
+libexec
+libx32
+local
+sbin
+
+hello
+
+$ echo hello
+hello
+
+total 0
+drwxr-xr-x 1 root root 0 Apr 18  2022 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+$ ls -la /home 2>/dev/null | head -10
+total 0
+drwxr-xr-x 1 root root 0 Apr 18  2022 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+processor	: 0
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 170
+model name	: Intel(R) Core(TM) Ultra 9 185H
+stepping	: 4
+microcode	: 0x28
+cpu MHz		: 4500.045
+cache size	: 24576 KB
+physical id	: 0
+
+$ cat /proc/cpuinfo 2>/dev/null | head -10
+processor	: 0
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 170
+model name	: Intel(R) Core(TM) Ultra 9 185H
+stepping	: 4
+microcode	: 0x28
+cpu MHz		: 4500.045
+cache size	: 24576 KB
+physical id	: 0
+
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+apt-config
+apt-get
+apt-key
+apt-mark
+arch
+
+$ ls /bin 2>/dev/null | head -10
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+apt-config
+apt-get
+apt-key
+apt-mark
+arch
+
+520K	/etc
+
+$ du -sh /etc 2>/dev/null
+520K	/etc
+
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+apt-config
+apt-get
+apt-key
+apt-mark
+arch
+awk
+b2sum
+base32
+base64
+basename
+
+$ ls /bin | head -15
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+apt-config
+apt-get
+apt-key
+apt-mark
+arch
+awk
+b2sum
+base32
+base64
+basename
+
+MemTotal:       32452140 kB
+MemFree:         7857472 kB
+MemAvailable:   21538276 kB
+Buffers:             648 kB
+Cached:         15135816 kB
+SwapCached:        88508 kB
+Active:          8086884 kB
+Inactive:       12565136 kB
+Active(anon):    6688456 kB
+Inactive(anon):   703964 kB
+
+$ cat /proc/meminfo 2>/dev/null | head -10
+MemTotal:       32452140 kB
+MemFree:         7857472 kB
+MemAvailable:   21538276 kB
+Buffers:             648 kB
+Cached:         15135816 kB
+SwapCached:        88508 kB
+Active:          8086884 kB
+Inactive:       12565136 kB
+Active(anon):    6688456 kB
+Inactive(anon):   703964 kB
+
+Linux a4d1c419a1b9 7.0.10-arch1-1 #1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000 x86_64 x86_64 x86_64 GNU/Linux
+
+$ uname -a
+Linux a4d1c419a1b9 7.0.10-arch1-1 #1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000 x86_64 x86_64 x86_64 GNU/Linux
+
+uid=0(root) gid=0(root) groups=0(root)
+
+$ id root 2>/dev/null
+uid=0(root) gid=0(root) groups=0(root)
+
+total 164
+drwxr-xr-x 1 root root      56 Jun 10 04:33 .
+drwxr-xr-x 1 root root       0 Jun 10 04:33 ..
+-rw------- 1 root root       0 May  9 02:05 .pwd.lock
+-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf
+drwxr-xr-x 1 root root      52 May  9 02:12 alternatives
+drwxr-xr-x 1 root root     162 May  9 02:05 apt
+-rw-r--r-- 1 root root    2319 Jan  6  2022 bash.bashrc
+
+$ ls -la /etc 2>/dev/null | head -8
+total 164
+drwxr-xr-x 1 root root      56 Jun 10 04:33 .
+drwxr-xr-x 1 root root       0 Jun 10 04:33 ..
+-rw------- 1 root root       0 May  9 02:05 .pwd.lock
+-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf
+drwxr-xr-x 1 root root      52 May  9 02:12 alternatives
+drwxr-xr-x 1 root root     162 May  9 02:05 apt
+-rw-r--r-- 1 root root    2319 Jan  6  2022 bash.bashrc
+
+total 0
+drwxr-xr-x 1 root root  116 May  9 02:05 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+drwxr-xr-x 1 root root 3644 May  9 02:12 bin
+drwxr-xr-x 1 root root    0 Apr 18  2022 games
+drwxr-xr-x 1 root root    0 Apr 18  2022 include
+drwxr-xr-x 1 root root  190 May  9 02:12 lib
+drwxr-xr-x 1 root root    0 May  9 02:05 lib32
+drwxr-xr-x 1 root root   40 May  9 02:12 lib64
+drwxr-xr-x 1 root root   26 May  9 02:05 libexec
+
+$ ls -la /usr 2>/dev/null | head -10
+total 0
+drwxr-xr-x 1 root root  116 May  9 02:05 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+drwxr-xr-x 1 root root 3644 May  9 02:12 bin
+drwxr-xr-x 1 root root    0 Apr 18  2022 games
+drwxr-xr-x 1 root root    0 Apr 18  2022 include
+drwxr-xr-x 1 root root  190 May  9 02:12 lib
+drwxr-xr-x 1 root root    0 May  9 02:05 lib32
+drwxr-xr-x 1 root root   40 May  9 02:12 lib64
+drwxr-xr-x 1 root root   26 May  9 02:05 libexec
+
+Ubuntu 22.04.5 LTS \n \l
+
+$ cat /etc/issue 2>/dev/null
+Ubuntu 22.04.5 LTS \n \l
+
+2026-06-10
+
+$ date +%Y-%m-%d
+2026-06-10
+
+HELLO
+
+$ echo HELLO
+HELLO
+
+hi there
+
+$ echo hi there
+hi there
+
+total 0
+drwxrwxrwt 1 root root 0 May  9 02:12 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+$ ls -la /tmp 2>/dev/null | head -8
+total 0
+drwxrwxrwt 1 root root 0 May  9 02:12 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+Linux
+
+$ uname -s
+Linux
+
+total 0
+drwxr-xr-x 1 root root 0 Apr 18  2022 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+$ ls -la /home 2>/dev/null | head -8
+total 0
+drwxr-xr-x 1 root root 0 Apr 18  2022 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+uid=0(root) gid=0(root) groups=0(root)
+
+$ id  2>/dev/null
+uid=0(root) gid=0(root) groups=0(root)
+
+0	/tmp
+
+$ du -sh /tmp 2>/dev/null
+0	/tmp
+
+alternatives.log
+apt
+bootstrap.log
+btmp
+dpkg.log
+faillog
+lastlog
+wtmp
+
+$ ls /var/log 2>/dev/null | head -10
+alternatives.log
+apt
+bootstrap.log
+btmp
+dpkg.log
+faillog
+lastlog
+wtmp
+
+Architecture:                            x86_64
+CPU op-mode(s):                          32-bit, 64-bit
+Address sizes:                           46 bits physical, 48 bits virtual
+Byte Order:                              Little Endian
+CPU(s):                                  22
+On-line CPU(s) list:                     0-21
+Vendor ID:                               GenuineIntel
+Model name:                              Intel(R) Core(TM) Ultra 9 185H
+CPU family:                              6
+Model:                                   170
+
+$ lscpu 2>/dev/null | head -10
+Architecture:                            x86_64
+CPU op-mode(s):                          32-bit, 64-bit
+Address sizes:                           46 bits physical, 48 bits virtual
+Byte Order:                              Little Endian
+CPU(s):                                  22
+On-line CPU(s) list:                     0-21
+Vendor ID:                               GenuineIntel
+Model name:                              Intel(R) Core(TM) Ultra 9 185H
+CPU family:                              6
+Model:                                   170
+
+127.0.0.1	localhost
+::1	localhost ip6-localhost ip6-loopback
+fe00::	ip6-localnet
+ff00::	ip6-mcastprefix
+ff02::1	ip6-allnodes
+ff02::2	ip6-allrouters
+172.17.0.2	a4d1c419a1b9
+
+$ cat /etc/hosts | head -10
+127.0.0.1	localhost
+::1	localhost ip6-localhost ip6-loopback
+fe00::	ip6-localnet
+ff00::	ip6-mcastprefix
+ff02::1	ip6-allnodes
+ff02::2	ip6-allrouters
+172.17.0.2	a4d1c419a1b9
+
+7.0.10-arch1-1
+
+$ uname -r
+7.0.10-arch1-1
+
+a4d1c419a1b9
+
+$ hostname
+a4d1c419a1b9
+
+1781066017
+
+$ date +%s
+1781066017
+
+Filesystem     1K-blocks     Used Available Use% Mounted on
+overlay        134217728 34496380  99025540  26% /
+
+$ df  / 2>/dev/null | head -5
+Filesystem     1K-blocks     Used Available Use% Mounted on
+overlay        134217728 34496380  99025540  26% /
+
+total        used        free      shared  buff/cache   available
+Mem:        32452140     7966104     8044520     1838988    16441516    21725328
+Swap:       16777212     3570344    13206868
+
+$ free  2>/dev/null
+total        used        free      shared  buff/cache   available
+Mem:        32452140     7966104     8044520     1838988    16441516    21725328
+Swap:       16777212     3570344    13206868
+
+/usr/bin/ls
+/usr/bin/which
+/usr/bin/cat
+/usr/bin/which
+/usr/bin/bash
+/usr/bin/which
+
+$ which ls which cat which bash which python3
+/usr/bin/ls
+/usr/bin/which
+/usr/bin/cat
+/usr/bin/which
+/usr/bin/bash
+/usr/bin/which
+
+backups
+cache
+lib
+local
+lock
+log
+mail
+opt
+run
+spool
+
+$ ls /var 2>/dev/null | head -10
+backups
+cache
+lib
+local
+lock
+log
+mail
+opt
+run
+spool
+
+total 24
+drwxr-xr-x   1 root root   0 Jun 10 04:33 .
+drwxr-xr-x   1 root root   0 Jun 10 04:33 ..
+-rwxr-xr-x   1 root root   0 Jun 10 04:33 .dockerenv
+lrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin
+drwxr-xr-x   1 root root   0 Apr 18  2022 boot
+drwxr-xr-x   5 root root 340 Jun 10 04:33 dev
+drwxr-xr-x   1 root root  56 Jun 10 04:33 etc
+
+$ ls -la / 2>/dev/null | head -8
+total 24
+drwxr-xr-x   1 root root   0 Jun 10 04:33 .
+drwxr-xr-x   1 root root   0 Jun 10 04:33 ..
+-rwxr-xr-x   1 root root   0 Jun 10 04:33 .dockerenv
+lrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin
+drwxr-xr-x   1 root root   0 Apr 18  2022 boot
+drwxr-xr-x   5 root root 340 Jun 10 04:33 dev
+drwxr-xr-x   1 root root  56 Jun 10 04:33 etc
+
+overlay on / type overlay (rw,relatime,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5336/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5337/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5337/work,index=off)
+proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
+tmpfs on /dev type tmpfs (rw,nosuid,size=65536k,mode=755,inode64,huge=within_size)
+devpts on /dev/pts type devpts (rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=666)
+sysfs on /sys type sysfs (ro,nosuid,nodev,noexec,relatime)
+cgroup on /sys/fs/cgroup type cgroup2 (ro,nosuid,nodev,noexec,relatime,nsdelegate,memory_recursiveprot,memory_hugetlb_accounting)
+mqueue on /dev/mqueue type mqueue (rw,nosuid,nodev,noexec,relatime)
+shm on /dev/shm type tmpfs (rw,nosuid,nodev,noexec,relatime,size=65536k,inode64,huge=within_size)
+/dev/nvme0n1p5 on /etc/resolv.conf type btrfs (rw,relatime,ssd,discard=async,space_cache=v2,subvolid=5,subvol=/)
+/dev/nvme0n1p5 on /etc/hostname type btrfs (rw,relatime,ssd,discard=async,space_cache=v2,subvolid=5,subvol=/)
+
+$ mount | head -10 2>/dev/null
+overlay on / type overlay (rw,relatime,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5336/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5337/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5337/work,index=off)
+proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
+tmpfs on /dev type tmpfs (rw,nosuid,size=65536k,mode=755,inode64,huge=within_size)
+devpts on /dev/pts type devpts (rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=666)
+sysfs on /sys type sysfs (ro,nosuid,nodev,noexec,relatime)
+cgroup on /sys/fs/cgroup type cgroup2 (ro,nosuid,nodev,noexec,relatime,nsdelegate,memory_recursiveprot,memory_hugetlb_accounting)
+mqueue on /dev/mqueue type mqueue (rw,nosuid,nodev,noexec,relatime)
+shm on /dev/shm type tmpfs (rw,nosuid,nodev,noexec,relatime,size=65536k,inode64,huge=within_size)
+/dev/nvme0n1p5 on /etc/resolv.conf type btrfs (rw,relatime,ssd,discard=async,space_cache=v2,subvolid=5,subvol=/)
+/dev/nvme0n1p5 on /etc/hostname type btrfs (rw,relatime,ssd,discard=async,space_cache=v2,subvolid=5,subvol=/)
+
+04:33:38 up 7 days, 14:05,  0 users,  load average: 1.77, 2.40, 2.01
+
+$ uptime
+04:33:38 up 7 days, 14:05,  0 users,  load average: 1.77, 2.40, 2.01
+
+a4d1c419a1b9
+
+$ uname -n
+a4d1c419a1b9
+
+total 0
+drwxrwxrwt 1 root root 0 May  9 02:12 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+$ ls -la /tmp 2>/dev/null | head -10
+total 0
+drwxrwxrwt 1 root root 0 May  9 02:12 .
+drwxr-xr-x 1 root root 0 Jun 10 04:33 ..
+
+0	/home
+
+$ du -sh /home 2>/dev/null
+0	/home
+
+total        used        free      shared  buff/cache   available
+Mem:     33230991360  8134180864  8250372096  1893441536 16846438400 22259515392
+Swap:    17179865088  3656032256 13523832832
+
+$ free -b 2>/dev/null
+total        used        free      shared  buff/cache   available
+Mem:     33230991360  8134180864  8250372096  1893441536 16846438400 22259515392
+Swap:    17179865088  3656032256 13523832832
+
+total 164
+drwxr-xr-x 1 root root      56 Jun 10 04:33 .
+drwxr-xr-x 1 root root       0 Jun 10 04:33 ..
+-rw------- 1 root root       0 May  9 02:05 .pwd.lock
+-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf
+drwxr-xr-x 1 root root      52 May  9 02:12 alternatives
+drwxr-xr-x 1 root root     162 May  9 02:05 apt
+-rw-r--r-- 1 root root    2319 Jan  6  2022 bash.bashrc
+-rw-r--r-- 1 root root     367 Dec 16  2020 bindresvport.blacklist
+drwxr-xr-x 1 root root      20 May  9 02:12 cloud
+
+$ ls -la /etc 2>/dev/null | head -10
+total 164
+drwxr-xr-x 1 root root      56 Jun 10 04:33 .
+drwxr-xr-x 1 root root       0 Jun 10 04:33 ..
+-rw------- 1 root root       0 May  9 02:05 .pwd.lock
+-rw-r--r-- 1 root root    3028 May  9 02:05 adduser.conf
+drwxr-xr-x 1 root root      52 May  9 02:12 alternatives
+drwxr-xr-x 1 root root     162 May  9 02:05 apt
+-rw-r--r-- 1 root root    2319 Jan  6  2022 bash.bashrc
+-rw-r--r-- 1 root root     367 Dec 16  2020 bindresvport.blacklist
+drwxr-xr-x 1 root root      20 May  9 02:12 cloud
+
+core
+fd
+full
+mqueue
+null
+ptmx
+pts
+random
+shm
+stderr
+
+$ ls /dev 2>/dev/null | head -10
+core
+fd
+full
+mqueue
+null
+ptmx
+pts
+random
+shm
+stderr
+
+total        used        free      shared  buff/cache   available
+Mem:            30Gi       7.6Gi       7.7Gi       1.8Gi        15Gi        20Gi
+Swap:           15Gi       3.4Gi        12Gi
+
+$ free -h 2>/dev/null
+total        used        free      shared  buff/cache   available
+Mem:            30Gi       7.6Gi       7.7Gi       1.8Gi        15Gi        20Gi
+Swap:           15Gi       3.4Gi        12Gi
+
+bin
+boot
+dev
+etc
+home
+lib
+lib32
+lib64
+libx32
+media
+
+$ ls / 2>/dev/null | head -10
+bin
+boot
+dev
+etc
+home
+lib
+lib32
+lib64
+libx32
+media
+
+Wed Jun 10 04:33:38 UTC 2026
+
+$ date
+Wed Jun 10 04:33:38 UTC 2026
+
+uid=1(daemon) gid=1(daemon) groups=1(daemon)
+
+$ id daemon 2>/dev/null
+uid=1(daemon) gid=1(daemon) groups=1(daemon)
+
+total 8
+drwxr-xr-x 1 root root   90 May  9 02:12 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+drwxr-xr-x 1 root root    0 Apr 18  2022 backups
+drwxr-xr-x 1 root root   36 May  9 02:12 cache
+drwxr-xr-x 1 root root   66 May  9 02:05 lib
+drwxrwsr-x 1 root staff   0 Apr 18  2022 local
+lrwxrwxrwx 1 root root    9 May  9 02:05 lock -> /run/lock
+drwxr-xr-x 1 root root  124 May  9 02:05 log
+drwxrwsr-x 1 root mail    0 May  9 02:05 mail
+
+$ ls -la /var 2>/dev/null | head -10
+total 8
+drwxr-xr-x 1 root root   90 May  9 02:12 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+drwxr-xr-x 1 root root    0 Apr 18  2022 backups
+drwxr-xr-x 1 root root   36 May  9 02:12 cache
+drwxr-xr-x 1 root root   66 May  9 02:05 lib
+drwxrwsr-x 1 root staff   0 Apr 18  2022 local
+lrwxrwxrwx 1 root root    9 May  9 02:05 lock -> /run/lock
+drwxr-xr-x 1 root root  124 May  9 02:05 log
+drwxrwsr-x 1 root mail    0 May  9 02:05 mail
+
+HOSTNAME=a4d1c419a1b9
+PWD=/
+HOME=/root
+SHLVL=0
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+_=/usr/bin/env
+
+$ env | head -10
+HOSTNAME=a4d1c419a1b9
+PWD=/
+HOME=/root
+SHLVL=0
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+_=/usr/bin/env
+
+total 0
+dr-xr-xr-x 531 root root     0 Jun 10 04:33 .
+drwxr-xr-x   1 root root     0 Jun 10 04:33 ..
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 1
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 2949
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 2955
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 2956
+drwxrwxrwt   2 root root    40 Jun 10 04:33 acpi
+drwxrwxrwt   2 root root    40 Jun 10 04:33 asound
+-r--r--r--   1 root root     0 Jun 10 04:33 bootconfig
+
+$ ls -la /proc 2>/dev/null | head -10
+total 0
+dr-xr-xr-x 531 root root     0 Jun 10 04:33 .
+drwxr-xr-x   1 root root     0 Jun 10 04:33 ..
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 1
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 2949
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 2955
+dr-xr-xr-x   9 root root     0 Jun 10 04:33 2956
+drwxrwxrwt   2 root root    40 Jun 10 04:33 acpi
+drwxrwxrwt   2 root root    40 Jun 10 04:33 asound
+-r--r--r--   1 root root     0 Jun 10 04:33 bootconfig
+
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+apt-config
+apt-get
+apt-key
+apt-mark
+arch
+awk
+b2sum
+base32
+base64
+basename
+
+$ ls /usr/bin | head -15
+[
+addpart
+apt
+apt-cache
+apt-cdrom
+apt-config
+apt-get
+apt-key
+apt-mark
+arch
+awk
+b2sum
+base32
+base64
+basename
+
+1
+2966
+2972
+2973
+acpi
+asound
+bootconfig
+buddyinfo
+bus
+cgroups
+
+$ ls /proc 2>/dev/null | head -10
+1
+2966
+2972
+2973
+acpi
+asound
+bootconfig
+buddyinfo
+bus
+cgroups
+
+uid=2(bin) gid=2(bin) groups=2(bin)
+
+$ id bin 2>/dev/null
+uid=2(bin) gid=2(bin) groups=2(bin)
+
+#1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000
+
+$ uname -v
+#1 SMP PREEMPT_DYNAMIC Sat, 23 May 2026 14:21:20 +0000
+
+total 8
+drwxr-xr-x 1 root root   90 May  9 02:12 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+drwxr-xr-x 1 root root    0 Apr 18  2022 backups
+drwxr-xr-x 1 root root   36 May  9 02:12 cache
+drwxr-xr-x 1 root root   66 May  9 02:05 lib
+drwxrwsr-x 1 root staff   0 Apr 18  2022 local
+lrwxrwxrwx 1 root root    9 May  9 02:05 lock -> /run/lock
+
+$ ls -la /var 2>/dev/null | head -8
+total 8
+drwxr-xr-x 1 root root   90 May  9 02:12 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+drwxr-xr-x 1 root root    0 Apr 18  2022 backups
+drwxr-xr-x 1 root root   36 May  9 02:12 cache
+drwxr-xr-x 1 root root   66 May  9 02:05 lib
+drwxrwsr-x 1 root staff   0 Apr 18  2022 local
+lrwxrwxrwx 1 root root    9 May  9 02:05 lock -> /run/lock
+
+a4d1c419a1b9
+
+$ cat /etc/hostname
+a4d1c419a1b9
+
+5.0M	/var
+
+$ du -sh /var 2>/dev/null
+5.0M	/var
+
+LANG=
+LANGUAGE=
+LC_CTYPE="POSIX"
+LC_NUMERIC="POSIX"
+LC_TIME="POSIX"
+LC_COLLATE="POSIX"
+LC_MONETARY="POSIX"
+LC_MESSAGES="POSIX"
+LC_PAPER="POSIX"
+LC_NAME="POSIX"
+LC_ADDRESS="POSIX"
+LC_TELEPHONE="POSIX"
+LC_MEASUREMENT="POSIX"
+LC_IDENTIFICATION="POSIX"
+LC_ALL=
+
+$ locale
+LANG=
+LANGUAGE=
+LC_CTYPE="POSIX"
+LC_NUMERIC="POSIX"
+LC_TIME="POSIX"
+LC_COLLATE="POSIX"
+LC_MONETARY="POSIX"
+LC_MESSAGES="POSIX"
+LC_PAPER="POSIX"
+LC_NAME="POSIX"
+LC_ADDRESS="POSIX"
+LC_TELEPHONE="POSIX"
+LC_MEASUREMENT="POSIX"
+LC_IDENTIFICATION="POSIX"
+LC_ALL=
+
+PRETTY_NAME="Ubuntu 22.04.5 LTS"
+NAME="Ubuntu"
+VERSION_ID="22.04"
+VERSION="22.04.5 LTS (Jammy Jellyfish)"
+VERSION_CODENAME=jammy
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+
+$ cat /etc/os-release 2>/dev/null | head -10
+PRETTY_NAME="Ubuntu 22.04.5 LTS"
+NAME="Ubuntu"
+VERSION_ID="22.04"
+VERSION="22.04.5 LTS (Jammy Jellyfish)"
+VERSION_CODENAME=jammy
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+
+2026-06-02 14:27:58
+
+$ uptime -s 2>/dev/null
+2026-06-02 14:27:58
+
+Wed Jun 10 04:33:39 UTC 2026
+
+$ date -u
+Wed Jun 10 04:33:39 UTC 2026
+
+uid=65534(nobody) gid=65534(nogroup) groups=65534(nogroup)
+
+$ id nobody 2>/dev/null
+uid=65534(nobody) gid=65534(nogroup) groups=65534(nogroup)
+
+eth0
+lo
+
+$ ls /sys/class/net 2>/dev/null | head -5
+eth0
+lo
+
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         128G   33G   95G  26% /
+
+$ df -h / 2>/dev/null | head -5
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         128G   33G   95G  26% /
+
+total 8
+drwx------ 1 root root   30 May  9 02:12 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+-rw-r--r-- 1 root root 3106 Oct 15  2021 .bashrc
+-rw-r--r-- 1 root root  161 Jul  9  2019 .profile
+
+$ ls -la /root 2>/dev/null | head -10
+total 8
+drwx------ 1 root root   30 May  9 02:12 .
+drwxr-xr-x 1 root root    0 Jun 10 04:33 ..
+-rw-r--r-- 1 root root 3106 Oct 15  2021 .bashrc
+-rw-r--r-- 1 root root  161 Jul  9  2019 .profile
+
+Filesystem     1M-blocks  Used Available Use% Mounted on
+overlay           131072 33688     96705  26% /
+
+$ df -m / 2>/dev/null | head -5
+Filesystem     1M-blocks  Used Available Use% Mounted on
+overlay           131072 33688     96705  26% /
+
+total 24
+drwxr-xr-x   1 root root   0 Jun 10 04:33 .
+drwxr-xr-x   1 root root   0 Jun 10 04:33 ..
+-rwxr-xr-x   1 root root   0 Jun 10 04:33 .dockerenv
+lrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin
+drwxr-xr-x   1 root root   0 Apr 18  2022 boot
+drwxr-xr-x   5 root root 340 Jun 10 04:33 dev
+drwxr-xr-x   1 root root  56 Jun 10 04:33 etc
+drwxr-xr-x   1 root root   0 Apr 18  2022 home
+lrwxrwxrwx   1 root root   7 May  9 02:05 lib -> usr/lib
+
+$ ls -la / 2>/dev/null | head -10
+total 24
+drwxr-xr-x   1 root root   0 Jun 10 04:33 .
+drwxr-xr-x   1 root root   0 Jun 10 04:33 ..
+-rwxr-xr-x   1 root root   0 Jun 10 04:33 .dockerenv
+lrwxrwxrwx   1 root root   7 May  9 02:05 bin -> usr/bin
+drwxr-xr-x   1 root root   0 Apr 18  2022 boot
+drwxr-xr-x   5 root root 340 Jun 10 04:33 dev
+drwxr-xr-x   1 root root  56 Jun 10 04:33 etc
+drwxr-xr-x   1 root root   0 Apr 18  2022 home
+lrwxrwxrwx   1 root root   7 May  9 02:05 lib -> usr/lib
+
+82M	/
+
+$ du -sh / 2>/dev/null
+82M	/
+
+adduser.conf
+alternatives
+apt
+bash.bashrc
+bindresvport.blacklist
+cloud
+cron.d
+cron.daily
+debconf.conf
+debian_version
+
+$ ls /etc 2>/dev/null | head -10
+adduser.conf
+alternatives
+apt
+bash.bashrc
+bindresvport.blacklist
+cloud
+cron.d
+cron.daily
+debconf.conf
+debian_version
+

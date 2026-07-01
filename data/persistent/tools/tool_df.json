@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "df"
+  ],
+  "desc": "run df with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

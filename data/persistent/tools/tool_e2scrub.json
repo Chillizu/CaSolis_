@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "e2scrub"
+  ],
+  "desc": "run e2scrub with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "losetup"
+  ],
+  "desc": "run losetup with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

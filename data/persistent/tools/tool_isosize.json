@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "isosize"
+  ],
+  "desc": "run isosize with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

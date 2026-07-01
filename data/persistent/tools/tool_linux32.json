@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "linux32"
+  ],
+  "desc": "run linux32 with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

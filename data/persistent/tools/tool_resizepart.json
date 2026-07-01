@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "resizepart"
+  ],
+  "desc": "run resizepart with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

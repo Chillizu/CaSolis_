@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "nisdomainname"
+  ],
+  "desc": "run nisdomainname with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

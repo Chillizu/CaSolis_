@@ -1,0 +1,147 @@
+  加载: checkpoints/stream-v1/model-800.pt
+  参数: 1,053,766
+
+==================================================
+🌊 自主意识流 — 模型自己决定做什么
+==================================================
+
+  [    5] 💾 EXEC | L:2.07 | v
+sys
+tmp
+usr
+var
+/"
+-rw-r--r-- 1 root r
+         ▶️  `ls` → bin
+boot
+dev
+etc
+home
+lib
+lib32
+lib64
+libx32
+media
+  [   10] 💾 EXEC | L:3.70 |  Jun 10 10:37:33 UTC 2026
+cdrom
+apt-conf
+         ▶️  `date` → Wed Jun 10 10:37:34 UTC 2026
+  [   15] 💾 EXEC | L:0.96 | v
+sys
+tmp
+usr
+var
+ ..
+-rw-r--r-- 1 root 
+         ▶️  `ls` → bin
+boot
+dev
+etc
+home
+lib
+lib32
+lib64
+libx32
+media
+  [   20] 💾 EXEC | L:1.74 |  Jun 10 10:37:44 UTC 2026
+ root root 310
+         ▶️  `date` → Wed Jun 10 10:37:45 UTC 2026
+  [   25] 🤔 THINK | L:2.21 |  Jun 10 10:37:49 UTC 2026
+-rw-r--r-- 1 r
+  [   30] 🤔 THINK | L:0.16 | -rw-r--r-- 1 root root 3106 Oct 15  2021
+  [   35] 🤔 THINK | L:0.00 |  3106 Oct 15  2021 .bashrc
+-rw-r--r-- 1 
+  [   40] 🤔 THINK | L:0.00 | -r--r-- 1 root root 3106 Oct 15  2021 .b
+  [   45] 🤔 THINK | L:0.00 |  15  2021 .bashrc
+-rw-r--r-- 1 root root
+  [   50] 🤔 THINK | L:0.12 | --r-- 1 root root 3106 Oct 15  2021 .bas
+  [   55] 🤔 THINK | L:0.00 |  2021 .bashrc
+-rw-r--r-- 1 root root 310
+  [   60] 🤔 THINK | L:0.04 | -- 1 root root 3106 Oct 15  2021 .bashrc
+  [   65] 🤔 THINK | L:0.00 | bashrc
+-rw-r--r-- 1 root root 3106 Oct 1
+  [   70] 🤔 THINK | L:0.00 |  root root 3106 Oct 15  2021 .bashrc
+-rw
+  [   75] 🤔 THINK | L:0.09 | -rw-r--r-- 1 root root 3106 Oct 15  2021
+  [   80] 🤔 THINK | L:0.00 |  3106 Oct 15  2021 .bashrc
+-rw-r--r-- 1 
+  [   85] 🤔 THINK | L:0.00 | -r--r-- 1 root root 3106 Oct 15  2021 .b
+  [   90] 🤔 THINK | L:0.00 |  15  2021 .bashrc
+-rw-r--r-- 1 root root
+  [   95] 🤔 THINK | L:0.15 | --r-- 1 root root 3106 Oct 15  2021 .bas
+  [  100] 🤔 THINK | L:0.00 |  2021 .bashrc
+-rw-r--r-- 1 root root 310
+  [  105] 🤔 THINK | L:0.00 | -- 1 root root 3106 Oct 15  2021 .bashrc
+  [  110] 🤔 THINK | L:0.00 | bashrc
+-rw-r--r-- 1 root root 3106 Oct 1
+  [  115] 🤔 THINK | L:0.00 |  root root 3106 Oct 15  2021 .bashrc
+-rw
+  [  120] 🤔 THINK | L:0.10 | -rw-r--r-- 1 root root 3106 Oct 15  2021
+  [  125] 🤔 THINK | L:0.00 |  3106 Oct 15  2021 .bashrc
+-rw-r--r-- 1 
+  [  130] 🤔 THINK | L:0.00 | -r--r-- 1 root root 3106 Oct 15  2021 .b
+  [  135] 🤔 THINK | L:0.00 |  15  2021 .bashrc
+-rw-r--r-- 1 root root
+  [  140] 🤔 THINK | L:0.15 | --r-- 1 root root 3106 Oct 15  2021 .bas
+  [  145] 🤔 THINK | L:0.00 |  2021 .bashrc
+-rw-r--r-- 1 root root 310
+  [  150] 🤔 THINK | L:0.00 | -- 1 root root 3106 Oct 15  2021 .bashrc
+  [  155] 🤔 THINK | L:0.00 | bashrc
+-rw-r--r-- 1 root root 3106 Oct 1
+  [  160] 🤔 THINK | L:0.00 |  root root 3106 Oct 15  2021 .bashrc
+-rw
+  [  165] 🤔 THINK | L:0.09 | -rw-r--r-- 1 root root 3106 Oct 15  2021
+  [  170] 🤔 THINK | L:0.00 |  3106 Oct 15  2021 .bashrc
+-rw-r--r-- 1 
+  [  175] 🤔 THINK | L:0.00 | -r--r-- 1 root root 3106 Oct 15  2021 .b
+  [  180] 🤔 THINK | L:0.00 |  15  2021 .bashrc
+-rw-r--r-- 1 root root
+  [  185] 🤔 THINK | L:0.16 | --r-- 1 root root 3106 Oct 15  2021 .bas
+  [  190] 🤔 THINK | L:0.00 |  2021 .bashrc
+-rw-r--r-- 1 root root 310
+  [  195] 🤔 THINK | L:0.00 | -- 1 root root 3106 Oct 15  2021 .bashrc
+  [  200] 🤔 THINK | L:0.00 | bashrc
+-rw-r--r-- 1 root root 3106 Oct 1
+
+  💾 保存 | 总周期: 200 | 命令: 2
+
+  [  205] 🤔 THINK | L:0.00 |  root root 3106 Oct 15  2021 .bashrc
+-rw
+  [  210] 🤔 THINK | L:0.09 | -rw-r--r-- 1 root root 3106 Oct 15  2021
+  [  215] 🤔 THINK | L:0.00 |  3106 Oct 15  2021 .bashrc
+-rw-r--r-- 1 
+  [  220] 🤔 THINK | L:0.00 | -r--r-- 1 root root 3106 Oct 15  2021 .b
+  [  225] 🤔 THINK | L:0.00 |  15  2021 .bashrc
+-rw-r--r-- 1 root root
+  [  230] 🤔 THINK | L:0.14 | --r-- 1 root root 3106 Oct 15  2021 .bas
+  [  235] 🤔 THINK | L:0.00 |  2021 .bashrc
+-rw-r--r-- 1 root root 310
+  [  240] 🤔 THINK | L:0.00 | -- 1 root root 3106 Oct 15  2021 .bashrc
+  [  245] 🤔 THINK | L:0.00 | bashrc
+-rw-r--r-- 1 root root 3106 Oct 1
+  [  250] 🤔 THINK | L:0.00 |  root root 3106 Oct 15  2021 .bashrc
+-rw
+  [  255] 🤔 THINK | L:0.08 | -rw-r--r-- 1 root root 3106 Oct 15  2021
+  [  260] 🤔 THINK | L:0.00 |  3106 Oct 15  2021 .bashrc
+-rw-r--r-- 1 
+  [  265] 🤔 THINK | L:0.00 | -r--r-- 1 root root 3106 Oct 15  2021 .b
+  [  270] 🤔 THINK | L:0.00 |  15  2021 .bashrc
+-rw-r--r-- 1 root root
+  [  275] 🤔 THINK | L:0.15 | --r-- 1 root root 3106 Oct 15  2021 .bas
+  [  280] 🤔 THINK | L:0.00 |  2021 .bashrc
+-rw-r--r-- 1 root root 310
+  [  285] 🤔 THINK | L:0.00 | -- 1 root root 3106 Oct 15  2021 .bashrc
+  [  290] 🤔 THINK | L:0.00 | bashrc
+-rw-r--r-- 1 root root 3106 Oct 1
+  [  295] 🤔 THINK | L:0.00 |  root root 3106 Oct 15  2021 .bashrc
+-rw
+  [  300] 🤔 THINK | L:0.08 | -rw-r--r-- 1 root root 3106 Oct 15  2021
+  [  305] 🤔 THINK | L:0.00 |  3106 Oct 15  2021 .bashrc
+-rw-r--r-- 1 
+  [  310] 🤔 THINK | L:0.00 | -r--r-- 1 root root 3106 Oct 15  2021 .b
+  [  315] 🤔 THINK | L:0.00 |  15  2021 .bashrc
+-rw-r--r-- 1 root root
+  [  320] 🤔 THINK | L:0.11 | --r-- 1 root root 3106 Oct 15  2021 .bas
+  [  325] 🤔 THINK | L:0.00 |  2021 .bashrc
+-rw-r--r-- 1 root root 310
+  [  330] 🤔 THINK | L:0.00 | -- 1 root root 3106 Oct 15  2021 .bashrc

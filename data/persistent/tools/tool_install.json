@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "install"
+  ],
+  "desc": "run install with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

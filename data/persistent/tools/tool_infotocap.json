@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "infotocap"
+  ],
+  "desc": "run infotocap with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

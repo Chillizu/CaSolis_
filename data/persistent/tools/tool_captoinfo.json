@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "captoinfo"
+  ],
+  "desc": "run captoinfo with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

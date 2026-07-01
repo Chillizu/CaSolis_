@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "chroot"
+  ],
+  "desc": "run chroot with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

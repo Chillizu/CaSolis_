@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "diff"
+  ],
+  "desc": "run diff with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

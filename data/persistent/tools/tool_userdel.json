@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "userdel"
+  ],
+  "desc": "run userdel with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "dash"
+  ],
+  "desc": "run dash with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

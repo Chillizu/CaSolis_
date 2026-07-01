@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "debconf-show"
+  ],
+  "desc": "run debconf-show with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

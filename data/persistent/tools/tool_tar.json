@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "tar"
+  ],
+  "desc": "run tar with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

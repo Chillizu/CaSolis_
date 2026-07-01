@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "unix_update"
+  ],
+  "desc": "run unix_update with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

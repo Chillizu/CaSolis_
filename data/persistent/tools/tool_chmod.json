@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "chmod"
+  ],
+  "desc": "run chmod with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

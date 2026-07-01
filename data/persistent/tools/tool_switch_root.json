@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "switch_root"
+  ],
+  "desc": "run switch_root with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

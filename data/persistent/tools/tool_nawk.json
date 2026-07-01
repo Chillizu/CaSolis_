@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "nawk"
+  ],
+  "desc": "run nawk with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "tee"
+  ],
+  "desc": "run tee with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

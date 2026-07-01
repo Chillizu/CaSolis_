@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "ldconfig"
+  ],
+  "desc": "run ldconfig with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

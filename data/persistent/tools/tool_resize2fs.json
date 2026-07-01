@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "resize2fs"
+  ],
+  "desc": "run resize2fs with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

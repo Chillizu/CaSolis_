@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "passwd"
+  ],
+  "desc": "run passwd with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

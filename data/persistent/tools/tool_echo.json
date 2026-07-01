@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "echo"
+  ],
+  "desc": "run echo with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

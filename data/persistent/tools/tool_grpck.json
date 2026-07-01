@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "grpck"
+  ],
+  "desc": "run grpck with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

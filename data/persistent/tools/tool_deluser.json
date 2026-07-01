@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "deluser"
+  ],
+  "desc": "run deluser with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

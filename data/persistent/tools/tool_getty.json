@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "getty"
+  ],
+  "desc": "run getty with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

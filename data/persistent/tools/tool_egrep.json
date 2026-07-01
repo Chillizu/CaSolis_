@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "egrep"
+  ],
+  "desc": "run egrep with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

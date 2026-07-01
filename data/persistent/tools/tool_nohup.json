@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "nohup"
+  ],
+  "desc": "run nohup with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

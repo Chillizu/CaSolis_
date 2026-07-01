@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "free"
+  ],
+  "desc": "run free with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

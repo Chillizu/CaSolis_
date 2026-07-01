@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "i386"
+  ],
+  "desc": "run i386 with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

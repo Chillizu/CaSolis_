@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "py3clean"
+  ],
+  "desc": "run py3clean with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

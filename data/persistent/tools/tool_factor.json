@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "factor"
+  ],
+  "desc": "run factor with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

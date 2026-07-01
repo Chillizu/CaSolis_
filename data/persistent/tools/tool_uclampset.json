@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "uclampset"
+  ],
+  "desc": "run uclampset with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

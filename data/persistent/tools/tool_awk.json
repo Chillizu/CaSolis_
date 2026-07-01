@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "awk"
+  ],
+  "desc": "run awk with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

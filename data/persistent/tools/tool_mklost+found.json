@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "mklost+found"
+  ],
+  "desc": "run mklost+found with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

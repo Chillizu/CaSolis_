@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "mkfs.cramfs"
+  ],
+  "desc": "run mkfs.cramfs with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

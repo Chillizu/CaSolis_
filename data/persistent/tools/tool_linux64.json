@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "linux64"
+  ],
+  "desc": "run linux64 with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

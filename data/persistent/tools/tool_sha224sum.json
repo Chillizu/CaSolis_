@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "sha224sum"
+  ],
+  "desc": "run sha224sum with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

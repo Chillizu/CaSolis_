@@ -1,0 +1,38 @@
+🧠 持续学习 — 边学边做
+   参数: 869,500
+   学习率: 5e-5 (低 = 保护旧知识)
+   Docker: continual-48c28f02
+
+    轮 |                                  命令 |       损失 |     困惑度 |       类型
+----------------------------------------------------------------------
+   25 |                              who -b |  19.3107 |   15.98 |  curious
+   50 |              ls -la /bin | head -10 |   7.9762 |   17.39 |   random
+   75 |                ls /nonexistent 2>&1 |   4.8329 |   13.91 |  curious
+  100 |                              who -b |   6.0509 |   10.04 |  curious
+  ↻ 重放: loss=2.5809
+  125 |      sl 2>/dev/null; echo not found |   4.7595 |   10.49 |  curious
+  150 |                  ls /dev | head -10 |   4.3474 |    8.30 |  curious
+  175 |                              who -b |   1.9899 |   15.28 |  curious
+  200 |                              uptime |   3.4462 |   11.32 |  curious
+  ↻ 重放: loss=2.6880
+  225 | cat /dev/urandom | head -c 50 2>/de |   1.9269 |   15.49 |  curious
+  250 |                   cat /etc/hostname |   1.7591 |   15.91 |   random
+  275 |        cat /etc/services | head -10 |   3.2404 |   14.21 |  curious
+  300 |                ls /nonexistent 2>&1 |   0.9513 |   14.53 |   random
+  ↻ 重放: loss=3.9438
+  325 |        cat /etc/services | head -10 |   1.9394 |   10.89 |  curious
+  350 |                 ls /proc | head -10 |   2.8169 |    5.84 |    weird
+  375 |        cat /etc/services | head -10 |   1.6678 |    5.01 |    weird
+  400 |                ls /nonexistent 2>&1 |   2.0197 |    3.79 |    weird
+  ↻ 重放: loss=3.1720
+  425 | cat /dev/urandom | head -c 50 2>/de |   1.2835 |    3.69 |    weird
+  450 |              ls -la /bin | head -10 |   0.5444 |    4.01 |    weird
+  475 | find /etc -name '*.conf' 2>/dev/nul |   0.2917 |    5.52 |    weird
+  500 |                 head -20 /etc/group |   1.6770 |    4.22 |    weird
+  ↻ 重放: loss=5.2274
+  525 |                 head -20 /etc/group |   0.7422 |    3.71 |    weird
+  550 |              ls -la /bin | head -10 |   0.6776 |    3.44 |    weird
+  575 |                  ls /dev | head -10 |   0.6803 |    3.21 |   random
+  600 |      sl 2>/dev/null; echo not found |   0.8776 |    3.72 |    weird
+  ↻ 重放: loss=7.6859
+  625 |              ls -la /bin | head -10 |   0.3172 |    4.21 |    weird

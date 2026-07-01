@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "toe"
+  ],
+  "desc": "run toe with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

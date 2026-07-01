@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "pwd"
+  ],
+  "desc": "run pwd with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

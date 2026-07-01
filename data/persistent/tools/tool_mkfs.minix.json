@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "mkfs.minix"
+  ],
+  "desc": "run mkfs.minix with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

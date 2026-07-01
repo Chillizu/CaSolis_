@@ -1,0 +1,146 @@
+最终验证实验 — 500 轮
+==================================================
+
+
+--- 轮 100 ---
+  命令: cat /etc/hostname
+  输出: 33a591b7f19b
+  生成:  $ ls -la /tmp
+total 0
+drwxrwxrwt 1 root root 0 May  9 02:12 .
+drwxr-xr-x 1 root root 0 Jun 10 0 04:33 .
+drwxr-xr-x   1 root root   0 Jun 10 0
+  损失: 0.5718
+
+--- 轮 200 ---
+  命令: grep root /etc/passwd
+  输出: root:x:0:0:root:/root:/bin/bash
+  生成:  $ ls /sys/class/net 2>/dev/nullrwx------: |:  0 Jun 10 ..
+-rw------- 1 root       0 May  9 02:05 .pwd.lock
+-rw-r--r-- 1 root root    3028 May  9 02:
+  损失: 1.0498
+
+--- 轮 300 ---
+  命令: grep root /etc/passwd
+  输出: root:x:0:0:root:/root:/bin/bash
+  生成:  $ ls /dev | head -10
+1
+b7f19_64
+basenc
+acpi
+asound
+bootconfig
+buddyinfo
+bus
+cgroups
+cmdline
+a4d1b
+PREtotal 0
+P
+  损失: 0.1603
+
+--- 轮 400 ---
+  命令: ls /dev | head -10
+  输出: core
+fd
+full
+mqueue
+null
+ptmx
+pts
+random
+shm
+stderr
+  生成:  $ cat /etc/passwd | head -5
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/
+  损失: 0.0665
+
+--- 轮 500 ---
+  命令: cat /etc/issue
+  输出: Ubuntu 22.04.5 LTS \n \l
+  生成:  $ ls /sys | head -10
+block
+bus
+class
+dev
+devices
+firmware
+fs
+hypervisor
+kernel
+module
+module
+6:x:5:60:x:9
+lp:x
+  损失: 0.1595
+
+
+==================================================
+最终报告
+==================================================
+已知命令: 29
+ls                             困惑度:5.88 见过5次
+date                           困惑度:6.48 见过14次
+whoami                         困惑度:0.00 见过2次
+cat /etc/hostname              困惑度:7.48 见过21次
+id                             困惑度:3.15 见过4次
+  生成:  $ ls /proc | head -10
+1
+ systemd
+2979
+acpi
+asound
+bootconfig
+buddyinfo
+bus
+cgroups
+cmdline
+config
+buddyinfo
+bus
+cgroups
+cmdline
+config.gz
+consoles
+cpuinfo
+crypto
+devices
+diskstats
+d
+  生成:  $ cat /etc/os-release | head -5
+PRETTY_NAME="Ubuntu 22.04.5 LTS"
+NAME="Ubuntu"
+VERSION_ID="22.04"
+VERSION="22.04.5 LTS (Jammy Jellyfish)"
+VERSION_CODENAME=jammy
+ID=ubuntu
+ID_LIKE=debian
+basenc
+a
+  生成:  $ ls /sys | head -10
+block
+bus
+class
+dev
+devices
+firmware
+fs
+hypervisor
+kernel
+module
+m:x:4:
+fa5 ..
+class
+systemfd
+full
+mqueue
+null
+ptmx
+pts
+random
+shm
+stderr
+stdin
+

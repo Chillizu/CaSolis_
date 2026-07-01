@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "debconf-escape"
+  ],
+  "desc": "run debconf-escape with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

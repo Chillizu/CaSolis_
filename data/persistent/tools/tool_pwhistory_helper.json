@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "pwhistory_helper"
+  ],
+  "desc": "run pwhistory_helper with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

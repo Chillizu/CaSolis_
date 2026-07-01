@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "blkzone"
+  ],
+  "desc": "run blkzone with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

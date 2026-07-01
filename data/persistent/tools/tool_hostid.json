@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "hostid"
+  ],
+  "desc": "run hostid with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

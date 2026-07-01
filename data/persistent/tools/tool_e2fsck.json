@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "e2fsck"
+  ],
+  "desc": "run e2fsck with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

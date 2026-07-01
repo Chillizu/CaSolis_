@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "vigr"
+  ],
+  "desc": "run vigr with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

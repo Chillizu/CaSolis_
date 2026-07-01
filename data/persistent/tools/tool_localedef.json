@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "localedef"
+  ],
+  "desc": "run localedef with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

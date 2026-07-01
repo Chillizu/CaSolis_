@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "sleep"
+  ],
+  "desc": "run sleep with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

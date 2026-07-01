@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "unshare"
+  ],
+  "desc": "run unshare with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

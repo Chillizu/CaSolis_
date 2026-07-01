@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "mkfs.bfs"
+  ],
+  "desc": "run mkfs.bfs with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "file"
+  ],
+  "desc": "run file with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

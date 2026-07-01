@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "reset"
+  ],
+  "desc": "run reset with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

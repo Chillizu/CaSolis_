@@ -1,0 +1,601 @@
+/home/chillizu/Projects/Folunar_/scripts/train_meta_world.py:197: RuntimeWarning: coroutine 'DockerSandbox.execute' was never awaited
+  r = sandbox.execute("bash", cmd, None)
+RuntimeWarning: Enable tracemalloc to get the object allocation traceback
+/home/chillizu/Projects/Folunar_/scripts/train_meta_world.py:250: RuntimeWarning: coroutine 'DockerSandbox.execute' was never awaited
+  train_meta(cycles=args.cycles, output_dir=args.output)
+RuntimeWarning: Enable tracemalloc to get the object allocation traceback
+🧠 元学习世界模型 — 学命令→输出函数
+   词表: 1500
+   冻结编码器: 869,500
+   可训练: 164,481
+
+   Docker: c0a38462ea72
+
+   轮 |                             命令 |       损失 |    好奇 |           类型
+-----------------------------------------------------------------
+    😴 无聊(好奇0.002) → 试奇怪的: true
+    😴 无聊(好奇0.001) → 试奇怪的: echo $HOME $USER $SHELL
+    😴 无聊(好奇0.001) → 试奇怪的: yes n 2>/dev/null | head -3
+    😴 无聊(好奇0.001) → 试奇怪的: ls -R /etc 2>/dev/null | head -20
+    😴 无聊(好奇0.001) → 试奇怪的: cat /dev/null
+    😴 无聊(好奇0.001) → 试奇怪的: ls /dev
+    😴 无聊(好奇0.001) → 试奇怪的: ls -la /dev/null
+    😴 无聊(好奇0.001) → 试奇怪的: printf 'hello
+world
+'
+    😴 无聊(好奇0.001) → 试奇怪的: wc /etc/hostname
+    😴 无聊(好奇0.001) → 试奇怪的: yes n 2>/dev/null | head -3
+    😴 无聊(好奇0.001) → 试奇怪的: wc /etc/hostname
+    😴 无聊(好奇0.001) → 试奇怪的: find /etc -name '*.conf' 2>/dev/null | head -5
+    😴 无聊(好奇0.001) → 试奇怪的: yes n 2>/dev/null | head -3
+    😴 无聊(好奇0.001) → 试奇怪的: printf 'hello
+world
+'
+    😴 无聊(好奇0.001) → 试奇怪的: ls /dev
+  15 |                        ls /dev |   0.0013 | 0.489 |        weird
+    😴 无聊(好奇0.001) → 试奇怪的: find /etc -name '*.conf' 2>/dev/null | head -5
+    😴 无聊(好奇0.001) → 试奇怪的: ls -R /etc 2>/dev/null | head -20
+    😴 无聊(好奇0.001) → 试奇怪的: yes n 2>/dev/null | head -3
+    😴 无聊(好奇0.001) → 试奇怪的: yes n 2>/dev/null | head -3
+    😴 无聊(好奇0.001) → 试奇怪的: false
+    😴 无聊(好奇0.001) → 试奇怪的: find /etc -name '*.conf' 2>/dev/null | head -5
+    😴 无聊(好奇0.002) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: ls /dev
+    😴 无聊(好奇0.001) → 试奇怪的: echo $HOME $USER $SHELL
+    😴 无聊(好奇0.001) → 试奇怪的: cat /etc/passwd
+    😴 无聊(好奇0.001) → 试奇怪的: printf 'hello
+world
+'
+    😴 无聊(好奇0.001) → 试奇怪的: cat /dev/null
+    😴 无聊(好奇0.001) → 试奇怪的: od -c /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.001) → 试奇怪的: printf 'hello
+world
+'
+    😴 无聊(好奇0.001) → 试奇怪的: sort /etc/hostname 2>/dev/null
+  30 | sort /etc/hostname 2>/dev/null |   0.0001 | 0.470 |        weird
+    😴 无聊(好奇0.001) → 试奇怪的: od -c /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.001) → 试奇怪的: head -5 /etc/services
+    😴 无聊(好奇0.001) → 试奇怪的: false
+    😴 无聊(好奇0.001) → 试奇怪的: wc /etc/hostname
+    😴 无聊(好奇0.002) → 试奇怪的: sort /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: ls /sys
+    😴 无聊(好奇0.002) → 试奇怪的: ls -la /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: true
+    😴 无聊(好奇0.002) → 试奇怪的: ls /dev
+    😴 无聊(好奇0.002) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: find /etc -name '*.conf' 2>/dev/null | head -5
+    😴 无聊(好奇0.002) → 试奇怪的: seq 1 5
+    😴 无聊(好奇0.002) → 试奇怪的: echo $HOME $USER $SHELL
+    😴 无聊(好奇0.002) → 试奇怪的: false
+    😴 无聊(好奇0.002) → 试奇怪的: yes n 2>/dev/null | head -3
+  45 |    yes n 2>/dev/null | head -3 |   0.0001 | 0.478 |        weird
+    😴 无聊(好奇0.002) → 试奇怪的: seq 1 5
+    😴 无聊(好奇0.002) → 试奇怪的: printf 'hello
+world
+'
+    😴 无聊(好奇0.002) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.002) → 试奇怪的: false
+    😴 无聊(好奇0.002) → 试奇怪的: od -c /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: env | grep PATH
+    😴 无聊(好奇0.002) → 试奇怪的: od -c /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.001) → 试奇怪的: false
+    😴 无聊(好奇0.001) → 试奇怪的: ls /dev
+    😴 无聊(好奇0.001) → 试奇怪的: ls -la /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: head -5 /etc/services
+    😴 无聊(好奇0.001) → 试奇怪的: ls /dev
+    😴 无聊(好奇0.001) → 试奇怪的: env | grep PATH
+    😴 无聊(好奇0.001) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+    😴 无聊(好奇0.001) → 试奇怪的: false
+  60 |                          false |   0.0001 | 0.473 |        weird
+    😴 无聊(好奇0.001) → 试奇怪的: ls -la /dev/null
+    😴 无聊(好奇0.001) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.001) → 试奇怪的: yes n 2>/dev/null | head -3
+    😴 无聊(好奇0.001) → 试奇怪的: ls /sys
+    😴 无聊(好奇0.001) → 试奇怪的: yes n 2>/dev/null | head -3
+    😴 无聊(好奇0.001) → 试奇怪的: find /etc -name '*.conf' 2>/dev/null | head -5
+    😴 无聊(好奇0.002) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.002) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.002) → 试奇怪的: cat /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: echo $HOME $USER $SHELL
+    😴 无聊(好奇0.002) → 试奇怪的: od -c /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: ls /dev
+    😴 无聊(好奇0.002) → 试奇怪的: ls -R /etc 2>/dev/null | head -20
+    😴 无聊(好奇0.002) → 试奇怪的: cat /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: false
+  75 |                          false |   0.0001 | 0.477 |        weird
+    😴 无聊(好奇0.001) → 试奇怪的: env | grep PATH
+    😴 无聊(好奇0.001) → 试奇怪的: echo $HOME $USER $SHELL
+    😴 无聊(好奇0.001) → 试奇怪的: seq 1 5
+    😴 无聊(好奇0.001) → 试奇怪的: env | grep PATH
+    😴 无聊(好奇0.001) → 试奇怪的: printf 'hello
+world
+'
+    😴 无聊(好奇0.001) → 试奇怪的: echo $HOME $USER $SHELL
+    😴 无聊(好奇0.001) → 试奇怪的: ls -la /dev/null
+    😴 无聊(好奇0.001) → 试奇怪的: true
+    😴 无聊(好奇0.001) → 试奇怪的: cat /dev/null
+    😴 无聊(好奇0.001) → 试奇怪的: head -5 /etc/services
+    😴 无聊(好奇0.001) → 试奇怪的: ls -R /etc 2>/dev/null | head -20
+    😴 无聊(好奇0.001) → 试奇怪的: find /etc -name '*.conf' 2>/dev/null | head -5
+    😴 无聊(好奇0.002) → 试奇怪的: cat /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: false
+    😴 无聊(好奇0.002) → 试奇怪的: seq 1 5
+  90 |                        seq 1 5 |   0.0001 | 0.475 |        weird
+    😴 无聊(好奇0.002) → 试奇怪的: ls -R /etc 2>/dev/null | head -20
+    😴 无聊(好奇0.002) → 试奇怪的: cat /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: ls -R /etc 2>/dev/null | head -20
+    😴 无聊(好奇0.002) → 试奇怪的: head -5 /etc/services
+    😴 无聊(好奇0.002) → 试奇怪的: echo $HOME $USER $SHELL
+    😴 无聊(好奇0.002) → 试奇怪的: echo $HOME $USER $SHELL
+    😴 无聊(好奇0.001) → 试奇怪的: od -c /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.001) → 试奇怪的: false
+    😴 无聊(好奇0.001) → 试奇怪的: cat /etc/passwd
+    😴 无聊(好奇0.001) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+    😴 无聊(好奇0.001) → 试奇怪的: yes n 2>/dev/null | head -3
+    😴 无聊(好奇0.001) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+    😴 无聊(好奇0.001) → 试奇怪的: true
+    😴 无聊(好奇0.001) → 试奇怪的: cat /dev/null
+    😴 无聊(好奇0.001) → 试奇怪的: od -c /etc/hostname 2>/dev/null
+ 105 | od -c /etc/hostname 2>/dev/nul |   0.0001 | 0.475 |        weird
+    😴 无聊(好奇0.001) → 试奇怪的: ls /sys
+    😴 无聊(好奇0.001) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+    😴 无聊(好奇0.001) → 试奇怪的: od -c /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.001) → 试奇怪的: ls /dev
+    😴 无聊(好奇0.001) → 试奇怪的: true
+    😴 无聊(好奇0.001) → 试奇怪的: cat /etc/passwd
+    😴 无聊(好奇0.002) → 试奇怪的: find /etc -name '*.conf' 2>/dev/null | head -5
+    😴 无聊(好奇0.002) → 试奇怪的: wc /etc/hostname
+    😴 无聊(好奇0.002) → 试奇怪的: ls /sys
+    😴 无聊(好奇0.002) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.002) → 试奇怪的: seq 1 5
+    😴 无聊(好奇0.002) → 试奇怪的: env | grep PATH
+    😴 无聊(好奇0.002) → 试奇怪的: ls /dev
+    😴 无聊(好奇0.002) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+ 120 | grep root /etc/passwd 2>/dev/n |   0.0000 | 0.475 |        weird
+    😴 无聊(好奇0.002) → 试奇怪的: env | grep PATH
+    😴 无聊(好奇0.002) → 试奇怪的: ls -la /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: find /etc -name '*.conf' 2>/dev/null | head -5
+    😴 无聊(好奇0.002) → 试奇怪的: env | grep PATH
+    😴 无聊(好奇0.002) → 试奇怪的: find /etc -name '*.conf' 2>/dev/null | head -5
+    😴 无聊(好奇0.002) → 试奇怪的: ls /dev
+    😴 无聊(好奇0.002) → 试奇怪的: head -5 /etc/services
+    😴 无聊(好奇0.002) → 试奇怪的: false
+    😴 无聊(好奇0.002) → 试奇怪的: find /etc -name '*.conf' 2>/dev/null | head -5
+    😴 无聊(好奇0.002) → 试奇怪的: cat /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: false
+    😴 无聊(好奇0.002) → 试奇怪的: cat /etc/passwd
+    😴 无聊(好奇0.001) → 试奇怪的: sort /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.001) → 试奇怪的: echo $HOME $USER $SHELL
+    😴 无聊(好奇0.001) → 试奇怪的: sort /etc/hostname 2>/dev/null
+ 135 | sort /etc/hostname 2>/dev/null |   0.0001 | 0.475 |        weird
+    😴 无聊(好奇0.001) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+    😴 无聊(好奇0.001) → 试奇怪的: true
+    😴 无聊(好奇0.001) → 试奇怪的: printf 'hello
+world
+'
+    😴 无聊(好奇0.001) → 试奇怪的: sort /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.001) → 试奇怪的: cat /dev/null
+    😴 无聊(好奇0.001) → 试奇怪的: seq 1 5
+    😴 无聊(好奇0.001) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.001) → 试奇怪的: head -5 /etc/services
+    😴 无聊(好奇0.001) → 试奇怪的: true
+    😴 无聊(好奇0.001) → 试奇怪的: cat /etc/passwd
+    😴 无聊(好奇0.001) → 试奇怪的: find /etc -name '*.conf' 2>/dev/null | head -5
+    😴 无聊(好奇0.001) → 试奇怪的: wc /etc/hostname
+    😴 无聊(好奇0.001) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+    😴 无聊(好奇0.001) → 试奇怪的: sort /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: true
+ 150 |                           true |   0.0000 | 0.475 |        weird
+    😴 无聊(好奇0.002) → 试奇怪的: sort /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: env | grep PATH
+    😴 无聊(好奇0.002) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.002) → 试奇怪的: seq 1 5
+    😴 无聊(好奇0.002) → 试奇怪的: ls /dev
+    😴 无聊(好奇0.002) → 试奇怪的: env | grep PATH
+    😴 无聊(好奇0.002) → 试奇怪的: find /etc -name '*.conf' 2>/dev/null | head -5
+    😴 无聊(好奇0.002) → 试奇怪的: seq 1 5
+    😴 无聊(好奇0.002) → 试奇怪的: cat /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: printf 'hello
+world
+'
+    😴 无聊(好奇0.002) → 试奇怪的: echo $HOME $USER $SHELL
+    😴 无聊(好奇0.002) → 试奇怪的: ls /sys
+    😴 无聊(好奇0.002) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: env | grep PATH
+    😴 无聊(好奇0.002) → 试奇怪的: ls -R /etc 2>/dev/null | head -20
+ 165 | ls -R /etc 2>/dev/null | head  |   0.0000 | 0.475 |        weird
+    😴 无聊(好奇0.002) → 试奇怪的: wc /etc/hostname
+    😴 无聊(好奇0.002) → 试奇怪的: env | grep PATH
+    😴 无聊(好奇0.002) → 试奇怪的: wc /etc/hostname
+    😴 无聊(好奇0.001) → 试奇怪的: od -c /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.001) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.001) → 试奇怪的: false
+    😴 无聊(好奇0.001) → 试奇怪的: ls -R /etc 2>/dev/null | head -20
+    😴 无聊(好奇0.001) → 试奇怪的: env | grep PATH
+    😴 无聊(好奇0.001) → 试奇怪的: od -c /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.001) → 试奇怪的: wc /etc/hostname
+    😴 无聊(好奇0.001) → 试奇怪的: cat /dev/null
+    😴 无聊(好奇0.001) → 试奇怪的: cat /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: seq 1 5
+    😴 无聊(好奇0.002) → 试奇怪的: ls /dev
+    😴 无聊(好奇0.002) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+ 180 | grep root /etc/passwd 2>/dev/n |   0.0000 | 0.475 |        weird
+    😴 无聊(好奇0.002) → 试奇怪的: od -c /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: ls -R /etc 2>/dev/null | head -20
+    😴 无聊(好奇0.002) → 试奇怪的: cat /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: ls -la /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: wc /etc/hostname
+    😴 无聊(好奇0.002) → 试奇怪的: ls /dev
+    😴 无聊(好奇0.002) → 试奇怪的: false
+    😴 无聊(好奇0.002) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: seq 1 5
+    😴 无聊(好奇0.002) → 试奇怪的: sort /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: ls -la /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: seq 1 5
+    😴 无聊(好奇0.002) → 试奇怪的: od -c /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: true
+ 195 |                           true |   0.0000 | 0.475 |        weird
+    😴 无聊(好奇0.002) → 试奇怪的: wc /etc/hostname
+    😴 无聊(好奇0.002) → 试奇怪的: head -5 /etc/services
+    😴 无聊(好奇0.002) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: head -5 /etc/services
+    😴 无聊(好奇0.002) → 试奇怪的: cat /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: env | grep PATH
+    😴 无聊(好奇0.002) → 试奇怪的: wc /etc/hostname
+    😴 无聊(好奇0.002) → 试奇怪的: yes n 2>/dev/null | head -3
+    😴 无聊(好奇0.002) → 试奇怪的: false
+    😴 无聊(好奇0.002) → 试奇怪的: echo $HOME $USER $SHELL
+    😴 无聊(好奇0.002) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.002) → 试奇怪的: ls -R /etc 2>/dev/null | head -20
+    😴 无聊(好奇0.002) → 试奇怪的: find /etc -name '*.conf' 2>/dev/null | head -5
+    😴 无聊(好奇0.002) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: wc /etc/hostname
+ 210 |               wc /etc/hostname |   0.0000 | 0.475 |        weird
+    😴 无聊(好奇0.002) → 试奇怪的: seq 1 5
+    😴 无聊(好奇0.002) → 试奇怪的: ls -la /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.002) → 试奇怪的: ls /dev
+    😴 无聊(好奇0.002) → 试奇怪的: false
+    😴 无聊(好奇0.002) → 试奇怪的: head -5 /etc/services
+    😴 无聊(好奇0.002) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: wc /etc/hostname
+    😴 无聊(好奇0.002) → 试奇怪的: cat /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: false
+    😴 无聊(好奇0.002) → 试奇怪的: ls /sys
+    😴 无聊(好奇0.002) → 试奇怪的: sort /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.002) → 试奇怪的: head -5 /etc/services
+    😴 无聊(好奇0.002) → 试奇怪的: wc /etc/hostname
+ 225 |               wc /etc/hostname |   0.0000 | 0.475 |        weird
+    😴 无聊(好奇0.002) → 试奇怪的: false
+    😴 无聊(好奇0.002) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.002) → 试奇怪的: env | grep PATH
+    😴 无聊(好奇0.002) → 试奇怪的: ls /dev
+    😴 无聊(好奇0.002) → 试奇怪的: echo $HOME $USER $SHELL
+    😴 无聊(好奇0.002) → 试奇怪的: cat /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: sort /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: false
+    😴 无聊(好奇0.002) → 试奇怪的: cat /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: wc /etc/hostname
+    😴 无聊(好奇0.002) → 试奇怪的: seq 1 5
+    😴 无聊(好奇0.002) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.002) → 试奇怪的: find /etc -name '*.conf' 2>/dev/null | head -5
+    😴 无聊(好奇0.002) → 试奇怪的: wc /etc/hostname
+    😴 无聊(好奇0.002) → 试奇怪的: ls /proc
+ 240 |                       ls /proc |   0.0000 | 0.475 |        weird
+    😴 无聊(好奇0.002) → 试奇怪的: head -5 /etc/services
+    😴 无聊(好奇0.002) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: false
+    😴 无聊(好奇0.002) → 试奇怪的: od -c /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.002) → 试奇怪的: wc /etc/hostname
+    😴 无聊(好奇0.002) → 试奇怪的: find /etc -name '*.conf' 2>/dev/null | head -5
+    😴 无聊(好奇0.002) → 试奇怪的: ls -R /etc 2>/dev/null | head -20
+    😴 无聊(好奇0.002) → 试奇怪的: head -5 /etc/services
+    😴 无聊(好奇0.002) → 试奇怪的: ls -la /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: head -5 /etc/services
+    😴 无聊(好奇0.002) → 试奇怪的: ls -R /etc 2>/dev/null | head -20
+    😴 无聊(好奇0.002) → 试奇怪的: ls -R /etc 2>/dev/null | head -20
+    😴 无聊(好奇0.002) → 试奇怪的: head -5 /etc/services
+    😴 无聊(好奇0.002) → 试奇怪的: head -5 /etc/services
+ 255 |          head -5 /etc/services |   0.0000 | 0.475 |        weird
+    😴 无聊(好奇0.002) → 试奇怪的: find /etc -name '*.conf' 2>/dev/null | head -5
+    😴 无聊(好奇0.002) → 试奇怪的: ls /sys
+    😴 无聊(好奇0.002) → 试奇怪的: sort /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: ls /dev
+    😴 无聊(好奇0.002) → 试奇怪的: ls -la /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: printf 'hello
+world
+'
+    😴 无聊(好奇0.002) → 试奇怪的: cat /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: wc /etc/hostname
+    😴 无聊(好奇0.002) → 试奇怪的: cat /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: ls /dev
+    😴 无聊(好奇0.002) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.002) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.002) → 试奇怪的: od -c /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.002) → 试奇怪的: od -c /etc/hostname 2>/dev/null
+ 270 | od -c /etc/hostname 2>/dev/nul |   0.0000 | 0.475 |        weird
+    😴 无聊(好奇0.002) → 试奇怪的: cat /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: env | grep PATH
+    😴 无聊(好奇0.002) → 试奇怪的: cat /etc/passwd
+    😴 无聊(好奇0.002) → 试奇怪的: yes n 2>/dev/null | head -3
+    😴 无聊(好奇0.002) → 试奇怪的: wc /etc/hostname
+    😴 无聊(好奇0.002) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.002) → 试奇怪的: wc /etc/hostname
+    😴 无聊(好奇0.002) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.002) → 试奇怪的: env | grep PATH
+    😴 无聊(好奇0.002) → 试奇怪的: false
+    😴 无聊(好奇0.002) → 试奇怪的: env | grep PATH
+    😴 无聊(好奇0.002) → 试奇怪的: ls -la /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: ls -la /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.002) → 试奇怪的: false
+ 285 |                          false |   0.0000 | 0.475 |        weird
+    😴 无聊(好奇0.002) → 试奇怪的: ls -la /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: ls -R /etc 2>/dev/null | head -20
+    😴 无聊(好奇0.002) → 试奇怪的: head -5 /etc/services
+    😴 无聊(好奇0.002) → 试奇怪的: echo $HOME $USER $SHELL
+    😴 无聊(好奇0.002) → 试奇怪的: echo $HOME $USER $SHELL
+    😴 无聊(好奇0.002) → 试奇怪的: od -c /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: ls -R /etc 2>/dev/null | head -20
+    😴 无聊(好奇0.002) → 试奇怪的: od -c /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: false
+    😴 无聊(好奇0.002) → 试奇怪的: od -c /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: od -c /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: ls -R /etc 2>/dev/null | head -20
+    😴 无聊(好奇0.002) → 试奇怪的: false
+    😴 无聊(好奇0.002) → 试奇怪的: echo $HOME $USER $SHELL
+    😴 无聊(好奇0.002) → 试奇怪的: wc /etc/hostname
+ 300 |               wc /etc/hostname |   0.0000 | 0.475 |        weird
+    😴 无聊(好奇0.002) → 试奇怪的: false
+    😴 无聊(好奇0.002) → 试奇怪的: ls -la /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: false
+    😴 无聊(好奇0.002) → 试奇怪的: ls /sys
+    😴 无聊(好奇0.002) → 试奇怪的: printf 'hello
+world
+'
+    😴 无聊(好奇0.002) → 试奇怪的: ls -R /etc 2>/dev/null | head -20
+    😴 无聊(好奇0.002) → 试奇怪的: printf 'hello
+world
+'
+    😴 无聊(好奇0.002) → 试奇怪的: find /etc -name '*.conf' 2>/dev/null | head -5
+    😴 无聊(好奇0.002) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: ls /dev
+    😴 无聊(好奇0.002) → 试奇怪的: sort /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: ls /sys
+    😴 无聊(好奇0.002) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.002) → 试奇怪的: head -5 /etc/services
+    😴 无聊(好奇0.002) → 试奇怪的: true
+ 315 |                           true |   0.0000 | 0.475 |        weird
+    😴 无聊(好奇0.002) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.002) → 试奇怪的: ls -R /etc 2>/dev/null | head -20
+    😴 无聊(好奇0.002) → 试奇怪的: od -c /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: echo $HOME $USER $SHELL
+    😴 无聊(好奇0.002) → 试奇怪的: od -c /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: ls /dev
+    😴 无聊(好奇0.002) → 试奇怪的: ls -R /etc 2>/dev/null | head -20
+    😴 无聊(好奇0.002) → 试奇怪的: ls /sys
+    😴 无聊(好奇0.002) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: false
+    😴 无聊(好奇0.002) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.002) → 试奇怪的: od -c /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: ls -R /etc 2>/dev/null | head -20
+    😴 无聊(好奇0.002) → 试奇怪的: env | grep PATH
+    😴 无聊(好奇0.002) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+ 330 | grep root /etc/passwd 2>/dev/n |   0.0000 | 0.475 |        weird
+    😴 无聊(好奇0.002) → 试奇怪的: false
+    😴 无聊(好奇0.002) → 试奇怪的: wc /etc/hostname
+    😴 无聊(好奇0.002) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: sort /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.002) → 试奇怪的: echo $HOME $USER $SHELL
+    😴 无聊(好奇0.002) → 试奇怪的: ls /dev
+    😴 无聊(好奇0.002) → 试奇怪的: ls /dev
+    😴 无聊(好奇0.002) → 试奇怪的: sort /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: cat /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: ls /sys
+    😴 无聊(好奇0.002) → 试奇怪的: sort /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: seq 1 5
+    😴 无聊(好奇0.002) → 试奇怪的: seq 1 5
+    😴 无聊(好奇0.002) → 试奇怪的: head -5 /etc/services
+ 345 |          head -5 /etc/services |   0.0000 | 0.475 |        weird
+    😴 无聊(好奇0.002) → 试奇怪的: ls /sys
+    😴 无聊(好奇0.002) → 试奇怪的: env | grep PATH
+    😴 无聊(好奇0.002) → 试奇怪的: ls -la /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: false
+    😴 无聊(好奇0.002) → 试奇怪的: seq 1 5
+    😴 无聊(好奇0.002) → 试奇怪的: cat /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: seq 1 5
+    😴 无聊(好奇0.002) → 试奇怪的: ls /sys
+    😴 无聊(好奇0.002) → 试奇怪的: ls -R /etc 2>/dev/null | head -20
+    😴 无聊(好奇0.002) → 试奇怪的: printf 'hello
+world
+'
+    😴 无聊(好奇0.002) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: od -c /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: printf 'hello
+world
+'
+    😴 无聊(好奇0.002) → 试奇怪的: false
+    😴 无聊(好奇0.002) → 试奇怪的: od -c /etc/hostname 2>/dev/null
+ 360 | od -c /etc/hostname 2>/dev/nul |   0.0000 | 0.475 |        weird
+    😴 无聊(好奇0.002) → 试奇怪的: head -5 /etc/services
+    😴 无聊(好奇0.002) → 试奇怪的: ls -R /etc 2>/dev/null | head -20
+    😴 无聊(好奇0.002) → 试奇怪的: echo $HOME $USER $SHELL
+    😴 无聊(好奇0.001) → 试奇怪的: cat /dev/null
+    😴 无聊(好奇0.001) → 试奇怪的: head -5 /etc/services
+    😴 无聊(好奇0.001) → 试奇怪的: yes n 2>/dev/null | head -3
+    😴 无聊(好奇0.001) → 试奇怪的: env | grep PATH
+    😴 无聊(好奇0.002) → 试奇怪的: echo $HOME $USER $SHELL
+    😴 无聊(好奇0.002) → 试奇怪的: find /etc -name '*.conf' 2>/dev/null | head -5
+    😴 无聊(好奇0.002) → 试奇怪的: ls /dev
+    😴 无聊(好奇0.002) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: wc /etc/hostname
+    😴 无聊(好奇0.002) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: find /etc -name '*.conf' 2>/dev/null | head -5
+    😴 无聊(好奇0.002) → 试奇怪的: head -5 /etc/services
+ 375 |          head -5 /etc/services |   0.0000 | 0.475 |        weird
+    😴 无聊(好奇0.002) → 试奇怪的: printf 'hello
+world
+'
+    😴 无聊(好奇0.002) → 试奇怪的: echo $HOME $USER $SHELL
+    😴 无聊(好奇0.002) → 试奇怪的: cat /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: echo $HOME $USER $SHELL
+    😴 无聊(好奇0.002) → 试奇怪的: printf 'hello
+world
+'
+    😴 无聊(好奇0.002) → 试奇怪的: od -c /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: od -c /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: cat /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: ls /dev
+    😴 无聊(好奇0.002) → 试奇怪的: ls /dev
+    😴 无聊(好奇0.002) → 试奇怪的: cat /etc/passwd
+    😴 无聊(好奇0.002) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.002) → 试奇怪的: false
+    😴 无聊(好奇0.002) → 试奇怪的: false
+    😴 无聊(好奇0.002) → 试奇怪的: ls -R /etc 2>/dev/null | head -20
+ 390 | ls -R /etc 2>/dev/null | head  |   0.0000 | 0.475 |        weird
+    😴 无聊(好奇0.002) → 试奇怪的: cat /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: cat /etc/passwd
+    😴 无聊(好奇0.002) → 试奇怪的: wc /etc/hostname
+    😴 无聊(好奇0.002) → 试奇怪的: true
+    😴 无聊(好奇0.002) → 试奇怪的: head -5 /etc/services
+    😴 无聊(好奇0.002) → 试奇怪的: seq 1 5
+    😴 无聊(好奇0.002) → 试奇怪的: sort /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: wc /etc/hostname
+    😴 无聊(好奇0.002) → 试奇怪的: cat /etc/passwd
+    😴 无聊(好奇0.002) → 试奇怪的: env | grep PATH
+    😴 无聊(好奇0.002) → 试奇怪的: yes n 2>/dev/null | head -3
+    😴 无聊(好奇0.002) → 试奇怪的: ls /sys
+    😴 无聊(好奇0.002) → 试奇怪的: find /etc -name '*.conf' 2>/dev/null | head -5
+    😴 无聊(好奇0.002) → 试奇怪的: true
+    😴 无聊(好奇0.002) → 试奇怪的: seq 1 5
+ 405 |                        seq 1 5 |   0.0000 | 0.475 |        weird
+    😴 无聊(好奇0.002) → 试奇怪的: find /etc -name '*.conf' 2>/dev/null | head -5
+    😴 无聊(好奇0.002) → 试奇怪的: ls /dev
+    😴 无聊(好奇0.002) → 试奇怪的: echo $HOME $USER $SHELL
+    😴 无聊(好奇0.002) → 试奇怪的: seq 1 5
+    😴 无聊(好奇0.002) → 试奇怪的: cat /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: cat /etc/passwd
+    😴 无聊(好奇0.002) → 试奇怪的: env | grep PATH
+    😴 无聊(好奇0.002) → 试奇怪的: head -5 /etc/services
+    😴 无聊(好奇0.002) → 试奇怪的: sort /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: ls /sys
+    😴 无聊(好奇0.002) → 试奇怪的: wc /etc/hostname
+    😴 无聊(好奇0.002) → 试奇怪的: false
+    😴 无聊(好奇0.002) → 试奇怪的: false
+    😴 无聊(好奇0.002) → 试奇怪的: od -c /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: find /etc -name '*.conf' 2>/dev/null | head -5
+ 420 | find /etc -name '*.conf' 2>/de |   0.0000 | 0.475 |        weird
+    😴 无聊(好奇0.002) → 试奇怪的: od -c /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: env | grep PATH
+    😴 无聊(好奇0.002) → 试奇怪的: echo $HOME $USER $SHELL
+    😴 无聊(好奇0.002) → 试奇怪的: head -5 /etc/services
+    😴 无聊(好奇0.002) → 试奇怪的: ls /sys
+    😴 无聊(好奇0.002) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.002) → 试奇怪的: wc /etc/hostname
+    😴 无聊(好奇0.002) → 试奇怪的: env | grep PATH
+    😴 无聊(好奇0.002) → 试奇怪的: ls -la /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: ls /sys
+    😴 无聊(好奇0.002) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.002) → 试奇怪的: printf 'hello
+world
+'
+    😴 无聊(好奇0.002) → 试奇怪的: seq 1 5
+    😴 无聊(好奇0.002) → 试奇怪的: printf 'hello
+world
+'
+    😴 无聊(好奇0.001) → 试奇怪的: ls /proc
+ 435 |                       ls /proc |   0.0000 | 0.475 |        weird
+    😴 无聊(好奇0.001) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+    😴 无聊(好奇0.001) → 试奇怪的: ls /dev
+    😴 无聊(好奇0.001) → 试奇怪的: cat /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.002) → 试奇怪的: ls /dev
+    😴 无聊(好奇0.002) → 试奇怪的: ls /sys
+    😴 无聊(好奇0.002) → 试奇怪的: cat /etc/passwd
+    😴 无聊(好奇0.002) → 试奇怪的: true
+    😴 无聊(好奇0.002) → 试奇怪的: sort /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.002) → 试奇怪的: cat /etc/passwd
+    😴 无聊(好奇0.002) → 试奇怪的: yes n 2>/dev/null | head -3
+    😴 无聊(好奇0.002) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.002) → 试奇怪的: od -c /etc/hostname 2>/dev/null
+ 450 | od -c /etc/hostname 2>/dev/nul |   0.0000 | 0.475 |        weird
+    😴 无聊(好奇0.002) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: wc /etc/hostname
+    😴 无聊(好奇0.002) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.002) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.002) → 试奇怪的: cat /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: head -5 /etc/services
+    😴 无聊(好奇0.001) → 试奇怪的: find /etc -name '*.conf' 2>/dev/null | head -5
+    😴 无聊(好奇0.001) → 试奇怪的: true
+    😴 无聊(好奇0.001) → 试奇怪的: sort /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.001) → 试奇怪的: head -5 /etc/services
+    😴 无聊(好奇0.001) → 试奇怪的: true
+    😴 无聊(好奇0.001) → 试奇怪的: seq 1 5
+    😴 无聊(好奇0.001) → 试奇怪的: yes n 2>/dev/null | head -3
+    😴 无聊(好奇0.002) → 试奇怪的: false
+    😴 无聊(好奇0.001) → 试奇怪的: printf 'hello
+world
+'
+ 465 |          printf 'hello
+world
+' |   0.0000 | 0.475 |        weird
+    😴 无聊(好奇0.001) → 试奇怪的: env | grep PATH
+    😴 无聊(好奇0.002) → 试奇怪的: ls /sys
+    😴 无聊(好奇0.002) → 试奇怪的: cat /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: find /etc -name '*.conf' 2>/dev/null | head -5
+    😴 无聊(好奇0.002) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: seq 1 5
+    😴 无聊(好奇0.002) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: env | grep PATH
+    😴 无聊(好奇0.002) → 试奇怪的: head -5 /etc/services
+    😴 无聊(好奇0.002) → 试奇怪的: cat /etc/passwd
+    😴 无聊(好奇0.002) → 试奇怪的: cat /etc/passwd
+    😴 无聊(好奇0.002) → 试奇怪的: echo $HOME $USER $SHELL
+    😴 无聊(好奇0.002) → 试奇怪的: ls /proc
+    😴 无聊(好奇0.002) → 试奇怪的: true
+    😴 无聊(好奇0.002) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+ 480 | grep root /etc/passwd 2>/dev/n |   0.0000 | 0.475 |        weird
+    😴 无聊(好奇0.002) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: printf 'hello
+world
+'
+    😴 无聊(好奇0.002) → 试奇怪的: true
+    😴 无聊(好奇0.002) → 试奇怪的: env | grep PATH
+    😴 无聊(好奇0.002) → 试奇怪的: printf 'hello
+world
+'
+    😴 无聊(好奇0.002) → 试奇怪的: ls /dev
+    😴 无聊(好奇0.002) → 试奇怪的: env | grep PATH
+    😴 无聊(好奇0.002) → 试奇怪的: ls /dev
+    😴 无聊(好奇0.002) → 试奇怪的: wc /etc/hostname
+    😴 无聊(好奇0.002) → 试奇怪的: cat /etc/passwd
+    😴 无聊(好奇0.002) → 试奇怪的: ls -R /etc 2>/dev/null | head -20
+    😴 无聊(好奇0.002) → 试奇怪的: sort /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: env | grep PATH
+    😴 无聊(好奇0.002) → 试奇怪的: grep root /etc/passwd 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: ls /dev
+ 495 |                        ls /dev |   0.0000 | 0.475 |        weird
+    😴 无聊(好奇0.002) → 试奇怪的: cat /dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: od -c /etc/hostname 2>/dev/null
+    😴 无聊(好奇0.002) → 试奇怪的: cat /etc/passwd
+    😴 无聊(好奇0.002) → 试奇怪的: wc /etc/hostname
+    😴 无聊(好奇0.002) → 试奇怪的: cat /dev/null
+
+✅ 500 轮完成
+   好奇度趋势: 0.516 → 0.475
+   奇怪尝试: 500/500
+   已知命令: 36
+
+🧪 世界模型预测测试:
+   ls                             预测确定性: 88.02
+   date -u                        预测确定性: 86.34
+   cat /etc/hostname              预测确定性: 85.43
+   ls /nonexistent 2>&1           预测确定性: 83.31

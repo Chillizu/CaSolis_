@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "update-alternatives"
+  ],
+  "desc": "run update-alternatives with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

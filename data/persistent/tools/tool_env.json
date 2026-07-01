@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "env"
+  ],
+  "desc": "run env with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

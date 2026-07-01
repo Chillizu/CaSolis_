@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "chage"
+  ],
+  "desc": "run chage with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

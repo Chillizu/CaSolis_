@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "delgroup"
+  ],
+  "desc": "run delgroup with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

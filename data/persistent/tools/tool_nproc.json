@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "nproc"
+  ],
+  "desc": "run nproc with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

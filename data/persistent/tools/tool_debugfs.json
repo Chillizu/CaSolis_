@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "debugfs"
+  ],
+  "desc": "run debugfs with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

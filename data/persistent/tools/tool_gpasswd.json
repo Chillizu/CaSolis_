@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "gpasswd"
+  ],
+  "desc": "run gpasswd with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

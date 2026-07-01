@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "dh_bash-completion"
+  ],
+  "desc": "run dh_bash-completion with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

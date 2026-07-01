@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "pam-auth-update"
+  ],
+  "desc": "run pam-auth-update with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "fsck.cramfs"
+  ],
+  "desc": "run fsck.cramfs with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

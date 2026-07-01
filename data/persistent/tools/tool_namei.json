@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "namei"
+  ],
+  "desc": "run namei with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

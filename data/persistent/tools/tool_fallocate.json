@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "fallocate"
+  ],
+  "desc": "run fallocate with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

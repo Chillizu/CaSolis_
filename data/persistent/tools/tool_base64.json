@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "base64"
+  ],
+  "desc": "run base64 with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

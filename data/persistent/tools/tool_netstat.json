@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "netstat"
+  ],
+  "desc": "run netstat with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

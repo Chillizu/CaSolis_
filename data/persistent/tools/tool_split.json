@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "split"
+  ],
+  "desc": "run split with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

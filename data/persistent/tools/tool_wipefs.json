@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "wipefs"
+  ],
+  "desc": "run wipefs with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

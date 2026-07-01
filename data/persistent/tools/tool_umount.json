@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "umount"
+  ],
+  "desc": "run umount with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

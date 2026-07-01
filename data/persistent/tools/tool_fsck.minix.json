@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "fsck.minix"
+  ],
+  "desc": "run fsck.minix with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

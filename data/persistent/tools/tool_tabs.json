@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "tabs"
+  ],
+  "desc": "run tabs with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

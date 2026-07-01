@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "uncompress"
+  ],
+  "desc": "run uncompress with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

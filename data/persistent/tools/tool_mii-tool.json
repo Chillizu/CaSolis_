@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "mii-tool"
+  ],
+  "desc": "run mii-tool with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

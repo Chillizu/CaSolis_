@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "nice"
+  ],
+  "desc": "run nice with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "su"
+  ],
+  "desc": "run su with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

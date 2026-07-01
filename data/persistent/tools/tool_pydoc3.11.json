@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "pydoc3.11"
+  ],
+  "desc": "run pydoc3.11 with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

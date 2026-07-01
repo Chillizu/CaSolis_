@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "policy-rc.d"
+  ],
+  "desc": "run policy-rc.d with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

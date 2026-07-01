@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "grep"
+  ],
+  "desc": "run grep with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

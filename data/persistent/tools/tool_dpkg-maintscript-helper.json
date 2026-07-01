@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "dpkg-maintscript-helper"
+  ],
+  "desc": "run dpkg-maintscript-helper with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

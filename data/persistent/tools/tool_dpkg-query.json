@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "dpkg-query"
+  ],
+  "desc": "run dpkg-query with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "pager"
+  ],
+  "desc": "run pager with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

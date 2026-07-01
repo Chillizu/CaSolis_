@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "pldd"
+  ],
+  "desc": "run pldd with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

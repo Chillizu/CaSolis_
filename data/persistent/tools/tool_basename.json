@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "basename"
+  ],
+  "desc": "run basename with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

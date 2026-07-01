@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "choom"
+  ],
+  "desc": "run choom with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

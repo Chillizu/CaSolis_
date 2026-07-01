@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "pam_namespace_helper"
+  ],
+  "desc": "run pam_namespace_helper with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

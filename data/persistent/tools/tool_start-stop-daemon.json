@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "start-stop-daemon"
+  ],
+  "desc": "run start-stop-daemon with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

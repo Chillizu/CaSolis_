@@ -1,0 +1,67 @@
+🧠 离线预训练 — checkpoints/word-offline-v1
+   参数: 869,500
+   词表: 1500 词 + 16 行动
+   数据: 350 条序列
+   轮次: 500 | lr: 0.0003 | batch: 8
+
+  epoch   10/500 | loss: 1.2361 | lr: 3.00e-04 | 44s
+  epoch   20/500 | loss: 0.8002 | lr: 2.99e-04 | 87s
+  epoch   30/500 | loss: 0.6532 | lr: 2.98e-04 | 130s
+  epoch   40/500 | loss: 0.5073 | lr: 2.96e-04 | 186s
+  epoch   50/500 | loss: 0.4035 | lr: 2.94e-04 | 270s
+  epoch   60/500 | loss: 0.3095 | lr: 2.92e-04 | 335s
+  epoch   70/500 | loss: 0.2624 | lr: 2.89e-04 | 402s
+  epoch   80/500 | loss: 0.2404 | lr: 2.86e-04 | 466s
+  epoch   90/500 | loss: 0.1732 | lr: 2.82e-04 | 522s
+  epoch  100/500 | loss: 0.1348 | lr: 2.78e-04 | 584s
+  epoch  110/500 | loss: 0.1574 | lr: 2.74e-04 | 641s
+  epoch  120/500 | loss: 0.0907 | lr: 2.69e-04 | 702s
+  epoch  130/500 | loss: 0.0815 | lr: 2.64e-04 | 776s
+  epoch  140/500 | loss: 0.0730 | lr: 2.59e-04 | 849s
+  epoch  150/500 | loss: 0.0648 | lr: 2.53e-04 | 923s
+  epoch  160/500 | loss: 0.0572 | lr: 2.47e-04 | 1015s
+  epoch  170/500 | loss: 0.0550 | lr: 2.41e-04 | 1120s
+  epoch  180/500 | loss: 0.0481 | lr: 2.34e-04 | 1211s
+  epoch  190/500 | loss: 0.0432 | lr: 2.27e-04 | 1289s
+  epoch  200/500 | loss: 0.0414 | lr: 2.20e-04 | 1362s
+  epoch  210/500 | loss: 0.0521 | lr: 2.13e-04 | 1464s
+  epoch  220/500 | loss: 0.0388 | lr: 2.05e-04 | 1591s
+  epoch  230/500 | loss: 0.0368 | lr: 1.98e-04 | 1722s
+  epoch  240/500 | loss: 0.0407 | lr: 1.90e-04 | 1802s
+  epoch  250/500 | loss: 0.0421 | lr: 1.82e-04 | 1921s
+  epoch  260/500 | loss: 0.0426 | lr: 1.74e-04 | 2019s
+  epoch  270/500 | loss: 0.0423 | lr: 1.66e-04 | 2116s
+  epoch  280/500 | loss: 0.0374 | lr: 1.58e-04 | 2218s
+  epoch  290/500 | loss: 0.0361 | lr: 1.50e-04 | 2313s
+  epoch  300/500 | loss: 0.0327 | lr: 1.42e-04 | 2435s
+  epoch  310/500 | loss: 0.0350 | lr: 1.34e-04 | 2546s
+  epoch  320/500 | loss: 0.0381 | lr: 1.26e-04 | 2612s
+  epoch  330/500 | loss: 0.0354 | lr: 1.19e-04 | 2739s
+  epoch  340/500 | loss: 0.0379 | lr: 1.11e-04 | 2841s
+  epoch  350/500 | loss: 0.0387 | lr: 1.03e-04 | 2947s
+  epoch  360/500 | loss: 0.0379 | lr: 9.59e-05 | 3075s
+  epoch  370/500 | loss: 0.0357 | lr: 8.87e-05 | 3209s
+  epoch  380/500 | loss: 0.0350 | lr: 8.17e-05 | 3351s
+  epoch  390/500 | loss: 0.0366 | lr: 7.49e-05 | 3517s
+  epoch  400/500 | loss: 0.0383 | lr: 6.83e-05 | 3621s
+  epoch  410/500 | loss: 0.0392 | lr: 6.20e-05 | 3730s
+  epoch  420/500 | loss: 0.0381 | lr: 5.60e-05 | 3881s
+  epoch  430/500 | loss: 0.0338 | lr: 5.03e-05 | 4081s
+  epoch  440/500 | loss: 0.0357 | lr: 4.49e-05 | 4327s
+   epoch  450/500 | loss: 0.0376 | lr: 3.99e-05 | 5427s
+  epoch  460/500 | loss: 0.0359 | lr: 3.52e-05 | 5493s
+  epoch  470/500 | loss: 0.0354 | lr: 3.08e-05 | 5558s
+  epoch  480/500 | loss: 0.0323 | lr: 2.69e-05 | 5625s
+  epoch  490/500 | loss: 0.0346 | lr: 2.33e-05 | 5692s
+  epoch  500/500 | loss: 0.0338 | lr: 2.02e-05 | 5759s
+
+✅ 完成! 最终损失: 0.0338
+   最佳损失: 0.0338
+
+🧪 生成测试:
+  生成:  $ du -sh /tmp 2>/dev/null
+0	/tmp
+/ro,drwxr-xr-x 1 root staff   0 Apr 18  2022 local
+lrwxrwxrwx 1 root root    9 May  9 02:05 lock -> /run/lock
+drwxr-xr-x 1 root root  124 May  9 02:05 log
+drwxrwsr-x 

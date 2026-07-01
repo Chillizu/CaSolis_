@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "mawk"
+  ],
+  "desc": "run mawk with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

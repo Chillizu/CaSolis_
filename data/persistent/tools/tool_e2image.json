@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "e2image"
+  ],
+  "desc": "run e2image with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

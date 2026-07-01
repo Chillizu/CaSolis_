@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "deb-systemd-helper"
+  ],
+  "desc": "run deb-systemd-helper with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

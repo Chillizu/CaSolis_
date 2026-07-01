@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "getopt"
+  ],
+  "desc": "run getopt with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

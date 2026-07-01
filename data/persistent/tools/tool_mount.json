@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "mount"
+  ],
+  "desc": "run mount with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

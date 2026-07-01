@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "dumpe2fs"
+  ],
+  "desc": "run dumpe2fs with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}

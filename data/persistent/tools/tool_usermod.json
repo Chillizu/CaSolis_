@@ -1,0 +1,8 @@
+{
+  "cmd": [
+    "usermod"
+  ],
+  "desc": "run usermod with arguments",
+  "cat": "discovered",
+  "source": "tool_factory"
+}
