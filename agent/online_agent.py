@@ -328,6 +328,16 @@ class OnlineAgent:
         self.intuition_buffer = IntuitionBuffer(capacity=1024)
         print(f"  ✅ IntuitionBuffer 就绪 (cap=1024, 0 参数)")
 
+        # P20: SalienceSignal — 杏仁核 / 全局显著性信号
+        from agent.salience import SalienceSignal
+        self.salience = SalienceSignal()
+        print("  ✅ SalienceSignal 就绪 (amygdala, 0 参数)")
+
+        # P20: HabitSystem — 基底神经节 / 习惯系统
+        from agent.habit import HabitSystem
+        self.habit_system = HabitSystem()
+        print("  ✅ HabitSystem 就绪 (basal ganglia, 0 参数)")
+
         # P19: 睡眠巩固 — 用经验回放微调 Conductor
         self._sleep_interval = 100
         self._sleep_batch_size = 32
@@ -338,6 +348,7 @@ class OnlineAgent:
         self._boredom = 0.0
         self._boredom_decay = 0.05
         self._boredom_threshold = 0.6
+        self._low_salience_streak = 0
         self._spontaneous_source = False
         print(f"  ✅ 增长型WM V4: {len(self.world_model_v4.leaves)} 个意图叶")
         # P10: 情景记忆 (初始禁用, V4 ready 后启用)
@@ -1711,13 +1722,35 @@ class OnlineAgent:
         print(f"  [SLEEP] Conductor consolidation loss={avg_loss:.4f} "
               f"n={len(batch)}")
 
-    def _update_boredom(self, reward: float, surprise: float):
-        """P19: 更新无聊度。低奖励+低惊奇 -> 无聊度上升。"""
-        interesting = max(0.0, reward) + surprise * 10.0
-        if interesting < 0.05:
-            self._boredom += 0.08
+    def _compute_salience_hints(self) -> dict:
+        """P20: 当最近显著性峰值高时, 为最近变化的 FactGraph 节点生成提示。"""
+        if not hasattr(self, 'salience') or self.salience.recent_max() <= 0.7:
+            return {}
+        graph = getattr(self.workbench, 'graph', None)
+        if not graph or not hasattr(graph, 'nodes'):
+            return {}
+        boost = self.salience.recent_max()
+        hints = {}
+        for key, node in graph.nodes.items():
+            if getattr(node, 'step', 0) >= self.step_count - 5:
+                hints[key] = boost
+        return hints
+
+    def _update_boredom(self):
+        """P20: 更新无聊度。显著性均值低且持续 -> 无聊度上升; 高显著性 -> 下降。"""
+        if not hasattr(self, 'salience'):
+            return
+        mean_salience = self.salience.recent_mean()
+        if mean_salience < 0.2:
+            self._low_salience_streak += 1
         else:
+            self._low_salience_streak = 0
+
+        if mean_salience > 0.5:
             self._boredom = max(0.0, self._boredom - self._boredom_decay)
+        elif self._low_salience_streak >= 5:
+            self._boredom += 0.08
+
         self._boredom = min(1.0, self._boredom)
 
     def _direction_step(self) -> tuple[str | None, dict | None]:
@@ -1792,8 +1825,11 @@ class OnlineAgent:
         mode_stats = self._compute_mode_stats()
         self.current_mode = self.meta_selector.select(mode_stats)
         self.state_encoder.set_mode(self.current_mode)
+        # P20: 丘脑注意力提示 — 高显著性时提升最近变化事实
+        salience_hints = self._compute_salience_hints()
+
         thought_label = f"{self.current_mode}:{thought_label}" if thought_label else self.current_mode
-        state_text = self.state_encoder.get_state_text(thought_label=thought_label)
+        state_text = self.state_encoder.get_state_text(thought_label=thought_label, salience_hints=salience_hints)
         state_emb = self.classifier.get_embedding(state_text).detach().clone()
 
         # 2. 推理引擎: 自适应频率
@@ -2369,6 +2405,23 @@ class OnlineAgent:
             try_cmd = str(params.get("custom_args", ""))[:40]
             self._tried_custom_cmds.add(try_cmd)
         
+        # P20: 习惯系统 — 高置信度习惯直接复用参数 (LEARN 模式除外)
+        if (
+            hasattr(self, 'habit_system')
+            and self.current_mode != "LEARN"
+            and intent is not None
+        ):
+            try:
+                intent_idx_h = INTENTS.index(intent) if intent in INTENTS else 0
+                habit_params = self.habit_system.suggest(intent_idx_h, state_emb)
+                if habit_params is not None:
+                    params = dict(habit_params)
+                    if random.random() < 0.15:
+                        print(f"  [HABIT] {intent} -> 复用历史参数")
+            except Exception as e:
+                if random.random() < 0.02:
+                    print(f"  [HABIT] suggest error: {e}")
+
         # TRY 预验证 — 检查命令存在、参数合法性
         if intent == "TRY":
             params["custom_args"] = self._validate_custom(params.get("custom_args", []))
@@ -2474,7 +2527,7 @@ class OnlineAgent:
             _post_state = {k: v.get("value", "") for k, v in _wb.facts.items()}
 
         # 6. 世界模型好奇心 + RND 新颖度
-        next_state_text = self.state_encoder.get_state_text(thought_label=thought_label)
+        next_state_text = self.state_encoder.get_state_text(thought_label=thought_label, salience_hints=salience_hints)
 
         # P18: WM5 surprise — prediction error as intrinsic motivation signal
         _wm5_surprise = 0.0
@@ -2636,6 +2689,28 @@ class OnlineAgent:
         # P1.5: 滑动窗口记录
         self.ab_window.append((used_conductor, step_success))
 
+        # P20: 更新显著性信号 (reward 和 step_success 已知后)
+        if hasattr(self, 'salience'):
+            try:
+                self.salience.update(
+                    rnd_novelty=rnd_novelty,
+                    wm_surprise=getattr(self, '_last_wm_surprise', 0.0),
+                    success=step_success,
+                    reward=reward,
+                )
+            except Exception as e:
+                if random.random() < 0.02:
+                    print(f"  [SAL] update error: {e}")
+
+        # P20: 注册习惯
+        if hasattr(self, 'habit_system') and intent is not None:
+            try:
+                intent_idx_h = INTENTS.index(intent) if intent in INTENTS else 0
+                self.habit_system.register(intent_idx_h, params, step_success, reward, self.step_count)
+            except Exception as e:
+                if random.random() < 0.02:
+                    print(f"  [HABIT] register error: {e}")
+
         # P2: 记录 Conductor 轨迹 (用于 REINFORCE)
         if used_conductor and self.conductor_path_active and self._last_cond_logits is not None:
             self.conductor_trajectories.append((
@@ -2650,6 +2725,8 @@ class OnlineAgent:
 
         # P9: 超级日志 — 每步记录
         try:
+            salience_stats = self.salience.get_stats() if hasattr(self, 'salience') else {}
+            habit_stats = self.habit_system.get_stats() if hasattr(self, 'habit_system') else {}
             self.logger.log_step(
                 step=self.step_count, intent=intent, params=params,
                 source=self._last_action_source,
@@ -2662,7 +2739,13 @@ class OnlineAgent:
                 facts_before=facts_before, facts_after=len(self.workbench.facts),
                 ab_stats=self.ab_stats,
                 rnd_state=self.rnd.get_novelty_stats(),
+                salience_stats=salience_stats,
+                habit_stats=habit_stats,
             )
+            if random.random() < 0.05 and (salience_stats or habit_stats):
+                print(f"  [SAL] last={salience_stats.get('last', 0):.2f} mean={salience_stats.get('mean', 0):.2f} max={salience_stats.get('max', 0):.2f}")
+                if habit_stats.get('n_habits'):
+                    print(f"  [HABIT] n={habit_stats['n_habits']} top={habit_stats['top'][:2]}")
         except Exception:
             pass
 
@@ -2914,7 +2997,7 @@ class OnlineAgent:
                     except Exception as e:
                         print(f"  [SLEEP] error: {e}")
                 # P19: 更新无聊度
-                self._update_boredom(reward, getattr(self, '_last_wm_surprise', 0.0))
+                self._update_boredom()
                 if len(self._wm5_buffer) > 600:
                     self._wm5_buffer = self._wm5_buffer[-600:]
                 if (len(self._wm5_buffer) >= 20

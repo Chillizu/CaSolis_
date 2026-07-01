@@ -1,7 +1,7 @@
 # Folunar_ — 项目规则与架构
 
-> 最后更新: 2026-06-29
-> 当前状态: P11-P15 全部完成, P16 推理层 R1-R4 已实施, P17 自我意识层已实施
+> 最后更新: 2026-07-01
+> 当前状态: P11-P19 全部完成, P20 人脑参考架构已实施
 > 最后验证: 200 步 91% 成功率, LLM 自由格式输出 3 次, 自省意图产生
 > 哲学: 小模型(分类器/Conductor)指决策, LLM(qwen3.5:0.8b)做自省+创作, CPU异步不堵塞
 
@@ -81,6 +81,9 @@ ExecResult
 | **P15** | 脑启发动态层: WM V4 图注意力, 自我反思, 置信度门控, 去人为化(自适应奖励/动态StateEncoder/动态GoalGenerator) | 已完成 |
 | **P16** | **推理层(R1-R4全部完成)**: TransitionMiner因果挖掘→HypothesisEngine假设生成→ExperimentPlanner实验→Verdict验证→WM反馈+自动schema+MODE自适应LEARN | **已实施** |
 | **P17** | **自我意识层**: SelfModel(意图成功率/高光/自描述), LLM自省每隔20步问"你想做什么", qwen3.5:0.8b替代gemma4(2s vs 76s), 自由格式输出异步管道 | **已实施** |
+| **P18** | **随机隐变量世界模型 V5.1**: RSSM Lite 预测下一状态, DoCalculusEngine 因果推断, CodeArchive 代码持久化, Planner 多步编排 | **已实施** |
+| **P19** | **想象与睡眠巩固**: ImaginationEngine 内部推演, IntuitionBuffer 成功率/想象标记, 睡眠巩固微调 Conductor, 无聊度/默认模式 | **已实施** |
+| **P20** | **人脑参考架构**: 将 P10-P19 模块映射到大脑功能区, 新增 SalienceSignal(杏仁核) + HabitSystem(基底神经节), StateEncoder 增加丘脑式注意力门控 | **已实施** |
 
 ### INTENTS (P15 重构后: 3 类元意图)
 
@@ -117,6 +120,14 @@ ExecResult
 | `agent/experience.py` | ~150 | 经验回放缓冲区 |
 | `agent/detailed_logger.py` | ~100 | JSONL日志 |
 | `agent/sandbox_executor.py` | ~100 | Docker沙箱执行 |
+| `agent/do_calculus.py` | ~413 | 因果推断: d-分离、后门准则、ATE 估计 |
+| `agent/code_archive.py` | ~208 | 代码持久化与生长追踪 |
+| `agent/planner.py` | ~164 | 多步计划编排 |
+| `agent/imagination.py` | ~150 | 想象引擎: WorldModelV5.1 内部推演 |
+| `agent/intuition_buffer.py` | ~224 | 直觉/习惯缓存: 成功/惊喜/想象标记 |
+| `agent/salience.py` | ~60 | 全局显著性信号(杏仁核): 整合 RND 新颖度 / WM 惊喜 / 成功 / 奖励 |
+| `agent/habit.py` | ~120 | 习惯系统(基底神经节): 意图级成功统计, 高置信度时绕过 deliberation |
+| `agent/world_model_v5_1.py` | ~410 | 世界模型 V5.1 RSSM Lite: 随机隐状态 + 前向预测 + KL 惊喜 |
 
 ### 模型指标
 
@@ -126,6 +137,7 @@ ExecResult
 | ConductorHead | ~67K | 状态文本 → 16维 thought |
 | WorldModelNet V3 | ~0.5M | 全局预测 |
 | GrowingWorldModel V4 | 核+16叶 | 逐意图预测 + 自动扩展 |
+| WorldModelV5.1 | ~410K | 随机隐状态世界模型 + 前向预测 + KL 惊喜 |
 | RND | ~0.3M | 新颖度检测 |
 | MiniLM (冻结) | ~90MB | 状态文本嵌入 |
 
@@ -234,7 +246,7 @@ R4 自我改进: Verdict→WM 反馈训练, 自动 schema 扩展, MetaCognitiveS
 
 | 目录 | 用途 |
 |------|------|
-| `agent/` | 所有核心模块 (20个 .py 文件) |
+| `agent/` | 所有核心模块 (20+ 个 .py 文件) |
 | `benchmark/` | 模板引擎 + 参数提取器 |
 | `config/` | 命令注册, 参数规则, 创作提示 |
 | `data/persistent/` | 持久化数据 (SQLite, PyTorch models, JSON) |
@@ -341,9 +353,9 @@ cp .env.example .env
 
 | 文件 | 内容 |
 |------|------|
-| `agent/` | 所有核心模块 (20个 .py 文件) |
+| `agent/` | 所有核心模块 (20+ 个 .py 文件) |
 | `PLAN_P11_P15.md` | P11-P15 实施计划 (已完成) |
-| `PLAN_P16_REASONING.md` | P16 推理层计划 (待实施) |
+| `PLAN_P16_REASONING.md` | P16 推理层计划 (已完成) |
 | `REASONING_LAYER_DESIGN.md` | Kimi 设计的推理层详细方案 |
 | `HANOFF.md` | 完整交接文档 (P15 最终状态) |
 | `ARCH_REVIEW_P10_EVOLUTION.md` | Kimi 架构评审 |

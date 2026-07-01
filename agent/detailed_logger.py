@@ -52,7 +52,9 @@ class DetailedLogger:
                  cond_logits_summary: Optional[dict] = None,
                  wm_pred_summary: Optional[dict] = None,
                  train_loss: Optional[float] = None,
-                 recovery_action: str = ""):
+                 recovery_action: str = "",
+                 salience_stats: Optional[dict] = None,
+                 habit_stats: Optional[dict] = None):
         """记录一步的完整状态"""
         entry = {
             "event": "step",
@@ -84,6 +86,10 @@ class DetailedLogger:
             entry["world_model"] = wm_pred_summary
         if train_loss is not None:
             entry["train_loss"] = round(train_loss, 6)
+        if salience_stats:
+            entry["salience_stats"] = salience_stats
+        if habit_stats:
+            entry["habit_stats"] = habit_stats
         self._write(entry)
 
     def log_training(self, *, step: int, loss: float, lr: float,

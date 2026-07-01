@@ -8,7 +8,7 @@
 """
 
 import re
-from typing import Optional
+from typing import Optional, Dict
 
 
 class StateEncoder:
@@ -58,12 +58,12 @@ class StateEncoder:
         first = lines[0].strip() if lines else "(空)"
         return first[:80]
 
-    def get_state_text(self, thought_label: str = "") -> str:
+    def get_state_text(self, thought_label: str = "", salience_hints: Optional[Dict[str, float]] = None) -> str:
         """
         生成状态文本 — 动态从 FactGraph 选取事实
 
-        不再有硬编码的"CPU: xxx 内存: xxx"段落。
-        改为: FactGraph 根据 MODE 选出最重要的节点。
+        参数:
+            salience_hints: 事实键 -> 显著性分数; 高显著性事实会被优先选入状态文本。
         """
         parts = []
 
@@ -76,8 +76,8 @@ class StateEncoder:
         avg_r = sum(self._recent_rewards[-5:]) / max(len(self._recent_rewards[-5:]), 1)
         parts.append(f"rew {avg_r:.2f}")
 
-        # 2. 从 FactGraph 选事实 (去掉硬编码的 if/else)
-        facts_text = self._get_dynamic_facts()
+        # 2. 从 FactGraph 选事实 (去掉硬编码的 if/else; 支持显著性门控)
+        facts_text = self._get_dynamic_facts(salience_hints=salience_hints)
         if facts_text:
             parts.append(facts_text)
 
@@ -87,7 +87,7 @@ class StateEncoder:
 
         return " ".join(parts)
 
-    def _get_dynamic_facts(self, max_facts: int = 6) -> str:
+    def _get_dynamic_facts(self, max_facts: int = 6, salience_hints: Optional[Dict[str, float]] = None) -> str:
         """
         从 FactGraph 动态选取最重要的节点
 
@@ -96,7 +96,7 @@ class StateEncoder:
           - CREATE: 工具结果 + 能力 + 创作相关
           - LEARN: 预测误差 + 新事实 + 意外
 
-        没有任何硬编码的类别/路径/正则。
+        当 salience_hints 提供时, 高显著性事实加权, 低显著性事实降权, 模拟丘脑注意力门控。
         """
         if not self.workbench:
             return ""
@@ -112,7 +112,7 @@ class StateEncoder:
         }
         prefer = mode_cats.get(self._mode, mode_cats["EXPLORE"])
 
-        # 评分: 偏好类别 * 置信度 * 近期性
+        # 评分: 偏好类别 * 置信度 * 近期性 * 显著性
         scored = []
         for key, node in graph.nodes.items():
             score = 0.0
@@ -126,6 +126,17 @@ class StateEncoder:
             score += node.confidence * 0.5
             # 近期性 (step 越大越新)
             score += min(node.step / 100, 1.0) * 0.3
+
+            # 丘脑注意力门控: 显著性调制
+            if salience_hints and key in salience_hints:
+                salience = salience_hints[key]
+                if salience > 0.5:
+                    score *= (1.0 + salience)
+                elif salience < 0.3:
+                    score *= 0.5
+                else:
+                    score *= (1.0 + salience * 0.5)
+
             scored.append((score, key, node))
 
         scored.sort(key=lambda x: -x[0])
@@ -141,6 +152,14 @@ class StateEncoder:
             fact_parts.append(f"{key}={val}")
 
         return " ".join(fact_parts)
+
+    def apply_attention(self, fact_scores: list[tuple[str, float]], top_k: int = 6) -> list[tuple[str, float]]:
+        """丘脑注意力输出: 按分数排序并截断 top_k。
+
+        当前为显式占位, 未来可扩展为可学习的注意力权重。
+        """
+        fact_scores.sort(key=lambda x: x[1], reverse=True)
+        return fact_scores[:top_k]
 
     @property
     def explored_paths(self):

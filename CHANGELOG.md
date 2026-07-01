@@ -5,6 +5,25 @@
 
 ---
 
+## [2026-07-01] P20 — Brain-Reference Architecture
+
+### 新增文档
+- `doc/BRAIN_REFERENCE.md` — 将 P10-P19 模块映射到大脑功能区, 包含信号流图和模块对照表
+
+### 新增模块
+- `agent/salience.py` — SalienceSignal(杏仁核): 整合 RND 新颖度、WorldModelV5.1 惊喜、上一步成功/奖励, 输出全局显著性标量
+- `agent/habit.py` — HabitSystem(基底神经节): 按 intent 统计成功/失败, 高置信度时直接复用历史参数
+
+### 修改
+- `agent/state_encoder.py` — `_get_dynamic_facts` 增加 `salience_hints` 参数, 实现丘脑式注意力门控: 高显著性事实加权, 低显著性事实降权
+- `agent/online_agent.py` — 主循环中实例化 SalienceSignal 和 HabitSystem; 每步更新显著性并注册习惯; 动作选择前优先使用高置信度习惯; 无聊度/默认模式由显著性均值驱动
+
+### 验证
+- 新增 `scripts/test_p20_salience.py`, `scripts/test_p20_habit.py`, `scripts/test_p20_state_encoder.py`
+- 120 秒 smoke test 通过, 无崩溃
+
+---
+
 ## [2026-06-29] P16 — 认知推理层设计方案
 
 ### 新增设计文档
