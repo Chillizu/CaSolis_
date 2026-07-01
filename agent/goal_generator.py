@@ -60,6 +60,11 @@ class GoalGenerator:
             "report": {"ok": 0, "fail": 0},
         }
         self._inferences: dict = {}
+        # P20: 多步计划编排
+        self._active_plan: Optional[Plan] = None
+        self._plan_history: list = []
+        self._plan_probability = 0.40  # 40% 概率输出计划而非单句
+
 
     def decide_creative_intention(self, wb, step: int) -> dict:
         """小模型思维: 看数据, 产生真实的好奇心, 发具体任务给 DeepSeek 实现"""
@@ -110,6 +115,39 @@ class GoalGenerator:
                 observations.extend(arch_obs)
             except Exception:
                 pass
+        # P18: WM5 Surprise signal — prediction error drives creative direction
+        recent_surprise = getattr(self, '_recent_surprise', [])
+        if recent_surprise and len(recent_surprise) >= 5:
+            avg_surprise = sum(recent_surprise[-10:]) / max(len(recent_surprise[-10:]), 1)
+            # Adaptive thresholds via running statistics
+            if not hasattr(self, '_surprise_running'):
+                self._surprise_running = []
+            self._surprise_running.append(avg_surprise)
+            if len(self._surprise_running) > 100:
+                self._surprise_running = self._surprise_running[-100:]
+            if len(self._surprise_running) >= 10:
+                # Running statistics for adaptive thresholds
+                run_mean = sum(self._surprise_running) / len(self._surprise_running)
+                run_var = sum((s - run_mean)**2 for s in self._surprise_running) / len(self._surprise_running)
+                run_std = max(run_var ** 0.5, 1e-8)
+                z = (avg_surprise - run_mean) / run_std
+                if z < -1.0:
+                    # Significantly below average → predictable → random explore
+                    observations.append(("boredom",
+                        f"z_surprise={z:.2f} (too predictable)"))
+                elif z > 1.5:
+                    # Significantly above average → unexpected → keep focus
+                    if observations and hasattr(self, '_tag_history') and self._tag_history:
+                        last_tag = self._tag_history[-1]
+                        for otag, otxt in observations[:]:
+                            if otag == last_tag:
+                                observations.append((otag, otxt + " (surprise spike)"))
+                                break
+            else:
+                # Not enough stats yet: use heuristic based on raw range
+                if avg_surprise < 0.0003:
+                    observations.append(("boredom",
+                        f"avg_surprise={avg_surprise:.6f} (too predictable)"))
         if not observations:
             observations.append(("random-explore", "nothing stands out"))
         
@@ -179,6 +217,81 @@ class GoalGenerator:
         if len(self._create_type_history) > 50:
             self._create_type_history = self._create_type_history[-50:]
         return {"style": style, "intention": idea, "category": "idea"}
+
+    def decide_plan(self, wb, step: int):
+        """动态生成多步计划 — 零模板, 全由结构化组合产生"""
+        if not hasattr(self, '_plan_probability'):
+            return None
+        if random.random() > self._plan_probability:
+            return None
+        from agent.planner import Plan
+        # 1. 找当前观察标签
+        facts = wb.facts if hasattr(wb, 'facts') and wb.facts else {}
+        tags = []
+        for k, v in facts.items():
+            if isinstance(v, dict):
+                cat = v.get('category', '')
+                if cat and cat not in ('general', 'content', 'meta'):
+                    tags.append(cat)
+        tag_counts = {}
+        for t in tags:
+            tag_counts[t] = tag_counts.get(t, 0) + 1
+        if not tag_counts:
+            return None
+        top_tag = max(tag_counts, key=tag_counts.get)
+        # 2. 生成步骤链: 保证 code → analysis → report 各一步
+        steps = []
+        formats_needed = ["code", "analysis", "report"]  # 构建→分析→报告
+        # 打乱前两个顺序但保持报告在最后
+        random.shuffle(formats_needed[:-1])
+        for i, fmt in enumerate(formats_needed):
+            # 临时设 format_bias 只产出当前格式
+            old_bias = self._format_bias_cache if hasattr(self, '_format_bias_cache') else None
+            candidates = self._generate_ideas(top_tag, f"{top_tag}=observed")
+            # 过滤当前格式
+            matching = [c for c in candidates if c[1] == fmt]
+            if matching:
+                _, style, idea = random.choice(matching)
+            else:
+                # 没匹配到: 用通用描述
+                domains = {"cpu":"CPU layer","kernel-limit":"kernel parameters",
+                    "memory":"memory hierarchy","fs-limit":"filesystem limits",
+                    "process":"process lifecycle","network":"network topology",
+                    "erratic":"anomalous behavior","system":"system state"}
+                domain = domains.get(top_tag, "system")
+                fmt_verbs = {"code":["build","probe","monitor","catalog"],
+                    "analysis":["analyze","study","examine"],
+                    "report":["document","report","summarize"]}
+                verb = random.choice(fmt_verbs.get(fmt, ["explore"]))
+                idea = f"I want to {verb} the {domain}"
+            if fmt == "code":
+                deps = []
+                desc = idea + ". Build the tool/module that collects data."
+            elif fmt == "analysis":
+                deps = [s["id"] for s in steps]  # 依赖前面所有已完成步骤
+                desc = idea + ". Use data from prior steps for analysis."
+            else:
+                deps = [s["id"] for s in steps]
+                desc = idea + ". Synthesize all prior steps into a structured report."
+            steps.append({"id": i, "style": fmt, "desc": desc,
+                "deps": deps, "done": False, "file": ""})
+        if not steps:
+            return None
+        domains = {"cpu":"CPU layer","kernel-limit":"kernel parameter space",
+            "memory":"memory hierarchy","erratic":"anomalous behavior",
+            "fs-limit":"filesystem boundary","process":"process lifecycle",
+            "network":"network topology","system":"system baseline"}
+        plan = Plan(f"plan_{step}", steps, created_step=step,
+                    topic=domains.get(top_tag, "system state"))
+        self._active_plan = plan
+        self._plan_history.append(plan.to_dict())
+        print(f"  [PLAN] {plan.plan_id}: {len(plan.steps)}步 (零模板), topic=\"{plan.topic}\"")
+        for s in plan.steps:
+            print(f"    步{s['id']}: [{s['style']:10s}] {s['desc'][:70]}")
+        return plan
+
+
+
     
     def record_format_result(self, fmt: str, success: bool):
         """记录格式执行结果, 用于自适应调权"""

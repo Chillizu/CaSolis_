@@ -566,6 +566,30 @@
       "pattern": "cmd_sysctl_intent",
       "key": "cmd_sysctl_intent",
       "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_arch_intent",
+      "key": "cmd_arch_intent",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_hostname_intent",
+      "key": "cmd_hostname_intent",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_uptime_has_help",
+      "key": "cmd_uptime_has_help",
+      "category": "script"
+    },
+    {
+      "trigger": "output_contains",
+      "pattern": "cmd_dmesg_intent",
+      "key": "cmd_dmesg_intent",
+      "category": "script"
     }
   ]
 }

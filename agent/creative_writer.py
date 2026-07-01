@@ -279,18 +279,6 @@ class CreativeWriter:
                 "The agent has an idea. Help implement it. Output ONLY the code or content.\n\n"
                 "## The Agent's Idea\n{intention}\n"
             ),
-            "self_reflect": (
-                "You are an autonomous Linux agent. Based on the following facts about yourself, "
-                "what do you want to do next?\n"
-                "## Rules\n"
-                "- Think about what you're good at, what you haven't tried, what interests you.\n"
-                "- Output ONE short sentence: your intention.\n"
-                "- Be specific: name a command, file type, or area to explore.\n"
-                "- Example: 'I want to explore network commands since I haven't tried them yet.'\n"
-                "- Example: 'I want to write a Python script that summarizes all my discoveries.'\n\n"
-                "## Self Knowledge\n{self_description}\n\n"
-                "## Intention\n"
-            ),
         }
     
     def health_check(self) -> bool:
