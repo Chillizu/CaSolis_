@@ -323,12 +323,19 @@ docker rm -f folunar-sandbox
 
 ## 密钥存储
 
-| 密钥 | 值 | 用途 |
-|------|-----|------|
-| HF_TOKEN | `YOUR_HF_TOKEN` | HuggingFace 访问 token |
-| DEEPSEEK_KEY | `YOUR_DEEPSEEK_KEY` | DeepSeek API (临时代码生成) |
+密钥不再存储在 AGENTS.md 中。请复制 `.env.example` 为 `.env` 并填入真实值：
 
----
+```bash
+cp .env.example .env
+# 然后编辑 .env
+```
+
+| 密钥 | 环境变量名 | 用途 |
+|------|------------|------|
+| HF_TOKEN | `HF_TOKEN` | HuggingFace 访问 token |
+| DEEPSEEK_KEY | `DEEPSEEK_API_KEY` | DeepSeek API (临时代码生成) |
+
+`.env` 已被 `.gitignore` 排除，不会进入版本控制。
 
 ## 文件索引
 

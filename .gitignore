@@ -37,6 +37,10 @@ marathon_*.log
 run_logs/
 seed/
 
+# Secrets
+.env
+main_session_*.jsonl
+
 # OS
 .DS_Store
 Thumbs.db
