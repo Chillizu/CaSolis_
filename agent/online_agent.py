@@ -16,6 +16,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import os
 os.environ["HF_HUB_OFFLINE"] = "1"
 import torch
+import torch.nn.functional as F
 from sentence_transformers import SentenceTransformer
 
 from agent.state_encoder import StateEncoder
@@ -57,6 +58,7 @@ from agent.world_model_v4 import GrowingWorldModel
 from agent.episodic_memory import EpisodicMemory
 from agent.creative_writer import CreativeWriter
 from agent.code_archive import CodeArchive
+from agent.imagination import ImaginationEngine  # P19: 想象引擎
 from benchmark.param_extractor import ParameterExtractor
 from benchmark.template_engine import TemplateEngine, ExecResult
 from collections import deque
@@ -304,28 +306,40 @@ class OnlineAgent:
             if name != "HELP":
                 self.world_model_v4.add_intent(name)
 
-        # P18: WorldModel V5 — 状态转移预测 (GRU, ~370K)
-        from agent.world_model_v5 import WorldModelV5
-        self.world_model_v5 = WorldModelV5()
-        self._wm5_buffer: list[dict] = []  # 累积 transition 供 V5 训练
-        self._wm5_train_interval = 15  # 每 15 步训练一次
+        # P18: WorldModel V5.1 — RSSM Lite (随机隐变量 + KL 惊奇度)
+        from agent.world_model_v5_1 import WorldModelV51
+        self.world_model_v5 = WorldModelV51()
+        self._wm5_buffer: list[dict] = []
+        self._wm5_train_interval = 15
         self._wm5_batch_size = 32
         self._wm5_checkpoint = "data/persistent/world_model_v5.pt"
-        # 尝试加载已有 checkpoint
         if os.path.exists(self._wm5_checkpoint):
             try:
                 self.world_model_v5.load(self._wm5_checkpoint)
-                print(f"  ✅ WorldModel V5 已加载 ({self.world_model_v5._param_count:,} params)")
+                print(f"  ✅ WorldModel V5.1 已加载 ({self.world_model_v5._param_count:,} params)")
             except Exception as e:
-                print(f"  ⚠️ WorldModel V5 加载失败, 从头开始: {e}")
+                print(f"  ⚠️ WorldModel V5.1 加载失败, 从头开始: {e}")
         else:
-            print(f"  ℹ️ WorldModel V5 新创建 ({self.world_model_v5._param_count:,} params)")
+            print(f"  ℹ️ WorldModel V5.1 新创建 ({self.world_model_v5._param_count:,} params)")
+        self._prev_fact_categories = {}
 
         # P18: IntuitionBuffer — 余弦相似度直觉缓冲
         from agent.intuition_buffer import IntuitionBuffer
         self.intuition_buffer = IntuitionBuffer(capacity=1024)
         print(f"  ✅ IntuitionBuffer 就绪 (cap=1024, 0 参数)")
-        print(f"  \u2705 增长型WM V4: {len(self.world_model_v4.leaves)} 个意图叶")
+
+        # P19: 睡眠巩固 — 用经验回放微调 Conductor
+        self._sleep_interval = 100
+        self._sleep_batch_size = 32
+        self._sleep_lr = 1e-5
+        self._sleep_steps = 3
+        self._sleep_optimizer = None
+        # P19: 默认模式/无聊度 — 内生冲动驱动
+        self._boredom = 0.0
+        self._boredom_decay = 0.05
+        self._boredom_threshold = 0.6
+        self._spontaneous_source = False
+        print(f"  ✅ 增长型WM V4: {len(self.world_model_v4.leaves)} 个意图叶")
         # P10: 情景记忆 (初始禁用, V4 ready 后启用)
         self.episodic_memory = EpisodicMemory()
         print("  \u2705 情景记忆就绪 (初始禁用)")
@@ -374,6 +388,27 @@ class OnlineAgent:
             print(f"  ✅ 保姆就绪 (阈值={conductor_gate})")
         except Exception as e:
             print(f"  ⚠️ 保姆不可用: {e}")
+
+        # P19: ImaginationEngine — 用 WM5.1 做想象回放
+        # 必须在 Nanny 初始化后，因为需要 conductor
+        self.imagination_engine = ImaginationEngine(
+            world_model=self.world_model_v5,
+            conductor=self.nanny.conductor if self.conductor_path_active else None,
+            buffer=self.intuition_buffer,
+            max_steps=5,
+            device=self.device,
+        )
+        print(f"  ✅ ImaginationEngine 就绪 (max_steps=5)")
+
+        # P19: 初始化 sleep optimizer（在 nanny 就绪后）
+        if self.conductor_path_active:
+            self._sleep_optimizer = torch.optim.AdamW(
+                self.nanny.conductor.head.parameters(),
+                lr=self._sleep_lr, weight_decay=1e-4,
+            )
+            print(f"  ✅ Sleep consolidation 就绪 (lr={self._sleep_lr})")
+        else:
+            self._sleep_optimizer = None
 
         # P11: PersistentStore
         from agent.persistent_store import PersistentStore
@@ -1466,6 +1501,31 @@ class OnlineAgent:
             "wm_error": wm_loss,
         }
 
+    def _compute_fact_diff(self) -> torch.Tensor:
+        """Compute binary vector of fact categories that gained new nodes this step"""
+        n_cats = 20
+        result = torch.zeros(n_cats)
+        try:
+            wb = self.workbench
+            if not hasattr(wb, 'graph') or not wb.graph:
+                return result
+            # Get current category counts
+            cur = {}
+            for n in wb.graph.nodes.values():
+                cur[n.category] = cur.get(n.category, 0) + 1
+            prev = getattr(self, '_prev_fact_categories', {})
+            # Which categories increased?
+            for cat, count in cur.items():
+                old = prev.get(cat, 0)
+                if count > old:
+                    idx = hash(cat) % n_cats
+                    result[idx] = 1.0
+            # Store current as prev for next step
+            self._prev_fact_categories = cur
+        except Exception:
+            pass
+        return result
+
 
     # ── P17: 自省方向解析与应用 ──
 
@@ -1523,6 +1583,142 @@ class OnlineAgent:
 
         if random.random() < 0.3:
             print(f"  [SELF-DIR] {direction}: {intention[:60]}...")
+
+
+    def _stats_based_direction(self):
+        """直觉方向: 从 IntuitionBuffer 经验中采样, 不再用 if/else"""
+        buf = getattr(self, 'intuition_buffer', None)
+        signals = {}
+
+        # P19: 如果无聊度很高，触发内生冲动
+        boredom = getattr(self, '_boredom', 0.0)
+        if boredom > getattr(self, '_boredom_threshold', 0.6):
+            self._spontaneous_impulse()
+            return
+
+        # 1. IntuitionBuffer 查询 — 从经验中学习方向
+        if buf and buf.size >= 10:
+            result = buf.query(self.persistent_thought)
+            signals["familiarity"] = round(result["familiarity"], 4)
+            signals["n_exp"] = result["n_entries"]
+            probs = list(result["direction_probs"])  # [p_obs, p_create, p_try]
+        else:
+            probs = [0.4, 0.2, 0.4]
+            signals["n_exp"] = buf.size if buf else 0
+
+        # 2. 惊奇度 z-score 修正
+        rs = getattr(self, '_recent_surprise', [])
+        if len(rs) >= 10:
+            avg_sur = sum(rs[-10:]) / 10
+            all_avg = sum(rs) / len(rs)
+            std = max((sum((s - all_avg)**2 for s in rs) / len(rs))**0.5, 1e-8)
+            z = (avg_sur - all_avg) / std
+            signals["z"] = round(z, 2)
+            if z > 1.5:
+                probs[0] *= 1.5   # 高惊奇 → 观察
+                probs[2] *= 1.2   # 尝试验证
+            elif z < -1.0:
+                probs[1] *= 2.0   # 低惊奇 → 创作
+
+        # 3. KL 不确定度修正
+        kl = getattr(self, '_last_kl', 0.0)
+        signals["kl"] = round(kl, 3)
+        if kl > 1.0:
+            probs[0] *= 1.5
+            probs[2] *= 1.2
+
+        # 4. 归一化 → 采样方向
+        p_t = torch.tensor(probs, dtype=torch.float)
+        p_t = torch.softmax(p_t, dim=0)
+        direction_map = {0: "explore", 1: "create", 2: "scripting"}
+        chosen = int(p_t.argmax().item())
+        direction = direction_map[chosen]
+
+        self._self_direction = direction
+        self._self_remaining = 5
+        self._spontaneous_source = False
+        if random.random() < 0.3:
+            sig_parts = [f"{k}={v}" for k, v in signals.items()]
+            sig_str = " ".join(sig_parts)
+            print(f"  [DIR] {direction} ({sig_str}) "
+                  f"pobs={p_t[0]:.2f} pcre={p_t[1]:.2f} ptry={p_t[2]:.2f}")
+
+    def _spontaneous_impulse(self):
+        """
+        P19: 默认模式/内生冲动。
+        当无聊度超过阈值时，从 IntuitionBuffer 中采样历史高光经验，
+        复现其意图作为当前方向。
+        """
+        buf = getattr(self, 'intuition_buffer', None)
+        if not buf or buf.size < 5:
+            return
+
+        # 采样高奖励成功经验
+        batch = buf.sample_batch(batch_size=16, prefer_success=True)
+        best = max(batch, key=lambda x: x["reward"] + (1.0 if x["success"] else 0.0))
+        intent = best["intent"]
+        direction_map = {0: "explore", 1: "create", 2: "scripting"}
+        direction = direction_map.get(intent, "explore")
+
+        self._self_direction = direction
+        self._self_remaining = 5
+        self._spontaneous_source = True
+        self._boredom = 0.0
+        print(f"  [SPONT] {direction} (from historical reward={best['reward']:.2f} "
+              f"success={best['success']}) boredom reset")
+
+    def _sleep_consolidation(self):
+        """
+        P19: 睡眠巩固 — 用 IntuitionBuffer 中的经验回放微调 Conductor。
+        目标: Conductor(state_emb)  closer to stored thought。
+        """
+        if not self.conductor_path_active or not self._sleep_optimizer:
+            return
+
+        buf = getattr(self, 'intuition_buffer', None)
+        if not buf or buf.size < 32:
+            return
+
+        batch = buf.sample_batch(batch_size=self._sleep_batch_size, prefer_success=True)
+        # 只保留有 state_emb 的条目
+        batch = [b for b in batch if b["state_emb"] is not None]
+        if len(batch) < 8:
+            return
+
+        self.nanny.conductor.head.train()
+        total_loss = 0.0
+        n_steps = 0
+
+        for _ in range(self._sleep_steps):
+            random.shuffle(batch)
+            states = torch.stack([b["state_emb"] for b in batch[:16]])
+            targets = torch.stack([b["thought"] for b in batch[:16]])
+
+            pred, _ = self.nanny.conductor.forward_emb(states)
+            loss = F.mse_loss(pred, targets)
+
+            self._sleep_optimizer.zero_grad()
+            loss.backward()
+            torch.nn.utils.clip_grad_norm_(
+                self.nanny.conductor.head.parameters(), 1.0)
+            self._sleep_optimizer.step()
+
+            total_loss += loss.item()
+            n_steps += 1
+
+        self.nanny.conductor.head.eval()
+        avg_loss = total_loss / max(n_steps, 1)
+        print(f"  [SLEEP] Conductor consolidation loss={avg_loss:.4f} "
+              f"n={len(batch)}")
+
+    def _update_boredom(self, reward: float, surprise: float):
+        """P19: 更新无聊度。低奖励+低惊奇 -> 无聊度上升。"""
+        interesting = max(0.0, reward) + surprise * 10.0
+        if interesting < 0.05:
+            self._boredom += 0.08
+        else:
+            self._boredom = max(0.0, self._boredom - self._boredom_decay)
+        self._boredom = min(1.0, self._boredom)
 
     def _direction_step(self) -> tuple[str | None, dict | None]:
         """按当前方向执行一步"""
@@ -1863,6 +2059,10 @@ class OnlineAgent:
                 and getattr(self.creative_writer, '_async_result', None) is None
                 and self.step_count % 5 == 0):
             try:
+                # Feed WM5 prediction error as surprise signal to GoalGenerator
+                self.goal_generator._recent_surprise = getattr(self, '_recent_surprise', [])
+                self.goal_generator._last_surprise = getattr(self, '_last_wm_surprise', 0.0)
+                self.goal_generator._last_kl = getattr(self, '_last_kl', 0.0)
                 intention = self.goal_generator.decide_creative_intention(
                     self.workbench, self.step_count)
                 self.creative_writer.generate_async(
@@ -1872,24 +2072,12 @@ class OnlineAgent:
                 )
             except Exception:
                 pass
-        # P17: 自我反思 — 检查异步自省结果
-        if (hasattr(self, 'self_model') and hasattr(self, 'creative_writer')
-                and self.creative_writer
+        # P17: 自我方向 — 多信号决策方向 (完全不依赖 LLM)
+        if (hasattr(self, 'self_model')
                 and self.step_count > 30
-                and self._self_remaining <= 0):
-            cw = self.creative_writer
-            sr = getattr(cw, '_self_reflect_result', None)
-            if sr is not None:
-                intention = sr.get("content", "")
-                cw._self_reflect_result = None
-                if intention and len(intention.strip()) > 10:
-                    self._parse_and_apply_direction(intention.strip())
-            elif self.step_count % 20 == 0:
-                # 每 20 步触发自省 async
-                try:
-                    cw.generate_async(self.workbench, "self_reflect")
-                except Exception:
-                    pass
+                and self._self_remaining <= 0
+                and self._adaptive_should("set_direction", 0.04)):
+            self._stats_based_direction()
         # P17: 方向持久期 — 每步按方向选择
         if self._self_remaining > 0 and not used_goal:
             dir_intent, dir_params = self._direction_step()
@@ -2185,6 +2373,15 @@ class OnlineAgent:
         if intent == "TRY":
             params["custom_args"] = self._validate_custom(params.get("custom_args", []))
 
+        # P18: WorldModel V5 — pre-action prediction for surprise computation
+        _wm5_pred = None
+        if hasattr(self, 'world_model_v5'):
+            try:
+                _i_idx = INTENTS.index(intent) if intent in INTENTS else 0
+                _wm5_pred = self.world_model_v5.step(state_emb, _i_idx)
+            except Exception:
+                pass
+
         # 4. 执行 (多命令组合 P1)
         depth = params.get("depth", 1)
         multi_results = None
@@ -2278,6 +2475,22 @@ class OnlineAgent:
 
         # 6. 世界模型好奇心 + RND 新颖度
         next_state_text = self.state_encoder.get_state_text(thought_label=thought_label)
+
+        # P18: WM5 surprise — prediction error as intrinsic motivation signal
+        _wm5_surprise = 0.0
+        if hasattr(self, 'world_model_v5') and _wm5_pred is not None:
+            try:
+                _next_emb = self.classifier.get_embedding(next_state_text).detach()
+                _wm5_surprise = ((_wm5_pred["next_state"].detach() - _next_emb) ** 2).mean().item()
+                if not hasattr(self, '_recent_surprise'):
+                    self._recent_surprise = []
+                self._recent_surprise.append(_wm5_surprise)
+                if len(self._recent_surprise) > 200:
+                    self._recent_surprise = self._recent_surprise[-200:]
+                self._last_wm_surprise = _wm5_surprise
+                self._last_post_emb = _next_emb
+            except Exception:
+                pass
 
         # V3: 世界模型 — 思考 + 预测 + 直觉
         intent_idx = INTENTS.index(intent) if intent in INTENTS else 0
@@ -2663,15 +2876,45 @@ class OnlineAgent:
                     "intent": INTENTS.index(intent) if intent in INTENTS else 0,
                     "reward": reward,
                     "continue": 1.0,
+                    "post_emb": self._last_post_emb.detach().clone()
+                        if hasattr(self, '_last_post_emb')
+                        else state_emb.detach().clone(),
+                    # P18 Phase 3: fact category diff (which categories got new facts)
+                    "fact_cats": self._compute_fact_diff() if hasattr(self, 'workbench') else torch.zeros(20),
                 })
-                # P18: IntuitionBuffer 记录
+                # P18 Phase 3: IntuitionBuffer 记录 (含成功/惊奇度)
                 if hasattr(self, 'intuition_buffer'):
                     self.intuition_buffer.store(
                         thought=self.persistent_thought,
                         intent=INTENTS.index(intent) if intent in INTENTS else 0,
                         params=params,
                         reward=reward,
+                        success=step_success,
+                        surprise=getattr(self, '_last_wm_surprise', 0.0),
+                        state_emb=state_emb.detach().clone(),
+                        imagined=False,
                     )
+                # P19: 想象回放 — 用 WM5.1 从当前状态 rollout 未来
+                if (hasattr(self, 'imagination_engine')
+                        and self.step_count % 10 == 0
+                        and self.intuition_buffer.size >= 20):
+                    try:
+                        img_result = self.imagination_engine.rollout(
+                            state_emb, first_intent=INTENTS.index(intent) if intent in INTENTS else 0)
+                        if img_result.get('n_steps', 0) > 0:
+                            print(f"  [IMAGINE] rolled {img_result['n_steps']} steps "
+                                  f"mean_reward={img_result['mean_reward']:.3f}")
+                    except Exception as e:
+                        print(f"  [IMAGINE] error: {e}")
+                # P19: 睡眠巩固 — 每 _sleep_interval 步微调 Conductor
+                if (self.step_count > 0
+                        and self.step_count % self._sleep_interval == 0):
+                    try:
+                        self._sleep_consolidation()
+                    except Exception as e:
+                        print(f"  [SLEEP] error: {e}")
+                # P19: 更新无聊度
+                self._update_boredom(reward, getattr(self, '_last_wm_surprise', 0.0))
                 if len(self._wm5_buffer) > 600:
                     self._wm5_buffer = self._wm5_buffer[-600:]
                 if (len(self._wm5_buffer) >= 20
@@ -2685,13 +2928,17 @@ class OnlineAgent:
                             buf[i]["intent"], states[i:i+1])
                         actions.append(a_emb)
                     actions_t = torch.cat(actions, dim=0)
-                    next_states = torch.stack([b["pre_emb"] for b in buf[1:T+1]])
+                    next_states = torch.stack([b["post_emb"] for b in buf[:T]])
                     rewards = torch.tensor([[b["reward"]] for b in buf[:T]])
                     cont = torch.tensor([[b["continue"]] for b in buf[:T]])
+                    fact_t = torch.stack([b.get("fact_cats", torch.zeros(20)) for b in buf[:T]])
                     loss = self.world_model_v5.train_step(
                         states, actions_t, next_states, rewards, cont,
+                        fact_targets=fact_t,
                         chunk_size=16,
                     )
+                    # V5.1: track KL divergence as uncertainty signal
+                    self._last_kl = self.world_model_v5.last_kl_value
                     if self.step_count % 50 == 0:
                         self.world_model_v5.save(self._wm5_checkpoint)
                     if self.step_count % 100 == 0:
