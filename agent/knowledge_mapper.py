@@ -524,6 +524,12 @@ class KnowledgeMapper:
                 fact_key = f"bin_{d.replace('/', '_').strip('_')}_count"
                 if not self._fact_exists(fact_key):
                     self._add_fact(fact_key, str(len(cmds)), "system", 0.9, 0, f"scan:{d}")
+        # 过滤已知不可用的命令 (如 lsmod 在沙箱内不可用)
+        if self.sandbox and hasattr(self.sandbox, '_unavailable_commands'):
+            self._all_available_commands = [
+                c for c in self._all_available_commands
+                if c not in self.sandbox._unavailable_commands
+            ]
         return self._all_available_commands
 
     def discover_next(self, step: int, rnd=None) -> int:

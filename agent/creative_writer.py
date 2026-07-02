@@ -57,37 +57,72 @@ def _ollama_generate(prompt: str, model: str = "gemma4:e4b",
         return None
 
 
+def _openai_compatible_generate(prompt: str,
+                                 api_key: str,
+                                 model: str,
+                                 base_url: str,
+                                 system_prompt: str = "You are a Linux system agent. Output ONLY the requested content, no explanation or markdown wrapping.",
+                                 timeout: float = 60.0,
+                                 max_tokens: int = 2048,
+                                 temperature: float = 0.3) -> Optional[str]:
+    """通用 OpenAI-compatible API (DeepSeek / OpenRouter 共用)"""
+    import urllib.request, urllib.error, json, time
+    max_retries = 2
+    for attempt in range(max_retries):
+        try:
+            req = urllib.request.Request(
+                f"{base_url}/chat/completions",
+                data=json.dumps({
+                    "model": model,
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": prompt},
+                    ],
+                    "temperature": temperature,
+                    "max_tokens": max_tokens,
+                }).encode(),
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {api_key}",
+                },
+            )
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                data = json.loads(resp.read().decode())
+                return data["choices"][0]["message"]["content"].strip()
+        except urllib.error.HTTPError as e:
+            if e.code == 429 and attempt < max_retries - 1:
+                time.sleep(5 * (attempt + 1))
+                continue
+            return None
+        except Exception:
+            return None
+
+
 def _deepseek_generate(prompt: str,
                        api_key: str,
                        model: str = "deepseek-chat",
                        timeout: float = 60.0,
                        max_tokens: int = 2048,
                        temperature: float = 0.3) -> Optional[str]:
-    """调用 DeepSeek API, 超时返回 None"""
-    try:
-        import urllib.request
-        import json
-        req = urllib.request.Request(
-            "https://api.deepseek.com/chat/completions",
-            data=json.dumps({
-                "model": model,
-                "messages": [
-                    {"role": "system", "content": "You are a Linux system agent. Output ONLY the requested content, no explanation or markdown wrapping."},
-                    {"role": "user", "content": prompt},
-                ],
-                "temperature": temperature,
-                "max_tokens": max_tokens,
-            }).encode(),
-            headers={
-                "Content-Type": "application/json",
-                "Authorization": f"Bearer {api_key}",
-            },
-        )
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
-            data = json.loads(resp.read().decode())
-            return data["choices"][0]["message"]["content"].strip()
-    except Exception:
-        return None
+    return _openai_compatible_generate(
+        prompt=prompt, api_key=api_key, model=model,
+        base_url="https://api.deepseek.com",
+        timeout=timeout, max_tokens=max_tokens, temperature=temperature,
+    )
+
+
+def _openrouter_generate(prompt: str,
+                          api_key: str,
+                          model: str = "qwen/qwen3-coder:free",
+                          timeout: float = 60.0,
+                          max_tokens: int = 2048,
+                          temperature: float = 0.3) -> Optional[str]:
+    """OpenRouter 代码生成专用 (仅 _generate_plan_code 调用)"""
+    return _openai_compatible_generate(
+        prompt=prompt, api_key=api_key, model=model,
+        base_url="https://openrouter.ai/api/v1",
+        timeout=timeout, max_tokens=max_tokens, temperature=temperature,
+    )
 
 
 def _ollama_health(base_url: str = "http://localhost:11434",
@@ -201,6 +236,20 @@ def _check_hallucination(text: str, facts_text: str) -> float:
         return 1.0  # no facts to cross-check = pass
     return len(matched) / len(fact_values)
 
+# ── Python 语法验证 ──
+
+FALLBACK_CODE = (
+    "#!/usr/bin/env python3\n"
+    "# LLM generated code was invalid; fallback script.\n"
+    "import sys\n"
+    "def main():\n"
+    "    print('OK')\n"
+    "    return 0\n"
+    "if __name__ == '__main__':\n"
+    "    sys.exit(main())\n"
+)
+
+
 
 class CreativeWriter:
     """
@@ -237,6 +286,9 @@ class CreativeWriter:
         self.api_backend = api_backend
         self.api_key = api_key or os.environ.get("DEEPSEEK_API_KEY", "")
         self._deepseek_ok = bool(self.api_key)
+        # OpenRouter 仅用于代码生成 (_generate_plan_code)
+        self._openrouter_api_key = os.environ.get("OPENROUTER_API_KEY", "")
+        self._openrouter_ok = bool(self._openrouter_api_key)
 
         # 统计
         self.stats = {
@@ -245,6 +297,9 @@ class CreativeWriter:
             "fallback": 0,
             "thermal_skip": 0,
             "timeout": 0,
+            "syntax_fail": 0,
+            "plan_gen_attempts": 0,
+            "plan_gen_success": 0,
         }
 
         # 加载 prompt 模板
@@ -254,6 +309,7 @@ class CreativeWriter:
         self._async_enabled = False
         self._async_result: Optional[dict] = None
         self._self_reflect_result: Optional[dict] = None
+        self._last_validation_error: Optional[str] = None
 
     def _load_prompts(self) -> dict:
         """多个 prompt 模板 — 小模型决定格式, DeepSeek 执行"""
@@ -280,6 +336,35 @@ class CreativeWriter:
                 "## The Agent's Idea\n{intention}\n"
             ),
         }
+
+    @staticmethod
+    def validate_python_code(code: str) -> tuple[bool, str | None]:
+        """Return (ok, error_message) using ast.parse."""
+        import ast
+        try:
+            ast.parse(code)
+            return True, None
+        except SyntaxError as e:
+            return False, f"SyntaxError line {e.lineno}: {e.msg}"
+        except (ValueError, MemoryError, RecursionError):
+            return False, "Parse error during validation"
+
+    @staticmethod
+    def _clean_code(text: str) -> str:
+        """Strip fences, whitespace, and ensure shebang."""
+        text = text.strip()
+        # Remove leading ```...``` markdown fence markers
+        if text.startswith("```"):
+            first_nl = text.find("\n")
+            if first_nl != -1:
+                text = text[first_nl + 1:]
+            last_fence = text.rfind("```")
+            if last_fence != -1:
+                text = text[:last_fence]
+        text = text.strip()
+        if not text.startswith("#!"):
+            text = "#!/usr/bin/env python3\n" + text
+        return text
     
     def health_check(self) -> bool:
         """检查后端是否可用: Ollama 或 DeepSeek"""
@@ -409,6 +494,30 @@ class CreativeWriter:
                     quality = _check_hallucination(text, self._last_facts_text)
                     min_quality = 0.1 if effective_style in ("create", "story") else 0.3
                     if quality >= min_quality:
+                        # Python code syntax validation (仅 code 风格)
+                        if effective_style == "code":
+                            text = self._clean_code(text)
+                            ok, err = self.validate_python_code(text)
+                            if not ok:
+                                for attempt in range(2):
+                                    retry = self.generate(prompt, timeout=None)
+                                    if retry:
+                                        retry = self._clean_code(retry)
+                                        ok, err = self.validate_python_code(retry)
+                                        if ok:
+                                            text = retry
+                                            break
+                                if not ok:
+                                    self._last_validation_error = err
+                                    self.stats["syntax_fail"] += 1
+                                    text = FALLBACK_CODE
+                                    validation_ok = False
+                                else:
+                                    validation_ok = True
+                            else:
+                                validation_ok = True
+                        else:
+                            validation_ok = True
                         step = getattr(workbench, '_step_counter', 0) or 0
                         desc_map = {
                             "report": "LLM报告", "analysis": "LLM分析",
@@ -432,6 +541,7 @@ class CreativeWriter:
                             "size": len(text),
                             "source": "llm",
                             "quality": quality,
+                            "validation_ok": validation_ok,
                         }
                         if effective_style == "self_reflect":
                             self._self_reflect_result = result
@@ -499,6 +609,26 @@ class CreativeWriter:
         if quality < 0.3:
             return self._fallback(workbench, style, f"hallucination({quality:.2f})")
 
+        # Python 语法验证 (仅 code 风格)
+        validation_ok = True
+        if effective_style == "code" and len(text) >= 80:
+            text = self._clean_code(text)
+            ok, err = self.validate_python_code(text)
+            if not ok:
+                for attempt in range(2):
+                    retry = self.generate(prompt, timeout)
+                    if retry:
+                        retry = self._clean_code(retry)
+                        ok, err = self.validate_python_code(retry)
+                        if ok:
+                            text = retry
+                            break
+                if not ok:
+                    self._last_validation_error = err
+                    self.stats["syntax_fail"] += 1
+                    text = FALLBACK_CODE
+                    validation_ok = False
+
         step = getattr(workbench, '_step_counter', 0) or 0
         desc_map = {
             "report": "LLM生成:系统报告",
@@ -520,12 +650,42 @@ class CreativeWriter:
             "size": len(text),
             "source": "llm",
             "quality": quality,
+            "validation_ok": validation_ok,
         }
 
+    def _generate_plan_code(self, desc: str, step_id: int = 0, max_tries: int = 2) -> str | None:
+        """为计划步骤生成 Python 代码 (同步, 含语法验证) — 优先 OpenRouter, 回退本地 qwen"""
+        self.stats["plan_gen_attempts"] += 1
+        prompt = (
+            f"Write Python using subprocess.run to: {desc}\n"
+            f"Only output Python code, no explanations."
+        )
+        for attempt in range(max_tries):
+            try:
+                text = None
+                if self._openrouter_ok:
+                    text = _openrouter_generate(
+                        prompt, api_key=self._openrouter_api_key,
+                        model="qwen/qwen3-coder:free",
+                        timeout=self.timeout, max_tokens=self.max_tokens,
+                    )
+                if text is None:
+                    text = self.generate(prompt, timeout=min(30.0, self.timeout))
+                if text is None:
+                    continue
+                text = self._clean_code(text)
+                ok, err = self.validate_python_code(text)
+                if ok:
+                    self.stats["plan_gen_success"] += 1
+                    return text
+                self.stats["syntax_fail"] += 1
+            except Exception:
+                continue
+        return FALLBACK_CODE
+    
     # ── 统计 ──
 
     def stats_report(self) -> str:
-        s = self.stats
         total = s["total_calls"]
         llm_pct = s["llm_success"] / max(total, 1) * 100
         fb_pct = s["fallback"] / max(total, 1) * 100

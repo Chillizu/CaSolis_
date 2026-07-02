@@ -255,6 +255,9 @@ class CommandMiner:
             "passed_sandbox": 0,
             "already_seen": 0,
         }
+        
+        # 命令可用性跟踪 (失败 ≥3 次标记 unavailable)
+        self.cmd_availability: dict[str, dict] = {}
     
     def mine(self, discovery_output: str, source: str = "unknown") -> list[dict]:
         """
@@ -427,3 +430,25 @@ class CommandMiner:
             f"  沙箱通过: {s['passed_sandbox']}\n"
             f"  UNKNOWN inodes: {len(self._seen_inodes)}"
         )
+    
+    def is_available(self, cmd_name: str) -> bool:
+        """返回 False 仅当 cmd 已失败 ≥3 次且标记为 unavailable"""
+        entry = self.cmd_availability.get(cmd_name)
+        if entry and entry["status"] == "unavailable" and entry["fail_count"] >= 3:
+            return False
+        return True
+    
+    def mark_unavailable(self, cmd_name: str, step: int) -> None:
+        """记录一次命令执行失败"""
+        entry = self.cmd_availability.get(cmd_name)
+        if entry is None:
+            entry = {"status": "available", "fail_count": 0, "last_fail_step": 0}
+            self.cmd_availability[cmd_name] = entry
+        entry["fail_count"] += 1
+        entry["last_fail_step"] = step
+        if entry["fail_count"] >= 3:
+            entry["status"] = "unavailable"
+    
+    def mark_available(self, cmd_name: str) -> None:
+        """恢复 cmd 为可用 (如沙箱重建后)"""
+        self.cmd_availability[cmd_name] = {"status": "available", "fail_count": 0, "last_fail_step": 0}

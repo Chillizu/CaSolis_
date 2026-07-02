@@ -57,12 +57,23 @@ from agent.goal_generator import GoalGenerator, Goal
 from agent.planner import Plan
 from agent.world_model_v4 import GrowingWorldModel
 from agent.episodic_memory import EpisodicMemory
-from agent.creative_writer import CreativeWriter
+from agent.creative_writer import CreativeWriter, FALLBACK_CODE
 from agent.code_archive import CodeArchive
 from agent.imagination import ImaginationEngine  # P19: 想象引擎
 from benchmark.param_extractor import ParameterExtractor
 from benchmark.template_engine import TemplateEngine, ExecResult
 from collections import deque
+
+# 救援路径池 — 在 _rescue_params 中轮转选择, 避免固定死路径卡死
+_RESCUE_PATHS_POOL = [
+    "/proc/version", "/proc/uptime", "/proc/loadavg", "/proc/meminfo",
+    "/proc/stat", "/proc/crypto", "/proc/cpuinfo", "/proc/devices",
+    "/proc/filesystems", "/proc/modules",
+    "/etc/hostname", "/etc/hosts", "/etc/os-release", "/etc/resolv.conf",
+    "/etc/nsswitch.conf", "/etc/shells", "/etc/passwd", "/etc/group",
+    "/sys/devices/system/cpu/online",
+    "/sys/kernel/mm/transparent_hugepage/enabled",
+]
 
 
 # 意图列表
@@ -240,6 +251,13 @@ class OnlineAgent:
         self.clusterer = CommandClusterer()
         self.cmd_miner = CommandMiner(clusterer=self.clusterer, sandbox=self.sandbox)
         self.cmd_selector = HierarchicalSelector()
+        # 命令失败同步跟踪
+        self._already_synced_unavailable: set[str] = set()
+        # 救援路径轮转索引
+        self._rescue_path_idx = 0
+        # 命令+参数签名跟踪 (防重复)
+        self._recent_cmd_sigs: list[str] = []
+        self.cmd_selector.command_miner = self.cmd_miner  # wire availability tracking
         
         # 注册所有 cluster
         for name, cmds in self.clusterer.clusters.items():
@@ -604,9 +622,17 @@ class OnlineAgent:
         step_id = step.get("id", 0)
         if style == "code":
             intent = "CREATE"
+            code = None
+            if self.creative_writer:
+                try:
+                    code = self.creative_writer._generate_plan_code(desc, step_id)
+                except Exception as e:
+                    if random.random() < 0.1:
+                        print(f"  [PLAN-CODE] LLM gen error: {e}")
+            content = code or f"# {desc}\nprint('plan step {step_id}')\n"
             params = {
                 "path": f"/tmp/plan_{self.step_count}_{step_id}.py",
-                "content": f"# {desc}\nprint('plan step {step_id}')\n",
+                "content": content,
             }
         elif style in ("analysis", "report"):
             intent = "OBSERVE"
@@ -1365,6 +1391,16 @@ class OnlineAgent:
           - cmd="" → 默认 "ls"
         """
         import re
+        # 路径池随机洗牌 (每个进程仅生效一次)
+        import random as _random
+        _random.shuffle(_RESCUE_PATHS_POOL)
+        del _random
+
+        def _rotate_rescue_path():
+            p = _RESCUE_PATHS_POOL[self._rescue_path_idx % len(_RESCUE_PATHS_POOL)]
+            self._rescue_path_idx += 1
+            return p
+
         fixed = dict(params)
 
         # 已知的路径类意图
@@ -1373,22 +1409,22 @@ class OnlineAgent:
         if intent in path_intents:
             p = fixed.get("path", "")
             if not p or not isinstance(p, str) or len(p.strip()) < 2:
-                fixed["path"] = "/etc/hostname"
+                fixed["path"] = _rotate_rescue_path()
             elif p.upper() in {"READ", "LIST", "SEARCH", "COUNT", "INFO",
                                "CUSTOM", "HELP", "EXPLORE", "INSPECT",
                                "READ_ETC", "LS_TMP", "ARCH_INFO",
                                "USB_DEVICES", "DISK_USAGE"}:
                 # path 值恰好是意图名 → 显然是参数错误
-                fixed["path"] = "/etc/hostname"
+                fixed["path"] = _rotate_rescue_path()
             elif not p.startswith("/"):
-                fixed["path"] = "/etc/hostname"
+                fixed["path"] = _rotate_rescue_path()
             # P9.1: 路径必须是已知合法前缀, 否则是事实值被误用
             _valid_path_prefixes = ("/proc/", "/etc/", "/tmp/", "/sys/",
                                     "/var/", "/dev/", "/home/", "/usr/",
                                     "/workspace/", "/persistent/",
                                     "/bin/", "/sbin/", "/lib/", "/opt/")
             if not any(p.startswith(prefix) for prefix in _valid_path_prefixes):
-                fixed["path"] = "/etc/hostname"
+                fixed["path"] = _rotate_rescue_path()
 
         # 搜索类意图: 固定用可靠 pattern+path
         if intent == "SEARCH":
@@ -1914,6 +1950,12 @@ class OnlineAgent:
         """执行一步: P10 MODE/GOAL/ACTION路由"""
         self.step_count += 1
         self._last_was_imagined = False
+        # 同步沙箱不可用命令到 cmd_miner (过滤 lsmod 类重复失败)
+        if self.sandbox and self.cmd_miner and hasattr(self.sandbox, '_unavailable_commands'):
+            new_unavailable = self.sandbox._unavailable_commands - self._already_synced_unavailable
+            for cmd in new_unavailable:
+                self.cmd_miner.mark_unavailable(cmd, self.step_count)
+            self._already_synced_unavailable |= new_unavailable
 
         # 1. 更新状态编码器上下文 (动态 FactGraph 驱动)
         self.state_encoder.set_step(self.step_count)
@@ -2541,6 +2583,16 @@ class OnlineAgent:
         # P8.5b: 参数预校验 — 执行前替换无效参数
         params = self._rescue_params(intent, params)
 
+        # 记录命令签名用于重复惩罚
+        if intent == "TRY":
+            custom = params.get("custom_args", [])
+            _phase2_cmd_sig_name = custom[0] if isinstance(custom, list) and custom else str(params.get("custom_args", ""))
+        else:
+            _phase2_cmd_sig_name = intent
+        cmd_sig = f"{_phase2_cmd_sig_name}:{hash(str(params)) & 0xFFFFFF}"
+        self._recent_cmd_sigs.append(cmd_sig)
+        if len(self._recent_cmd_sigs) > 30:
+            self._recent_cmd_sigs = self._recent_cmd_sigs[-30:]
         # 追踪已试过的 TRY 命令
         if intent == "TRY":
             try_cmd = str(params.get("custom_args", ""))[:40]
@@ -2742,6 +2794,13 @@ class OnlineAgent:
                                       chain_bonus=chain_bonus, params=params,
                                       facts_before=facts_before)
         self.state_encoder.set_reward(reward)
+        # P2.3: 命令-参数签名重复惩罚
+        if hasattr(self, '_recent_cmd_sigs') and self._recent_cmd_sigs:
+            last_sig = self._recent_cmd_sigs[-1] if self._recent_cmd_sigs else ""
+            if last_sig and last_sig in self._recent_cmd_sigs[-6:-1]:
+                reward *= 0.1  # 精确重复
+            elif _phase2_cmd_sig_name and _phase2_cmd_sig_name in [s.split(":")[0] for s in self._recent_cmd_sigs[-5:-1]]:
+                reward *= 0.5  # 同命令不同参数
         if is_repeat and recent_repeats > 2:
             reward *= 0.3  # 重复严重惩罚
 
@@ -2944,18 +3003,34 @@ class OnlineAgent:
                     p = self.creative_writer.build_prompt(self.workbench, "code")
                     t = self.creative_writer.generate(p, timeout=120.0)
                     if t and len(t) > 80:
+                        # Clean, validate syntax, retry up to 2 times, fallback to FALLBACK_CODE
+                        code = self.creative_writer._clean_code(t)
+                        valid, err = self.creative_writer.validate_python_code(code)
+                        for _ in range(2):
+                            if valid:
+                                break
+                            print(f"  [LLM] code syntax error ({err}), retrying...")
+                            t = self.creative_writer.generate(p, timeout=120.0)
+                            if not t:
+                                valid = False
+                                break
+                            code = self.creative_writer._clean_code(t)
+                            valid, err = self.creative_writer.validate_python_code(code)
+                        if not valid:
+                            print(f"  [LLM] code fallback: syntax error ({err})")
+                            code = FALLBACK_CODE
                         path = f"/tmp/llm_code_{self.step_count}.py"
-                        enc = _b64.b64encode(t.encode()).decode()
+                        enc = _b64.b64encode(code.encode()).decode()
                         self.sandbox.execute(f"echo '{enc}' | base64 -d > {path}")
                         self.sandbox.execute(f"chmod +x {path}")
                         r = self.sandbox.execute(f"python3 {path} 2>&1", timeout=15)
                         out = (r.stdout or r.stderr or "").strip()
                         exit_ok = r and r.exit_code == 0
                         if exit_ok:
-                            self._total_create_content += len(t)
+                            self._total_create_content += len(code)
                             self.workbench.extract_facts("LLM_CODE", path, out, {}, self.step_count)
                             self.total_reward += 2.0
-                            print(f"  [LLM] code {len(t)}B -> {path} OK +2.0!")
+                            print(f"  [LLM] code {len(code)}B -> {path} OK +2.0!")
                         else:
                             error_preview = out[:400]
                             retry_prompt = (
@@ -3015,6 +3090,11 @@ class OnlineAgent:
                     content = content.strip()
                     if path.endswith('.py') and not content.startswith('#!'):
                         content = '#!/usr/bin/env python3\n' + content
+                    if path.endswith('.py'):
+                        valid, err = self.creative_writer.validate_python_code(content)
+                        if not valid:
+                            print(f"  [LLM] async code fallback: syntax error ({err})")
+                            content = FALLBACK_CODE
                     import base64
                     encoded = base64.b64encode(content.encode()).decode()
                     self.sandbox.execute(f"echo '{encoded}' | base64 -d > {path}")

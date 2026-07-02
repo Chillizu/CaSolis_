@@ -22,6 +22,7 @@ import math
 import re
 from collections import defaultdict
 from typing import Optional
+LOW_ENTROPY_COMMANDS = frozenset({"cat", "echo", "hostname", "uname", "id", "pwd", "whoami", "ls", "date"})
 
 
 class HierarchicalSelector:
@@ -52,6 +53,7 @@ class HierarchicalSelector:
         self.novelty_weight = novelty_weight
         self.discovery_rate = discovery_rate
         self.jitter = jitter
+        self.command_miner = None  # CommandMiner for availability tracking
         
         # ── Cluster 级统计 ──
         self.clusters: dict[str, list[str]] = {}  # cluster_name → [cmd1, cmd2, ...]
@@ -178,6 +180,8 @@ class HierarchicalSelector:
     def _select_command(self, cluster: str) -> str:
         """从 cluster 中选择命令 (softmax + satiation)"""
         cmds = self.clusters.get(cluster, [])
+        if self.command_miner is not None:
+            cmds = [c for c in cmds if self.command_miner.is_available(c)]
         if not cmds:
             return ""
         
@@ -194,9 +198,16 @@ class HierarchicalSelector:
                 base_score = success / max(n, 1)
             
             satiation = stats.get("satiation", 0.0)
-            
+
             # 厌腻感: 越久没选恢复越多
-            satiation_penalty = 1.0 - satiation * self.satiation_penalty
+            if cmd in LOW_ENTROPY_COMMANDS:
+                # 低熵命令更强惩罚, 更慢恢复
+                sp = 0.70  # penalty (default 0.85)
+                sr = 0.01  # recovery (default 0.03)
+            else:
+                sp = self.satiation_penalty
+                sr = self.satiation_recovery
+            satiation_penalty = 1.0 - satiation * sp
             
             # 新颖度 bonus
             novelty_bonus = stats.get("total_novelty", 0) / max(n, 1) * self.novelty_weight
@@ -397,7 +408,8 @@ class HierarchicalSelector:
         # 厌腻感衰减 (被选了就增加, 然后整体恢复)
         for c in self.cmd_stats:
             # 整体恢复 (每步固定减, clamp 到 0)
-            self.cmd_stats[c]["satiation"] = max(0.0, self.cmd_stats[c]["satiation"] - self.satiation_recovery)
+            rec = 0.01 if c in LOW_ENTROPY_COMMANDS else self.satiation_recovery
+            self.cmd_stats[c]["satiation"] = max(0.0, self.cmd_stats[c]["satiation"] - rec)
         # 被选中的命令增加 satiation
         s["satiation"] = min(1.0, s["satiation"] + self.satiation_penalty * (1.0 - s["satiation"]))
     
