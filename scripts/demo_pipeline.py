@@ -2,7 +2,7 @@
 Full pipeline trace: GoalGenerator decision → Prompt → DeepSeek output → File
 """
 import sys, os, json, time
-sys.path.insert(0, "/home/chillizu/Projects/Folunar_")
+sys.path.insert(0, "/home/chillizu/Projects/CaSolis_")
 os.environ["HF_HUB_OFFLINE"] = "1"
 os.environ["DEEPSEEK_API_KEY"] = os.environ.get("DEEPSEEK_API_KEY", "")
 
@@ -96,4 +96,4 @@ for cycle in range(5):
 
 log.close()
 print(f"\nFull log saved to data/detailed_pipeline.jsonl")
-agent.sandbox.execute("docker rm -f folunar-sandbox 2>/dev/null", timeout=5)
+agent.sandbox.execute("docker rm -f casolis-sandbox 2>/dev/null", timeout=5)

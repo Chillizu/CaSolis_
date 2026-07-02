@@ -1,4 +1,4 @@
-# Folunar_ 项目研究评审请求
+# CaSolis_ 项目研究评审请求
 
 ## 项目概述
 
@@ -59,5 +59,5 @@
 **核心成员**: 1 人，梦想做 agent OS，但缺乏系统 ML 知识。
 **硬件**: CPU only (Intel Core Ultra 9 185H, 16C/22T, 105°C 热限), 30GB RAM, Docker 可用。
 **时间**: 断断续续做了约 2-3 周。
-**项目路径**: `/home/chillizu/Projects/Folunar_/`
+**项目路径**: `/home/chillizu/Projects/CaSolis_/`
 **已存档前期工作**: `github.com/Chillizu/Trahexa` (Phase 1, Qwen/DeepSeek pipeline)

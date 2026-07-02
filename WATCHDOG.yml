@@ -1,0 +1,10 @@
+advisors: 
+  - name: default
+    model: deepseek/deepseek-v4-pro:high
+    tools: 
+      - read
+      - glob
+      - grep
+      - web_search
+      - learn
+    instructions: "作出合适的建议，可以适当提供灵感与确保确定稳定，保证正确的情况下提供下一步指示。同时也可以对与agent的绕弯子行为进行提示和建议\n"

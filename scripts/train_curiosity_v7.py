@@ -101,7 +101,7 @@ def load_data(paths):
     return samples
 
 
-DOCKER = "folunar-c7"
+DOCKER = "casolis-c7"
 def dk_start():
     subprocess.run(["docker","kill",DOCKER],capture_output=True)
     subprocess.run(["docker","rm",DOCKER],capture_output=True)

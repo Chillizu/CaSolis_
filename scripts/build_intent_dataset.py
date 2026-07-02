@@ -2,7 +2,7 @@
 数据整合工具 — 合成训练数据集
 
 来源:
-  A) folunar_intent_dataset.csv    2400 条 (Kimi 生成)
+  A) casolis_intent_dataset.csv    2400 条 (Kimi 生成)
   B) checkpoints/clean-v3/         1452 条 (历史真实命令, parse_intent 打标)
   C) 混淆样本 (ChatGPT 设计)        自定义生成
 
@@ -23,7 +23,7 @@ random.seed(42)
 
 # ── 配置 ─────────────────────────────────────────────────
 
-CSV_PATH = "Response/folunar_intent_dataset.csv"
+CSV_PATH = "Response/casolis_intent_dataset.csv"
 CLEAN_V3_PATH = "checkpoints/clean-v3/train_data.jsonl"
 OUTPUT_PATH = "data/intent_train.jsonl"
 

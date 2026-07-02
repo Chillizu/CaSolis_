@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CaSolis_ Architecture</title>
+<style>
+:root {
+  --bg: #fafafa;
+  --fg: #1a1a1a;
+  --border: #888;
+  --dim: #999;
+  --line: #bbb;
+  --box-bg: #fff;
+  --box-hover-bg: #f0f0f0;
+  --tag-bg: #eee;
+  --tag-fg: #555;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font: 13px/1.5 -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  padding: 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+h1 {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  margin-bottom: 4px;
+}
+h1 small {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--dim);
+  display: block;
+  margin-top: 2px;
+}
+h2 {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--dim);
+  margin: 32px 0 16px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 6px;
+}
+h3 {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--dim);
+  margin: 24px 0 10px;
+}
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: start;
+}
+.module {
+  background: var(--box-bg);
+  border: 1px solid var(--border);
+  padding: 8px 10px;
+  min-width: 100px;
+  font-size: 11px;
+  line-height: 1.4;
+  transition: background 0.15s;
+  cursor: default;
+  position: relative;
+}
+.module:hover {
+  background: var(--box-hover-bg);
+}
+.module .name {
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--fg);
+}
+.module .file {
+  font: 10px/1.3 'SF Mono', 'Cascadia Code', 'Fira Code', monospace;
+  color: var(--dim);
+  margin-top: 2px;
+}
+.module .desc {
+  color: #555;
+  margin-top: 3px;
+  font-size: 10.5px;
+}
+.module .tag {
+  display: inline-block;
+  background: var(--tag-bg);
+  color: var(--tag-fg);
+  font: 9px/1.3 'SF Mono', monospace;
+  padding: 0 4px;
+  margin-top: 4px;
+}
+.module .model-size {
+  display: inline-block;
+  font: 9px/1.3 'SF Mono', monospace;
+  color: var(--dim);
+  margin-top: 4px;
+}
+.pipeline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  align-items: center;
+  position: relative;
+}
+.pipeline .module {
+  flex: 0 0 auto;
+}
+.arrow {
+  width: 24px;
+  height: 1.5px;
+  background: var(--line);
+  position: relative;
+  flex: 0 0 24px;
+}
+.arrow::after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  top: -3px;
+  border: 3.5px solid transparent;
+  border-left: 5px solid var(--line);
+  border-right: 0;
+}
+.arrow.down { width: 1.5px; height: 20px; }
+.arrow.down::after {
+  right: -3px; top: auto; bottom: -1px;
+  border-left: 3.5px solid transparent;
+  border-right: 3.5px solid transparent;
+  border-top: 5px solid var(--line);
+  border-bottom: 0;
+}
+.arrow.up { width: 1.5px; height: 20px; }
+.arrow.up::after {
+  right: -3px; top: -1px;
+  border-left: 3.5px solid transparent;
+  border-right: 3.5px solid transparent;
+  border-bottom: 5px solid var(--line);
+  border-top: 0;
+}
+.row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0;
+  margin-bottom: 2px;
+}
+.indent { margin-left: 36px; }
+.branch {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  margin-left: 12px;
+  border-left: 1.5px solid var(--line);
+  padding-left: 14px;
+}
+.branch .module { min-width: 110px; }
+.module.p16 { border-left: 2px solid #777; }
+.module.p17 { border-left: 2px solid #999; }
+.module.p18 { border-left: 2px solid #555; }
+.module.p19 { border-left: 2px solid #aaa; }
+.module.p20 { border-left: 2px solid #666; }
+.module.core { border: 1.5px solid #555; }
+.module.input { border: 1.5px solid #777; }
+.module.output { border: 1.5px solid #555; }
+.double-arrow {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-direction: column;
+}
+.double-arrow .arrow.down { margin-bottom: -1px; }
+.double-arrow .arrow.up { margin-top: -1px; }
+.legend {
+  display: flex;
+  gap: 16px;
+  margin: 20px 0 10px;
+  flex-wrap: wrap;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10.5px;
+  color: var(--dim);
+}
+.legend-item .swatch {
+  width: 14px;
+  height: 10px;
+  border: 1px solid var(--border);
+}
+.section { margin-bottom: 28px; }
+.footer {
+  margin-top: 40px;
+  padding-top: 16px;
+  border-top: 1px solid #ddd;
+  font-size: 10.5px;
+  color: var(--dim);
+}
+</style>
+</head>
+<body>
+
+<h1>CaSolis_ Architecture<small>Autonomous Linux Agent — Core Loop &amp; Module Map</small></h1>
+
+<div class="legend">
+  <span class="legend-item"><span class="swatch" style="border-color:#555;border-width:1.5px"></span> Core Pipeline</span>
+  <span class="legend-item"><span class="swatch" style="border-color:#777;border-width:1.5px"></span> Input/Output</span>
+  <span class="legend-item"><span class="swatch" style="border-left:2px solid #777"></span> P16 Reasoning</span>
+  <span class="legend-item"><span class="swatch" style="border-left:2px solid #999"></span> P17 Self-Awareness</span>
+  <span class="legend-item"><span class="swatch" style="border-left:2px solid #555"></span> P18 World Model V5.1</span>
+  <span class="legend-item"><span class="swatch" style="border-left:2px solid #666"></span> P20 Brain Reference</span>
+</div>
+
+<!-- ===== MAIN PIPELINE ===== -->
+<div class="section">
+<h2>Core Pipeline</h2>
+
+<div class="row">
+  <div class="module input">
+    <div class="name">StateText</div>
+    <div class="file">online_agent.py</div>
+    <div class="tag">input</div>
+  </div>
+  <div class="arrow"></div>
+  <div class="module">
+    <div class="name">StateEncoder</div>
+    <div class="file">state_encoder.py</div>
+    <div class="desc">FactGraph-driven dynamic encoding</div>
+    <div class="tag">130 lines</div>
+  </div>
+  <div class="arrow"></div>
+  <div class="module core">
+    <div class="name">MetaCognitiveSelector</div>
+    <div class="file">meta_selector.py</div>
+    <div class="desc">EXPLORE / CREATE / LEARN</div>
+    <div class="tag">200 lines</div>
+  </div>
+  <div class="arrow"></div>
+  <div class="module">
+    <div class="name">GoalGenerator</div>
+    <div class="file">goal_generator.py</div>
+    <div class="desc">gap / curiosity / create / hypothesis</div>
+    <div class="tag">600 lines</div>
+  </div>
+</div>
+
+<div class="row" style="margin-top:4px;">
+  <div style="width:384px"></div>
+  <div class="arrow down"></div>
+  <div style="width:150px"></div>
+  <div class="arrow down"></div>
+  <div style="width:42px"></div>
+  <div class="module" style="margin-top:-28px">
+    <div class="name">Imagination</div>
+    <div class="file">imagination.py</div>
+    <div class="desc">WorldModel internal simulation</div>
+    <div class="tag">P19 ~150 lines</div>
+  </div>
+</div>
+
+<div class="row">
+  <div style="width:384px"></div>
+  <div class="module core">
+    <div class="name">Conductor</div>
+    <div class="file">conductor.py</div>
+    <div class="desc">384&rarr;128&rarr;64&rarr;16 thought</div>
+    <div class="tag">250 lines</div>
+  </div>
+  <div class="arrow"></div>
+  <div class="module core">
+    <div class="name">Nanny</div>
+    <div class="file">nanny.py</div>
+    <div class="desc">thought &rarr; intent translation</div>
+    <div class="tag">150 lines</div>
+  </div>
+  <div class="arrow"></div>
+  <div class="module core">
+    <div class="name">IntentClassifier</div>
+    <div class="file">online_agent.py</div>
+    <div class="desc">OBSERVE / CREATE / TRY</div>
+    <div class="model-size">66K params</div>
+  </div>
+</div>
+
+<div class="row">
+  <div style="width:542px"></div>
+  <div class="arrow down"></div>
+</div>
+
+<div class="row">
+  <div style="width:542px"></div>
+  <div class="module">
+    <div class="name">CmdSelectorV2</div>
+    <div class="file">command_selector_v2.py</div>
+    <div class="desc">Hierarchical command selection</div>
+    <div class="tag">command + arg selection</div>
+  </div>
+  <div class="arrow"></div>
+  <div class="module">
+    <div class="name">Param Extraction</div>
+    <div class="file">online_agent.py</div>
+    <div class="desc">Template engine + parameters</div>
+    <div class="tag">inline in step()</div>
+  </div>
+</div>
+
+<div class="row">
+  <div style="width:640px"></div>
+  <div class="arrow down"></div>
+</div>
+
+<div class="row">
+  <div style="width:640px"></div>
+  <div class="module output">
+    <div class="name">Docker Sandbox</div>
+    <div class="file">sandbox_executor.py</div>
+    <div class="desc">casolis-sandbox &middot; --network none</div>
+    <div class="tag">containerized execution</div>
+  </div>
+</div>
+
+<div class="row">
+  <div style="width:640px"></div>
+  <div class="arrow down"></div>
+</div>
+
+<div class="row">
+  <div style="width:640px"></div>
+  <div class="module output">
+    <div class="name">ExecResult</div>
+    <div class="file">online_agent.py</div>
+    <div class="desc">stdout + stderr + exit code</div>
+    <div class="tag">result processing</div>
+  </div>
+</div>
+</div>
+
+<!-- ===== RESULT PROCESSING ===== -->
+<div class="section">
+<h2>Result Processing (per step)</h2>
+
+<div class="branch">
+  <div class="module">
+    <div class="name">Workbench</div>
+    <div class="file">workbench.py</div>
+    <div class="desc">Fact extraction + FactGraph integration</div>
+    <div class="tag">~750 lines</div>
+  </div>
+  <div class="module">
+    <div class="name">RND Curiosity</div>
+    <div class="file">rnd.py</div>
+    <div class="desc">Novelty detection &amp; interest reset</div>
+    <div class="model-size">~0.3M params</div>
+  </div>
+  <div class="module">
+    <div class="name">EpisodicMemory</div>
+    <div class="file">episodic_memory.py</div>
+    <div class="desc">Ring buffer &rarr; surprise detection</div>
+    <div class="tag">~150 lines</div>
+  </div>
+  <div class="module">
+    <div class="name">ExperienceBuffer</div>
+    <div class="file">experience.py</div>
+    <div class="desc">Experience replay buffer</div>
+    <div class="tag">~150 lines</div>
+  </div>
+  <div class="module">
+    <div class="name">Online Training</div>
+    <div class="file">online_agent.py</div>
+    <div class="desc">Classifier + WM + Conductor</div>
+    <div class="tag">adaptive</div>
+  </div>
+  <div class="module">
+    <div class="name">Adaptive Probabilities</div>
+    <div class="file">online_agent.py</div>
+    <div class="desc">Replaces step%N heuristics</div>
+    <div class="tag">learned scheduling</div>
+  </div>
+</div>
+</div>
+
+<!-- ===== P16-P20 MODULES ===== -->
+<div class="section">
+<h2>Advanced Systems (P16–P20)</h2>
+
+<div style="display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start;">
+
+<div>
+<h3>P16 Reasoning</h3>
+<div style="display:flex;flex-direction:column;gap:4px;">
+  <div class="module p16">
+    <div class="name">TransitionMiner</div>
+    <div class="file">transition_miner.py</div>
+    <div class="desc">P(B|A)-P(B) causal discovery</div>
+    <div class="tag">R2</div>
+  </div>
+  <div class="module p16">
+    <div class="name">HypothesisEngine</div>
+    <div class="file">hypothesis_engine.py</div>
+    <div class="desc">Uncertainty x testability ranking</div>
+    <div class="tag">R2</div>
+  </div>
+  <div class="module p16">
+    <div class="name">ExperimentPlanner</div>
+    <div class="file">experiment_planner.py</div>
+    <div class="desc">Hypothesis &rarr; sandbox commands</div>
+    <div class="tag">R3</div>
+  </div>
+  <div class="module p16">
+    <div class="name">Verdict</div>
+    <div class="file">verdict.py</div>
+    <div class="desc">Predict vs actual &rarr; WM feedback</div>
+    <div class="tag">R3</div>
+  </div>
+</div>
+</div>
+
+<div>
+<h3>P18 World Model V5.1</h3>
+<div style="display:flex;flex-direction:column;gap:4px;">
+  <div class="module p18">
+    <div class="name">WorldModel V5.1</div>
+    <div class="file">world_model_v5_1.py</div>
+    <div class="desc">RSSM Lite: stochastic latent + prediction</div>
+    <div class="model-size">~410K params</div>
+  </div>
+  <div class="module p18">
+    <div class="name">DoCalculusEngine</div>
+    <div class="file">do_calculus.py</div>
+    <div class="desc">d-separation / back-door / ATE</div>
+    <div class="tag">~413 lines</div>
+  </div>
+  <div class="module p18">
+    <div class="name">CodeArchive</div>
+    <div class="file">code_archive.py</div>
+    <div class="desc">Code persistence + growth tracking</div>
+    <div class="tag">~208 lines</div>
+  </div>
+  <div class="module p18">
+    <div class="name">Planner</div>
+    <div class="file">planner.py</div>
+    <div class="desc">Multi-step plan orchestration</div>
+    <div class="tag">~164 lines</div>
+  </div>
+</div>
+</div>
+
+<div>
+<h3>P19 Imagination</h3>
+<div style="display:flex;flex-direction:column;gap:4px;">
+  <div class="module p19">
+    <div class="name">ImaginationEngine</div>
+    <div class="file">imagination.py</div>
+    <div class="desc">WorldModel V5.1 internal rollouts</div>
+    <div class="tag">~150 lines</div>
+  </div>
+  <div class="module p19">
+    <div class="name">IntuitionBuffer</div>
+    <div class="file">intuition_buffer.py</div>
+    <div class="desc">Success / surprise / imagination cache</div>
+    <div class="tag">~224 lines</div>
+  </div>
+</div>
+</div>
+
+<div>
+<h3>P20 Brain Reference</h3>
+<div style="display:flex;flex-direction:column;gap:4px;">
+  <div class="module p20">
+    <div class="name">SalienceSignal</div>
+    <div class="file">salience.py</div>
+    <div class="desc">Amygdala: RND + WM surprise + reward</div>
+    <div class="tag">~60 lines</div>
+  </div>
+  <div class="module p20">
+    <div class="name">HabitSystem</div>
+    <div class="file">habit.py</div>
+    <div class="desc">Basal Ganglia: bypass deliberation</div>
+    <div class="tag">~120 lines</div>
+  </div>
+</div>
+</div>
+
+<div>
+<h3>P17 Self-Awareness</h3>
+<div style="display:flex;flex-direction:column;gap:4px;">
+  <div class="module p17">
+    <div class="name">SelfModel</div>
+    <div class="file">self_model.py</div>
+    <div class="desc">Success rates / highlights / self-description</div>
+    <div class="tag">intent-level stats</div>
+  </div>
+  <div class="module p17">
+    <div class="name">CreativeWriter</div>
+    <div class="file">creative_writer.py</div>
+    <div class="desc">Async LLM generation + self-reflection</div>
+    <div class="tag">~350 lines</div>
+  </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- ===== WORLD MODELS ===== -->
+<div class="section">
+<h2>World Models</h2>
+
+<div class="branch">
+  <div class="module">
+    <div class="name">WorldModelNet V3</div>
+    <div class="file">world_model.py</div>
+    <div class="desc">Global prediction network</div>
+    <div class="model-size">~0.5M params</div>
+  </div>
+  <div class="module">
+    <div class="name">GrowingWorldModel V4</div>
+    <div class="file">world_model_v4.py</div>
+    <div class="desc">Core + 16 leaf nodes, per-intent prediction</div>
+    <div class="tag">graph attention + self-reflection</div>
+  </div>
+  <div class="module p18">
+    <div class="name">WorldModel V5.1</div>
+    <div class="file">world_model_v5_1.py</div>
+    <div class="desc">RSSM Lite: stochastic latent state</div>
+    <div class="model-size">~410K params</div>
+  </div>
+</div>
+</div>
+
+<!-- ===== KNOWLEDGE & PERSISTENCE ===== -->
+<div class="section">
+<h2>Knowledge &amp; Persistence</h2>
+
+<div class="branch">
+  <div class="module">
+    <div class="name">FactGraph</div>
+    <div class="file">fact_graph.py</div>
+    <div class="desc">Graph knowledge base ~200 nodes</div>
+    <div class="tag">edges: CORRELATES/CAUSES/PREDICTS/INHIBITS</div>
+  </div>
+  <div class="module">
+    <div class="name">KnowledgeMapper</div>
+    <div class="file">knowledge_mapper.py</div>
+    <div class="desc">418 command discovery + intent mapping</div>
+    <div class="tag">~500 lines</div>
+  </div>
+  <div class="module">
+    <div class="name">ToolFactory</div>
+    <div class="file">tool_factory.py</div>
+    <div class="desc">JSON tool generation from 418 pool</div>
+    <div class="tag">~200 lines</div>
+  </div>
+  <div class="module">
+    <div class="name">ToolRegistry</div>
+    <div class="file">tool_registry.py</div>
+    <div class="desc">Tool execution + statistics</div>
+    <div class="tag">~200 lines</div>
+  </div>
+  <div class="module">
+    <div class="name">PersistentStore</div>
+    <div class="file">persistent_store.py</div>
+    <div class="desc">SQLite + PyTorch + Docker volume</div>
+    <div class="tag">checkpointing</div>
+  </div>
+  <div class="module">
+    <div class="name">CommandMiner</div>
+    <div class="file">command_miner.py</div>
+    <div class="desc">Command discovery + availability tracking</div>
+    <div class="tag">failure memory</div>
+  </div>
+</div>
+</div>
+
+<!-- ===== DATA FLOW DIAGRAM ===== -->
+<div class="section">
+<h2>Data Flow</h2>
+
+<svg viewBox="0 0 900 480" style="width:100%;max-width:900px;font:10px/1.3 'SF Mono','Cascadia Code','Fira Code',monospace;display:block;">
+  <defs>
+    <marker id="arrowhead" markerWidth="6" markerHeight="5" refX="6" refY="2.5" orient="auto">
+      <polygon points="0 0, 6 2.5, 0 5" fill="#888" />
+    </marker>
+    <marker id="arrowhead-right" markerWidth="6" markerHeight="5" refX="0" refY="2.5" orient="auto">
+      <polygon points="6 0, 0 2.5, 6 5" fill="#888" />
+    </marker>
+  </defs>
+
+  <!-- Boxes -->
+  <rect x="10" y="10" width="80" height="26" fill="#fff" stroke="#555" stroke-width="1.2" rx="0" />
+  <text x="50" y="27" text-anchor="middle" fill="#1a1a1a" font-size="10">StateText</text>
+
+  <rect x="120" y="10" width="100" height="26" fill="#fff" stroke="#888" stroke-width="1" rx="0" />
+  <text x="170" y="27" text-anchor="middle" fill="#1a1a1a" font-size="10">StateEncoder</text>
+
+  <rect x="250" y="10" width="120" height="26" fill="#fff" stroke="#888" stroke-width="1" rx="0" />
+  <text x="310" y="27" text-anchor="middle" fill="#1a1a1a" font-size="10">MetaSelector</text>
+
+  <rect x="400" y="10" width="100" height="26" fill="#fff" stroke="#888" stroke-width="1" rx="0" />
+  <text x="450" y="27" text-anchor="middle" fill="#1a1a1a" font-size="10">GoalGen</text>
+
+  <rect x="530" y="10" width="100" height="26" fill="#fff" stroke="#888" stroke-width="1" rx="0" />
+  <text x="580" y="27" text-anchor="middle" fill="#1a1a1a" font-size="10">Conductor</text>
+
+  <rect x="660" y="10" width="80" height="26" fill="#fff" stroke="#888" stroke-width="1" rx="0" />
+  <text x="700" y="27" text-anchor="middle" fill="#1a1a1a" font-size="10">Nanny</text>
+
+  <rect x="770" y="10" width="120" height="26" fill="#fff" stroke="#888" stroke-width="1" rx="0" />
+  <text x="830" y="27" text-anchor="middle" fill="#1a1a1a" font-size="10">Classifier</text>
+
+  <!-- Row 2 -->
+  <rect x="660" y="80" width="130" height="26" fill="#fff" stroke="#888" stroke-width="1" rx="0" />
+  <text x="725" y="97" text-anchor="middle" fill="#1a1a1a" font-size="10">Template/Params</text>
+
+  <rect x="660" y="120" width="100" height="26" fill="#fff" stroke="#555" stroke-width="1.2" rx="0" />
+  <text x="710" y="137" text-anchor="middle" fill="#1a1a1a" font-size="10">Sandbox</text>
+
+  <rect x="660" y="160" width="100" height="26" fill="#fff" stroke="#555" stroke-width="1.2" rx="0" />
+  <text x="710" y="177" text-anchor="middle" fill="#1a1a1a" font-size="10">ExecResult</text>
+
+  <!-- Row 3 -->
+  <rect x="10" y="200" width="110" height="26" fill="#fff" stroke="#888" stroke-width="1" rx="0" />
+  <text x="65" y="217" text-anchor="middle" fill="#1a1a1a" font-size="10">Workbench</text>
+
+  <rect x="140" y="200" width="90" height="26" fill="#fff" stroke="#888" stroke-width="1" rx="0" />
+  <text x="185" y="217" text-anchor="middle" fill="#1a1a1a" font-size="10">FactGraph</text>
+
+  <rect x="250" y="200" width="80" height="26" fill="#fff" stroke="#888" stroke-width="1" rx="0" />
+  <text x="290" y="217" text-anchor="middle" fill="#1a1a1a" font-size="10">RND</text>
+
+  <rect x="350" y="200" width="100" height="26" fill="#fff" stroke="#888" stroke-width="1" rx="0" />
+  <text x="400" y="217" text-anchor="middle" fill="#1a1a1a" font-size="10">EpisodicMem</text>
+
+  <rect x="470" y="200" width="100" height="26" fill="#fff" stroke="#888" stroke-width="1" rx="0" />
+  <text x="520" y="217" text-anchor="middle" fill="#1a1a1a" font-size="10">ExpBuffer</text>
+
+  <rect x="590" y="200" width="100" height="26" fill="#fff" stroke="#888" stroke-width="1" rx="0" />
+  <text x="640" y="217" text-anchor="middle" fill="#1a1a1a" font-size="10">OnlineTrain</text>
+
+  <!-- Row 4: P16-P20 -->
+  <rect x="10" y="260" width="100" height="22" fill="#f0f0f0" stroke="#777" stroke-width="1" rx="0" />
+  <text x="60" y="274" text-anchor="middle" fill="#1a1a1a" font-size="9">TransitionMiner</text>
+
+  <rect x="120" y="260" width="100" height="22" fill="#f0f0f0" stroke="#777" stroke-width="1" rx="0" />
+  <text x="170" y="274" text-anchor="middle" fill="#1a1a1a" font-size="9">HypothesisEng</text>
+
+  <rect x="230" y="260" width="100" height="22" fill="#f0f0f0" stroke="#777" stroke-width="1" rx="0" />
+  <text x="280" y="274" text-anchor="middle" fill="#1a1a1a" font-size="9">ExperimentPlan</text>
+
+  <rect x="340" y="260" width="80" height="22" fill="#f0f0f0" stroke="#777" stroke-width="1" rx="0" />
+  <text x="380" y="274" text-anchor="middle" fill="#1a1a1a" font-size="9">Verdict</text>
+
+  <!-- WM V5.1 -->
+  <rect x="10" y="300" width="110" height="22" fill="#f0f0f0" stroke="#555" stroke-width="1" rx="0" />
+  <text x="65" y="314" text-anchor="middle" fill="#1a1a1a" font-size="9">WorldModelV5.1</text>
+
+  <rect x="130" y="300" width="90" height="22" fill="#f0f0f0" stroke="#555" stroke-width="1" rx="0" />
+  <text x="175" y="314" text-anchor="middle" fill="#1a1a1a" font-size="9">DoCalculus</text>
+
+  <rect x="230" y="300" width="80" height="22" fill="#f0f0f0" stroke="#555" stroke-width="1" rx="0" />
+  <text x="270" y="314" text-anchor="middle" fill="#1a1a1a" font-size="9">Planner</text>
+
+  <rect x="320" y="300" width="90" height="22" fill="#f0f0f0" stroke="#888" stroke-width="1" rx="0" />
+  <text x="365" y="314" text-anchor="middle" fill="#1a1a1a" font-size="9">SelfModel</text>
+
+  <rect x="420" y="300" width="90" height="22" fill="#f0f0f0" stroke="#888" stroke-width="1" rx="0" />
+  <text x="465" y="314" text-anchor="middle" fill="#1a1a1a" font-size="9">CreativeW</text>
+
+  <rect x="520" y="300" width="80" height="22" fill="#f0f0f0" stroke="#666" stroke-width="1" rx="0" />
+  <text x="560" y="314" text-anchor="middle" fill="#1a1a1a" font-size="9">Salience</text>
+
+  <rect x="610" y="300" width="80" height="22" fill="#f0f0f0" stroke="#666" stroke-width="1" rx="0" />
+  <text x="650" y="314" text-anchor="middle" fill="#1a1a1a" font-size="9">Habit</text>
+
+  <rect x="700" y="300" width="100" height="22" fill="#f0f0f0" stroke="#888" stroke-width="1" rx="0" />
+  <text x="750" y="314" text-anchor="middle" fill="#1a1a1a" font-size="9">Persistent</text>
+
+  <!-- Main arrows right -->
+  <line x1="90" y1="23" x2="118" y2="23" stroke="#888" stroke-width="1" marker-end="url(#arrowhead)" />
+  <line x1="220" y1="23" x2="248" y2="23" stroke="#888" stroke-width="1" marker-end="url(#arrowhead)" />
+  <line x1="370" y1="23" x2="398" y2="23" stroke="#888" stroke-width="1" marker-end="url(#arrowhead)" />
+  <line x1="500" y1="23" x2="528" y2="23" stroke="#888" stroke-width="1" marker-end="url(#arrowhead)" />
+  <line x1="630" y1="23" x2="658" y2="23" stroke="#888" stroke-width="1" marker-end="url(#arrowhead)" />
+  <line x1="740" y1="23" x2="768" y2="23" stroke="#888" stroke-width="1" marker-end="url(#arrowhead)" />
+
+  <!-- Classifier down to Template/Params -->
+  <line x1="830" y1="36" x2="830" y2="50" stroke="#888" stroke-width="1" />
+  <line x1="830" y1="50" x2="758" y2="50" stroke="#888" stroke-width="1" />
+  <line x1="758" y1="50" x2="758" y2="78" stroke="#888" stroke-width="1" marker-end="url(#arrowhead)" />
+
+  <!-- Mode feed from MetaSelector down -->
+  <line x1="310" y1="36" x2="310" y2="50" stroke="#888" stroke-width="0.8" stroke-dasharray="3,3" />
+  <line x1="310" y1="50" x2="230" y2="50" stroke="#888" stroke-width="0.8" stroke-dasharray="3,3" />
+
+  <!-- Imagination loops back to Conductor -->
+  <line x1="580" y1="36" x2="580" y2="55" stroke="#888" stroke-width="0.8" stroke-dasharray="3,3" />
+  <rect x="555" y="52" width="50" height="16" fill="#f6f6f6" stroke="#aaa" stroke-width="0.8" rx="0" />
+  <text x="580" y="63" text-anchor="middle" fill="#888" font-size="8">80% prob</text>
+
+  <!-- Template down to Sandbox -->
+  <line x1="725" y1="106" x2="710" y2="118" stroke="#888" stroke-width="1" marker-end="url(#arrowhead)" />
+
+  <!-- Sandbox down to ExecResult -->
+  <line x1="710" y1="146" x2="710" y2="158" stroke="#888" stroke-width="1" marker-end="url(#arrowhead)" />
+
+  <!-- ExecResult down to processing row -->
+  <line x1="710" y1="186" x2="710" y2="195" stroke="#888" stroke-width="1" />
+  <line x1="710" y1="195" x2="65" y2="195" stroke="#888" stroke-width="1" />
+  <line x1="65" y1="195" x2="65" y2="198" stroke="#888" stroke-width="1" marker-end="url(#arrowhead)" />
+
+  <!-- Processing row arrows -->
+  <line x1="120" y1="213" x2="138" y2="213" stroke="#888" stroke-width="1" marker-end="url(#arrowhead)" />
+  <line x1="230" y1="213" x2="248" y2="213" stroke="#888" stroke-width="1" marker-end="url(#arrowhead)" />
+  <line x1="330" y1="213" x2="348" y2="213" stroke="#888" stroke-width="1" marker-end="url(#arrowhead)" />
+  <line x1="450" y1="213" x2="468" y2="213" stroke="#888" stroke-width="1" marker-end="url(#arrowhead)" />
+  <line x1="570" y1="213" x2="588" y2="213" stroke="#888" stroke-width="1" marker-end="url(#arrowhead)" />
+
+  <!-- FactGraph feedback to StateEncoder -->
+  <line x1="185" y1="226" x2="185" y2="240" stroke="#888" stroke-width="0.8" stroke-dasharray="3,3" />
+  <line x1="185" y1="240" x2="170" y2="240" stroke="#888" stroke-width="0.8" stroke-dasharray="3,3" />
+  <line x1="170" y1="240" x2="170" y2="38" stroke="#888" stroke-width="0.8" stroke-dasharray="3,3" marker-end="url(#arrowhead)" />
+  <text x="145" y="235" fill="#888" font-size="7">feedback</text>
+
+  <!-- Online training feedback -->
+  <line x1="640" y1="226" x2="640" y2="240" stroke="#888" stroke-width="0.8" stroke-dasharray="3,3" />
+  <line x1="640" y1="240" x2="830" y2="240" stroke="#888" stroke-width="0.8" stroke-dasharray="3,3" />
+  <line x1="830" y1="240" x2="830" y2="340" stroke="#888" stroke-width="0.8" stroke-dasharray="3,3" marker-end="url(#arrowhead)" />
+  <text x="645" y="235" fill="#888" font-size="7">trains</text>
+
+  <!-- P16 chain -->
+  <line x1="110" y1="271" x2="118" y2="271" stroke="#888" stroke-width="1" marker-end="url(#arrowhead)" />
+  <line x1="220" y1="271" x2="228" y2="271" stroke="#888" stroke-width="1" marker-end="url(#arrowhead)" />
+  <line x1="330" y1="271" x2="338" y2="271" stroke="#888" stroke-width="1" marker-end="url(#arrowhead)" />
+
+  <!-- Verdict feedback to WM -->
+  <line x1="380" y1="282" x2="380" y2="295" stroke="#888" stroke-width="0.8" stroke-dasharray="3,3" />
+  <line x1="380" y1="295" x2="65" y2="295" stroke="#888" stroke-width="0.8" stroke-dasharray="3,3" />
+  <line x1="65" y1="295" x2="65" y2="298" stroke="#888" stroke-width="0.8" stroke-dasharray="3,3" marker-end="url(#arrowhead)" />
+  <text x="200" y="291" fill="#888" font-size="7">feedback</text>
+
+  <!-- Legend -->
+  <line x1="10" y1="350" x2="30" y2="350" stroke="#888" stroke-width="1" marker-end="url(#arrowhead)" />
+  <text x="35" y="354" fill="#888" font-size="8">Data flow</text>
+  <line x1="100" y1="350" x2="120" y2="350" stroke="#888" stroke-width="0.8" stroke-dasharray="3,3" />
+  <text x="125" y="354" fill="#888" font-size="8">Feedback / training</text>
+</svg>
+
+</div>
+
+<!-- ===== MODELS TABLE ===== -->
+<div class="section">
+<h2>Model Parameters</h2>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:4px;">
+  <div class="module"><div class="name">IntentClassifier</div><div class="model-size">~66K params</div><div class="desc">State text &rarr; 3 intents</div></div>
+  <div class="module"><div class="name">ConductorHead</div><div class="model-size">~67K params</div><div class="desc">State text &rarr; 16-dim thought</div></div>
+  <div class="module"><div class="name">WorldModelNet V3</div><div class="model-size">~0.5M params</div><div class="desc">Global prediction</div></div>
+  <div class="module"><div class="name">WorldModel V5.1</div><div class="model-size">~410K params</div><div class="desc">RSSM Lite stochastic</div></div>
+  <div class="module"><div class="name">RND</div><div class="model-size">~0.3M params</div><div class="desc">Novelty detection</div></div>
+  <div class="module"><div class="name">MiniLM (frozen)</div><div class="model-size">~90MB</div><div class="desc">Text embedding</div></div>
+</div>
+</div>
+
+<div class="footer">
+  CaSolis_ &middot; Autonomous Linux Agent &middot; ~20K lines &middot; GPU-free &middot; Docker-isolated
+</div>
+
+</body>
+</html>

@@ -36,7 +36,7 @@ class ThoughtModel(nn.Module):
         h2=self.rnn(self.embed(t),h); s=self.shared(h2)
         return h2,self.lm_head(s),self.role_head(s),self.cmd_head(s)
 
-DOCKER="folunar-boot"
+DOCKER="casolis-boot"
 def dk_start():
     subprocess.run(["docker","kill",DOCKER],capture_output=True)
     subprocess.run(["docker","rm",DOCKER],capture_output=True)

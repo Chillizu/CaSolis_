@@ -2,7 +2,7 @@
 Creative Marathon v2 — full output logging, everything preserved
 """
 import sys, os, json, time, shutil
-sys.path.insert(0, "/home/chillizu/Projects/Folunar_")
+sys.path.insert(0, "/home/chillizu/Projects/CaSolis_")
 os.environ["HF_HUB_OFFLINE"] = "1"
 os.environ["DEEPSEEK_API_KEY"] = os.environ.get("DEEPSEEK_API_KEY", "")
 
@@ -88,6 +88,6 @@ if r and r.stdout:
                 f.write(c.stdout)
             print(f"  saved {path}")
 
-agent.sandbox.execute("docker rm -f folunar-sandbox", timeout=5)
+agent.sandbox.execute("docker rm -f casolis-sandbox", timeout=5)
 log.close()
 print(f"\nDone. {llm_entries} LLM files in {OUT}/")

@@ -1,7 +1,7 @@
-/home/chillizu/Projects/Folunar_/scripts/train_meta_world.py:197: RuntimeWarning: coroutine 'DockerSandbox.execute' was never awaited
+/home/chillizu/Projects/CaSolis_/scripts/train_meta_world.py:197: RuntimeWarning: coroutine 'DockerSandbox.execute' was never awaited
   r = sandbox.execute("bash", cmd, None)
 RuntimeWarning: Enable tracemalloc to get the object allocation traceback
-/home/chillizu/Projects/Folunar_/scripts/train_meta_world.py:250: RuntimeWarning: coroutine 'DockerSandbox.execute' was never awaited
+/home/chillizu/Projects/CaSolis_/scripts/train_meta_world.py:250: RuntimeWarning: coroutine 'DockerSandbox.execute' was never awaited
   train_meta(cycles=args.cycles, output_dir=args.output)
 RuntimeWarning: Enable tracemalloc to get the object allocation traceback
 🧠 元学习世界模型 — 学命令→输出函数

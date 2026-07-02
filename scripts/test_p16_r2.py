@@ -88,7 +88,7 @@ print(f"[OK] 去重有效: {len(hyps2)} <= {len(hyps)}")
 
 # -- 4. Integration smoke test --
 print("\n--- OnlineAgent 集成 ---")
-os.system("docker rm -f folunar-sandbox 2>/dev/null")
+os.system("docker rm -f casolis-sandbox 2>/dev/null")
 from agent.online_agent import OnlineAgent
 
 agent = OnlineAgent(buffer_size=100, train_interval=99, batch_size=16,

@@ -8,7 +8,7 @@ P18 Phase 3-LITE 验证: IntuitionBuffer
 import sys, os, time, math
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ["HF_HUB_OFFLINE"] = "1"
-os.system("docker rm -f folunar-sandbox 2>/dev/null")
+os.system("docker rm -f casolis-sandbox 2>/dev/null")
 
 from agent.intuition_buffer import IntuitionBuffer
 import torch
@@ -86,10 +86,10 @@ print(f"  [OK] Capacity cap: {buf4.size}/16")
 # 5. OnlineAgent 集成
 print("\n--- OnlineAgent 集成 ---")
 from agent.online_agent import OnlineAgent
-os.system("docker rm -f folunar-sandbox 2>/dev/null")
+os.system("docker rm -f casolis-sandbox 2>/dev/null")
 agent = OnlineAgent(buffer_size=100, train_interval=99, batch_size=16,
                     lr=1e-4, conductor_gate=0.7, mode="auto")
-os.system("docker rm -f folunar-sandbox 2>/dev/null")
+os.system("docker rm -f casolis-sandbox 2>/dev/null")
 
 assert hasattr(agent, 'intuition_buffer'), "intuition_buffer missing"
 assert agent.intuition_buffer.capacity == 1024
@@ -101,7 +101,7 @@ print(f"  15 steps, buffer size: {agent.intuition_buffer.size}")
 assert agent.intuition_buffer.size >= 1, "No entries recorded"
 print(f"  [OK] OnlineAgent integration")
 
-os.system("docker rm -f folunar-sandbox 2>/dev/null")
+os.system("docker rm -f casolis-sandbox 2>/dev/null")
 print(f"\n{'='*60}")
 print("Phase 3-LITE PASSED")
 print(f"{'='*60}")

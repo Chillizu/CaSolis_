@@ -1,5 +1,5 @@
 Traceback (most recent call last):
-  File "/home/chillizu/Projects/Folunar_/scripts/train_continual.py", line 241, in <module>
+  File "/home/chillizu/Projects/CaSolis_/scripts/train_continual.py", line 241, in <module>
     asyncio.run(train_continual(cycles=args.cycles, output_dir=args.output))
     ^^^^^^^
 NameError: name 'asyncio' is not defined. Did you forget to import 'asyncio'?

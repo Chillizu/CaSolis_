@@ -12,8 +12,8 @@ import json
 from typing import Optional
 from dataclasses import dataclass
 
-SANDBOX_IMAGE = "folunar-sandbox:latest"  # P9: 预装 python3+curl
-CONTAINER_NAME = "folunar-sandbox"
+SANDBOX_IMAGE = "casolis-sandbox:latest"  # P9: 预装 python3+curl
+CONTAINER_NAME = "casolis-sandbox"
 
 
 @dataclass

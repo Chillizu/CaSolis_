@@ -13,7 +13,7 @@
 import os, sys, json, subprocess, random, time
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-CONTAINER = "folunar_gen_v2"
+CONTAINER = "casolis_gen_v2"
 DOCKER_IMAGE = "ubuntu:22.04"
 
 # 启动容器

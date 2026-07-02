@@ -1,4 +1,4 @@
-# Folunar_ P10 后层级架构升级评审
+# CaSolis_ P10 后层级架构升级评审
 
 > 评审范围: P10 已完成层级架构 (MODE->GOAL->ACTION), 16 intent 100% stable
 > 目标: 升级为 层级架构 + 动态事实图 + 增长型世界模型 + 长期自主学习
@@ -278,7 +278,7 @@ class PersistentStore:
     def __init__(self, base_path: str = "data/persistent"):
         self.base = Path(base_path)
         self.base.mkdir(parents=True, exist_ok=True)
-        self.db = sqlite3.connect(self.base / "folunar.db")
+        self.db = sqlite3.connect(self.base / "casolis.db")
         self._init_tables()
 
     def save_fact_graph(self, graph: FactGraph):
@@ -316,8 +316,8 @@ docker run -d \
   -v "$(pwd)/data/persistent:/app/data/persistent" \
   -v "$(pwd)/checkpoints:/app/checkpoints" \
   --network none \
-  --name folunar-agent \
-  folunar-agent:latest
+  --name casolis-agent \
+  casolis-agent:latest
 ```
 
 如果 agent 跑在宿主, 只有 sandbox 在 docker 里, 则保证 sandbox 的 `/persistent` mount 继续保留即可。

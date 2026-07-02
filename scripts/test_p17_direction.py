@@ -4,10 +4,10 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ["HF_HUB_OFFLINE"] = "1"
 
 from agent.online_agent import OnlineAgent
-os.system("docker rm -f folunar-sandbox 2>/dev/null")
+os.system("docker rm -f casolis-sandbox 2>/dev/null")
 agent = OnlineAgent(buffer_size=100, train_interval=99, batch_size=16,
                     lr=1e-4, conductor_gate=0.7, mode="auto")
-os.system("docker rm -f folunar-sandbox 2>/dev/null")
+os.system("docker rm -f casolis-sandbox 2>/dev/null")
 
 # 跑几步让 system 有基础事实
 for i in range(15):
@@ -42,4 +42,4 @@ if hasattr(agent, 'cmd_selector'):
     assert bias, "cluster_bias should be set"
 
 print(f"\nOK: 方向链路完整")
-os.system("docker rm -f folunar-sandbox 2>/dev/null")
+os.system("docker rm -f casolis-sandbox 2>/dev/null")

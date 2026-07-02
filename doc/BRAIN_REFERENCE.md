@@ -1,11 +1,11 @@
-# Folunar_ Brain-Reference Architecture
+# CaSolis_ Brain-Reference Architecture
 
 > 人脑参考架构: 将 P10-P19 的 agent 模块映射到大脑功能区, 使 P20 之后的扩展有明确的神经科学对照。
 > 最后更新: 2026-07-01
 
 ## Why this mapping matters
 
-The Folunar_ agent was built layer by layer (P10 hierarchy, P11 persistence, P12 knowledge expansion, P13 tools, P14 LLM pipeline, P15 brain-inspired dynamics, P16 reasoning, P17 self-awareness, P18/P19 world-model and imagination). By P19 the system had several modules that were already brain-like in function, but the analogies were scattered in comments. P20 makes the mapping explicit so that:
+The CaSolis_ agent was built layer by layer (P10 hierarchy, P11 persistence, P12 knowledge expansion, P13 tools, P14 LLM pipeline, P15 brain-inspired dynamics, P16 reasoning, P17 self-awareness, P18/P19 world-model and imagination). By P19 the system had several modules that were already brain-like in function, but the analogies were scattered in comments. P20 makes the mapping explicit so that:
 
 - New mechanisms have a clear location in the architecture (e.g., "this belongs to the hippocampal-neocortical loop").
 - Missing biological functions become feature gaps (e.g., "we have no amygdala, so salience is ad-hoc").

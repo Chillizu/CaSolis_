@@ -1,4 +1,4 @@
-# Folunar_ — 自主 AI Agent 项目评审请求
+# CaSolis_ — 自主 AI Agent 项目评审请求
 
 ## 项目梗概
 
@@ -56,5 +56,5 @@ SlotMind 架构试图通过以下方式解决：
 
 ---
 
-项目位置: `/home/chillizu/Projects/Folunar_/`
+项目位置: `/home/chillizu/Projects/CaSolis_/`
 已存档前期: `github.com/Chillizu/Trahexa`

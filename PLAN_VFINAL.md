@@ -1,4 +1,4 @@
-# Folunar_ 项目 — 总体规划书 vFinal
+# CaSolis_ 项目 — 总体规划书 vFinal
 
 > 整合 ChatGPT · Claude · Gemini · Kimi 各两轮评审
 > 写作日期: 2026-06-18

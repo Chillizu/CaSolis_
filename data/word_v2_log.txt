@@ -1,4 +1,4 @@
-/home/chillizu/Projects/Folunar_/scripts/train_word.py:96: RuntimeWarning: coroutine 'DockerSandbox.execute' was never awaited
+/home/chillizu/Projects/CaSolis_/scripts/train_word.py:96: RuntimeWarning: coroutine 'DockerSandbox.execute' was never awaited
   result = run_cmd(sandbox, cmd)
 RuntimeWarning: Enable tracemalloc to get the object allocation traceback
 🧠 词级思考链架构

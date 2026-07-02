@@ -34,7 +34,7 @@ def ollama_gen(prompt: str, max_tokens: int = 120) -> str:
         print(f"  Ollama API 错误: {e}")
         return ""
 
-DOCKER = "folunar-ds"
+DOCKER = "casolis-ds"
 def docker_start():
     subprocess.run(["docker","kill",DOCKER],capture_output=True)
     subprocess.run(["docker","rm",DOCKER],capture_output=True)

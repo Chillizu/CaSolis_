@@ -4,7 +4,7 @@ Runs 30 steps and verifies plan generation/execution appears in logs.
 import sys, os, json
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ["HF_HUB_OFFLINE"] = "1"
-os.system("docker rm -f folunar-sandbox 2>/dev/null")
+os.system("docker rm -f casolis-sandbox 2>/dev/null")
 
 from agent.online_agent import OnlineAgent
 print("=" * 60)
@@ -28,7 +28,7 @@ assert hasattr(agent, '_plan_step_count'), "Missing _plan_step_count field"
 assert hasattr(agent.goal_generator, '_plan_topic_stats'), "Missing _plan_topic_stats"
 print("[OK] Self-Scaffolding fields present")
 
-os.system("docker rm -f folunar-sandbox 2>/dev/null")
+os.system("docker rm -f casolis-sandbox 2>/dev/null")
 print(f"\n{'='*60}")
 print("Self-Scaffolding smoke test PASSED")
 print(f"{'='*60}")

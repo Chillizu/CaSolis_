@@ -2,7 +2,7 @@
 Long run — track creative output from the two-layer architecture
 """
 import sys, os, json, time, torch
-sys.path.insert(0, "/home/chillizu/Projects/Folunar_")
+sys.path.insert(0, "/home/chillizu/Projects/CaSolis_")
 os.environ["HF_HUB_OFFLINE"] = "1"
 os.environ["DEEPSEEK_API_KEY"] = os.environ.get("DEEPSEEK_API_KEY", "")
 

@@ -1,4 +1,4 @@
-# Folunar_ 认知推理层设计方案 (P16)
+# CaSolis_ 认知推理层设计方案 (P16)
 
 > 目标: 在现有 MODE -> GOAL -> ACTION 层级 + FactGraph + GrowingWorldModel V4 之上,
 > 增加一个不以 LLM 为核心的真正推理层, 使系统能自发提出假设、设计实验、验证/修正因果信念。

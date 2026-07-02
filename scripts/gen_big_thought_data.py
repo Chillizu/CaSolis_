@@ -7,7 +7,7 @@
 
 import os, sys, json, subprocess, random, time, re, hashlib
 
-DOCKER = "folunar-ds2"
+DOCKER = "casolis-ds2"
 def dk_start():
     subprocess.run(["docker","kill",DOCKER],capture_output=True)
     subprocess.run(["docker","rm",DOCKER],capture_output=True)

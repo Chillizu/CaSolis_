@@ -1,7 +1,7 @@
-/home/chillizu/Projects/Folunar_/scripts/train_online.py:96: RuntimeWarning: coroutine 'DockerSandbox.execute' was never awaited
+/home/chillizu/Projects/CaSolis_/scripts/train_online.py:96: RuntimeWarning: coroutine 'DockerSandbox.execute' was never awaited
   r = sandbox.execute("bash", cmd, None)
 RuntimeWarning: Enable tracemalloc to get the object allocation traceback
-/home/chillizu/Projects/Folunar_/scripts/train_online.py:192: RuntimeWarning: coroutine 'DockerSandbox.execute' was never awaited
+/home/chillizu/Projects/CaSolis_/scripts/train_online.py:192: RuntimeWarning: coroutine 'DockerSandbox.execute' was never awaited
   train_online(steps=args.steps, output_dir=args.output)
 RuntimeWarning: Enable tracemalloc to get the object allocation traceback
 🧠 在线训练 | 参数: 385,521

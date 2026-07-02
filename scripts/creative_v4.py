@@ -3,7 +3,7 @@ Creative Marathon v4 — full pipeline logging
 Every output traces: GoalGenerator decision → Prompt → DeepSeek response → File
 """
 import sys, os, json, time
-sys.path.insert(0, "/home/chillizu/Projects/Folunar_")
+sys.path.insert(0, "/home/chillizu/Projects/CaSolis_")
 os.environ["HF_HUB_OFFLINE"] = "1"
 os.environ["DEEPSEEK_API_KEY"] = os.environ.get("DEEPSEEK_API_KEY", "")
 
@@ -79,5 +79,5 @@ for step in range(1, TOTAL_STEPS + 1):
 
 log_file.write(json.dumps({"event": "done", "steps": TOTAL_STEPS}, ensure_ascii=False) + "\n")
 log_file.close()
-agent.sandbox.execute("docker rm -f folunar-sandbox", timeout=5)
+agent.sandbox.execute("docker rm -f casolis-sandbox", timeout=5)
 print(f"\nDone. Output in {OUT}/")

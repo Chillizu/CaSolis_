@@ -2,7 +2,7 @@
 8 小时马拉松 — 完整日志记录所有模型细节与产出
 """
 import sys, os, json, time, torch
-sys.path.insert(0, "/home/chillizu/Projects/Folunar_")
+sys.path.insert(0, "/home/chillizu/Projects/CaSolis_")
 os.environ["HF_HUB_OFFLINE"] = "1"
 
 LOG_DIR = "data/marathon_logs"
@@ -181,5 +181,5 @@ if r and r.stdout:
         size = c.stdout.strip().split()[0] if c and c.stdout else "?"
         print(f"  {f} ({size}B)")
 
-os.system("docker rm -f folunar-sandbox 2>/dev/null")
+os.system("docker rm -f casolis-sandbox 2>/dev/null")
 print("\nDone.")

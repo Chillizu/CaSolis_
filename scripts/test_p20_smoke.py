@@ -6,7 +6,7 @@ P20 联合验证: SalienceSignal + HabitSystem + StateEncoder 注意力门控
 import sys, os, json
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ["HF_HUB_OFFLINE"] = "1"
-os.system("docker rm -f folunar-sandbox 2>/dev/null")
+os.system("docker rm -f casolis-sandbox 2>/dev/null")
 
 from agent.online_agent import OnlineAgent
 import torch
@@ -14,7 +14,7 @@ print("=" * 60)
 print("P20 联合验证: Salience + Habit + StateEncoder")
 print("=" * 60)
 
-os.system("docker rm -f folunar-sandbox 2>/dev/null")
+os.system("docker rm -f casolis-sandbox 2>/dev/null")
 agent = OnlineAgent(buffer_size=100, train_interval=99, batch_size=16,
                     lr=1e-4, conductor_gate=0.7, mode="auto")
 
@@ -49,7 +49,7 @@ state_text = agent.state_encoder.get_state_text(salience_hints={"cpu": 0.9})
 assert isinstance(state_text, str) and len(state_text) > 0
 print(f"[OK] StateEncoder salience_hints path works")
 
-os.system("docker rm -f folunar-sandbox 2>/dev/null")
+os.system("docker rm -f casolis-sandbox 2>/dev/null")
 print(f"\n{'='*60}")
 print("P20 联合验证 PASSED")
 print(f"{'='*60}")

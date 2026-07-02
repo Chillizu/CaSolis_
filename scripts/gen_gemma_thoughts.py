@@ -13,7 +13,7 @@ Gemma4 协作思考链生成器
 
 import os, sys, json, subprocess, random, time, re, urllib.request
 
-DOCKER = "folunar-g4"
+DOCKER = "casolis-g4"
 def dk_start():
     subprocess.run(["docker","kill",DOCKER],capture_output=True)
     subprocess.run(["docker","rm",DOCKER],capture_output=True)

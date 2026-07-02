@@ -6,7 +6,7 @@
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ["HF_HUB_OFFLINE"] = "1"
-os.system("docker rm -f folunar-sandbox 2>/dev/null")
+os.system("docker rm -f casolis-sandbox 2>/dev/null")
 
 from agent.creative_writer import CreativeWriter
 
@@ -27,11 +27,11 @@ print("[OK] initial _async_result=None")
 wb = object()  # mock, generate 走到 ollama 后靠 fact build 也不会 crash, 但可能 build_prompt 需要 workbench
 from types import SimpleNamespace
 from agent.workbench import Workbench
-os.system("docker rm -f folunar-sandbox 2>/dev/null")
+os.system("docker rm -f casolis-sandbox 2>/dev/null")
 from agent.online_agent import OnlineAgent
 agent = OnlineAgent(buffer_size=100, train_interval=99, batch_size=16,
                     lr=1e-4, conductor_gate=0.7, mode="auto")
-os.system("docker rm -f folunar-sandbox 2>/dev/null")
+os.system("docker rm -f casolis-sandbox 2>/dev/null")
 
 # 2. 验证 periodic trigger
 print("\n--- 验证 periodic async trigger ---")

@@ -2,7 +2,7 @@
 Creative Marathon v3 — track outputs from sandbox, not competing with agent
 """
 import sys, os, json, time
-sys.path.insert(0, "/home/chillizu/Projects/Folunar_")
+sys.path.insert(0, "/home/chillizu/Projects/CaSolis_")
 os.environ["HF_HUB_OFFLINE"] = "1"
 os.environ["DEEPSEEK_API_KEY"] = os.environ.get("DEEPSEEK_API_KEY", "")
 
@@ -70,6 +70,6 @@ if r and r.stdout:
             with open(f"{OUT}/files/{fname}", "w") as f:
                 f.write(c.stdout)
 
-agent.sandbox.execute("docker rm -f folunar-sandbox", timeout=5)
+agent.sandbox.execute("docker rm -f casolis-sandbox", timeout=5)
 log.close()
 print(f"\nDone. {llm_count} LLM files in {OUT}/")

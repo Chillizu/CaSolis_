@@ -10,7 +10,7 @@ LOG_DIR = ROOT / "run_logs"
 
 
 def reset_state():
-    subprocess.run(["docker", "rm", "-f", "folunar-sandbox"], capture_output=True)
+    subprocess.run(["docker", "rm", "-f", "casolis-sandbox"], capture_output=True)
     # remove persistent data and logs
     for p in (ROOT / "data" / "persistent").glob("*"):
         if p.is_file():

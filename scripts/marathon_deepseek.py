@@ -4,7 +4,7 @@ DeepSeek 长程马拉松 — 使用 deepseek-v4-flash API
 """
 import sys, os, json, time, torch
 
-sys.path.insert(0, "/home/chillizu/Projects/Folunar_")
+sys.path.insert(0, "/home/chillizu/Projects/CaSolis_")
 os.environ["HF_HUB_OFFLINE"] = "1"
 os.environ["DEEPSEEK_API_KEY"] = os.environ.get("DEEPSEEK_API_KEY", "")
 

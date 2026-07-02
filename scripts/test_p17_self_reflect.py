@@ -62,11 +62,11 @@ else:
 
 # 4. OnlineAgent integration
 print("\n--- OnlineAgent integration ---")
-os.system("docker rm -f folunar-sandbox 2>/dev/null")
+os.system("docker rm -f casolis-sandbox 2>/dev/null")
 from agent.online_agent import OnlineAgent
 agent = OnlineAgent(buffer_size=100, train_interval=99, batch_size=16,
                     lr=1e-4, conductor_gate=0.7, mode="auto")
-os.system("docker rm -f folunar-sandbox 2>/dev/null")
+os.system("docker rm -f casolis-sandbox 2>/dev/null")
 assert hasattr(agent, 'self_model') and agent.self_model is not None
 assert agent.creative_writer and agent.creative_writer.model == "qwen3.5:0.8b"
 print(f"  模型: {agent.creative_writer.model}")
@@ -85,7 +85,7 @@ if self_hit:
 else:
     print("  [SKIP] not triggered (needs step>30+%20==0)")
 
-os.system("docker rm -f folunar-sandbox 2>/dev/null")
+os.system("docker rm -f casolis-sandbox 2>/dev/null")
 print(f"\n{'='*60}")
 print("P17 自省验证 PASSED")
 print(f"{'='*60}")

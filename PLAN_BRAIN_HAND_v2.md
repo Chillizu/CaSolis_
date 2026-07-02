@@ -1,4 +1,4 @@
-# Folunar_ v2 — 大脑+手脚架构（修正版）
+# CaSolis_ v2 — 大脑+手脚架构（修正版）
 
 > 基于四大模型（ChatGPT · Claude · Gemini · Kimi）的评审修正
 

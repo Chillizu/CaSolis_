@@ -7,7 +7,7 @@ P18 联合验证: WorldModel V5 + IntuitionBuffer
 import sys, os, json
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ["HF_HUB_OFFLINE"] = "1"
-os.system("docker rm -f folunar-sandbox 2>/dev/null")
+os.system("docker rm -f casolis-sandbox 2>/dev/null")
 
 from agent.online_agent import OnlineAgent
 import torch
@@ -15,7 +15,7 @@ print("=" * 60)
 print("P18 联合验证: V5 + IntuitionBuffer")
 print("=" * 60)
 
-os.system("docker rm -f folunar-sandbox 2>/dev/null")
+os.system("docker rm -f casolis-sandbox 2>/dev/null")
 agent = OnlineAgent(buffer_size=100, train_interval=99, batch_size=16,
                     lr=1e-4, conductor_gate=0.7, mode="auto")
 
@@ -82,7 +82,7 @@ print(f"  Predicted next: {pred_next.shape}")
 assert pred_next.shape == (1, 384)
 print(f"[OK] V5 forward pass works after 50 steps")
 
-os.system("docker rm -f folunar-sandbox 2>/dev/null")
+os.system("docker rm -f casolis-sandbox 2>/dev/null")
 print(f"\n{'='*60}")
 print("P18 联合验证 PASSED")
 print(f"{'='*60}")

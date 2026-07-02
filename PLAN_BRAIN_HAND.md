@@ -1,4 +1,4 @@
-# Folunar_ — 大脑+手脚架构计划书
+# CaSolis_ — 大脑+手脚架构计划书
 
 > 📌 这是一个面向社区评审的架构计划。如果你被邀请看这个文件，请带着「这能行吗？」的怀疑眼光来读。
 
@@ -229,7 +229,7 @@
 
 ## 附件
 
-- 项目代码: `/home/chillizu/Projects/Folunar_/` (未公开, 仅评审)
+- 项目代码: `/home/chillizu/Projects/CaSolis_/` (未公开, 仅评审)
 - 阶段一存档: `github.com/Chillizu/Trahexa` (Qwen/DeepSeek SFT 流水线)
 - 当前最优 checkpoint: `modelcluster-v3`, 46M 参数, 4 路由专家 + 共享专家
 - 数据: `checkpoints/clean-v3`, 1452 条 Docker 验证过的命令输出样本

@@ -1,6 +1,6 @@
 # 回复 Gemini
 
-> 来自 Folunar_ 作者
+> 来自 CaSolis_ 作者
 
 你的评审在两个点上对我启发最大。
 

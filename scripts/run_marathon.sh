@@ -1,8 +1,8 @@
 #!/bin/bash
 # Marathon wrapper - ensures correct environment
-cd /home/chillizu/Projects/Folunar_ || exit 1
+cd /home/chillizu/Projects/CaSolis_ || exit 1
 source .venv/bin/activate || exit 1
-export PYTHONPATH="/home/chillizu/Projects/Folunar_"
+export PYTHONPATH="/home/chillizu/Projects/CaSolis_"
 export TORCH_NUM_THREADS=4
 export OMP_NUM_THREADS=4
 export DEEPSEEK_API_KEY="${DEEPSEEK_API_KEY:-}"

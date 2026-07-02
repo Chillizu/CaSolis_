@@ -2,7 +2,7 @@
 Inline Creative Marathon — 每步: 决策→prompt→生成→文件, 完整追踪
 """
 import sys, os, json, time
-sys.path.insert(0, "/home/chillizu/Projects/Folunar_")
+sys.path.insert(0, "/home/chillizu/Projects/CaSolis_")
 os.environ["HF_HUB_OFFLINE"] = "1"
 os.environ["DEEPSEEK_API_KEY"] = os.environ.get("DEEPSEEK_API_KEY", "")
 
@@ -122,4 +122,4 @@ print(f"LLM 创作: {total_generated} 次")
 print(f"总输出: {sum(os.path.getsize(f'{OUT}/files/{f}') for f in os.listdir(f'{OUT}/files/')):,}B")
 print(f"日志: {OUT}/run.jsonl")
 print(f"文件: {OUT}/files/")
-agent.sandbox.execute("docker rm -f folunar-sandbox", timeout=5)
+agent.sandbox.execute("docker rm -f casolis-sandbox", timeout=5)

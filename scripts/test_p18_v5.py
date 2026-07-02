@@ -9,7 +9,7 @@ P18 Phase 1-LITE 验证: WorldModel V5
 import sys, os, time
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ["HF_HUB_OFFLINE"] = "1"
-os.system("docker rm -f folunar-sandbox 2>/dev/null")
+os.system("docker rm -f casolis-sandbox 2>/dev/null")
 
 from agent.world_model_v5 import WorldModelV5
 import torch, math
@@ -73,10 +73,10 @@ print(f"  [OK] Loss decreased over 20 epochs")
 # 4. OnlineAgent 集成
 print("\n--- OnlineAgent 集成 ---")
 from agent.online_agent import OnlineAgent
-os.system("docker rm -f folunar-sandbox 2>/dev/null")
+os.system("docker rm -f casolis-sandbox 2>/dev/null")
 agent = OnlineAgent(buffer_size=100, train_interval=99, batch_size=16,
                     lr=1e-4, conductor_gate=0.7, mode="auto")
-os.system("docker rm -f folunar-sandbox 2>/dev/null")
+os.system("docker rm -f casolis-sandbox 2>/dev/null")
 
 assert hasattr(agent, 'world_model_v5'), "V5 missing from agent"
 assert hasattr(agent, '_wm5_buffer'), "wm5_buffer missing"
@@ -93,7 +93,7 @@ print(f"  20 steps done, buffer: {len(agent._wm5_buffer)} entries")
 assert len(agent._wm5_buffer) >= 1, "No transitions collected"
 print(f"  [OK] Transitions collected")
 
-os.system("docker rm -f folunar-sandbox 2>/dev/null")
+os.system("docker rm -f casolis-sandbox 2>/dev/null")
 print(f"\n{'='*60}")
 print("Phase 1-LITE PASSED")
 print(f"{'='*60}")

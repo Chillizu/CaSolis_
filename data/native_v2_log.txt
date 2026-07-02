@@ -1,10 +1,10 @@
-/home/chillizu/Projects/Folunar_/scripts/train_native_docker.py:58: RuntimeWarning: coroutine 'DockerSandbox.execute' was never awaited
+/home/chillizu/Projects/CaSolis_/scripts/train_native_docker.py:58: RuntimeWarning: coroutine 'DockerSandbox.execute' was never awaited
   r = sandbox.execute("bash", cmd, None)
 RuntimeWarning: Enable tracemalloc to get the object allocation traceback
-/home/chillizu/Projects/Folunar_/scripts/train_native_docker.py:111: RuntimeWarning: coroutine 'DockerSandbox.execute' was never awaited
+/home/chillizu/Projects/CaSolis_/scripts/train_native_docker.py:111: RuntimeWarning: coroutine 'DockerSandbox.execute' was never awaited
   initial_tokens = generate_training_data(sandbox, actions, n_interactions=6)
 RuntimeWarning: Enable tracemalloc to get the object allocation traceback
-/home/chillizu/Projects/Folunar_/scripts/train_native_docker.py:148: RuntimeWarning: coroutine 'DockerSandbox.execute' was never awaited
+/home/chillizu/Projects/CaSolis_/scripts/train_native_docker.py:148: RuntimeWarning: coroutine 'DockerSandbox.execute' was never awaited
   new_data = generate_training_data(sandbox, actions, n_interactions=3)
 RuntimeWarning: Enable tracemalloc to get the object allocation traceback
 🌐 原生交互 — Docker 真实训练

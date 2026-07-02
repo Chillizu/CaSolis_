@@ -5,7 +5,7 @@ import sys, os, json, time
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ["HF_HUB_OFFLINE"] = "1"
 
-os.system("docker rm -f folunar-sandbox 2>/dev/null")
+os.system("docker rm -f casolis-sandbox 2>/dev/null")
 
 from agent.online_agent import OnlineAgent
 from agent.fact_graph import Node, FactGraph, EDGE_CORRELATES, EDGE_CAUSES

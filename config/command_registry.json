@@ -869,7 +869,7 @@
             "args": [
                 "sh",
                 "-c",
-                "echo 'Hello from Folunar' > /tmp/hello.txt && cat /tmp/hello.txt"
+                "echo 'Hello from CaSolis' > /tmp/hello.txt && cat /tmp/hello.txt"
             ],
             "desc": "写测试文件"
         },

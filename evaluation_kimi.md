@@ -1,7 +1,7 @@
 ## 评估报告 (2026-06-24)
 
-评估对象: Folunar_ 自治 Linux Agent (P8 完成版本)
-评估根目录: /home/chillizu/Projects/Folunar_
+评估对象: CaSolis_ 自治 Linux Agent (P8 完成版本)
+评估根目录: /home/chillizu/Projects/CaSolis_
 数据来源: agent/*.py、config/command_registry.json、benchmark/template_engine.py、exec_log.jsonl（最近 100 步）
 
 ---
@@ -101,4 +101,4 @@
 
 **总体星级评价: ★★★☆☆ (3/5)**
 
-Folunar_ 已经搭建了一个具备自感知、自决策、自学习、自恢复雏形的自治 Agent 框架, 在小模型自治 Linux Agent 的方向上完成了大量工程探索。然而,P8 的实际运行数据表明, 系统仍处于「机制齐全但行为未收敛」的阶段: 好奇心奖励耗尽、CUSTOM 探索低质量、参数错误反复出现、产物价值不高。下一步的关键不是继续堆叠模块, 而是提升执行正确率、强化参数校验、让 World Model 真正驱动意图选择, 并让工作栏产生更高阶的链式任务而非简单事实罗列。
+CaSolis_ 已经搭建了一个具备自感知、自决策、自学习、自恢复雏形的自治 Agent 框架, 在小模型自治 Linux Agent 的方向上完成了大量工程探索。然而,P8 的实际运行数据表明, 系统仍处于「机制齐全但行为未收敛」的阶段: 好奇心奖励耗尽、CUSTOM 探索低质量、参数错误反复出现、产物价值不高。下一步的关键不是继续堆叠模块, 而是提升执行正确率、强化参数校验、让 World Model 真正驱动意图选择, 并让工作栏产生更高阶的链式任务而非简单事实罗列。

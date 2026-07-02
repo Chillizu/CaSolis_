@@ -13,7 +13,7 @@ from arch.model_cluster import ModelCluster, V
 torch.set_num_threads(4)
 
 # Docker 沙箱
-CONTAINER = "folunar_mc"
+CONTAINER = "casolis_mc"
 DOCKER_IMAGE = "ubuntu:22.04"
 
 def ensure_container():

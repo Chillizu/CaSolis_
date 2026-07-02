@@ -6,7 +6,7 @@ Multi-step plan execution demo:
   → log complete trace
 """
 import sys, os, json, time
-sys.path.insert(0, "/home/chillizu/Projects/Folunar_")
+sys.path.insert(0, "/home/chillizu/Projects/CaSolis_")
 os.environ["HF_HUB_OFFLINE"] = "1"
 os.environ["DEEPSEEK_API_KEY"] = os.environ.get("DEEPSEEK_API_KEY", "")
 
@@ -120,5 +120,5 @@ print(f"计划 {plan.plan_id}: {len(plan.steps)}步, 全部完成")
 print(f"日志: {OUT}/run.jsonl")
 print(f"文件: {OUT}/files/")
 
-agent.sandbox.execute("docker rm -f folunar-sandbox", timeout=5)
+agent.sandbox.execute("docker rm -f casolis-sandbox", timeout=5)
 log_file.close()

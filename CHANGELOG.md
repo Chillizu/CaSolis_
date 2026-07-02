@@ -1,4 +1,4 @@
-# Changelog — Folunar_
+# Changelog — CaSolis_
 
 > 项目级操作日志, 记录每次里程碑变更。
 > 格式: `[日期] 阶段 — 做了什么`

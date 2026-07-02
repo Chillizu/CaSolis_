@@ -1,6 +1,6 @@
-# Folunar_ 创造力与局部最优深度评估报告
+# CaSolis_ 创造力与局部最优深度评估报告
 
-**项目**: Folunar_  
+**项目**: CaSolis_  
 **版本**: P8.5d  
 **报告日期**: 2026-06-24  
 **作者**: pi agent 深度分析  
@@ -17,7 +17,7 @@
 - 最新报告: `checkpoints/p8_v14_freedom/report.json`
 - 核心源码: `agent/online_agent.py`, `agent/workbench.py`, `agent/conductor.py`, `agent/world_model.py`, `agent/rnd.py`, `agent/meta_learner.py`, `agent/command_selector_v2.py`, `agent/state_encoder.py`
 
-总体判断: **Folunar_ 目前展现出的是"受约束的复合生成能力"(bounded combinatorial synthesis)，而非开放式创造力。它能在给定模板和事实集合内有效组合，但已经被沙箱边界、事实空间和意图集合三重锁死，正处于明显的局部最优平台期。**
+总体判断: **CaSolis_ 目前展现出的是"受约束的复合生成能力"(bounded combinatorial synthesis)，而非开放式创造力。它能在给定模板和事实集合内有效组合，但已经被沙箱边界、事实空间和意图集合三重锁死，正处于明显的局部最优平台期。**
 
 ---
 
@@ -174,7 +174,7 @@ scores = (1.0 - agreement_norm) * 0.3 + value_norm * 0.4 + dist_norm * 0.3
 
 我们可以把创造力分为四层:
 
-| 层级 | 定义 | Folunar_ 现状 |
+| 层级 | 定义 | CaSolis_ 现状 |
 |------|------|---------------|
 | L1 组合 | 把已有元素按规则拼在一起 | 已实现(事实组合、意图选择) |
 | L2 探索 | 在已知空间内按新颖性采样 | 部分实现(RND、imagination) |

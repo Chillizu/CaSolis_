@@ -17,7 +17,7 @@ LOG_DIR = ROOT / "run_logs"
 
 def reset_state():
     """Reset sandbox and persistent data to baseline."""
-    subprocess.run(["docker", "rm", "-f", "folunar-sandbox"], capture_output=True)
+    subprocess.run(["docker", "rm", "-f", "casolis-sandbox"], capture_output=True)
     subprocess.run(["git", "checkout", "--", "data/persistent/"], cwd=ROOT, check=True)
     # Remove any new run logs so they don't interfere with file discovery
     for p in LOG_DIR.glob("run_*.jsonl"):

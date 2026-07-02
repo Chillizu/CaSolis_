@@ -53,7 +53,7 @@ state_text (环境状态)
 参数提取 → 模板引擎 → 沙箱命令
     │
     ▼
-Docker沙箱 (folunar-sandbox, --network none)
+Docker沙箱 (casolis-sandbox, --network none)
     │
     ▼
 ExecResult
@@ -251,27 +251,27 @@ R4 (后续): 自我改进
 
 ### 快速测试
 ```bash
-cd /home/chillizu/Projects/Folunar_
-docker rm -f folunar-sandbox 2>/dev/null
+cd /home/chillizu/Projects/CaSolis_
+docker rm -f casolis-sandbox 2>/dev/null
 source .venv/bin/activate
 timeout 120 python3 -u doc/script.py  # or inline python
 ```
 
 ### 长程运行
 ```bash
-cd /home/chillizu/Projects/Folunar_
+cd /home/chillizu/Projects/CaSolis_
 source .venv/bin/activate
 nohup python3 -u scripts/marathon.py > marathon.log 2>&1 &
 ```
 
 ### 查看持久化状态
 ```bash
-cd /home/chillizu/Projects/Folunar_
+cd /home/chillizu/Projects/CaSolis_
 source .venv/bin/activate
 python3 -c "
 from agent.persistent_store import PersistentStore
 import json, sqlite3
-db = sqlite3.connect('data/persistent/folunar.db')
+db = sqlite3.connect('data/persistent/casolis.db')
 c = db.cursor()
 c.execute('SELECT run_id, n_steps, success_rate FROM run_stats')
 for r in c.fetchall(): print(f'{r[0]}: {r[1]} steps, {r[2]:.0%} success')
@@ -280,7 +280,7 @@ for r in c.fetchall(): print(f'{r[0]}: {r[1]} steps, {r[2]:.0%} success')
 
 ### 清理沙箱
 ```bash
-docker rm -f folunar-sandbox
+docker rm -f casolis-sandbox
 ```
 
 ---

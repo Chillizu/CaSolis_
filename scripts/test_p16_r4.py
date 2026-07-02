@@ -4,7 +4,7 @@ P16 R4 验证: 自我改进 — MetaCognitiveSelector R9/R10 + WM feedback + aut
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ["HF_HUB_OFFLINE"] = "1"
-os.system("docker rm -f folunar-sandbox 2>/dev/null")
+os.system("docker rm -f casolis-sandbox 2>/dev/null")
 
 from agent.meta_selector import MetaCognitiveSelector
 from agent.fact_graph import FactGraph, EDGE_CAUSES
@@ -92,7 +92,7 @@ print("[OK] belief_confidence computed from miner edge weights")
 
 # -- 5. Integration smoke test --
 print("\n--- OnlineAgent integration ---")
-os.system("docker rm -f folunar-sandbox 2>/dev/null")
+os.system("docker rm -f casolis-sandbox 2>/dev/null")
 from agent.online_agent import OnlineAgent
 
 agent = OnlineAgent(buffer_size=100, train_interval=99, batch_size=16,

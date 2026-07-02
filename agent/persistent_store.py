@@ -29,7 +29,7 @@ PERSISTENT_DIR = Path("data/persistent")
 # ── 目录结构 ──
 MODELS_DIR = PERSISTENT_DIR / "models"
 TOOLS_DIR = PERSISTENT_DIR / "tools"
-DB_PATH = PERSISTENT_DIR / "folunar.db"
+DB_PATH = PERSISTENT_DIR / "casolis.db"
 VERSION_FILE = PERSISTENT_DIR / "version.txt"
 
 SCHEMA_VERSION = 1
@@ -42,7 +42,7 @@ class PersistentStore:
         self.base_dir = Path(base_dir)
         self.models_dir = self.base_dir / "models"
         self.tools_dir = self.base_dir / "tools"
-        self.db_path = self.base_dir / "folunar.db"
+        self.db_path = self.base_dir / "casolis.db"
         self._lock = threading.Lock()
 
         # 确保目录存在
