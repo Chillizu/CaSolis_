@@ -44,3 +44,4 @@ main_session_*.jsonl
 # OS
 .DS_Store
 Thumbs.db
+run_outputs/

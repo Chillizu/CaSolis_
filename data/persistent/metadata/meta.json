@@ -42,9 +42,9 @@
       "pattern": "kernel",
       "trigger": "output_contains"
     },
-    "utility": 0.4001624999999999,
-    "n": 38,
-    "last_step": 75,
+    "utility": 0.41868173226562494,
+    "n": 42,
+    "last_step": 17,
     "created_step": 1
   },
   "rule_architecture": {
@@ -54,9 +54,9 @@
       "pattern": "architecture",
       "trigger": "output_contains"
     },
-    "utility": 0.028061749999999976,
-    "n": 24,
-    "last_step": 75,
+    "utility": 0.07407572937499998,
+    "n": 26,
+    "last_step": 3,
     "created_step": 1
   },
   "rule_disk_etc_hosts": {
@@ -95,18 +95,6 @@
     "last_step": 100,
     "created_step": 1
   },
-  "rule_cpu_cores": {
-    "type": "extraction_rule",
-    "params": {
-      "key": "cpu_cores",
-      "pattern": "cpu_cores",
-      "trigger": "output_contains"
-    },
-    "utility": 0.5,
-    "n": 3,
-    "last_step": 75,
-    "created_step": 1
-  },
   "rule_VERSION_CODENAME": {
     "type": "extraction_rule",
     "params": {
@@ -115,8 +103,8 @@
       "trigger": "output_contains"
     },
     "utility": 0.5,
-    "n": 92,
-    "last_step": 75,
+    "n": 100,
+    "last_step": 26,
     "created_step": 1
   },
   "rule_ID": {
@@ -126,9 +114,9 @@
       "pattern": "ID",
       "trigger": "output_contains"
     },
-    "utility": 0.48489947349908447,
-    "n": 121,
-    "last_step": 75,
+    "utility": 0.46105176192469954,
+    "n": 140,
+    "last_step": 19,
     "created_step": 1
   },
   "intent_INFO_classifier": {
@@ -163,16 +151,6 @@
     "last_step": 99,
     "created_step": 3
   },
-  "probe_CUSTOM": {
-    "type": "probe_path",
-    "params": {
-      "path": "CUSTOM"
-    },
-    "utility": -0.3,
-    "n": 1,
-    "last_step": 4,
-    "created_step": 4
-  },
   "probe_cat_/proc/uptime": {
     "type": "probe_path",
     "params": {
@@ -203,16 +181,6 @@
     "last_step": 288,
     "created_step": 12
   },
-  "probe_lsblk_-o_NAME,SIZE,TYPE,FSTYPE,MOUNTPOIN": {
-    "type": "probe_path",
-    "params": {
-      "path": "lsblk -o NAME,SIZE,TYPE,FSTYPE,MOUNTPOINT"
-    },
-    "utility": 0.5,
-    "n": 1,
-    "last_step": 13,
-    "created_step": 13
-  },
   "probe_INFO": {
     "type": "probe_path",
     "params": {
@@ -223,16 +191,6 @@
     "last_step": 5,
     "created_step": 14
   },
-  "probe_free_-h": {
-    "type": "probe_path",
-    "params": {
-      "path": "free -h"
-    },
-    "utility": -0.3,
-    "n": 1,
-    "last_step": 19,
-    "created_step": 19
-  },
   "probe_cat_/proc/self/status": {
     "type": "probe_path",
     "params": {
@@ -242,38 +200,6 @@
     "n": 34,
     "last_step": 291,
     "created_step": 21
-  },
-  "probe_compgen_-c": {
-    "type": "probe_path",
-    "params": {
-      "path": "compgen -c"
-    },
-    "utility": -0.3666666666666667,
-    "n": 3,
-    "last_step": 47,
-    "created_step": 23
-  },
-  "extract_VERSION_CODENAME": {
-    "type": "extraction",
-    "params": {
-      "key": "VERSION_CODENAME",
-      "source": "discover_25.sh"
-    },
-    "utility": 1.0,
-    "n": 1,
-    "last_step": 25,
-    "created_step": 25
-  },
-  "extract_ID": {
-    "type": "extraction",
-    "params": {
-      "key": "ID",
-      "source": "discover_25.sh"
-    },
-    "utility": 1.0,
-    "n": 1,
-    "last_step": 25,
-    "created_step": 25
   },
   "script_25": {
     "type": "script_output",
@@ -316,36 +242,6 @@
     "last_step": 31,
     "created_step": 34
   },
-  "probe_taskset": {
-    "type": "probe_path",
-    "params": {
-      "path": "taskset"
-    },
-    "utility": -0.3,
-    "n": 1,
-    "last_step": 37,
-    "created_step": 37
-  },
-  "probe_find": {
-    "type": "probe_path",
-    "params": {
-      "path": "find"
-    },
-    "utility": 0.5,
-    "n": 1,
-    "last_step": 38,
-    "created_step": 38
-  },
-  "probe_ipcs": {
-    "type": "probe_path",
-    "params": {
-      "path": "ipcs"
-    },
-    "utility": 0.5,
-    "n": 1,
-    "last_step": 43,
-    "created_step": 43
-  },
   "probe_cat_/etc/hosts": {
     "type": "probe_path",
     "params": {
@@ -367,16 +263,6 @@
     "last_step": 50,
     "created_step": 50
   },
-  "probe_lspci": {
-    "type": "probe_path",
-    "params": {
-      "path": "lspci"
-    },
-    "utility": -0.4,
-    "n": 2,
-    "last_step": 50,
-    "created_step": 50
-  },
   "rule_hostname": {
     "type": "extraction_rule",
     "params": {
@@ -384,9 +270,9 @@
       "pattern": "hostname",
       "trigger": "output_contains"
     },
-    "utility": 0.2993859628770176,
-    "n": 96,
-    "last_step": 60,
+    "utility": 0.327998539921683,
+    "n": 99,
+    "last_step": 15,
     "created_step": 51
   },
   "probe_cat_/etc/os-release": {
@@ -398,26 +284,6 @@
     "n": 24,
     "last_step": 300,
     "created_step": 51
-  },
-  "probe_ls_/bin": {
-    "type": "probe_path",
-    "params": {
-      "path": "ls /bin"
-    },
-    "utility": 0.5,
-    "n": 1,
-    "last_step": 59,
-    "created_step": 59
-  },
-  "probe_pacman_-Qi": {
-    "type": "probe_path",
-    "params": {
-      "path": "pacman -Qi"
-    },
-    "utility": -0.3,
-    "n": 1,
-    "last_step": 62,
-    "created_step": 62
   },
   "probe_cat_/etc/fstab": {
     "type": "probe_path",
@@ -439,16 +305,6 @@
     "last_step": 282,
     "created_step": 69
   },
-  "probe_sysctl_-a": {
-    "type": "probe_path",
-    "params": {
-      "path": "sysctl -a"
-    },
-    "utility": -0.3,
-    "n": 1,
-    "last_step": 73,
-    "created_step": 73
-  },
   "script_75": {
     "type": "script_output",
     "params": {
@@ -459,28 +315,6 @@
     "n": 24,
     "last_step": 75,
     "created_step": 75
-  },
-  "rule_passwd_line_count": {
-    "type": "extraction_rule",
-    "params": {
-      "key": "passwd_line_count",
-      "pattern": "passwd_line_count",
-      "trigger": "output_contains"
-    },
-    "utility": 0.5,
-    "n": 1,
-    "last_step": 50,
-    "created_step": 76
-  },
-  "probe_dmesg_-T_--level=info,warn,err": {
-    "type": "probe_path",
-    "params": {
-      "path": "dmesg -T --level=info,warn,err"
-    },
-    "utility": -0.43333333333333335,
-    "n": 3,
-    "last_step": 13,
-    "created_step": 85
   },
   "script_100": {
     "type": "script_output",
@@ -548,56 +382,6 @@
     "last_step": 41,
     "created_step": 17
   },
-  "probe_whoami": {
-    "type": "probe_path",
-    "params": {
-      "path": "whoami"
-    },
-    "utility": 0.5,
-    "n": 1,
-    "last_step": 25,
-    "created_step": 25
-  },
-  "probe_sed": {
-    "type": "probe_path",
-    "params": {
-      "path": "sed"
-    },
-    "utility": -0.5,
-    "n": 1,
-    "last_step": 37,
-    "created_step": 37
-  },
-  "probe_man": {
-    "type": "probe_path",
-    "params": {
-      "path": "man"
-    },
-    "utility": -0.5,
-    "n": 1,
-    "last_step": 47,
-    "created_step": 47
-  },
-  "probe_ls_/usr/sbin": {
-    "type": "probe_path",
-    "params": {
-      "path": "ls /usr/sbin"
-    },
-    "utility": -0.5,
-    "n": 1,
-    "last_step": 55,
-    "created_step": 55
-  },
-  "probe_basename": {
-    "type": "probe_path",
-    "params": {
-      "path": "basename"
-    },
-    "utility": -0.5,
-    "n": 1,
-    "last_step": 62,
-    "created_step": 62
-  },
   "probe_ls_-la_/etc/_2>/dev/null": {
     "type": "probe_path",
     "params": {
@@ -618,27 +402,6 @@
     "last_step": 279,
     "created_step": 67
   },
-  "probe_locale_-a": {
-    "type": "probe_path",
-    "params": {
-      "path": "locale -a"
-    },
-    "utility": 0.5,
-    "n": 1,
-    "last_step": 70,
-    "created_step": 70
-  },
-  "intent_INSPECT_classifier": {
-    "type": "intent_choice",
-    "params": {
-      "intent": "INSPECT",
-      "source": "classifier"
-    },
-    "utility": -0.4,
-    "n": 2,
-    "last_step": 8,
-    "created_step": 2
-  },
   "intent_LS_TMP_conductor": {
     "type": "intent_choice",
     "params": {
@@ -649,47 +412,6 @@
     "n": 23,
     "last_step": 146,
     "created_step": 38
-  },
-  "probe_ls_/usr/bin": {
-    "type": "probe_path",
-    "params": {
-      "path": "ls /usr/bin"
-    },
-    "utility": -0.3,
-    "n": 3,
-    "last_step": 75,
-    "created_step": 61
-  },
-  "probe_sockstat": {
-    "type": "probe_path",
-    "params": {
-      "path": "sockstat"
-    },
-    "utility": -0.5,
-    "n": 1,
-    "last_step": 62,
-    "created_step": 62
-  },
-  "probe_htop_--no-color": {
-    "type": "probe_path",
-    "params": {
-      "path": "htop --no-color"
-    },
-    "utility": -0.5,
-    "n": 1,
-    "last_step": 74,
-    "created_step": 74
-  },
-  "intent_SEARCH_classifier": {
-    "type": "intent_choice",
-    "params": {
-      "intent": "SEARCH",
-      "source": "classifier"
-    },
-    "utility": -0.15000000000000002,
-    "n": 2,
-    "last_step": 10,
-    "created_step": 1
   },
   "rule_users": {
     "type": "extraction_rule",
@@ -736,58 +458,6 @@
     "last_step": 52,
     "created_step": 89
   },
-  "probe_at_-l": {
-    "type": "probe_path",
-    "params": {
-      "path": "at -l"
-    },
-    "utility": -0.5,
-    "n": 2,
-    "last_step": 43,
-    "created_step": 5
-  },
-  "probe_ls_-la_/proc/self/fd/_2>/dev/null": {
-    "type": "probe_path",
-    "params": {
-      "path": "ls -la /proc/self/fd/ 2>/dev/null"
-    },
-    "utility": -0.5,
-    "n": 2,
-    "last_step": 45,
-    "created_step": 36
-  },
-  "probe_find_/sys_-maxdepth_2_-type_f_2>/dev/nul": {
-    "type": "probe_path",
-    "params": {
-      "path": "find /sys -maxdepth 2 -type f 2>/dev/null | shuf -n 5"
-    },
-    "utility": -0.5,
-    "n": 2,
-    "last_step": 33,
-    "created_step": 22
-  },
-  "extract_os_version_id": {
-    "type": "extraction",
-    "params": {
-      "key": "os_version_id",
-      "source": "['cat', '/etc/os-release']"
-    },
-    "utility": 1.0,
-    "n": 1,
-    "last_step": 6,
-    "created_step": 6
-  },
-  "extract_os_id": {
-    "type": "extraction",
-    "params": {
-      "key": "os_id",
-      "source": "['cat', '/etc/os-release']"
-    },
-    "utility": 1.0,
-    "n": 1,
-    "last_step": 6,
-    "created_step": 6
-  },
   "intent_LS_TMP_classifier": {
     "type": "intent_choice",
     "params": {
@@ -798,17 +468,6 @@
     "n": 4,
     "last_step": 5,
     "created_step": 1
-  },
-  "intent_EXPLORE_classifier": {
-    "type": "intent_choice",
-    "params": {
-      "intent": "EXPLORE",
-      "source": "classifier"
-    },
-    "utility": 0.1,
-    "n": 3,
-    "last_step": 8,
-    "created_step": 2
   },
   "intent_COUNT_classifier": {
     "type": "intent_choice",
@@ -832,108 +491,6 @@
     "last_step": 62,
     "created_step": 83
   },
-  "intent_DISK_USAGE_classifier": {
-    "type": "intent_choice",
-    "params": {
-      "intent": "DISK_USAGE",
-      "source": "classifier"
-    },
-    "utility": -0.4,
-    "n": 1,
-    "last_step": 2,
-    "created_step": 2
-  },
-  "intent_CUSTOM_classifier": {
-    "type": "intent_choice",
-    "params": {
-      "intent": "CUSTOM",
-      "source": "classifier"
-    },
-    "utility": 0.1,
-    "n": 2,
-    "last_step": 11,
-    "created_step": 1
-  },
-  "extract_disk_persistent": {
-    "type": "extraction",
-    "params": {
-      "key": "disk_persistent",
-      "source": "['df', '-h']"
-    },
-    "utility": 1.0,
-    "n": 1,
-    "last_step": 140,
-    "created_step": 140
-  },
-  "extract_disk_etc_hosts": {
-    "type": "extraction",
-    "params": {
-      "key": "disk_etc_hosts",
-      "source": "['df', '-h']"
-    },
-    "utility": 1.0,
-    "n": 1,
-    "last_step": 140,
-    "created_step": 140
-  },
-  "script_225": {
-    "type": "script_output",
-    "params": {
-      "script": "discover_225.sh",
-      "size": 869,
-      "combo": "disk_etc_hosts,hostname,os_version_id"
-    },
-    "utility": 1.0,
-    "n": 2,
-    "last_step": 225,
-    "created_step": 225
-  },
-  "script_250": {
-    "type": "script_output",
-    "params": {
-      "script": "discover_250.sh",
-      "size": 1415,
-      "combo": "disk_etc_hosts,os_name,os_version_codename,os_version_id"
-    },
-    "utility": 1.0,
-    "n": 2,
-    "last_step": 250,
-    "created_step": 250
-  },
-  "script_275": {
-    "type": "script_output",
-    "params": {
-      "script": "discover_275.sh",
-      "size": 869,
-      "combo": "disk_etc_hosts,hostname,os_version_id"
-    },
-    "utility": 1.0,
-    "n": 2,
-    "last_step": 275,
-    "created_step": 275
-  },
-  "script_300": {
-    "type": "script_output",
-    "params": {
-      "script": "discover_300.sh",
-      "size": 520,
-      "combo": "node_name,os_name"
-    },
-    "utility": 1.0,
-    "n": 2,
-    "last_step": 300,
-    "created_step": 300
-  },
-  "probe_find_/proc_-maxdepth_3_-type_f_2>/dev/nu": {
-    "type": "probe_path",
-    "params": {
-      "path": "find /proc -maxdepth 3 -type f 2>/dev/null | shuf -n 8"
-    },
-    "utility": -0.5,
-    "n": 2,
-    "last_step": 15,
-    "created_step": 7
-  },
   "intent_DISK_USAGE_imagination": {
     "type": "intent_choice",
     "params": {
@@ -956,17 +513,6 @@
     "last_step": 159,
     "created_step": 134
   },
-  "intent_DISK_USAGE_conductor": {
-    "type": "intent_choice",
-    "params": {
-      "intent": "DISK_USAGE",
-      "source": "conductor"
-    },
-    "utility": -0.4,
-    "n": 2,
-    "last_step": 147,
-    "created_step": 173
-  },
   "intent_EXPLORE_conductor": {
     "type": "intent_choice",
     "params": {
@@ -977,17 +523,6 @@
     "n": 11,
     "last_step": 7,
     "created_step": 176
-  },
-  "intent_READ_ETC_classifier": {
-    "type": "intent_choice",
-    "params": {
-      "intent": "READ_ETC",
-      "source": "classifier"
-    },
-    "utility": 0.1,
-    "n": 1,
-    "last_step": 1,
-    "created_step": 1
   },
   "intent_LIST_classifier": {
     "type": "intent_choice",
@@ -1000,16 +535,6 @@
     "last_step": 7,
     "created_step": 9
   },
-  "probe_lsusb": {
-    "type": "probe_path",
-    "params": {
-      "path": "lsusb"
-    },
-    "utility": -0.5,
-    "n": 1,
-    "last_step": 29,
-    "created_step": 29
-  },
   "intent_USB_DEVICES_conductor": {
     "type": "intent_choice",
     "params": {
@@ -1020,26 +545,6 @@
     "n": 4,
     "last_step": 173,
     "created_step": 34
-  },
-  "probe_ls_/proc": {
-    "type": "probe_path",
-    "params": {
-      "path": "ls /proc"
-    },
-    "utility": -0.5,
-    "n": 1,
-    "last_step": 43,
-    "created_step": 43
-  },
-  "probe_zcmp": {
-    "type": "probe_path",
-    "params": {
-      "path": "zcmp"
-    },
-    "utility": -0.5,
-    "n": 1,
-    "last_step": 45,
-    "created_step": 45
   },
   "intent_READ_imagination": {
     "type": "intent_choice",
@@ -1052,56 +557,6 @@
     "last_step": 41,
     "created_step": 58
   },
-  "probe_getconf_PAGE_SIZE": {
-    "type": "probe_path",
-    "params": {
-      "path": "getconf PAGE_SIZE"
-    },
-    "utility": -0.2,
-    "n": 1,
-    "last_step": 82,
-    "created_step": 82
-  },
-  "probe_dircolors": {
-    "type": "probe_path",
-    "params": {
-      "path": "dircolors"
-    },
-    "utility": -0.5,
-    "n": 1,
-    "last_step": 86,
-    "created_step": 86
-  },
-  "probe_dmidecode_-t_system": {
-    "type": "probe_path",
-    "params": {
-      "path": "dmidecode -t system"
-    },
-    "utility": -0.5,
-    "n": 1,
-    "last_step": 22,
-    "created_step": 22
-  },
-  "probe_diff": {
-    "type": "probe_path",
-    "params": {
-      "path": "diff"
-    },
-    "utility": -0.5,
-    "n": 1,
-    "last_step": 28,
-    "created_step": 28
-  },
-  "probe_man_-k": {
-    "type": "probe_path",
-    "params": {
-      "path": "man -k"
-    },
-    "utility": -0.5,
-    "n": 1,
-    "last_step": 37,
-    "created_step": 37
-  },
   "probe_DISK_USAGE": {
     "type": "probe_path",
     "params": {
@@ -1111,66 +566,6 @@
     "n": 4,
     "last_step": 43,
     "created_step": 48
-  },
-  "probe_ip_route": {
-    "type": "probe_path",
-    "params": {
-      "path": "ip route"
-    },
-    "utility": -0.5,
-    "n": 1,
-    "last_step": 73,
-    "created_step": 73
-  },
-  "probe_sum": {
-    "type": "probe_path",
-    "params": {
-      "path": "sum"
-    },
-    "utility": -0.2,
-    "n": 1,
-    "last_step": 97,
-    "created_step": 97
-  },
-  "probe_pidof": {
-    "type": "probe_path",
-    "params": {
-      "path": "pidof"
-    },
-    "utility": -0.5,
-    "n": 1,
-    "last_step": 118,
-    "created_step": 118
-  },
-  "probe_ls_/usr/local/bin": {
-    "type": "probe_path",
-    "params": {
-      "path": "ls /usr/local/bin"
-    },
-    "utility": -0.5,
-    "n": 1,
-    "last_step": 130,
-    "created_step": 130
-  },
-  "probe_dpkg_-L": {
-    "type": "probe_path",
-    "params": {
-      "path": "dpkg -L"
-    },
-    "utility": -0.5,
-    "n": 1,
-    "last_step": 136,
-    "created_step": 136
-  },
-  "probe_LS_TMP": {
-    "type": "probe_path",
-    "params": {
-      "path": "LS_TMP"
-    },
-    "utility": -0.2,
-    "n": 3,
-    "last_step": 9,
-    "created_step": 140
   },
   "intent_COUNT_conductor": {
     "type": "intent_choice",
@@ -1182,38 +577,6 @@
     "n": 4,
     "last_step": 89,
     "created_step": 153
-  },
-  "intent_CUSTOM_conductor": {
-    "type": "intent_choice",
-    "params": {
-      "intent": "CUSTOM",
-      "source": "conductor"
-    },
-    "utility": -0.4,
-    "n": 1,
-    "last_step": 160,
-    "created_step": 160
-  },
-  "probe_depmod": {
-    "type": "probe_path",
-    "params": {
-      "path": "depmod"
-    },
-    "utility": -0.5,
-    "n": 1,
-    "last_step": 169,
-    "created_step": 169
-  },
-  "intent_SEARCH_imagination": {
-    "type": "intent_choice",
-    "params": {
-      "intent": "SEARCH",
-      "source": "imagination"
-    },
-    "utility": -0.4,
-    "n": 2,
-    "last_step": 185,
-    "created_step": 181
   },
   "probe_COUNT": {
     "type": "probe_path",
@@ -1235,47 +598,6 @@
     "n": 12,
     "last_step": 10,
     "created_step": 41
-  },
-  "probe_INSPECT": {
-    "type": "probe_path",
-    "params": {
-      "path": "INSPECT"
-    },
-    "utility": -0.5,
-    "n": 1,
-    "last_step": 59,
-    "created_step": 59
-  },
-  "probe_READ_ETC": {
-    "type": "probe_path",
-    "params": {
-      "path": "READ_ETC"
-    },
-    "utility": -0.2,
-    "n": 2,
-    "last_step": 112,
-    "created_step": 79
-  },
-  "probe_HELP": {
-    "type": "probe_path",
-    "params": {
-      "path": "HELP"
-    },
-    "utility": -0.5,
-    "n": 1,
-    "last_step": 130,
-    "created_step": 130
-  },
-  "intent_READ_conductor": {
-    "type": "intent_choice",
-    "params": {
-      "intent": "READ",
-      "source": "conductor"
-    },
-    "utility": 0.1,
-    "n": 2,
-    "last_step": 63,
-    "created_step": 10
   },
   "intent_EXPLORE_imagination": {
     "type": "intent_choice",
@@ -1299,17 +621,6 @@
     "last_step": 98,
     "created_step": 23
   },
-  "intent_COUNT_imagination": {
-    "type": "intent_choice",
-    "params": {
-      "intent": "COUNT",
-      "source": "imagination"
-    },
-    "utility": 0.1,
-    "n": 1,
-    "last_step": 51,
-    "created_step": 51
-  },
   "intent_CUSTOM_imagination": {
     "type": "intent_choice",
     "params": {
@@ -1321,66 +632,6 @@
     "last_step": 28,
     "created_step": 88
   },
-  "probe_cat_/etc/group": {
-    "type": "probe_path",
-    "params": {
-      "path": "cat /etc/group"
-    },
-    "utility": -0.2,
-    "n": 3,
-    "last_step": 66,
-    "created_step": 11
-  },
-  "probe_cat_/proc/modules": {
-    "type": "probe_path",
-    "params": {
-      "path": "cat /proc/modules"
-    },
-    "utility": -0.2,
-    "n": 2,
-    "last_step": 45,
-    "created_step": 17
-  },
-  "probe_cat_/proc/1/status": {
-    "type": "probe_path",
-    "params": {
-      "path": "cat /proc/1/status"
-    },
-    "utility": -0.2,
-    "n": 2,
-    "last_step": 36,
-    "created_step": 25
-  },
-  "probe_cat_/etc/timezone": {
-    "type": "probe_path",
-    "params": {
-      "path": "cat /etc/timezone"
-    },
-    "utility": -0.2,
-    "n": 2,
-    "last_step": 63,
-    "created_step": 47
-  },
-  "probe_cat_/proc/partitions": {
-    "type": "probe_path",
-    "params": {
-      "path": "cat /proc/partitions"
-    },
-    "utility": -0.2,
-    "n": 2,
-    "last_step": 87,
-    "created_step": 58
-  },
-  "probe_READ": {
-    "type": "probe_path",
-    "params": {
-      "path": "READ"
-    },
-    "utility": -0.5,
-    "n": 1,
-    "last_step": 4,
-    "created_step": 4
-  },
   "probe_hostname": {
     "type": "probe_path",
     "params": {
@@ -1390,5 +641,1286 @@
     "n": 4,
     "last_step": 93,
     "created_step": 52
+  },
+  "rule_hostname_info": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "hostname_info",
+      "pattern": "hostname_info",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_bin_bin_count": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "bin_bin_count",
+      "pattern": "bin_bin_count",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_arch_path": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_arch_path",
+      "pattern": "cmd_arch_path",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_arch_has_help": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_arch_has_help",
+      "pattern": "cmd_arch_has_help",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cpu_vendor_id": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cpu_vendor_id",
+      "pattern": "cpu_vendor_id",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_kernel_version": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "kernel_version",
+      "pattern": "kernel_version",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_dmesg_path": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_dmesg_path",
+      "pattern": "cmd_dmesg_path",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_dmesg_usage": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_dmesg_usage",
+      "pattern": "cmd_dmesg_usage",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_dmesg_has_help": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_dmesg_has_help",
+      "pattern": "cmd_dmesg_has_help",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_free_usage": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_free_usage",
+      "pattern": "cmd_free_usage",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_free_path": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_free_path",
+      "pattern": "cmd_free_path",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_free_has_help": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_free_has_help",
+      "pattern": "cmd_free_has_help",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_hostname_path": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_hostname_path",
+      "pattern": "cmd_hostname_path",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_hostname_has_help": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_hostname_has_help",
+      "pattern": "cmd_hostname_has_help",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_id_path": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_id_path",
+      "pattern": "cmd_id_path",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_id_has_help": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_id_has_help",
+      "pattern": "cmd_id_has_help",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_nproc_has_help": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_nproc_has_help",
+      "pattern": "cmd_nproc_has_help",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_ps_usage": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_ps_usage",
+      "pattern": "cmd_ps_usage",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_nproc_path": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_nproc_path",
+      "pattern": "cmd_nproc_path",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_ps_has_help": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_ps_has_help",
+      "pattern": "cmd_ps_has_help",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_ps_path": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_ps_path",
+      "pattern": "cmd_ps_path",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_top_usage": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_top_usage",
+      "pattern": "cmd_top_usage",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_top_has_help": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_top_has_help",
+      "pattern": "cmd_top_has_help",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_top_path": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_top_path",
+      "pattern": "cmd_top_path",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_uptime_usage": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_uptime_usage",
+      "pattern": "cmd_uptime_usage",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_uname_path": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_uname_path",
+      "pattern": "cmd_uname_path",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_w_usage": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_w_usage",
+      "pattern": "cmd_w_usage",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_uptime_path": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_uptime_path",
+      "pattern": "cmd_uptime_path",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_w_path": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_w_path",
+      "pattern": "cmd_w_path",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_w_has_help": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_w_has_help",
+      "pattern": "cmd_w_has_help",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_uname_has_help": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_uname_has_help",
+      "pattern": "cmd_uname_has_help",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_sysctl_has_help": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_sysctl_has_help",
+      "pattern": "cmd_sysctl_has_help",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_sysctl_usage": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_sysctl_usage",
+      "pattern": "cmd_sysctl_usage",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_sysctl_path": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_sysctl_path",
+      "pattern": "cmd_sysctl_path",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_free_intent": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_free_intent",
+      "pattern": "cmd_free_intent",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_id_intent": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_id_intent",
+      "pattern": "cmd_id_intent",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_nproc_intent": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_nproc_intent",
+      "pattern": "cmd_nproc_intent",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_ps_intent": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_ps_intent",
+      "pattern": "cmd_ps_intent",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_top_intent": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_top_intent",
+      "pattern": "cmd_top_intent",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_uname_intent": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_uname_intent",
+      "pattern": "cmd_uname_intent",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_uptime_intent": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_uptime_intent",
+      "pattern": "cmd_uptime_intent",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_w_intent": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_w_intent",
+      "pattern": "cmd_w_intent",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_sysctl_intent": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_sysctl_intent",
+      "pattern": "cmd_sysctl_intent",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_arch_intent": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_arch_intent",
+      "pattern": "cmd_arch_intent",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_hostname_intent": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_hostname_intent",
+      "pattern": "cmd_hostname_intent",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_uptime_has_help": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_uptime_has_help",
+      "pattern": "cmd_uptime_has_help",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cmd_dmesg_intent": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cmd_dmesg_intent",
+      "pattern": "cmd_dmesg_intent",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 1
+  },
+  "rule_cpu_cores": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "cpu_cores",
+      "pattern": "cpu_cores",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 390
+  },
+  "rule_passwd_line_count": {
+    "type": "extraction_rule",
+    "params": {
+      "key": "passwd_line_count",
+      "pattern": "passwd_line_count",
+      "trigger": "output_contains"
+    },
+    "utility": 0.0,
+    "n": 0,
+    "last_step": 0,
+    "created_step": 390
+  },
+  "extract_llm_2900": {
+    "type": "extraction",
+    "params": {
+      "key": "llm_2900",
+      "source": "async:LLM分析"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 2900,
+    "created_step": 2900
+  },
+  "extract_llm_2925": {
+    "type": "extraction",
+    "params": {
+      "key": "llm_2925",
+      "source": "async:LLM脚本"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 2925,
+    "created_step": 2925
+  },
+  "extract_llm_2950": {
+    "type": "extraction",
+    "params": {
+      "key": "llm_2950",
+      "source": "async:LLM脚本"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 2950,
+    "created_step": 2950
+  },
+  "extract_llm_2960": {
+    "type": "extraction",
+    "params": {
+      "key": "llm_2960",
+      "source": "async:LLM分析"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 2960,
+    "created_step": 2960
+  },
+  "extract_llm_2975": {
+    "type": "extraction",
+    "params": {
+      "key": "llm_2975",
+      "source": "async:LLM脚本"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 2975,
+    "created_step": 2975
+  },
+  "extract_llm_3000": {
+    "type": "extraction",
+    "params": {
+      "key": "llm_3000",
+      "source": "async:LLM分析"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 3000,
+    "created_step": 3000
+  },
+  "extract_llm_3010": {
+    "type": "extraction",
+    "params": {
+      "key": "llm_3010",
+      "source": "async:LLM分析"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 3010,
+    "created_step": 3010
+  },
+  "extract_llm_3030": {
+    "type": "extraction",
+    "params": {
+      "key": "llm_3030",
+      "source": "async:LLM分析"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 3030,
+    "created_step": 3030
+  },
+  "extract_llm_3045": {
+    "type": "extraction",
+    "params": {
+      "key": "llm_3045",
+      "source": "async:LLM脚本"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 3045,
+    "created_step": 3045
+  },
+  "extract_llm_3050": {
+    "type": "extraction",
+    "params": {
+      "key": "llm_3050",
+      "source": "async:LLM脚本"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 3050,
+    "created_step": 3050
+  },
+  "extract_llm_3070": {
+    "type": "extraction",
+    "params": {
+      "key": "llm_3070",
+      "source": "async:LLM分析"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 3070,
+    "created_step": 3070
+  },
+  "extract_llm_3085": {
+    "type": "extraction",
+    "params": {
+      "key": "llm_3085",
+      "source": "async:LLM脚本"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 3085,
+    "created_step": 3085
+  },
+  "extract_llm_3095": {
+    "type": "extraction",
+    "params": {
+      "key": "llm_3095",
+      "source": "async:LLM脚本"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 3095,
+    "created_step": 3095
+  },
+  "extract_llm_3110": {
+    "type": "extraction",
+    "params": {
+      "key": "llm_3110",
+      "source": "async:LLM脚本"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 3110,
+    "created_step": 3110
+  },
+  "extract_generic_slab": {
+    "type": "extraction",
+    "params": {
+      "key": "generic_slab",
+      "source": "['cat', '/proc/meminfo']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 3111,
+    "created_step": 3111
+  },
+  "extract_generic_sreclaimable": {
+    "type": "extraction",
+    "params": {
+      "key": "generic_sreclaimable",
+      "source": "['cat', '/proc/meminfo']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 3111,
+    "created_step": 3111
+  },
+  "extract_generic_sunreclaim": {
+    "type": "extraction",
+    "params": {
+      "key": "generic_sunreclaim",
+      "source": "['cat', '/proc/meminfo']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 3111,
+    "created_step": 3111
+  },
+  "extract_generic_kernelstack": {
+    "type": "extraction",
+    "params": {
+      "key": "generic_kernelstack",
+      "source": "['cat', '/proc/meminfo']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 3113,
+    "created_step": 3113
+  },
+  "extract_generic_pagetables": {
+    "type": "extraction",
+    "params": {
+      "key": "generic_pagetables",
+      "source": "['cat', '/proc/meminfo']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 3113,
+    "created_step": 3113
+  },
+  "extract_generic_secpagetables": {
+    "type": "extraction",
+    "params": {
+      "key": "generic_secpagetables",
+      "source": "['cat', '/proc/meminfo']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 3113,
+    "created_step": 3113
+  },
+  "extract_llm_3135": {
+    "type": "extraction",
+    "params": {
+      "key": "llm_3135",
+      "source": "async:LLM脚本"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 3135,
+    "created_step": 3135
+  },
+  "extract_llm_3145": {
+    "type": "extraction",
+    "params": {
+      "key": "llm_3145",
+      "source": "async:LLM报告"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 3145,
+    "created_step": 3145
+  },
+  "extract_llm_3155": {
+    "type": "extraction",
+    "params": {
+      "key": "llm_3155",
+      "source": "async:LLM报告"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 3155,
+    "created_step": 3155
+  },
+  "extract_llm_3165": {
+    "type": "extraction",
+    "params": {
+      "key": "llm_3165",
+      "source": "async:LLM分析"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 3165,
+    "created_step": 3165
+  },
+  "extract_llm_3180": {
+    "type": "extraction",
+    "params": {
+      "key": "llm_3180",
+      "source": "async:LLM分析"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 3180,
+    "created_step": 3180
+  },
+  "extract_llm_3195": {
+    "type": "extraction",
+    "params": {
+      "key": "llm_3195",
+      "source": "async:LLM脚本"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 3195,
+    "created_step": 3195
+  },
+  "extract_os_pretty_name": {
+    "type": "extraction",
+    "params": {
+      "key": "os_pretty_name",
+      "source": "['cat', '/etc/os-release']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 2,
+    "created_step": 2
+  },
+  "extract_os_name": {
+    "type": "extraction",
+    "params": {
+      "key": "os_name",
+      "source": "['cat', '/etc/os-release']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 2,
+    "created_step": 2
+  },
+  "extract_os_version_id": {
+    "type": "extraction",
+    "params": {
+      "key": "os_version_id",
+      "source": "['cat', '/etc/os-release']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 2,
+    "created_step": 2
+  },
+  "extract_os_version_codename": {
+    "type": "extraction",
+    "params": {
+      "key": "os_version_codename",
+      "source": "['cat', '/etc/os-release']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 2,
+    "created_step": 2
+  },
+  "extract_os_id": {
+    "type": "extraction",
+    "params": {
+      "key": "os_id",
+      "source": "['cat', '/etc/os-release']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 2,
+    "created_step": 2
+  },
+  "extract_VERSION_CODENAME": {
+    "type": "extraction",
+    "params": {
+      "key": "VERSION_CODENAME",
+      "source": "['cat', '/etc/os-release']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 2,
+    "created_step": 2
+  },
+  "extract_llm_10": {
+    "type": "extraction",
+    "params": {
+      "key": "llm_10",
+      "source": "async:LLM报告"
+    },
+    "utility": 1.0,
+    "n": 2,
+    "last_step": 10,
+    "created_step": 10
+  },
+  "extract_llm_15": {
+    "type": "extraction",
+    "params": {
+      "key": "llm_15",
+      "source": "async:LLM脚本"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 15,
+    "created_step": 15
+  },
+  "extract_generic_sync": {
+    "type": "extraction",
+    "params": {
+      "key": "generic_sync",
+      "source": "['OBSERVE']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 24,
+    "created_step": 24
+  },
+  "extract_generic_games": {
+    "type": "extraction",
+    "params": {
+      "key": "generic_games",
+      "source": "['OBSERVE']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 24,
+    "created_step": 24
+  },
+  "extract_generic_man": {
+    "type": "extraction",
+    "params": {
+      "key": "generic_man",
+      "source": "['OBSERVE']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 24,
+    "created_step": 24
+  },
+  "extract_self_discovery": {
+    "type": "extraction",
+    "params": {
+      "key": "self_discovery",
+      "source": "self_monitor"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 29,
+    "created_step": 29
+  },
+  "extract_generic_--pre-invoke": {
+    "type": "extraction",
+    "params": {
+      "key": "generic_--pre-invoke",
+      "source": "['dpkg', '--help']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 3,
+    "created_step": 3
+  },
+  "extract_generic_--post-invoke": {
+    "type": "extraction",
+    "params": {
+      "key": "generic_--post-invoke",
+      "source": "['dpkg', '--help']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 3,
+    "created_step": 3
+  },
+  "extract_generic_--path-exclude": {
+    "type": "extraction",
+    "params": {
+      "key": "generic_--path-exclude",
+      "source": "['dpkg', '--help']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 3,
+    "created_step": 3
+  },
+  "extract_llm_5": {
+    "type": "extraction",
+    "params": {
+      "key": "llm_5",
+      "source": "async:LLM报告"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 5,
+    "created_step": 5
+  },
+  "extract_generic_lp": {
+    "type": "extraction",
+    "params": {
+      "key": "generic_lp",
+      "source": "['OBSERVE']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 10,
+    "created_step": 10
+  },
+  "extract_generic_mail": {
+    "type": "extraction",
+    "params": {
+      "key": "generic_mail",
+      "source": "['OBSERVE']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 10,
+    "created_step": 10
+  },
+  "extract_generic_news": {
+    "type": "extraction",
+    "params": {
+      "key": "generic_news",
+      "source": "['OBSERVE']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 10,
+    "created_step": 10
+  },
+  "extract_llm_20": {
+    "type": "extraction",
+    "params": {
+      "key": "llm_20",
+      "source": "async:LLM脚本"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 20,
+    "created_step": 20
+  },
+  "extract_llm_30": {
+    "type": "extraction",
+    "params": {
+      "key": "llm_30",
+      "source": "async:LLM脚本"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 30,
+    "created_step": 30
+  },
+  "extract_generic_gnu______#": {
+    "type": "extraction",
+    "params": {
+      "key": "generic_gnu______#",
+      "source": "['pygettext3.11', '--help']"
+    },
+    "utility": 1.0,
+    "n": 2,
+    "last_step": 3,
+    "created_step": 1
+  },
+  "extract_generic_--width": {
+    "type": "extraction",
+    "params": {
+      "key": "generic_--width",
+      "source": "['pygettext3.11', '--help']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 1,
+    "created_step": 1
+  },
+  "extract_generic_--exclude-file": {
+    "type": "extraction",
+    "params": {
+      "key": "generic_--exclude-file",
+      "source": "['pygettext3.11', '--help']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 1,
+    "created_step": 1
+  },
+  "extract_generic_--from-unit": {
+    "type": "extraction",
+    "params": {
+      "key": "generic_--from-unit",
+      "source": "['numfmt', '--help']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 5,
+    "created_step": 5
+  },
+  "extract_generic_--header[": {
+    "type": "extraction",
+    "params": {
+      "key": "generic_--header[",
+      "source": "['numfmt', '--help']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 5,
+    "created_step": 5
+  },
+  "extract_generic_--invalid": {
+    "type": "extraction",
+    "params": {
+      "key": "generic_--invalid",
+      "source": "['numfmt', '--help']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 5,
+    "created_step": 5
+  },
+  "extract_generic_-w,_--wrap": {
+    "type": "extraction",
+    "params": {
+      "key": "generic_-w,_--wrap",
+      "source": "['base64', '--help']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 15,
+    "created_step": 15
+  },
+  "extract_llm_25": {
+    "type": "extraction",
+    "params": {
+      "key": "llm_25",
+      "source": "async:LLM脚本"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 25,
+    "created_step": 25
+  },
+  "extract_generic_--no-docstrings": {
+    "type": "extraction",
+    "params": {
+      "key": "generic_--no-docstrings",
+      "source": "['pygettext3', '--help']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 3,
+    "created_step": 3
+  },
+  "extract_generic_birth_time": {
+    "type": "extraction",
+    "params": {
+      "key": "generic_birth_time",
+      "source": "['dir', '--help']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 5,
+    "created_step": 5
+  },
+  "extract_generic_with_--sort": {
+    "type": "extraction",
+    "params": {
+      "key": "generic_with_--sort",
+      "source": "['dir', '--help']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 5,
+    "created_step": 5
+  },
+  "extract_generic_-t,_--tabsize": {
+    "type": "extraction",
+    "params": {
+      "key": "generic_-t,_--tabsize",
+      "source": "['dir', '--help']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 5,
+    "created_step": 5
+  },
+  "extract_generic_uucp": {
+    "type": "extraction",
+    "params": {
+      "key": "generic_uucp",
+      "source": "['OBSERVE']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 14,
+    "created_step": 14
+  },
+  "extract_generic_proxy": {
+    "type": "extraction",
+    "params": {
+      "key": "generic_proxy",
+      "source": "['OBSERVE']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 14,
+    "created_step": 14
+  },
+  "extract_generic_www-data": {
+    "type": "extraction",
+    "params": {
+      "key": "generic_www-data",
+      "source": "['OBSERVE']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 14,
+    "created_step": 14
+  },
+  "extract_generic_with_--color": {
+    "type": "extraction",
+    "params": {
+      "key": "generic_with_--color",
+      "source": "['dir', '--help']"
+    },
+    "utility": 1.0,
+    "n": 1,
+    "last_step": 19,
+    "created_step": 19
   }
 }

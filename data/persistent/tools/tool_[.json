@@ -1,7 +1,6 @@
 {
   "cmd": [
-    "[",
-    "--version"
+    "["
   ],
   "desc": "run [ with arguments",
   "cat": "discovered",

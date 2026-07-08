@@ -354,7 +354,7 @@
   "tool_addpart.json": {
     "name": "tool_addpart.json",
     "tool_type": "utility",
-    "description": "418-pool: tool_addpart.json",
+    "description": "tool from 418 pool",
     "use_count": 0,
     "success_count": 0,
     "last_used_step": 0,
@@ -486,7 +486,7 @@
   "tool_apt-key.json": {
     "name": "tool_apt-key.json",
     "tool_type": "utility",
-    "description": "418-pool: tool_apt-key.json",
+    "description": "tool from 418 pool",
     "use_count": 0,
     "success_count": 0,
     "last_used_step": 0,
@@ -2620,7 +2620,7 @@
   "tool_[.json": {
     "name": "tool_[.json",
     "tool_type": "utility",
-    "description": "418-pool: tool_[.json",
+    "description": "tool from 418 pool",
     "use_count": 0,
     "success_count": 0,
     "last_used_step": 0,
